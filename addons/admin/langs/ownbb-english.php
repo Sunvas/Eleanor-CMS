@@ -1,0 +1,35 @@
+<?php
+return array(
+	#For /addons/admin/modules/ownbb.php
+	'general'=>'General',
+	'handler'=>'Handler',
+	'tags'=>'Tags',
+	'tags_'=>'Comma all BB tags, which will be processed',
+	'special'=>'Special',
+	'special_'=>'Special tags are processed only within certain tags, and are not handled by themselves',
+	'no_parse'=>'Do not processed nested tags?',
+	'no_parse_'=>'Nested in this tag other BB tag will not be processed',
+	'sp_tags'=>'Special tags',
+	'sp_tags_'=>'Comma separated special tags will be processed within this tag',
+	'activate'=>'Activate',
+	'pos'=>'Position',
+	'pos_'=>'Shows the position in which the queue will be processed BB tags. Leave blank to append',
+	'can_use'=>'Can use',
+	'can_use_'=>'Option determines whether the processed used by the user BB tag. Do not select anything to solve everything.',
+	'can_see'=>'Can see',
+	'can_see_'=>'Option determines whether the user has finished to see the tag on the page. Do not select anything to solve everything.',
+	'sb'=>'Display button below editor',
+	'delc'=>'Confirm delete',
+	'list'=>'List of own BB tags',
+	'adding'=>'Adding BB tag',
+	'editing'=>'Editing BB tags',
+
+	#For template
+	'EMPTY_TAGS'=>'You have not entered any tag',
+	'ERROR_TAGS'=>'Tag field is filled incorrectly!',
+	'ERROR_STAGS'=>'Field of special tags filled incorrectly!',
+	'add'=>'Add BB tag',
+	'update'=>'Refresh cache',
+	'notags'=>'BB tags do not found!',
+	'deleting'=>'Do you really want to delete tag &quot;%s&quot;?',
+);

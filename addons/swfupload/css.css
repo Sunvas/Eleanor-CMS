@@ -1,0 +1,74 @@
+.progressWrapper {
+	width: 99%;
+	overflow: hidden;
+}
+.progressContainer {
+	margin: 0;
+	padding: 4px;
+	padding-top: 6px;
+	margin-bottom: 5px;
+	border: solid 1px #dfdfdf;
+	background: #979797 url(uploader_bg.png) repeat-x left 3px;
+	overflow: hidden;
+	text-align: left;
+}
+.red {
+	border: solid 1px #dfdfdf;
+	background: #B50000 url(uploader_bg.png) repeat-x left 3px;
+}
+.green {
+	border: solid 1px #dfdfdf;
+	background: #c9c9c9 url(uploader_bg.png) repeat-x left 3px;
+}
+.blue {
+	border: solid 1px #dfdfdf;
+	background: #CEE2F2 url(uploader_bg.png) repeat-x left 3px;
+}
+.progressName {
+	font-size: 8pt;
+	font-weight: bold;
+	color: #555555;
+	width: 323px;
+	height: 14px;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.progressBarInProgress, .progressBarComplete, .progressBarError {
+	font-size: 0px;
+	width: 0%;
+	height: 2px;
+	background-color: #f9990e;
+	margin-top: 2px;
+}
+.progressBarComplete {
+	width: 100%;
+	background-color: #92c07b;
+	visibility: hidden;
+}
+.progressBarError {
+	width: 100%;
+	background-color: #ff4e00;
+	visibility: hidden;
+}
+.progressBarStatus {
+	margin-top: 2px;
+	width: 337px;
+	font-size: 7pt;
+	font-family: Verdana;
+	text-align: left;
+	white-space: nowrap;
+}
+a.progressCancel, a.progressCancel:link, a.progressCancel:active, a.progressCancel:visited, a.progressCancel:hover {
+	font-size: 0px;
+	display: block;
+	height: 14px;
+	width: 14px;
+	background-image: url(cancelbutton.gif);
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+	float: right;
+}
+a.progressCancel:hover {
+	background-position: 0px -14px;
+}

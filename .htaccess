@@ -1,0 +1,44 @@
+<FilesMatch "\.js$">
+ForceType "text/javascript; charset=utf-8"
+</FilesMatch>
+
+#Глобалы нам не нужны
+#php_flag register_globals off
+
+#Слешировать кавычки также не требуется
+#php_flag magic_quotes_gpc off
+
+#Запретим получать урлы при помощи fopen()
+#php_admin_value allow_url_fopen off
+
+#При получении ошибки - сообщаем об этом скрипту
+#/index.php?module=errors&code=400 - пример без ЧПУ
+ErrorDocument 400 /errors/400.html
+ErrorDocument 401 /errors/401.html
+ErrorDocument 403 /errors/403.html
+#ErrorDocument 404 /errors/404.html
+ErrorDocument 500 /errors/500.html
+ErrorDocument 503 /errors/503.html
+
+#Запрещаем листинги каталогов
+Options -Indexes
+
+#Разрешаем переходы по символьным ссылкам
+Options +FollowSymlinks
+
+#Редирект для чужих доменов
+#RewriteCond %{HTTP_HOST} !^eleanor\-cms\.ru$
+#RewriteRule ^(.*)$ http\:\/\/eleanor\-cms\.ru/$1 [R=301,L]
+
+RewriteEngine On
+
+#Правила для скачивания: отдаем любой контент только через скрипт
+#НЕ УДАЛЯЙТЕ И НЕ КОММЕНТИРУЙТЕ СТРОКУ НИЖЕ!!!! ЭТО ЧРЕВАТО ВЗЛОМОМ!!!
+RewriteRule ^uploads/(.*)$ download.php?download=$1 [L]
+
+#Если запрашиваемый ресурс не папка и не файл - это ЧПУ
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+#Если файл - картинка. Нафик надо сообщать об этом системе... Это ж целую страницу придется генерить из-за случайной глупости, что тяжело для сервера...
+RewriteCond %{REQUEST_URI} !\.(css|js|jpe?g|gif|png|bmp)$
+RewriteRule ^(.*)$ index.php?!$1&%{QUERY_STRING} [L]

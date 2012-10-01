@@ -1,0 +1,3 @@
+<filesmatch "\.php|\.html?$">
+deny from all
+</filesmatch>

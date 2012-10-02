@@ -338,7 +338,7 @@ class Categories_Manager extends Categories
 		$parent=isset($_GET[$this->pp.'parent']) ? (int)$_GET[$this->pp.'parent'] : 0;
 
 		$items=$subitems=$navi=$where=$qs=array();
-		$U=Eleanor::getInstance()->Url;
+		$El=Eleanor::getInstance();
 		if($parent>0)
 		{
 			$qs['']['parent']=$parent;
@@ -349,11 +349,11 @@ class Categories_Manager extends Categories
 			$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.$this->table.'` INNER JOIN `'.$this->table.'_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id` IN ('.$parents.')');
 			while($a=$R->fetch_assoc())
 				$temp[$a['id']]=$a['title'];
-			$navi[0]=array('title'=>$this->Language['list'],'_a'=>$U->Prefix());
+			$navi[0]=array('title'=>$this->Language['list'],'_a'=>$El->Url->Prefix());
 			foreach(explode(',',$parents) as $v)
 				if(isset($temp[$v]))
-					$navi[$v]=array('title'=>$temp[$v],'_a'=>$v==$parent ? false : $U->Construct(array($this->pp.'parent'=>$v)));
-			$this->navigation[0]['submenu'][0][0]=$U->Construct(array($this->pp.'do'=>'add',$this->pp.'parent'=>$parent));
+					$navi[$v]=array('title'=>$temp[$v],'_a'=>$v==$parent ? false : $El->Url->Construct(array($this->pp.'parent'=>$v)));
+			$El->module['links_categories']['add']=$El->Url->Construct(array($this->pp.'do'=>'add',$this->pp.'parent'=>$parent));
 		}
 
 		$R=Eleanor::$Db->Query('SELECT COUNT(`parent`) FROM `'.$this->table.'` WHERE `parent`='.$parent);
@@ -387,12 +387,12 @@ class Categories_Manager extends Categories
 		{
 			$R=Eleanor::$Db->Query('SELECT `id`,`title`,`parent`,`image`,`pos` FROM `'.$this->table.'` INNER JOIN `'.$this->table.'_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `parent`='.$parent.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.','.$pp);
 			while($a=$R->fetch_assoc())
-			{				$a['_aedit']=$U->Construct(array($this->pp.'edit'=>$a['id']));
-				$a['_adel']=$U->Construct(array($this->pp.'delete'=>$a['id']));
-				$a['_aparent']=$U->Construct(array($this->pp.'parent'=>$a['id']));
-				$a['_aup']=$a['pos']<$cnt ? $U->Construct(array($this->pp.'up'=>$a['id'])) : false;
-				$a['_adown']=$a['pos']>1 ? $U->Construct(array($this->pp.'down'=>$a['id'])) : false;
-				$a['_aaddp']=$U->Construct(array($this->pp.'do'=>'add',$this->pp.'parent'=>$a['id']));
+			{				$a['_aedit']=$El->Url->Construct(array($this->pp.'edit'=>$a['id']));
+				$a['_adel']=$El->Url->Construct(array($this->pp.'delete'=>$a['id']));
+				$a['_aparent']=$El->Url->Construct(array($this->pp.'parent'=>$a['id']));
+				$a['_aup']=$a['pos']<$cnt ? $El->Url->Construct(array($this->pp.'up'=>$a['id'])) : false;
+				$a['_adown']=$a['pos']>1 ? $El->Url->Construct(array($this->pp.'down'=>$a['id'])) : false;
+				$a['_aaddp']=$El->Url->Construct(array($this->pp.'do'=>'add',$this->pp.'parent'=>$a['id']));
 
 				if($a['image'])
 					$a['image']=$this->imgfolder.$a['image'];
@@ -415,17 +415,17 @@ class Categories_Manager extends Categories
 				foreach($v as $kk=>&$vv)
 					$vv=array(
 						'title'=>$vv,
-						'_aedit'=>$U->Construct(array('edit'=>$kk)),
+						'_aedit'=>$El->Url->Construct(array('edit'=>$kk)),
 					);
 			}
 		}
 
 		$links=array(
-			'sort_title'=>$U->Construct(array_merge($qs,array($this->pp.'sort'=>'title',$this->pp.'so'=>$qs['sort']=='title' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-			'sort_pos'=>$U->Construct(array_merge($qs,array($this->pp.'sort'=>'pos',$this->pp.'so'=>$qs['sort']=='pos' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-			'sort_id'=>$U->Construct(array_merge($qs,array($this->pp.'sort'=>'id',$this->pp.'so'=>$qs['sort']=='id' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-			'form_items'=>$U->Construct($qs+array($this->pp.'page'=>$page)),
-			'pp'=>$U->Construct($qs+array($this->pp.'new-pp'=>true)),
+			'sort_title'=>$El->Url->Construct(array_merge($qs,array($this->pp.'sort'=>'title',$this->pp.'so'=>$qs['sort']=='title' && $qs['so']=='asc' ? 'desc' : 'asc'))),
+			'sort_pos'=>$El->Url->Construct(array_merge($qs,array($this->pp.'sort'=>'pos',$this->pp.'so'=>$qs['sort']=='pos' && $qs['so']=='asc' ? 'desc' : 'asc'))),
+			'sort_id'=>$El->Url->Construct(array_merge($qs,array($this->pp.'sort'=>'id',$this->pp.'so'=>$qs['sort']=='id' && $qs['so']=='asc' ? 'desc' : 'asc'))),
+			'form_items'=>$El->Url->Construct($qs+array($this->pp.'page'=>$page)),
+			'pp'=>$El->Url->Construct($qs+array($this->pp.'new-pp'=>true)),
 		);
 		return Eleanor::$Template->CMList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links,$this->Language);
 	}

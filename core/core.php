@@ -394,7 +394,18 @@ final class Eleanor extends BaseClass
 		else
 		{
 			if(class_exists('EE',false) or include(self::$root.'core/others/ee.php'))
-				throw new EE('Class not found: '.$cl,EE::FATAL);
+			{
+				$d=debug_backtrace();
+				$a=array();
+				foreach($d as &$v)
+					if(isset($v['file'],$v['line']) and $v['file']!=__file__)
+					{
+						$a['file']=$v['file'];
+						$a['line']=$v['line'];
+						break;
+					}
+				throw new EE('Class not found: '.$cl,EE::FATAL,$a);
+			}
 			trigger_error('Class not found: '.$cl,E_USER_ERROR);
 		}
 	}

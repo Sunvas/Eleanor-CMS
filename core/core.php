@@ -31,20 +31,26 @@ abstract class BaseClass
 	public static function __callStatic($n,$p)
 	{
 		$d=self::_BT(debug_backtrace());
-		new EE('Called undefined method '.get_called_class().' :: '.$n,EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
+		$E=new EE('Called undefined method '.get_called_class().' :: '.$n,EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
+		if(DEBUG)
+			throw$E;
 	}
 
 	public function __call($n,$p)
 	{		if(property_exists($this,$n) and is_object($this->$n) and method_exists($this->$n,'__invoke'))
 			return call_user_func_array(array($this->$n,'__invoke'),$p);
 		$d=self::_BT(debug_backtrace());
-		new EE('Called undefined method '.get_class().' -› '.$n,EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
+		$E=new EE('Called undefined method '.get_class().' -› '.$n,EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
+		if(DEBUG)
+			throw$E;
 	}
 
 	public function __toString()
 	{
 		$d=self::_BT(debug_backtrace());
-		new EE('Trying to get string form class '.get_class(),EE::DEV,array('file'=>$d[0]['file'],'line'=>$d[0]['line']));
+		$E=new EE('Trying to get string form class '.get_class(),EE::DEV,array('file'=>$d[0]['file'],'line'=>$d[0]['line']));
+		if(DEBUG)
+			throw$E;
 	}
 
 	public function __invoke(){}#Äëÿ $class()
@@ -67,7 +73,9 @@ abstract class BaseClass
 		else
 			$d=debug_backtrace();
 		$d=self::_BT($d);
-		new EE('Trying to get value from the unknown variable <code><b>'.get_class($this).' -› '.$n.'</b></code>',EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
+		$E=new EE('Trying to get value from the unknown variable <code><b>'.get_class($this).' -› '.$n.'</b></code>',EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
+		if(DEBUG)
+			throw$E;
 	}
 }
 

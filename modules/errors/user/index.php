@@ -94,7 +94,7 @@ if(!$info['error'] and !$info['sent'])
 
 	if($canlog and $a['log'] and $info['back'])
 	{
-		$E=new EE('',EE::INFO);
+		$E=new EE('',EE::INFO,array('file'=>false));
 		$E->LogIt(EE::$vars['log_site_errors'],$my['title']);
 	}
 }

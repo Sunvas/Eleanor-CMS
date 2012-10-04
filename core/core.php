@@ -15,7 +15,7 @@ ignore_user_abort(true);
 error_reporting(E_ALL^E_NOTICE);
 set_error_handler(array('Eleanor','ErrorHandle'));
 set_exception_handler(array('Eleanor','ExceptionHandle'));
-define('ELENT',ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE | ENT_DISALLOWED);
+define('ELENT',defined('ENT_HTML5') ? ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE | ENT_DISALLOWED : ENT_QUOTES);#ToDo! PHP 5.4 удалить defined
 spl_autoload_register(array('Eleanor','Autoload'));
 
 abstract class BaseClass

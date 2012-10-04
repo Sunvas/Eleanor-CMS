@@ -792,7 +792,7 @@ function Save($id)
 	GoAway(empty($_POST['back']) ? true : $_POST['back']);
 }
 
-function AddEditId($id,$error=array())
+function AddEditId($id,$errors=array())
 {global$Eleanor,$title;
 	$lang=Eleanor::$Language['blocks'];
 	if($id)

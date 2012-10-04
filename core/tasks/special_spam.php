@@ -90,7 +90,7 @@ class TaskSpecial_Spam extends BaseClass implements Task
 		if(Eleanor::$Db===Eleanor::$UsersDb)
 		{
 			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`name`,`u`.`full_name`,`email`,`u`.`language` FROM `'.USERS_TABLE.'` `u` INNER JOIN `'.P.'users_extra` USING(`id`) INNER JOIN `'.P.'users_site` USING(`id`) WHERE `id`>'.(int)$lid.($where ? ' AND '.$where : '').' LIMIT '.$a['per_run']);
-			while($temp=v->fetch_assoc())
+			while($temp=$R->fetch_assoc())
 			{
 				$users[$temp['id']]=array_slice($temp,1);
 				$langs[]=$temp['language'] ? $temp['language'] : LANGUAGE;

@@ -56,9 +56,9 @@ switch($goal)
 		Start('');
 		echo'{query:"'.addcslashes($query,"\n\r\t\"\\").'",suggestions:['.($items ? '"'.join('","',$items).'"],data:["'.join('","',array_keys($items)).'"' : '').']}';
 	break;
-	default:		$filter=isset($_POST['filter']) ? $_POST['filter'] : false;
+	default:		$filter=isset($_GET['filter']) ? (string)$_GET['filter'] : false;
 		$cut=Eleanor::$root;
-		$path=isset($_POST['path']) ? trim($_POST['path'],'\//') : '';
+		$path=isset($_GET['path']) ? trim((string)$_GET['path'],'\//') : '';
 
 		if($path)
 		{

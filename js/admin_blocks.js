@@ -112,7 +112,7 @@ function AddEditBlock()
 				configs[k].insertAfter("#block tr.preconf");
 		}
 	tfch.change(ChangeFile);
-	file.change(ChangeFile).autocomplete({
+	file.change(ChangeFile).change().autocomplete({
 		serviceUrl:CORE.ajax_file,
 		minChars:2,
 		delimiter: null,

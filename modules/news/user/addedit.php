@@ -519,7 +519,7 @@ function Save($id,$gn=array())
 	}
 
 	Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
-
+	SetData();
 	$u=array('u'=>array(Eleanor::FilterLangValues($lvalues['uri']),'nid'=>$id));
 	if($maincat and $Eleanor->Url->furl)
 	{

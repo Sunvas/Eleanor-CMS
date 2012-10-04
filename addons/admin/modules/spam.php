@@ -364,7 +364,7 @@ function Save($id)
 	}
 	$lang=Eleanor::$Language['spam'];
 
-	$values=array();
+	$values=$errors=array();
 	if($filter)
 	{
 		$figr=isset($_POST['figroup']) ? (array)$_POST['figroup'] : array();

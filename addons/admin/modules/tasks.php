@@ -305,7 +305,6 @@ function AddEdit($id,$errors=array())
 function Save($id)
 {global$Eleanor;
 	$C=new Controls;
-	$C->langs=$langs;
 	$C->throw=false;
 	try
 	{

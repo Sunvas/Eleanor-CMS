@@ -18,10 +18,9 @@ $Eleanor->module['etag']='';#Дополнение к ETAG
 Eleanor::LoadOptions($mc['opts']);
 
 $curls=array();
-$puri='';
+$puri=false;
 if($Eleanor->Url->is_static)
 {
-	$puri=false;
 	$str=$Eleanor->Url->GetEnding(array($Eleanor->Url->ending,$Eleanor->Url->delimiter),true);
 	$_GET+=$Eleanor->Url->Parse($str ? array() : array('do'));
 	if($str)

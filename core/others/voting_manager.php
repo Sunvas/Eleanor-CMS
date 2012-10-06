@@ -511,7 +511,7 @@ class Voting_Manager extends BaseClass
 						}
 						return Eleanor::$Template->VmQuestions($r,$a['controls'],$THIS->Language);
 					},
-					'save'=>function($a,$Obj)
+					'save'=>function($a,$Obj) use ($THIS)
 					{
 						$keys=$Obj->GetPostVal($a['name']);
 						if(!$keys)
@@ -519,7 +519,7 @@ class Voting_Manager extends BaseClass
 						$keys=$keys ? array_keys($keys) : array();
 						$C=new Controls;
 						$C->arrname=array_merge($Obj->arrname,$a['name']);
-						$C->langs=$this->langs;
+						$C->langs=$THIS->langs;
 						$r=array();
 						foreach($keys as &$v)
 						{
@@ -535,18 +535,18 @@ class Voting_Manager extends BaseClass
 						'title'=>$this->Language['question'],
 						'descr'=>'',
 						'type'=>'edit',
-						'check'=>function($value,$langs)
+						'check'=>function($value,$langs) use ($THIS)
 						{							$errors=array();
-							if($this->langs)
+							if($THIS->langs)
 								foreach($value as $k=>&$v)
 								{
 									if($v=='' and in_array($k,$langs))
 									{										$uk=strtoupper($k);
-										$errors['EMPTY_TITLE_'.$uk]=$this->Language['EMPTY_TITLE']($k);
+										$errors['EMPTY_TITLE_'.$uk]=$THIS->Language['EMPTY_TITLE']($k);
 									}
 								}
 							elseif($value=='')
-								$errors['EMPTY_TITLE']=$this->Language['EMPTY_TITLE']();
+								$errors['EMPTY_TITLE']=$THIS->Language['EMPTY_TITLE']();
 							return$errors;
 						},
 						'bypost'=>&$this->bypost,

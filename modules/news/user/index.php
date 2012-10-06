@@ -772,7 +772,7 @@ function SetData()
 		'tags'=>$tags,
 		'cron'=>$cron,
 		'links'=>array(
-			'base'=>$Eleanor->Url->Prefix(),
+			'base'=>$Eleanor->Url->Prefix(false),
 			'categories'=>$Eleanor->Categories->dump ? $Eleanor->Url->Construct(array('do'=>'categories'),true,'') : false,
 			'tags'=>$tags ? $Eleanor->Url->Construct(array('do'=>'tags'),true,'') : false,
 			'search'=>$Eleanor->Url->Construct(array('do'=>'search'),true,''),

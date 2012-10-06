@@ -320,8 +320,11 @@ if(isset($_GET['do']))
 		case'options':
 			$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
 			$c=$Eleanor->Settings->GetInterface('group','users-on-site');
-			Start();
-			echo$c;
+			if($c)
+			{
+				Start();
+				echo$c;
+			}
 		break;
 		case'letters':
 			$post=false;
@@ -408,7 +411,7 @@ if(isset($_GET['do']))
 					{
 						$tosave=array();
 						foreach($letter as $k=>&$v)
-							$tosave[$k]=isset($v[$lng]) ? $v[$lng] : '';
+							$tosave[$k]=$controls[$k]['multilang'] ? Eleanor::FilterLangValues($v,$lng) : $v;
 						$file=Eleanor::$root.'addons/admin/letters/users-'.$lng.'.php';
 						file_put_contents($file,'<?php return '.var_export($tosave,true).';');
 					}

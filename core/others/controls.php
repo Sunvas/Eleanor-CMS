@@ -225,11 +225,11 @@ class Controls extends BaseClass
 				{
 					if(null===$tmp=$this->DisplayControl($a+$v,$ret,$laddon))
 						continue;
+					$ret[$k]=$tmp;
 				}
 				catch(EE$E)
 				{					if($this->throw)
 						throw$E;				}
-				$ret[$k]=$tmp;
 			}
 		}
 		return$ret;

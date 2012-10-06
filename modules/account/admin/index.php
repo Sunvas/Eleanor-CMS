@@ -202,7 +202,7 @@ if(isset($_GET['do']))
 					{
 						$tosave=array();
 						foreach($letter as $k=>&$v)
-							$tosave[$k]=isset($v[$lng]) ? $v[$lng] : '';
+							$tosave[$k]=$controls[$k]['multilang'] ? Eleanor::FilterLangValues($v,$lng) : $v;
 						$file=$Eleanor->module['path'].'letters-'.$lng.'.php';
 						file_put_contents($file,'<?php return '.var_export($tosave,true).';');
 					}

@@ -864,7 +864,7 @@ function AddEditId($id,$errors=array())
 function SaveId($id)
 {global$Eleanor;
 	$Eleanor->Editor_result->type='codemirror';
-	$Eleanor->Editor_result->ownbb=$Eleanor_result->Editor->smiles=false;
+	$Eleanor->Editor_result->ownbb=$Eleanor->Editor_result->smiles=false;
 	$values=array(
 		'service'=>isset($_POST['service']) ? (string)$_POST['service'] : '',
 		'code'=>isset($_POST['code']) ? (string)$_POST['code'] : '',

@@ -184,14 +184,14 @@ if(isset($_GET['do']))
 			$values=array();
 			$multilang=Eleanor::$vars['multilang'] ? array_keys(Eleanor::$langs) : array(Language::$main);
 			if($_SERVER['REQUEST_METHOD']=='POST')
-			{
+			{				$post=true;
 				$letter=$Eleanor->Controls->SaveControls($controls);
 				if(Eleanor::$vars['multilang'])
 					foreach($multilang as &$lng)
 					{
 						$tosave=array();
 						foreach($letter as $k=>&$v)
-							$tosave[$k]=isset($v[$lng]) ? $v[$lng] : '';
+							$tosave[$k]=$controls[$k]['multilang'] ? Eleanor::FilterLangValues($v,$lng) : $v;
 						$file=$Eleanor->module['path'].'letters-'.$lng.'.php';
 						file_put_contents($file,'<?php return '.var_export($tosave,true).';');
 					}

@@ -10,17 +10,17 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor,$title;
-$Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-Eleanor::$Template->queue[]=$Eleanor->module['config']['admintpl'];
+$Eleanor->module['config']=$mc=include($Eleanor->module['path'].'config.php');
+Eleanor::$Template->queue[]=$mc['admintpl'];
 
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_admin-*.php',$Eleanor->module['config']['n']);
-Eleanor::LoadOptions($Eleanor->module['config']['opts'],false);
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_admin-*.php',$mc['n']);
+Eleanor::LoadOptions($mc['opts'],false);
 
-$R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$Eleanor->module['config']['t'].'` WHERE `status`=-1');
+$R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$mc['t'].'` WHERE `status`=-1');
 list($cnt)=$R->fetch_row();
 
 $Eleanor->Categories=new Categories_manager;
-$Eleanor->Categories->table=$Eleanor->module['config']['c'];
+$Eleanor->Categories->table=$mc['c'];
 $Eleanor->Categories->deletecb='DelCategories';
 
 $Eleanor->module['links']=array(
@@ -131,11 +131,11 @@ if(isset($_GET['do']))
 				{
 					case'k':
 						$ids=Eleanor::$Db->In($_POST['mass']);
-						Eleanor::$Db->Delete($Eleanor->module['config']['tt'],'`id`'.$ids);
-						Eleanor::$Db->Delete($Eleanor->module['config']['rt'],'`tag`'.$ids);
+						Eleanor::$Db->Delete($mc['tt'],'`id`'.$ids);
+						Eleanor::$Db->Delete($mc['rt'],'`tag`'.$ids);
 				}
 
-			$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$Eleanor->module['config']['tt'].'`'.$where);
+			$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$mc['tt'].'`'.$where);
 			list($cnt)=$R->fetch_row();
 			if($page<=0)
 				$page=1;
@@ -162,7 +162,7 @@ if(isset($_GET['do']))
 
 			if($cnt>0)
 			{
-				$R=Eleanor::$Db->Query('SELECT `id`,`language`,`name`,`cnt` FROM `'.$Eleanor->module['config']['tt'].'`'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
+				$R=Eleanor::$Db->Query('SELECT `id`,`language`,`name`,`cnt` FROM `'.$mc['tt'].'`'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
 				while($a=$R->fetch_assoc())
 				{					$a['_aedit']=$Eleanor->Url->Construct(array('editt'=>$a['id']));
 					$a['_adel']=$Eleanor->Url->Construct(array('deletet'=>$a['id']));
@@ -204,7 +204,7 @@ if(isset($_GET['do']))
 		break;
 		case'options':
 			$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
-			$c=$Eleanor->Settings->GetInterface('group',$Eleanor->module['config']['opts']);
+			$c=$Eleanor->Settings->GetInterface('group',$mc['opts']);
 			if($c)
 			{
 				$c=Eleanor::$Template->Options($c);
@@ -217,7 +217,7 @@ if(isset($_GET['do']))
 			if(preg_match('#^([nt])(\d+)$#',$t,$m)>0)
 			{
 				unset($_POST['_draft'],$_POST['back']);
-				Eleanor::$Db->Replace(P.'drafts',array('key'=>$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$t,'value'=>serialize($_POST)));
+				Eleanor::$Db->Replace(P.'drafts',array('key'=>$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$t,'value'=>serialize($_POST)));
 			}
 			Eleanor::$content_type='text/plain';
 			Start('');
@@ -245,33 +245,33 @@ elseif(isset($_GET['delete']))
 	$id=(int)$_GET['delete'];
 	if(!Eleanor::$our_query)
 		return GoAway();
-	$R=Eleanor::$Db->Query('SELECT `id`,`title`,`tags`,`voting` FROM `'.$Eleanor->module['config']['t'].'` LEFT JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `id`='.$id.' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `id`,`title`,`tags`,`voting` FROM `'.$mc['t'].'` LEFT JOIN `'.$mc['tl'].'` USING(`id`) WHERE `id`='.$id.' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
 	if(!$a=$R->fetch_assoc())
 		return GoAway(true);
 	if(isset($_POST['ok']))
 	{
 		if($a['voting'])
 			$Eleanor->Voting_Manager->Delete($a['voting']);
-		Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id);
-		$R=Eleanor::$Db->Query('SELECT `tag`,COUNT(`id`) `cnt` FROM `'.$Eleanor->module['config']['rt'].'` WHERE `id`='.$id.' GROUP BY `tag`');
+		Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$mc['n'].DIRECTORY_SEPARATOR.$id);
+		$R=Eleanor::$Db->Query('SELECT `tag`,COUNT(`id`) `cnt` FROM `'.$mc['rt'].'` WHERE `id`='.$id.' GROUP BY `tag`');
 		$tids=array();
 		while($a=$R->fetch_assoc())
 		{
 			$tids[]=$a['tag'];
-			Eleanor::$Db->Update($Eleanor->module['config']['tt'],array('!cnt'=>'GREATEST(0,`cnt`-'.$a['cnt'].')'),'`id`='.$a['tag'].' AND `cnt`>0');
+			Eleanor::$Db->Update($mc['tt'],array('!cnt'=>'GREATEST(0,`cnt`-'.$a['cnt'].')'),'`id`='.$a['tag'].' AND `cnt`>0');
 		}
 
 		if($a['tags'])
 			$tids=array_merge($tids,explode(',,',trim($a['tags'],',')));
 
 		if($tids)
-			Eleanor::$Db->Delete($Eleanor->module['config']['tt'],'`cnt`=0 AND `id`'.Eleanor::$Db->In(array_unique($tids)));
+			Eleanor::$Db->Delete($mc['tt'],'`cnt`=0 AND `id`'.Eleanor::$Db->In(array_unique($tids)));
 		Eleanor::$Db->Delete(P.'comments','`module`='.$Eleanor->module['id'].' AND `contid`='.$id);
-		Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`='.$id.' LIMIT 1');
-		Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`='.$id);
-		Eleanor::$Db->Delete($Eleanor->module['config']['rt'],'`id`='.$id);
-		Eleanor::$Db->Delete(P.'drafts','`key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-n'.$id.'\' LIMIT 1');
-		Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+		Eleanor::$Db->Delete($mc['t'],'`id`='.$id.' LIMIT 1');
+		Eleanor::$Db->Delete($mc['tl'],'`id`='.$id);
+		Eleanor::$Db->Delete($mc['rt'],'`id`='.$id);
+		Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-n'.$id.'\' LIMIT 1');
+		Eleanor::$Cache->Lib->CleanByTag($mc['n']);
 		return GoAway(empty($_POST['back']) ? true : $_POST['back']);
 	}
 	$title=$lang['delc'];
@@ -288,30 +288,30 @@ elseif(isset($_GET['swap']))
 	$id=(int)$_GET['swap'];
 	if(Eleanor::$our_query)
 	{
-		$R=Eleanor::$Db->Query('SELECT `pinned`,`enddate`,`status`,`tags` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.' LIMIT 1');
+		$R=Eleanor::$Db->Query('SELECT `pinned`,`enddate`,`status`,`tags` FROM `'.$mc['t'].'` WHERE `id`='.$id.' LIMIT 1');
 		if(list($pin,$ed,$st,$tags)=$R->fetch_row() and ((int)$ed==0 or strtotime($ed)>time()))
 		{
 			$tags=$tags ? explode(',,',trim($tags,',')) : false;
 			if($st<=0)
 			{
 				if($pin)
-					Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'IF(`date`>`pinned` AND `date`<=NOW(),1,2)'),'`id`='.$id.' LIMIT 1');
+					Eleanor::$Db->Update($mc['t'],array('!status'=>'IF(`date`>`pinned` AND `date`<=NOW(),1,2)'),'`id`='.$id.' LIMIT 1');
 				else
-					Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>1),'`id`='.$id.' LIMIT 1');
+					Eleanor::$Db->Update($mc['t'],array('status'=>1),'`id`='.$id.' LIMIT 1');
 				if($tags)
 				{
-					Eleanor::$Db->Insert($Eleanor->module['config']['rt'],array('id'=>array_fill(0,count($tags),$id),'tag'=>$tags));
-					Eleanor::$Db->Update($Eleanor->module['config']['tt'],array('!cnt'=>'`cnt`+1'),'`id`'.Eleanor::$Db->In($tags));
+					Eleanor::$Db->Insert($mc['rt'],array('id'=>array_fill(0,count($tags),$id),'tag'=>$tags));
+					Eleanor::$Db->Update($mc['tt'],array('!cnt'=>'`cnt`+1'),'`id`'.Eleanor::$Db->In($tags));
 				}
 			}
 			else
 			{
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`='.$id.' LIMIT 1');
+				Eleanor::$Db->Update($mc['t'],array('status'=>0),'`id`='.$id.' LIMIT 1');
 				RemoveTags($id);
 			}
 		}
-		$R=Eleanor::$Db->Query('UPDATE `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) SET `lstatus`=`status` WHERE `id`='.$id);
-		Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+		$R=Eleanor::$Db->Query('UPDATE `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) SET `lstatus`=`status` WHERE `id`='.$id);
+		Eleanor::$Cache->Lib->CleanByTag($mc['n']);
 	}
 	$back=getenv('HTTP_REFERER');
 	GoAway($back ? $back.'#it'.$id : true);
@@ -327,14 +327,14 @@ elseif(isset($_GET['editt']))
 elseif(isset($_GET['deletet']))
 {
 	$id=(int)$_GET['deletet'];
-	$R=Eleanor::$Db->Query('SELECT `name` FROM `'.$Eleanor->module['config']['tt'].'` WHERE `id`='.$id.' LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `name` FROM `'.$mc['tt'].'` WHERE `id`='.$id.' LIMIT 1');
 	if(!$a=$R->fetch_assoc() or !Eleanor::$our_query)
 		return GoAway(true);
 	if(isset($_POST['ok']))
 	{
-		Eleanor::$Db->Delete($Eleanor->module['config']['tt'],'`id`='.$id);
-		Eleanor::$Db->Delete($Eleanor->module['config']['rt'],'`tag`='.$id);
-		Eleanor::$Db->Delete(P.'drafts','`key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-t'.$id.'\' LIMIT 1');
+		Eleanor::$Db->Delete($mc['tt'],'`id`='.$id);
+		Eleanor::$Db->Delete($mc['rt'],'`tag`='.$id);
+		Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-t'.$id.'\' LIMIT 1');
 		return GoAway(empty($_POST['back']) ? true : $_POST['back']);
 	}
 	$title=$lang['delc'];

@@ -1,6 +1,6 @@
 <?php
 /*
-	Секелет основного шаблона.
+	Скелет основного шаблона.
 */
 if(!defined('CMS'))die;
 $ltpl=Eleanor::$Language['tpl'];?><!DOCTYPE html>

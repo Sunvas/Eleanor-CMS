@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright В© Eleanor CMS
+	Copyright © Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -13,7 +13,7 @@ define('CMS',true);
 
 require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
-Eleanor::$service='admin';#ID СЃРµСЂРІРёСЃР°
+Eleanor::$service='admin';#ID сервиса
 Eleanor::LoadOptions(array('site','users-on-site'));
 Eleanor::LoadService();
 Eleanor::$Language->queue['main']='langs/admin-*.php';
@@ -41,7 +41,7 @@ if(Eleanor::$vars['multilang'])
 else
 	Eleanor::$lvars=array();
 
-#РўСЂРё РїСЂРµРґСѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
+#Три предустановленные переменные
 $title=$head=$jscripts=array();
 $Eleanor->started=$Eleanor->error=false;
 Eleanor::InitTemplate(Eleanor::$services[Eleanor::$service]['theme']);
@@ -152,7 +152,7 @@ else
 	Start('Enter');
 }
 
-#РџСЂРµРґРѕРїСЂРµРґРµР»РµРЅРЅС‹Рµ С„СѓРЅРєС†РёРё.
+#Предопределенные функции.
 function Start($tpl='index',$code=200)
 {global$Eleanor,$jscripts,$head,$title,$tcover,$thead;
 	if($Eleanor->started)
@@ -188,7 +188,7 @@ function Start($tpl='index',$code=200)
 
 	$Lst=Eleanor::LoadListTemplate('headfoot')
 		->metahttp('text/html; charset='.DISPLAY_CHARSET)
-		#РќР°С„РёРіР° СЃР»РµРґСѓСЋС‰Р°СЏ СЃС‚СЂРѕРєР°? РџСЂРё РїРµСЂРµРЅРѕСЃРµ СЃР°Р№С‚Р° РЅРµР»СЊР·СЏ СЃРјРµРЅРёС‚СЊ РґРѕРјРµРЅ!
+		#Нафига следующая строка? При переносе сайта нельзя сменить домен!
 		#->base(PROTOCOL.Eleanor::$domain.Eleanor::$site_path)
 		->title(is_array($title) ? join(' &raquo; ',$title) : $title)
 		->meta('robots','noindex, nofollow');
@@ -288,14 +288,14 @@ function Error($e='',$extra=array())
 			)
 		);
 
-	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#РћС€РёР±РєР° РјРѕРіР»Р° РІС‹Р»РµС‚РµС‚СЊ Рё РІ РјРѕРјРµРЅС‚ СЃРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚Р° $Eleanor
+	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#Ошибка могла вылететь и в момент создания объекта $Eleanor
 	{
 		$Eleanor->error=true;
 		if($csh)
 			header('Content-Type: text/html; charset='.Eleanor::$charset,true,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503);
 		while(ob_get_contents()!==false)
 			ob_end_clean();
-		ob_start();ob_start();#РЎС‚СЂР°РЅРЅС‹Р№ РіР»СЋРє PHP... Р”РѕСЃС‚Р°С‚РѕС‡РЅРѕ СЃРґРµР»Р°С‚СЊ Parse error РІ index.php С‚РµРјС‹ Рё Core::FinishOutPut Р±СѓРґРµС‚ РїРѕР»СѓС‡Р°С‚СЊ РїСѓСЃС‚РѕРµ Р·РЅР°С‡РµРЅРёРµ
+		ob_start();ob_start();#Странный глюк PHP... Достаточно сделать Parse error в index.php темы и Core::FinishOutPut будет получать пустое значение
 		echo$e;
 	}
 	else

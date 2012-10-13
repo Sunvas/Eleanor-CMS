@@ -19,13 +19,11 @@ class EE_SQL extends EE
 		$lang=Eleanor::$Language->Load('langs/db-*.php',false);
 		$params+=array('query'=>false,'no'=>false,'error'=>false);
 		$d=debug_backtrace();
-		foreach($d as &$v)
-		{
-			if((!isset($v['class']) or $v['class']!='Db') and isset($params['file'],$params['line']))
-				break;
-			$this->file=$v['file'];
-			$this->line=$v['line'];
-		}
+
+		$d=isset($d[1],$d[2],$d[0]['class'],$d[1]['class']) && $d[0]['class']=='EE_SQL' && $d[1]['class']=='Db' ? $d[2] : $d[0];
+		$this->file=$d['file'];
+		$this->line=$d['line'];
+
 		switch($error)
 		{
 			case'connect':

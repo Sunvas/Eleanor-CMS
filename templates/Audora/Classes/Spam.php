@@ -57,7 +57,7 @@ class TPLSpam
 			sort_innertitle - ссылка на сортировку списка $items по названию (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_status - ссылка на сортировку списка $items по статусу для отпрвки ошибки (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
-			form_items - ссылка для параметра action формы, внтури которой происходит отображение перечня $items
+			form_items - ссылка для параметра action формы, внутри которой происходит отображение перечня $items
 	*/	public static function ShowList($items,$cnt,$pp,$page,$qs,$links)
 	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$lang=Eleanor::$Language['spam'];

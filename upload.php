@@ -37,16 +37,9 @@ if($m)
 	$Eleanor->modules=Modules::GetCache();
 	if(!isset($Eleanor->modules['ids'][$m]))
 		return ExitPage();
-	$R=Eleanor::$Db->Query('SELECT `id`,`services`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files`,`image`,`user_groups` FROM `'.P.'modules` WHERE `id`='.(int)$Eleanor->modules['ids'][$m].' AND `active`=1 LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `id`,`services`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files`,`image` FROM `'.P.'modules` WHERE `id`='.(int)$Eleanor->modules['ids'][$m].' AND `active`=1 LIMIT 1');
 	if(!$a=$R->fetch_assoc())
 		return ExitPage(404);
-	if($a['user_groups'])
-	{
-		$groups=explode(',,',trim($a['user_groups'],','));
-		$user_groups=Eleanor::GetUserGroups();
-		if(count(array_intersect($groups,$user_groups))==0)
-			return ExitPage(403);
-	}
 	if(!$a['multiservice'])
 	{
 		$files=unserialize($a['files']);

@@ -463,7 +463,9 @@ function ShowList()
 		while($a=$R->fetch_assoc())
 		{
 			$a['parents']=rtrim($a['parents'],',');
-			$subitems[substr(strrchr($a['parents'],','),1)][$a['id']]=$a['title'];
+			$p=strrchr($a['parents'],',');
+			$p=$p===false ? $a['parents'] : substr($p,1);
+			$subitems[$p][$a['id']]=$a['title'];
 		}
 		foreach($subitems as &$v)
 		{			asort($v,SORT_STRING);

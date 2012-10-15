@@ -479,7 +479,8 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 	*/
 	public static function DeleteTag($a,$back)
 	{
-
+		static::Menu();
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['deletingt'],$a['name']),$back));
 	}
 
 	/*

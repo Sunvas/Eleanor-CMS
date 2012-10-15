@@ -384,12 +384,13 @@ function ShowList()
 		$where[]='`parents`=\'\'';
 	$where[]='`language` IN (\'\',\''.Language::$main.'\')';
 	$where=' WHERE '.join(' AND ',$where);
-	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
+	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
+	{		$in=Eleanor::$Db->In($_POST['mass']);
 		switch($_POST['op'])
 		{
 			case'k':
 				$ids=array();
-				$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`'.Eleanor::$Db->In($_POST['mass']));
+				$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`'.$in);
 				while($a=$R->fetch_assoc())
 				{
 					$ids[]=$a['id'];
@@ -404,14 +405,15 @@ function ShowList()
 					Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$v);
 			break;
 			case'a':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>1),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>1),'`id`'.$in);
 			break;
 			case'd':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`'.$in);
 			break;
 			case's':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`'.$in);
 		}
+	}
 	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`)'.$where);
 	list($cnt)=$R->fetch_row();
 	if($page<=0)

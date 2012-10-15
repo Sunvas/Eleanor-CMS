@@ -238,11 +238,9 @@ class TplComments
 				$avatar=$author['avatar_location'];
 			break;
 			default:
-				static$avg;
-				if(!isset($avg))
-					$avg=Eleanor::$vars['noavatar'];
-				$avatar=$avg;
+				$avatar=Eleanor::$vars['noavatar'];
 		}
+		static$maw,$mah;
 		if(!isset($maw,$mah))
 			list($maw,$mah)=explode(' ',Eleanor::$vars['avatar_size']);
 

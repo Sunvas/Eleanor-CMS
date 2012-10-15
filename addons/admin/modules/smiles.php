@@ -296,18 +296,18 @@ function ShowList()
 {global$Eleanor,$title;
 	$title[]=Eleanor::$Language['smiles']['list'];
 
-	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
-	{
+	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
+	{		$in=Eleanor::$Db->In($_POST['mass']);
 		switch($_POST['op'])
 		{
 			case'd':
-				Eleanor::$Db->Update(P.'smiles',array('status'=>0),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update(P.'smiles',array('status'=>0),'`id`'.$in);
 			break;
 			case'a':
-				Eleanor::$Db->Update(P.'smiles',array('status'=>1),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update(P.'smiles',array('status'=>1),'`id`'.$in);
 			break;
 			case'k':
-				Eleanor::$Db->Delete(P.'smiles','`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Delete(P.'smiles','`id`'.$in);
 		}
 		Eleanor::$Cache->Obsolete('smiles');
 	}

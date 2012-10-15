@@ -126,13 +126,13 @@ if(isset($_GET['do']))
 			}
 
 			$where=$where ? ' WHERE '.join(' AND ',$where) : '';
-			if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
+			if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
 				switch($_POST['op'])
 				{
 					case'k':
-						$ids=Eleanor::$Db->In($_POST['mass']);
-						Eleanor::$Db->Delete($mc['tt'],'`id`'.$ids);
-						Eleanor::$Db->Delete($mc['rt'],'`tag`'.$ids);
+						$in=Eleanor::$Db->In($_POST['mass']);
+						Eleanor::$Db->Delete($mc['tt'],'`id`'.$in);
+						Eleanor::$Db->Delete($mc['rt'],'`tag`'.$in);
 				}
 
 			$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$mc['tt'].'`'.$where);
@@ -481,7 +481,7 @@ function ShowList()
 		}
 	}
 
-	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
+	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
 		do
 		{
 			$in=Eleanor::$Db->In($_POST['mass']);

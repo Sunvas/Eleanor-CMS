@@ -143,7 +143,7 @@ function ShowList()
 		$sort='id';
 	$qs+=array('sort'=>false,'so'=>false);
 
-	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
+	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
 		switch($_POST['op'])
 		{
 			case'k':

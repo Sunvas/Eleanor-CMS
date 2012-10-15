@@ -172,7 +172,6 @@ class Editor_Result extends BaseClass
 
 		#Накладывает ограничения на вложенность тегов. Теги, не указанные в массиве справа, вложенные в тег слева, будут игнорироваться как неправильно вложенные.
 		$children=array(
-			'a'=>array_slice($inline,1),
 			'button'=>&$inline,
 			'caption'=>&$inline,
 			'th'=>&$inline,

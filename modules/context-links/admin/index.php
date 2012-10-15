@@ -247,23 +247,24 @@ function ShowList()
 
 	$where[]='`language` IN (\'\',\''.Language::$main.'\')';
 	$where=' WHERE '.join(' AND ',$where);
-	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
+	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
+	{		$in=Eleanor::$Db->In($_POST['mass']);
 		switch($_POST['op'])
 		{
 			case'k':
-				$ids=Eleanor::$Db->In($_POST['mass']);
-				Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`'.$ids);
-				Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$ids);
+				Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`'.$in);
+				Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$in);
 			break;
 			case'a':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>1),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>1),'`id`'.$in);
 			break;
 			case'd':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`'.$in);
 			break;
 			case's':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`'.$in);
 		}
+	}
 	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`)'.$where);
 	list($cnt)=$R->fetch_row();
 	if($page<=0)
@@ -498,28 +499,13 @@ function Save($id)
 		foreach($langs as &$v)
 		{
 			$values['id'][]=$id;
-			if(Eleanor::$vars['multilang'])
-			{
-				$lng=$v ? $v : Language::$main;
-				$values['language'][]=$v;
-				$values['from'][]=isset($lvalues['from'][$lng]) ? $lvalues['from'][$lng] : '';
-				$values['regexp'][]=isset($lvalues['regexp'][$lng]) ? $lvalues['regexp'][$lng] : '';
-				$values['to'][]=isset($lvalues['to'][$lng]) ? $lvalues['to'][$lng] : '';
-				$values['url'][]=isset($lvalues['url'][$lng]) ? $lvalues['url'][$lng] : '';
-				$values['eval_url'][]=isset($lvalues['eval_url'][$lng]) ? $lvalues['eval_url'][$lng] : '';
-				$values['params'][]=isset($lvalues['params'][$lng]) ? $lvalues['params'][$lng] : '';
-			}
-			else
-			{
-				$values['language'][]='';
-				$values['from'][]=$lvalues['from'][''];
-				$values['regexp'][]=$lvalues['regexp'][''];
-				$values['to'][]=$lvalues['to'][''];
-				$values['url'][]=$lvalues['url'][''];
-				$values['eval_url'][]=$lvalues['eval_url'][''];
-				$values['params'][]=$lvalues['params'][''];
-				break;
-			}
+			$values['language'][]=$v;
+			$values['from'][]=isset($lvalues['from'][$v]) ? $lvalues['from'][$v] : '';
+			$values['regexp'][]=isset($lvalues['regexp'][$v]) ? $lvalues['regexp'][$v] : '';
+			$values['to'][]=isset($lvalues['to'][$v]) ? $lvalues['to'][$v] : '';
+			$values['url'][]=isset($lvalues['url'][$v]) ? $lvalues['url'][$v] : '';
+			$values['eval_url'][]=isset($lvalues['eval_url'][$v]) ? $lvalues['eval_url'][$v] : '';
+			$values['params'][]=isset($lvalues['params'][$v]) ? $lvalues['params'][$v] : '';
 		}
 		Eleanor::$Db->Insert($Eleanor->module['config']['tl'],$values);
 	}

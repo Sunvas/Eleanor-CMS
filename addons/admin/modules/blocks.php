@@ -81,7 +81,7 @@ if(isset($_GET['do']))
 				}
 			}
 
-			if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
+			if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
 			{
 				$in=Eleanor::$Db->In($_POST['mass']);
 				switch($_POST['op'])
@@ -107,7 +107,7 @@ if(isset($_GET['do']))
 						}
 					break;
 					case'm':
-						Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`'.$ids);
+						Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`'.$in);
 					break;
 					case'k':
 						Eleanor::$Db->Delete(P.'blocks','`id`'.$in);

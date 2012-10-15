@@ -71,8 +71,9 @@ table { border-collapse: collapse; border-spacing: 0; }
 /*language*/
 .hlang { float: right; margin-left: 10px; overflow: hidden; }
 	.hlang li, .hlang ul { display: inline; }
-	.hlang li a { background: url("../images/htools.png") no-repeat 0 -900px; float: left; width: 23px; height: 19px; padding: 3px 0 0 3px; margin: 11px 0 0; text-align: left; }
-	.hlang li a.active { background: #2d2d2d url("../images/htools.png") no-repeat -26px -262px; }
+	.hlang li a, .hlang li span { float: left; width: 23px; height: 19px; padding: 3px 0 0 3px; margin: 11px 0 0; text-align: left; }
+	.hlang li a { background: url("../images/htools.png") no-repeat 0 -900px; }
+	.hlang li .active { background: #2d2d2d url("../images/htools.png") no-repeat -26px -262px; }
 	.hlang li a:hover { background: url("../images/htools.png") no-repeat 0 -262px; }
 	.hlang li a img { display: block; width: 20px; height: 16px; }
 

@@ -1,44 +1,54 @@
+Options All -ExecCGI -Indexes -Includes +FollowSymLinks
+DirectoryIndex index.php
+ServerSignature Off
+
+AddType application/x-javascript .js
+AddType text/css .css
 <FilesMatch "\.js$">
 ForceType "text/javascript; charset=utf-8"
 </FilesMatch>
 
-#Глобалы нам не нужны
-#php_flag register_globals off
-
-#Слешировать кавычки также не требуется
-#php_flag magic_quotes_gpc off
-
-#Запретим получать урлы при помощи fopen()
-#php_admin_value allow_url_fopen off
-
-#При получении ошибки - сообщаем об этом скрипту
 #/index.php?module=errors&code=400 - пример без ЧПУ
+#Bad Rquest
 ErrorDocument 400 /errors/400.html
+#Authorization Required
 ErrorDocument 401 /errors/401.html
+#Forbidden
 ErrorDocument 403 /errors/403.html
+#Not found
 #ErrorDocument 404 /errors/404.html
+#Method Not Allowed
+ErrorDocument 405 /errors/405.html
+#Request Timed Out
+ErrorDocument 408 /errors/408.html
+#Request URI Too Long
+ErrorDocument 414 /errors/414.html
+#Internal Server Error
 ErrorDocument 500 /errors/500.html
+#Not Implemented
+ErrorDocument 501 /errors/501.html
+#Bad Gateway
+ErrorDocument 502 /errors/502.html
+#Service Unavailable
 ErrorDocument 503 /errors/503.html
+#Gateway Timeout
+ErrorDocument 504 /errors/504.html
 
-#Запрещаем листинги каталогов
-Options -Indexes
+<IfModule mod_rewrite.c>
+	#Редирект для чужих доменов
+	#RewriteCond %{HTTP_HOST} !^eleanor\-cms\.ru$
+	#RewriteRule ^(.*)$ http\:\/\/eleanor\-cms\.ru/$1 [R=301,L]
 
-#Разрешаем переходы по символьным ссылкам
-Options +FollowSymlinks
+	RewriteEngine On
 
-#Редирект для чужих доменов
-#RewriteCond %{HTTP_HOST} !^eleanor\-cms\.ru$
-#RewriteRule ^(.*)$ http\:\/\/eleanor\-cms\.ru/$1 [R=301,L]
+	#Правила для скачивания: отдаем любой контент только через скрипт
+	#НЕ УДАЛЯЙТЕ И НЕ КОММЕНТИРУЙТЕ СТРОКУ НИЖЕ!!!! ЭТО ЧРЕВАТО ВЗЛОМОМ!!!
+	RewriteRule ^uploads/(.*)$ download.php?download=$1 [L]
 
-RewriteEngine On
-
-#Правила для скачивания: отдаем любой контент только через скрипт
-#НЕ УДАЛЯЙТЕ И НЕ КОММЕНТИРУЙТЕ СТРОКУ НИЖЕ!!!! ЭТО ЧРЕВАТО ВЗЛОМОМ!!!
-RewriteRule ^uploads/(.*)$ download.php?download=$1 [L]
-
-#Если запрашиваемый ресурс не папка и не файл - это ЧПУ
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-#Если файл - картинка. Нафик надо сообщать об этом системе... Это ж целую страницу придется генерить из-за случайной глупости, что тяжело для сервера...
-RewriteCond %{REQUEST_URI} !\.(css|js|jpe?g|gif|png|bmp)$
-RewriteRule ^(.*)$ index.php?!$1&%{QUERY_STRING} [L]
+	#Если запрашиваемый ресурс не папка и не файл - это ЧПУ
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	#Если файл - картинка. Нафик надо сообщать об этом системе... Это ж целую страницу придется генерить из-за случайной глупости, что тяжело для сервера...
+	RewriteCond %{REQUEST_URI} !\.(css|js|jpe?g|gif|png|bmp)$
+	RewriteRule ^(.*)$ index.php?!$1&%{QUERY_STRING} [L]
+</IfModule>

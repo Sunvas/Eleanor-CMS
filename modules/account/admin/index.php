@@ -244,7 +244,7 @@ if(isset($_GET['do']))
 			$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
 			$c=$Eleanor->Settings->GetInterface('group','user-profile');
 			if($c)
-			{
+			{				$c=Eleanor::$Template->Options($c);
 				Start();
 				echo$c;
 			}

@@ -290,13 +290,13 @@ function ShowList()
 
 	$where[]='`language` IN (\'\',\''.Language::$main.'\')';
 	$where=' WHERE '.join(' AND ',$where);
-	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
+	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
 		switch($_POST['op'])
 		{
 			case'k':
-				$ids_=Eleanor::$Db->In($_POST['mass']);
-				Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`'.$ids_);
-				Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$ids_);
+				$in=Eleanor::$Db->In($_POST['mass']);
+				Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`'.$in);
+				Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$in);
 				foreach($_POST['mass'] as &$v)
 					Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$v);
 		}

@@ -317,17 +317,18 @@ function ShowList()
 		$where[]='`parents`=\'\'';
 	$where[]='`language` IN (\'\',\''.Language::$main.'\')';
 	$where=' WHERE '.join(' AND ',$where);
-	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
+	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
+	{		$in=Eleanor::$Db->In($_POST['mass']);
 		switch($_POST['op'])
 		{
 			case'k':
 				$ids=array();
-				$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`'.Eleanor::$Db->In($_POST['mass']));
+				$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`'.$in);
 				while($a=$R->fetch_assoc())
 				{
 					$ids[]=$a['id'];
-					$R=Eleanor::$Db->Query('SELECT `id` FROM `'.$Eleanor->module['config']['t'].'` WHERE `parents` LIKE \''.$a['parents'].$a['id'].',%\'');
-					while($temp=$R->fetch_assoc())
+					$R2=Eleanor::$Db->Query('SELECT `id` FROM `'.$Eleanor->module['config']['t'].'` WHERE `parents` LIKE \''.$a['parents'].$a['id'].',%\'');
+					while($temp=$R2->fetch_assoc())
 						$ids[]=$temp['id'];
 				}
 				$ids_=Eleanor::$Db->In($ids);
@@ -335,14 +336,15 @@ function ShowList()
 				Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$ids_);
 			break;
 			case'a':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>1),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>1),'`id`'.$in);
 			break;
 			case'd':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`'.$in);
 			break;
 			case's':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`'.Eleanor::$Db->In($_POST['mass']));
+				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`'.$in);
 		}
+	}
 	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`)'.$where);
 	list($cnt)=$R->fetch_row();
 	if($page<=0)
@@ -592,7 +594,7 @@ function Save($id)
 		Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`='.$id.' AND `language`'.Eleanor::$Db->In($langs,true));
 		$values=array();
 		foreach($langs as &$v)
-			$values=array(
+			$values[]=array(
 				'id'=>$id,
 				'language'=>$v,
 				'title'=>isset($lvalues['title'][$v]) ? $lvalues['title'][$v] : '',
@@ -622,24 +624,11 @@ function Save($id)
 		foreach($langs as &$v)
 		{
 			$values['id'][]=$id;
-			if(Eleanor::$vars['multilang'])
-			{
-				$lng=$v ? $v : Language::$main;
-				$values['language'][]=$v;
-				$values['title'][]=isset($lvalues['title'][$lng]) ? $lvalues['title'][$lng] : '';
-				$values['url'][]=isset($lvalues['url'][$lng]) ? $lvalues['url'][$lng] : '';
-				$values['eval_url'][]=isset($lvalues['eval_url'][$lng]) ? $lvalues['eval_url'][$lng] : '';
-				$values['params'][]=isset($lvalues['params'][$lng]) ? $lvalues['params'][$lng] : '';
-			}
-			else
-			{
-				$values['language'][]='';
-				$values['title'][]=$lvalues['title'][''];
-				$values['url'][]=$lvalues['url'][''];
-				$values['eval_url'][]=$lvalues['eval_url'][''];
-				$values['params'][]=$lvalues['params'][''];
-				break;
-			}
+			$values['language'][]=$v;
+			$values['title'][]=isset($lvalues['title'][$v]) ? $lvalues['title'][$v] : '';
+			$values['url'][]=isset($lvalues['url'][$v]) ? $lvalues['url'][$v] : '';
+			$values['eval_url'][]=isset($lvalues['eval_url'][$v]) ? $lvalues['eval_url'][$v] : '';
+			$values['params'][]=isset($lvalues['params'][$v]) ? $lvalues['params'][$v] : '';
 		}
 		Eleanor::$Db->Insert($Eleanor->module['config']['tl'],$values);
 	}

@@ -496,7 +496,7 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 	*/
 	public static function Options($c)
 	{
-		static::Menu();
+		static::Menu('options');
 		return$c;
 	}
 }

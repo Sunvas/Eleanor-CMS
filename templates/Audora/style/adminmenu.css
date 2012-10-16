@@ -11,7 +11,7 @@ body, html { padding: 0; margin: 0;}
 
 /*adminmenupanel*/
 .hmenu, .hmenu li, .adminsubmenu ul, .adminsubmenu li { padding: 0; margin: 0; list-style: none; }
-.fixmenupanel { position: fixed; width: 100%; z-index: 999; left: 0; }
+.fixmenupanel { position: fixed; width: 100%; z-index: 999; left: 0; top: 0; }
 .adminmenupanel { width: 100%; height: 38px; background: #4e5050 url("../images/elhead.png") repeat-x 0 -297px; overflow: hidden; border-bottom: 1px solid #000; }
 .hmenu, .hmenu li { display: inline; }
 	.hmenu a { margin: 5px 2px 0 0; line-height: 27px; text-decoration: none !important; color: #fff; }

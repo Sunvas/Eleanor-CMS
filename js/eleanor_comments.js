@@ -293,7 +293,7 @@ CORE.Comments=function(opts)
 			),
 			function(r)
 			{				var comm=th.closest(".comment");
-				comm.find("form").remove().end().find(".text").after(r).end().find(".text,.signature,.buttons").hide().end()
+				comm.find("form").remove().end().find(".text,.signature,.buttons").hide().end().find(".text").after(r).end()
 				.find("form").submit(function(){					var params=CORE.Inputs2object($(this));
 
 					if(params["text"+th.data("id")].length<5)
@@ -314,10 +314,12 @@ CORE.Comments=function(opts)
 						function(rs)
 						{
 							comm.find("form").remove().end().find(".text").html(rs).end().find(".text,.signature,.buttons").not(":empty").show();
+							EDITOR.Active("text");
 						}
 					);
 					return false;				}).end()
 				.on("click",".cb-cancel",function(){					th.closest(".comment").find("form").remove().end().find(".text,.signature,.buttons").not(":empty").show();
+					EDITOR.Active("text");
 					return false;				});
 			}
 		);

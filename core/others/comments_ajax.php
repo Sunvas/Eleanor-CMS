@@ -396,6 +396,12 @@ class Comments_Ajax extends Comments
 			break;
 			case'save':
 				$id=isset($post['id']) ? (int)$post['id'] : false;
+
+				OwnBB::$replace['quote']='CommentsQoute';
+				if(!class_exists('CommentsQoute',false))
+					include Eleanor::$root.'core/others/comments/ownbb-quote.php';
+				CommentsQoute::$findlink=$this->Url(array($this->upref.'find'=>true));
+
 				$El=Eleanor::getInstance();
 				$text=isset($post['text'.$id]) ? $El->Editor_result->GetHtml($post['text'.$id],true) : '';
 				if(mb_strlen($text)<5 or !$id)
@@ -410,7 +416,6 @@ class Comments_Ajax extends Comments
 					return false;
 				}
 				Eleanor::$Db->Update($this->table,array('text'=>$text),'`id`='.$a['id'].' LIMIT 1');
-
 
 				if($parent)
 				{
@@ -431,15 +436,12 @@ class Comments_Ajax extends Comments
 						$wq='(`status`=1 OR `status`=-1 AND `id`'.Eleanor::$Db->In($this->cs).')';
 					else
 						$wq='`status`=1';
-					OwnBB::$replace['quote']='CommentsQoute';
-					if(!class_exists('CommentsQoute',false))
-						include Eleanor::$root.'core/others/comments/ownbb-quote.php';
-					CommentsQoute::$findlink=$this->Url(array($this->upref.'find'=>true));
 					$R=Eleanor::$Db->Query('SELECT `id`,`date`,`author`,`text` FROM `'.$this->table.'` WHERE `id`'.Eleanor::$Db->In($quotes).($this->rights['status'] ? '' : ' AND '.$wq).' ORDER BY `id` ASC');
 					$quotes=array();
 					while($a=$R->fetch_assoc())
 						$quotes[$a['id']]=OwnBB::Parse('[quote date="'.$a['date'].'" name="'.$a['author'].'" c='.$a['id'].']<!-- SUBQUOTE -->'.$a['text'].'[/quote]');
 				}
+				$text=OwnBB::Parse($text);
 
 				Result(Eleanor::$Template->CommentsAfterEdit($text,$quotes));
 			break;

@@ -240,9 +240,7 @@ class Voting_Manager extends BaseClass
 				foreach($this->langs as &$l)
 				{
 					if(!isset($lqv[$qk]['variants'][$l]) or !is_array($lqv[$qk]['variants'][$l]) or count($lqv[$qk]['variants'][$l])!=$cnt)
-					//{						//die(var_dump($lqv[$qk],$lqv[$qk]['variants'][$l]));
 						return$erri;
-					//}
 
 					foreach($qv['answers'] as $k=>&$a)
 					{
@@ -254,6 +252,7 @@ class Voting_Manager extends BaseClass
 						{							$er=strtoupper('empty_variant'.($l ? '_'.$l : ''));							$errors[$er]=$this->Language['EMPTY_VARIANT']($l);
 						}
 					}
+					unset($a);
 				}
 
 			$qv['maxans']=(int)$qv['maxans'];
@@ -383,10 +382,6 @@ class Voting_Manager extends BaseClass
 
 	public function Controls()
 	{		$THIS=$this;#ToDo! PHP 5.4 убрать этот костыль (смотри ниже) use ($THIS)
-		$vasave=function($a,$Obj)
-		{
-			return$Obj->GetPostVal($a['name']);
-		};
 		$ans=array();
 		$vaload=function($a,$Obj) use (&$ans,$THIS)
 		{
@@ -564,7 +559,13 @@ class Voting_Manager extends BaseClass
 						'nodisplay'=>true,
 						'options'=>array(
 							'load'=>$vaload,
-							'save'=>$vasave,
+							'save'=>function($a,$Obj)
+							{static $z;
+								$ans=(array)$Obj->GetPostVal($a['name'],array());
+								foreach($ans as &$v)
+									$v=(int)$v;
+								return$ans;
+							},
 						),
 					),
 					'variants'=>array(
@@ -576,7 +577,10 @@ class Voting_Manager extends BaseClass
 						'tabindex'=>$this->ti++,
 						'options'=>array(
 							'load'=>$vaload,
-							'save'=>$vasave,
+							'save'=>function($a,$Obj)
+							{
+								return$Obj->GetPostVal($a['name']);
+							},
 						),
 					),
 					'multiple'=>array(

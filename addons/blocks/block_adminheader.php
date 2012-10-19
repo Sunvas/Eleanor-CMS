@@ -84,7 +84,7 @@ if($AL->IsUser())
 	$GLOBALS['head'][]='<link rel="stylesheet" media="screen" type="text/css" href="templates/'.Eleanor::$services['admin']['theme'].'/style/adminmenu.css" />';
 	$GLOBALS['jscripts'][]='js/admin.js';
 
-	echo '<div id="subm1" class="adminsubmenu';
+	echo'<div id="adminblockf"><div id="subm1" class="adminsubmenu';
 	if($modcnt>10)
 		echo $three ? ' threecol' : ' twocol';
 	echo'"><div class="colomn"><ul class="reset">',
@@ -111,11 +111,11 @@ $(function(){	$("a.mlink").MainMenu();
 	if(localStorage.getItem("ahfu"))
 	{
 		d.addClass("active");
-		$("#adminblockf").toggleClass("fixmenupanel fixmenupaneldis");
+		$("#adminblockf").addClass("fixmenupanel");
 		$(".wrapper:first").css("margin-top","39px")
 	}
 
-	$("#adminblockh a").click(function(){		$("#adminblockf").toggleClass("fixmenupanel fixmenupaneldis");
+	$("#adminblockh a").click(function(){		$("#adminblockf").toggleClass("fixmenupanel");
 		if(d.is(".active"))
 		{			d.removeClass("active");
 			$(".wrapper:first").css("margin-top",0)
@@ -129,7 +129,6 @@ $(function(){	$("a.mlink").MainMenu();
 		}
 		return false;	});
 })//]]></script>
-	<div class="fixmenupaneldis" id="adminblockf">
 	<div class="adminmenupanel">
 	<div class="backtoadmin" id="adminblockh"><a href="#"></a></div>
 	<a href="'.$af.'" class="logotypepanel"><img src="templates/'.Eleanor::$services['admin']['theme'].'/images/eleanorcms_menu.png" alt="Eleanor CMS" /></a>

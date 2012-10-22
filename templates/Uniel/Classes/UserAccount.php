@@ -9,7 +9,9 @@
 	*Pseudonym
 */
 class TplUserAccount
-{	/*
+{	public static
+		$lang;
+	/*
 		Шаблон страницы вывода всех групп пользователей
 		$groups - массив всех групп. Формат: id=>array(), ключи внутреннего массива:
 			title - название группы
@@ -19,10 +21,9 @@ class TplUserAccount
 	*/
 	public static function AcGroups($groups)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$c=Eleanor::$Template->Title(end($GLOBALS['title']))->OpenTable();
 		$Lst=Eleanor::LoadListTemplate('table-list',2)
-			->begin($lang['group'],$lang['descr']);
+			->begin(static::$lang['group'],static::$lang['descr']);
 		foreach($groups as $k=>&$v)
 			$Lst->item(array($v['html_pref'].$v['title'].$v['html_end'],'traddon'=>array('id'=>'group-'.$k)),$v['descr']);
 		return$c.$Lst->end().Eleanor::$Template->CloseTable();
@@ -52,16 +53,15 @@ class TplUserAccount
 	*/
 	public static function AcUsersOnline($items,$groups,$cnt,$pp,$page)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$isa=Eleanor::$Permissions->IsAdmin();
 		$Lst=Eleanor::LoadListTemplate('table-list',$isa ? 5 : 4)
 			->begin(
-				array($lang['who'],'colspan'=>2),
+				array(static::$lang['who'],'colspan'=>2),
 				$isa ? 'IP' : false,
-				array($lang['activity'],120),
-				$lang['pl']
+				array(static::$lang['activity'],120),
+				static::$lang['pl']
 			);
 
 		if($items)
@@ -100,7 +100,7 @@ class TplUserAccount
 							break;
 						}
 					default:
-						$name='<i>'.$lang['guest'].'</i>';
+						$name='<i>'.static::$lang['guest'].'</i>';
 				}
 				$v['location']=htmlspecialchars($v['location'],ELENT,CHARSET,false);
 				if($isa)
@@ -116,7 +116,7 @@ class TplUserAccount
 			}
 		}
 		else
-			$Lst->empty($lang['snf']);
+			$Lst->empty(static::$lang['snf']);
 
 		return Eleanor::$Template->Title(end($GLOBALS['title']))->OpenTable().$Lst->end().Eleanor::$Template->Pages($cnt,$pp,$page)->CloseTable();
 	}
@@ -131,8 +131,7 @@ class TplUserAccount
 			_candel - флаг возможности удаления сессии
 	*/
 	public static function AcMain($sessions)
-	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		$ltpl=Eleanor::$Language['tpl'];
+	{		$ltpl=Eleanor::$Language['tpl'];
 
 		$C=static::Menu('user','index','main')
 			->Title('Открытые сессии');
@@ -140,7 +139,7 @@ class TplUserAccount
 		$Lst=Eleanor::LoadListTemplate('table-list',3)
 			->begin(
 				array('Browser &amp; IP','colspan'=>2,'tableaddon'=>array('id'=>'sessions')),
-				$lang['datee'],
+				static::$lang['datee'],
 				array($ltpl['delete'],50)
 			);
 
@@ -171,7 +170,7 @@ class TplUserAccount
 				);
 				$del[1]='center';			}
 			else
-				$del=array('<b title="'.$lang['csnd'].'">&mdash;</b>','center');
+				$del=array('<b title="'.static::$lang['csnd'].'">&mdash;</b>','center');
 
 			$Lst->item(
 				$icon ? array('<a href="#" data-ua="'.$ua.'"><img title="'.$iconh.'" src="'.$icon.'" /></a>','style'=>'width:16px') : array('<a href="#" data-ua="'.$ua.'">?</a>','center'),
@@ -206,13 +205,12 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 	*/
 	public static function AcLogin($values,$back,$errors,$captcha,$links)
 	{		$ltpl=Eleanor::$Language['tpl'];
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 
 		$C=static::Menu('guest','index','main');
 		if($errors)
 		{			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+				if(is_int($k) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 			$C->Message(join('<br />',$errors),'error');
 		}
 
@@ -223,7 +221,7 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 			->item($ltpl['pass'],Eleanor::Control('login[password]','password',$values['password'],array('style'=>'width:300px','tabindex'=>2)));
 
 		if($captcha)
-			$Lst->item(array($lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'descr'=>$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'descr'=>static::$lang['captcha_']));
 
 		if($back)
 			$back=Eleanor::Control('back','hidden',$back);
@@ -258,10 +256,8 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 	*/
 	public static function AcRegister($values,$captcha,$errors)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-
 		if(Eleanor::$vars['reg_off'])
-			return static::AcMenu($handlers)->Message($lang['reg_off'],'error');
+			return static::AcMenu($handlers)->Message(static::$lang['reg_off'],'error');
 
 		array_push($GLOBALS['jscripts'],'js/module_account.js','js/module_account-'.Language::$main.'.js');
 
@@ -272,7 +268,7 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 		{			foreach($errors as $k=>&$v)
 			{				if(is_int($k))
 				{					$code=$v;
-					$error=isset($lang[$v]) ? $lang[$v] : $v;				}
+					$error=isset(static::$lang[$v]) ? static::$lang[$v] : $v;				}
 				else
 				{					$code=$k;
 					$error=$v;				}
@@ -306,18 +302,18 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 				$C->Message(join('<br />',$errors),'error');
 		}
 		if(isset($values['_external']))
-			$C->Message(sprintf($lang['external_reg'],empty($values['_external']['nickname']) ? ($values['full_name'] ? $values['full_name'] : 'Anonym') : $values['_external']['nickname']),'info');
+			$C->Message(sprintf(static::$lang['external_reg'],empty($values['_external']['nickname']) ? ($values['full_name'] ? $values['full_name'] : 'Anonym') : $values['_external']['nickname']),'info');
 
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form(array('id'=>'regform'))
 			->begin()
-			->item(array($lang['name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>1,'style'=>'width:80%','placeholder'=>$lang['enter_g_name'])).' <a href="#" title="'.$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="name-error" style="color:red;display:none;">'.$errname.'</div>','tip'=>$lang['name_'],'imp'=>true,'td1'=>array('style'=>'width:150px;')))
-			->item($lang['full_name'],Eleanor::Edit('full_name',$values['full_name'],array('tabindex'=>2,'style'=>'width:80%')))
-			->item(array('E-mail',Eleanor::Edit('email',$values['email'],array('tabindex'=>3,'style'=>'width:80%','placeholder'=>$lang['enter_g_email'])).' <a href="#" title="'.$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="email-error" style="color:red;display:none;">'.$erremail.'</div>','tip'=>$lang['email_'],'imp'=>true))
-			->item(array($lang['pass'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>4)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>$lang['pass_']))
-			->item($lang['rpass'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>5)).'<div id="password2-error" style="color:red;display:none;">'.$lang['PASSWORD_MISMATCH'].'</div>');
+			->item(array(static::$lang['name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>1,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_name'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="name-error" style="color:red;display:none;">'.$errname.'</div>','tip'=>static::$lang['name_'],'imp'=>true,'td1'=>array('style'=>'width:150px;')))
+			->item(static::$lang['full_name'],Eleanor::Edit('full_name',$values['full_name'],array('tabindex'=>2,'style'=>'width:80%')))
+			->item(array('E-mail',Eleanor::Edit('email',$values['email'],array('tabindex'=>3,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_email'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="email-error" style="color:red;display:none;">'.$erremail.'</div>','tip'=>static::$lang['email_'],'imp'=>true))
+			->item(array(static::$lang['pass'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>4)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>static::$lang['pass_']))
+			->item(static::$lang['rpass'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>5)).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>');
 		if($captcha)
-			$Lst->item(array($lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>6)),'tip'=>$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>6)),'tip'=>static::$lang['captcha_']));
 
 		return Eleanor::JsVars(
 				array(
@@ -325,7 +321,7 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 					'max_name'=>Eleanor::$vars['max_name_length'],
 				),
 				true,false,'CORE.AcRegister.'
-		).$C.$Lst->item('',Eleanor::Button($lang['do_reg'],'submit',array('tabindex'=>7)))->end()->endform()
+		).$C.$Lst->item('',Eleanor::Button(static::$lang['do_reg'],'submit',array('tabindex'=>7)))->end()->endform()
 		.'<script type="text/javascript">//<![CDATA[
 $(function(){	var ef={//Error field		name:$("#name-error"),
 		email:$("#email-error"),
@@ -334,7 +330,7 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 			v=th.val();
 		if(v=="")		{
 			th.removeClass("ok").addClass("error");
-			ef.name.html("'.$lang['EMPTY_NAME'].'").show();
+			ef.name.html("'.static::$lang['EMPTY_NAME'].'").show();
 		}
 		else
 			CORE.AcRegister.CheckName(v,function(e){				if(e)
@@ -368,7 +364,7 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 		else
 		{
 			th.removeClass("ok").addClass("error");
-			ef.email.html("'.$lang['EMPTY_EMAIL'].'").show();
+			ef.email.html("'.static::$lang['EMPTY_EMAIL'].'").show();
 		}
 	})'.($erremail ? '.addClass("error");ef.email.show()' : '').';
 
@@ -400,7 +396,7 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 		if(!ef.p.is(":visible"))
 			if(p2.val()!=p1.val())
 			{				p2.removeClass("ok").addClass("error");
-				ef.p2.html("'.$lang['PASSWORD_MISMATCH'].'").show();
+				ef.p2.html("'.static::$lang['PASSWORD_MISMATCH'].'").show();
 			}
 			else
 			{				ef.p2.hide();
@@ -429,8 +425,7 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 	*/
 	public static function AcSuccessReg()
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		return static::Menu('guest','register','main')->Message($lang['success_reg'],'info');
+		return static::Menu('guest','register','main')->Message(static::$lang['success_reg'],'info');
 	}
 
 	/*
@@ -438,9 +433,8 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 		$byadmin - флаг активации учетной записи администратором
 	*/
 	public static function AcWaitActivate($byadmin)
-	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		return static::Menu('guest','register','main')->Message($byadmin ? $lang['wait_act_admin'] : $lang['wait_act_text'](round(Eleanor::$vars['reg_act_time']/3600)),'info');
+	{		$wat=static::$lang['wait_act_text'];
+		return static::Menu('guest','register','main')->Message($byadmin ? static::$lang['wait_act_admin'] : $wat(round(Eleanor::$vars['reg_act_time']/3600)),'info');
 	}
 
 	/*
@@ -454,26 +448,25 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 	public static function AcRemindPass($values,$captcha,$errors)
 	{
 		$ltpl=Eleanor::$Language['tpl'];
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 
 		$C=static::Menu('guest','lostpass','main');
 		if($errors)
 		{
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+				if(is_int($k) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 			$C->Message(join('<br />',$errors),'error');
 		}
-		$C->Message($lang['notnoem'],'info');
+		$C->Message(static::$lang['notnoem'],'info');
 
 		$em=$values['email'] and !$values['name'];
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form()
 			->begin(array('id'=>'rpass'))
-			->item(array($lang['enterna'],Eleanor::Edit('name',$values['name'],array('tabindex'=>1)).'<br /><a href="#" class="small">'.$lang['fogotname'].'</a>','tr'=>array('id'=>'tr-name','style'=>$em ? 'display:none' : ''),'td1'=>array('style'=>'width:170px')))
-			->item(array($lang['enterem'],Eleanor::Edit('email',$values['email'],array('tabindex'=>2)).'<br /><a href="#" class="small">'.$lang['fogotemail'].'</a>','tr'=>array('id'=>'tr-email','style'=>$em ? '' : 'display:none'),'td1'=>array('style'=>'width:170px')));
+			->item(array(static::$lang['enterna'],Eleanor::Edit('name',$values['name'],array('tabindex'=>1)).'<br /><a href="#" class="small">'.static::$lang['fogotname'].'</a>','tr'=>array('id'=>'tr-name','style'=>$em ? 'display:none' : ''),'td1'=>array('style'=>'width:170px')))
+			->item(array(static::$lang['enterem'],Eleanor::Edit('email',$values['email'],array('tabindex'=>2)).'<br /><a href="#" class="small">'.static::$lang['fogotemail'].'</a>','tr'=>array('id'=>'tr-email','style'=>$em ? '' : 'display:none'),'td1'=>array('style'=>'width:170px')));
 		if($captcha)
-			$Lst->item(array($lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'tip'=>$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'tip'=>static::$lang['captcha_']));
 
 		$Lst->button(Eleanor::Button('OK','submit',array('tabindex'=>4)))->end()->endform();
 		return$C.$Lst.'<script type="text/javascript">//<![CDATA[
@@ -487,8 +480,7 @@ $(function(){	$("#rpass a.small").click(function(){		$("#tr-email,#tr-name").t
 	*/
 	public static function AcRemindPassStep2()
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		return static::Menu('guest','lostpass','main')->Message($lang['wait_pass1_text'],'info');
+		return static::Menu('guest','lostpass','main')->Message(static::$lang['wait_pass1_text'],'info');
 	}
 
 	/*
@@ -504,7 +496,6 @@ $(function(){	$("#rpass a.small").click(function(){		$("#tr-email,#tr-name").t
 	*/
 	public static function AcRemindPassStep3($values,$captcha,$errors=array())
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$GLOBALS['jscripts'][]='js/module_account-'.Language::$main.'.js';
 		$C=static::Menu('guest','lostpass','main');
 		$errpass=$errpass2='';
@@ -515,7 +506,7 @@ $(function(){	$("#rpass a.small").click(function(){		$("#tr-email,#tr-name").t
 				if(is_int($k))
 				{
 					$code=$v;
-					$error=isset($lang[$v]) ? $lang[$v] : $v;
+					$error=isset(static::$lang[$v]) ? static::$lang[$v] : $v;
 				}
 				else
 				{
@@ -546,10 +537,10 @@ $(function(){	$("#rpass a.small").click(function(){		$("#tr-email,#tr-name").t
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form(array('id'=>'newpass'))
 			->begin()
-			->item(array($lang['ent_newp'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>1)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>$lang['pass_'],'td1'=>array('style'=>'width:200px')))
-			->item($lang['rep_newp'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>2)).'<div id="password2-error" style="color:red;display:none;">'.$lang['PASSWORD_MISMATCH'].'</div>');
+			->item(array(static::$lang['ent_newp'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>1)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>static::$lang['pass_'],'td1'=>array('style'=>'width:200px')))
+			->item(static::$lang['rep_newp'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>2)).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>');
 		if($captcha)
-			$Lst->item(array($lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'descr'=>$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'descr'=>static::$lang['captcha_']));
 
 		return$C.$Lst->button(Eleanor::Button('OK','submit',array('tabindex'=>4)))->end()->endform()
 			.'<script type="text/javascript">//<!CDATA[
@@ -586,7 +577,7 @@ $(function(){	var ef={//Error field
 			if(p2.val()!=p1.val())
 			{
 				p2.removeClass("ok").addClass("error");
-				ef.p2.html("'.$lang['PASSWORD_MISMATCH'].'").show();
+				ef.p2.html("'.static::$lang['PASSWORD_MISMATCH'].'").show();
 			}
 			else
 			{
@@ -632,8 +623,7 @@ $(function(){	var ef={//Error field
 	*/
 	public static function AcRemindPassSent($passsent,$user)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		return static::Menu('guest','lostpass','main')->Message($passsent ? $lang['new_pass_sent'] : $lang['pass_changed'],'info');
+		return static::Menu('guest','lostpass','main')->Message($passsent ? static::$lang['new_pass_sent'] : static::$lang['pass_changed'],'info');
 	}
 
 	/*
@@ -642,11 +632,10 @@ $(function(){	var ef={//Error field
 	*/
 	public static function AcActivate($success)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$C=static::Menu('user','activate','main');
 		if($success)
-			return$C->Message($lang['activation_ok'],'info');
-		return$C->Message($lang['activation_err'],'error');
+			return$C->Message(static::$lang['activation_ok'],'info');
+		return$C->Message(static::$lang['activation_err'],'error');
 	}
 
 	/*
@@ -658,8 +647,6 @@ $(function(){	var ef={//Error field
 	*/
 	public static function AcReactivation($sent,$captcha,$errors,$hours)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-
 		$C=static::Menu('user','activate','new');
 		if($errors)
 		{
@@ -667,14 +654,16 @@ $(function(){	var ef={//Error field
 				if(is_int($k))
 				{
 					$code=$v;
-					if(isset($lang[$v]))
-						$v=$lang[$v];
+					if(isset(static::$lang[$v]))
+						$v=static::$lang[$v];
 				}
 
 			$C->Message(join('<br />',$errors),'error');
 		}
 		if($sent)
-			$C->Message($lang['wait_new_act']($hours),'info');
+		{			$wna=static::$lang['wait_new_act'];
+			$C->Message($wna($hours),'info');
+		}
 		else
 		{
 			$Lst=Eleanor::LoadListTemplate('table-form')
@@ -682,9 +671,9 @@ $(function(){	var ef={//Error field
 				->begin();
 
 			if($captcha)
-				$Lst->item(array($lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>$lang['captcha_'],'td1'=>array('addon')));
+				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_'],'td1'=>array('addon')));
 
-			$C.=$Lst->button(Eleanor::Button($lang['ractletter'],'submit',array('tabindex'=>2)))
+			$C.=$Lst->button(Eleanor::Button(static::$lang['ractletter'],'submit',array('tabindex'=>2)))
 				->end()->endform();
 		}
 		return$C;
@@ -699,8 +688,6 @@ $(function(){	var ef={//Error field
 	*/
 	public static function AcEmailChange($values,$captcha,$errors)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-
 		$C=static::Menu('user','changeemail','main');
 		if($errors)
 		{
@@ -708,8 +695,8 @@ $(function(){	var ef={//Error field
 				if(is_int($k))
 				{
 					$code=$v;
-					if(isset($lang[$v]))
-						$v=$lang[$v];
+					if(isset(static::$lang[$v]))
+						$v=static::$lang[$v];
 				}
 
 			$C->Message(join('<br />',$errors),'error');
@@ -718,13 +705,13 @@ $(function(){	var ef={//Error field
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form()
 			->begin()
-			->item(array($lang['curr_email'],($em=Eleanor::$Login->GetUserValue('email')) ? $em : '&mdash;','td1'=>array('style'=>'width:200px')))
-			->item($lang['new_email'],Eleanor::Edit('email',$values['email'],array('tabindex'=>1)));
+			->item(array(static::$lang['curr_email'],($em=Eleanor::$Login->GetUserValue('email')) ? $em : '&mdash;','td1'=>array('style'=>'width:200px')))
+			->item(static::$lang['new_email'],Eleanor::Edit('email',$values['email'],array('tabindex'=>1)));
 
 		if($captcha)
-			$Lst->item(array($lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>$lang['captcha_'],'td1'=>array('addon')));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_'],'td1'=>array('addon')));
 
-		return$C.$Lst->button(Eleanor::Button($lang['continue'],'submit',array('tabindex'=>3)))->end()->endform();
+		return$C.$Lst->button(Eleanor::Button(static::$lang['continue'],'submit',array('tabindex'=>3)))->end()->endform();
 	}
 
 	/*
@@ -735,8 +722,7 @@ $(function(){	var ef={//Error field
 	*/
 	public static function AcEmailChangeSteps12($step)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		return static::Menu('user','changeemail','main')->Message($lang['wait_change'.$step],'info');
+		return static::Menu('user','changeemail','main')->Message(static::$lang['wait_change'.$step],'info');
 	}
 
 	/*
@@ -744,8 +730,7 @@ $(function(){	var ef={//Error field
 	*/
 	public static function AcEmailChangeSuccess()
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		return static::Menu('user','changeemail','main')->Message($lang['email_success'],'info');
+		return static::Menu('user','changeemail','main')->Message(static::$lang['email_success'],'info');
 	}
 
 	/*
@@ -753,7 +738,6 @@ $(function(){	var ef={//Error field
 	*/
 	public static function AcNewPass($success,$errors,$values)
 	{		$GLOBALS['jscripts'][]='js/module_account-'.Language::$main.'.js';
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 
 		Eleanor::LoadOptions('user-profile');
 		$C=static::Menu('user','changepass','main');
@@ -766,7 +750,7 @@ $(function(){	var ef={//Error field
 				if(is_int($k))
 				{
 					$code=$v;
-					$error=isset($lang[$v]) ? $lang[$v] : $v;
+					$error=isset(static::$lang[$v]) ? static::$lang[$v] : $v;
 				}
 				else
 				{
@@ -794,16 +778,16 @@ $(function(){	var ef={//Error field
 				$C->Message(join('<br />',$errors),'error');
 		}
 		elseif($success)
-			$C->Message($lang['pass_changed'],'info');
+			$C->Message(static::$lang['pass_changed'],'info');
 
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form(array('id'=>'newpass'))
 			->begin()
-			->head($lang['your_curr_pass'])
-			->item(array($lang['en_ycp'],Eleanor::Control('old','password',$values['old'],array('tabindex'=>1)),'td1'=>array('style'=>'width:200px')))
-			->head($lang['new_pass_me'])
-			->item($lang['ent_newp'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>2)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>')
-			->item($lang['rep_newp'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>3)).'<div id="password2-error" style="color:red;display:none;">'.$lang['PASSWORD_MISMATCH'].'</div>')
+			->head(static::$lang['your_curr_pass'])
+			->item(array(static::$lang['en_ycp'],Eleanor::Control('old','password',$values['old'],array('tabindex'=>1)),'td1'=>array('style'=>'width:200px')))
+			->head(static::$lang['new_pass_me'])
+			->item(static::$lang['ent_newp'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>2)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>')
+			->item(static::$lang['rep_newp'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>3)).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>')
 			->button(Eleanor::Button('OK','submit',array('tabindex'=>4)))
 			->end()
 			->endform();
@@ -838,7 +822,7 @@ $(function(){
 			if(p2.val()!=p1.val())
 			{
 				p2.removeClass("ok").addClass("error");
-				ef.p2.html("'.$lang['PASSWORD_MISMATCH'].'").show();
+				ef.p2.html("'.static::$lang['PASSWORD_MISMATCH'].'").show();
 			}
 			else
 			{
@@ -883,8 +867,7 @@ $(function(){
 		$im - индекс пункта меню
 	*/
 	protected static function Menu($section='',$ih='',$im='')
-	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		$ltpl=Eleanor::$Language['tpl'];
+	{		$ltpl=Eleanor::$Language['tpl'];
 
 		$menu=array();
 		foreach($GLOBALS['Eleanor']->module['handlers'] as $k=>&$v)
@@ -903,10 +886,10 @@ $(function(){
 				{					$act=$k==$ih and $kk==$im;
 					switch(array($section,$k,$kk))
 					{						case array('user','index','main'):
-							$t=$lang['main'];
+							$t=static::$lang['main'];
 						break;
 						case array('user','settings','main'):
-							$t=$lang['settings'];
+							$t=static::$lang['settings'];
 						break;
 						case array('user','activate','new'):
 							if(!$act)
@@ -914,13 +897,13 @@ $(function(){
 							$t=false;
 						break;
 						case array('user','changeemail','main'):
-							$t=$lang['change_email'];
+							$t=static::$lang['change_email'];
 						break;
 						case array('user','changepass','main'):
-							$t=$lang['change_pass'];
+							$t=static::$lang['change_pass'];
 						break;
 						case array('user',0,'externals'):
-							$t=$lang['externals'];
+							$t=static::$lang['externals'];
 						break;
 						case array('guest','index','main'):
 							$t=$ltpl['enter'];
@@ -941,13 +924,14 @@ $(function(){
 
 		$menu=Eleanor::$Template->Menu(array('title'=>end($GLOBALS['title']),'menu'=>$rmenu));
 		if($actmess)
-			$menu->Message($lang['please_activate'](round($actmess['remain']/3600),$actmess['link']),'info');
+		{			$pa=static::$lang['please_activate'];
+			$menu->Message($pa(round($actmess['remain']/3600),$actmess['link']),'info');
+		}
 		return$menu;
 	}
 
 	public static function AcOptions($controls,$values,$avatar,$errors,$saved)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 		list($awidth,$aheight)=explode(' ',Eleanor::$vars['avatar_size']);
 
@@ -955,23 +939,23 @@ $(function(){
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->begin()
 			->item(
-				$lang['alocation'],
+				static::$lang['alocation'],
 				Eleanor::Select(
 					'_atype',
-					Eleanor::Option($lang['agallery'],'gallery',!$values['_aupload'])
-					.Eleanor::Option($lang['apersonal'],'upload',$values['_aupload']),
+					Eleanor::Option(static::$lang['agallery'],'gallery',!$values['_aupload'])
+					.Eleanor::Option(static::$lang['apersonal'],'upload',$values['_aupload']),
 					array('id'=>'atype','tabindex'=>10)
 				)
 			)
 			->item(
-				$lang['amanage'],
+				static::$lang['amanage'],
 				Eleanor::Control('avatar_location','hidden',$values['avatar_location'],array('id'=>'avatar-input'))
 				.'<div id="avatar-local">
 					<div id="avatar-select"></div>
 					<div id="avatar-view">
-						<a class="imagebtn getgalleries" href="#">'.$lang['gallery_select'].'</a><div class="clr"></div>
+						<a class="imagebtn getgalleries" href="#">'.static::$lang['gallery_select'].'</a><div class="clr"></div>
 						<span id="avatar-no" style="width:'.($awidth ? $awidth : '180').'px;height:'.($aheight ? $aheight : '145').'px;text-decoration:none;max-height:100%;max-width:100%;" class="screenblock">
-							<b>'.$lang['noavatar'].'</b><br />
+							<b>'.static::$lang['noavatar'].'</b><br />
 							<span>'.sprintf('<b>%s</b> <small>x</small> <b>%s</b> <small>px</small>',$awidth ? $awidth : '&infin;',$aheight ? $aheight : '&infin;').'</span>
 						</span>
 						<img id="avatar-image" style="border:1px solid #c9c7c3;max-width:'.($awidth>0 ? $awidth.'px' : '100%').';max-height:'.($aheight>0 ? $aheight.'px' : '100%').'" src="images/spacer.png" /><div class="clr"></div>
@@ -1073,7 +1057,7 @@ $(function(){
 					});
 				});//]]></script>');
 
-		$tabs[]=array($lang['avatar'],(string)$Lst->end());
+		$tabs[]=array(static::$lang['avatar'],(string)$Lst->end());
 		$head=false;
 
 		$n=0;
@@ -1100,12 +1084,12 @@ $(function(){
 		if($errors)
 		{
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+				if(is_int($k) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 			$C->Message(join('<br />',$errors),'error');
 		}
 		if($saved)
-			$C->Message($lang['optssaved'],'info');
+			$C->Message(static::$lang['optssaved'],'info');
 
 		return$C.$Lst->form(array('id'=>'form'))
 			->tabs($tabs)
@@ -1132,7 +1116,6 @@ $(function(){
 	*/
 	public static function AcUserInfo($groups)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$user=$GLOBALS['Eleanor']->module['user'];
 		$C=static::Menu('view','main','main');
 		$ogr=$mgr='';
@@ -1167,22 +1150,22 @@ $(function(){
 		switch($user['gender'])
 		{
 			case 0:
-				$gender=$lang['female'];
+				$gender=static::$lang['female'];
 			break;
 			case 1:
-				$gender=$lang['male'];
+				$gender=static::$lang['male'];
 			break;
 			default:
-				$gender=$lang['nogender'];
+				$gender=static::$lang['nogender'];
 		}
 		$personal=(string)$Lst->begin()
-			->item($lang['gender'],$gender)
-			->item($lang['bio'],$user['bio'] ? $user['bio'] : '&mdash;')
-			->item($lang['interests'],$user['interests'] ? $user['interests'] : '&mdash;')
-			->item($lang['location'],$user['location'] ? $user['location'] : '&mdash;')
-			->item($lang['site'],$user['site'] ? $user['site'] : '&mdash;')
-			->item($lang['signature'],$user['signature'] ? $user['signature'] : '&mdash;')
-			->item($lang['timezone'],$user['timezone'] ? $user['timezone'] : '<i>'.$lang['by_default'].'</i>')
+			->item(static::$lang['gender'],$gender)
+			->item(static::$lang['bio'],$user['bio'] ? $user['bio'] : '&mdash;')
+			->item(static::$lang['interests'],$user['interests'] ? $user['interests'] : '&mdash;')
+			->item(static::$lang['location'],$user['location'] ? $user['location'] : '&mdash;')
+			->item(static::$lang['site'],$user['site'] ? $user['site'] : '&mdash;')
+			->item(static::$lang['signature'],$user['signature'] ? $user['signature'] : '&mdash;')
+			->item(static::$lang['timezone'],$user['timezone'] ? $user['timezone'] : '<i>'.static::$lang['by_default'].'</i>')
 			->end();
 
 		$user['skype']=htmlspecialchars($user['skype'],ELENT,CHARSET,false);
@@ -1192,26 +1175,26 @@ $(function(){
 			->item('Jabber',$user['jabber'] ? $user['jabber'] : '&mdash;')
 			->item('Skype',$user['skype'] ? '<a href="skype:'.$user['skype'].'">'.$user['skype'].'</a>' : '&mdash;')
 			->item('ICQ',$user['icq'] ? '<img src="http://status.icq.com/online.gif?icq='.$user['icq'].'&amp;img=5" alt="'.$icq.'" title="'.$icq.'" /> '.$icq : '&mdash;')
-			->item($lang['vk'],$user['vk'] ? $user['vk'] : '&mdash;')
+			->item(static::$lang['vk'],$user['vk'] ? $user['vk'] : '&mdash;')
 			->item('Twitter',$user['twitter'] ? $user['twitter'] : '&mdash;')
 			->end();
 
 		$C.=$Lst->begin()
-			.'<tr><td rowspan="5" style="padding:5px;width:10%">'.$avatar.'</td><td class="label" style="width:150px">'.$lang['nickname'].'</td><td>'.$sname.'</td></tr>'
-			.($sname==$user['full_name'] ? '' : $Lst->item($lang['full_name'],$user['full_name']));
+			.'<tr><td rowspan="5" style="padding:5px;width:10%">'.$avatar.'</td><td class="label" style="width:150px">'.static::$lang['nickname'].'</td><td>'.$sname.'</td></tr>'
+			.($sname==$user['full_name'] ? '' : $Lst->item(static::$lang['full_name'],$user['full_name']));
 
-		$Lst->item($lang['registered'],Eleanor::$Language->Date($user['register'],'fdt'))
-			->item($lang['last_visit'],Eleanor::$Language->Date($user['last_visit'],'fdt'));
+		$Lst->item(static::$lang['registered'],Eleanor::$Language->Date($user['register'],'fdt'))
+			->item(static::$lang['last_visit'],Eleanor::$Language->Date($user['last_visit'],'fdt'));
 		if($mgr)
-			$mgr=$Lst->item($lang['maingroup'],$mgr);
+			$mgr=$Lst->item(static::$lang['maingroup'],$mgr);
 		if($ogr)
-			$Lst->item($lang['othgroups'],rtrim($ogr,' ,'));
+			$Lst->item(static::$lang['othgroups'],rtrim($ogr,' ,'));
 		if(Eleanor::$vars['multilang'])
-			$Lst->item($lang['lang'],$user['language'] && isset(Eleanor::$langs[$user['language']]) ? '<span title="'.$user['language'].'">'.Eleanor::$langs[$user['language']]['name'].'</span>' : '<i>'.$lang['by_default'].'</i>');
+			$Lst->item(static::$lang['lang'],$user['language'] && isset(Eleanor::$langs[$user['language']]) ? '<span title="'.$user['language'].'">'.Eleanor::$langs[$user['language']]['name'].'</span>' : '<i>'.static::$lang['by_default'].'</i>');
 		$Lst->end()
 			->tabs(
-				array($lang['personal'],$personal),
-				array($lang['connect'],$connect)
+				array(static::$lang['personal'],$personal),
+				array(static::$lang['connect'],$connect)
 			);
 		return$C.$Lst;
 	}
@@ -1228,8 +1211,7 @@ $(function(){
 		$c='';
 		foreach($galleries as &$v)
 			$c.='<a href="#" class="gallery" data-gallery="'.$v['n'].'"><b><img src="'.$v['i'].'" alt="" /><span>'.$v['d'].'</span></b></a>';
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		return$c ? '<a class="imagebtn cancelavatar" href="#">'.$lang['cancel_avatar'].'</a><div class="clr"></div><div class="galleryavatars">'.$c.'</div>' : '<div class="noavatars cancelavatar">'.$lang['no_avatars'].'</div>';
+		return$c ? '<a class="imagebtn cancelavatar" href="#">'.static::$lang['cancel_avatar'].'</a><div class="clr"></div><div class="galleryavatars">'.$c.'</div>' : '<div class="noavatars cancelavatar">'.static::$lang['no_avatars'].'</div>';
 	}
 
 	/*
@@ -1240,11 +1222,10 @@ $(function(){
 	*/
 	public static function Avatars($avatars)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$c='';
 		foreach($avatars as &$v)
 			$c.='<a href="#" class="applyavatar" title="'.$v['f'].'"><img src="'.join($v).'" /></a>';
-		return$c ? '<a class="imagebtn getgalleries" href="#">'.$lang['togals'].'</a><a class="imagebtn cancelavatar" href="#">'.$lang['cancel_avatar'].'</a><div class="clr"></div><div class="avatarscover">'.$c.'</div>' : '<div class="noavatars cancelavatar">'.$lang['no_avatars'].'</div>';
+		return$c ? '<a class="imagebtn getgalleries" href="#">'.static::$lang['togals'].'</a><a class="imagebtn cancelavatar" href="#">'.static::$lang['cancel_avatar'].'</a><div class="clr"></div><div class="avatarscover">'.$c.'</div>' : '<div class="noavatars cancelavatar">'.static::$lang['no_avatars'].'</div>';
 	}
 
 	#Loginza
@@ -1260,18 +1241,17 @@ $(function(){
 	*/
 	public static function Loginza($items,$added,$error)
 	{
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 		$C=static::Menu('user','externals','main');
 
 		if($added)
-			$C->Message(sprintf($lang['aexternal'],'<a href="'.$added['identity'].'" target="_blank">'.(isset($lang[$added['provider']]) ? $lang[$added['provider']] : $added['provider']).'</a>'),'info');
+			$C->Message(sprintf(static::$lang['aexternal'],'<a href="'.$added['identity'].'" target="_blank">'.(isset(static::$lang[$added['provider']]) ? static::$lang[$added['provider']] : $added['provider']).'</a>'),'info');
 		if($error)
 			$C->Message($error ? $error['error_message'] : 'Error...','error');
 
 		$s='';
 		foreach($items as &$v)
-			$s.='<span><a href="'.$v['identity'].'" target="_blank" style="font-size:2em">'.(isset($lang[$v['provider']]) ? $lang[$v['provider']] : $v['provider']).'</a><a href="#" data-provider="'.$v['provider'].'" data-uid="'.$v['provider_uid'].'" title="'.$ltpl['delete'].'">X</a> </span>';
+			$s.='<span><a href="'.$v['identity'].'" target="_blank" style="font-size:2em">'.(isset(static::$lang[$v['provider']]) ? static::$lang[$v['provider']] : $v['provider']).'</a><a href="#" data-provider="'.$v['provider'].'" data-uid="'.$v['provider_uid'].'" title="'.$ltpl['delete'].'">X</a> </span>';
 		return $C.'<script type="text/javascript">//<![CDATA[
 $(function(){
 	$("#externals").on("click","a[href=#]",function(){
@@ -1300,7 +1280,7 @@ $(function(){
 <img src="http://loginza.ru/img/providers/loginza.png" title="Loginza" />
 <img src="http://loginza.ru/img/providers/myopenid.png" title="MyOpenID" />
 <img src="http://loginza.ru/img/providers/openid.png" title="OpenID" />
-<img src="http://loginza.ru/img/providers/webmoney.png" title="WebMoney" /></a><br />'.($s ? '<div id="externals">'.rtrim($s,', ').'</div><br />' : '').'<a href="https://loginza.ru/api/widget?token_url='.urlencode(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'loginza'),true,'')).'" class="loginza link-button" style="width:150px"><b>'.$lang['add'].'</b></a></div>';
+<img src="http://loginza.ru/img/providers/webmoney.png" title="WebMoney" /></a><br />'.($s ? '<div id="externals">'.rtrim($s,', ').'</div><br />' : '').'<a href="https://loginza.ru/api/widget?token_url='.urlencode(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'loginza'),true,'')).'" class="loginza link-button" style="width:150px"><b>'.static::$lang['add'].'</b></a></div>';
 	}
 
 	/*
@@ -1312,3 +1292,4 @@ $(function(){
 		return static::Menu('guest','externals','main')->Message($loginza ? $loginza['error_message'] : 'Error...','error');
 	}
 }
+TplUserAccount::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/account-*.php',false);

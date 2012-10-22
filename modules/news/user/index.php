@@ -85,7 +85,7 @@ if(isset($_GET['do']))
 		break;
 		case'tags':
 			SetData();
-			$title[]=Eleanor::$Language[$mc['n']]['tags_list'];
+			$title[]=$lang['tags'];
 			$c=Eleanor::$Template->ShowAllTags();
 			Start();
 			echo$c;
@@ -181,7 +181,7 @@ if(isset($_GET['do']))
 							$back='';
 						else
 							$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
-						$c=Eleanor::$Template->Delete(sprintf($lang['submit_del'],$a['title']),$back);
+						$c=Eleanor::$Template->Delete($a,$back);
 					}
 					Start();
 					echo$c;
@@ -726,7 +726,7 @@ function GetGN()
 		return explode(',',$gn);
 	return array();}
 
-function SetData()
+function SetData($tpl=false)
 {global$Eleanor,$head;
 	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];	$Lst=Eleanor::LoadListTemplate('headfoot');
 	$u='?'.Url::Query(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
@@ -744,7 +744,7 @@ function SetData()
 		'href'=>Eleanor::$services['xml']['file'].$u,
 	));
 
-	Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
+	Eleanor::$Template->queue[]=$tpl ? $tpl : $Eleanor->module['config']['usertpl'];
 
 	$tags=Eleanor::$Cache->Get($Eleanor->module['config']['n'].'_tags_'.Language::$main);
 	if($tags===false)
@@ -769,7 +769,7 @@ function SetData()
 		$cron=false;
 
 	$Eleanor->module+=array(
-		'tags'=>$tags,
+		'tags'=>$tags ? $tags : null,
 		'cron'=>$cron,
 		'links'=>array(
 			'base'=>$Eleanor->Url->Prefix(false),

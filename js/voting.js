@@ -13,10 +13,9 @@ function Voting(opts)
 {	opts=$.extend(
 		{			form:"#id",
 			similar:false,
-			AfterSwitch:function(type){},
+			AfterSwitch:$.Callbacks(),
 			request:{},
 			type:"",
-			module:"",
 			qcnt:0
 		},
 		opts
@@ -31,7 +30,7 @@ function Voting(opts)
 			$(opts.form).html(content);
 		else
 			types[type].appendTo(opts.form);
-		opts.AfterSwitch(type,opts.type);
+		opts.AfterSwitch.fire(type,opts);
 		opts.type=type;
 		$.each(votings[opts.similar],function(k,v){
 			if(v!=th)
@@ -42,8 +41,7 @@ function Voting(opts)
 	this.Load=function(type,data)
 	{		if(typeof types[type]=="undefined")			CORE.Ajax(
 				$.extend(
-					{						module:opts.module,
-						language:CORE.language,
+					{						language:CORE.language,
 						voting:{
 							data:data,
 							type:type

@@ -54,5 +54,12 @@ if($narr)
 		else
 			$cat=false;
 		$un=array('u'=>array($narr['uri'],'nid'=>$narr['id']));
-		echo'<a href="'.$Eleanor->Url->Construct(array('module'=>$uri)+($cat ? $cat+$un : $un),false).'" style="font-weight:bold">'.$narr['title'].'</a><br />'.$c;
+		try
+		{
+			echo Eleanor::$Template->BlockVoting($narr['title'],$Eleanor->Url->Construct(array('module'=>$uri)+($cat ? $cat+$un : $un),false),$c);
+		}
+		catch(EE$E)
+		{
+			return'Template BlockVoting does not exists.';
+		}
 	}}

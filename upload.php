@@ -195,10 +195,9 @@ function BeAs($n)
 {global$Eleanor;
 	if(Eleanor::$service==$n or !isset(Eleanor::$services[$n]))
 		return;
-	Eleanor::LoadOptions(array('users-on-site'));
+
 	Eleanor::$filename=Eleanor::$services[$n]['file'];
 
-	Eleanor::InitTemplate(Eleanor::$services[$n]['theme']);
 	if(Eleanor::$services[$n]['login']!=Eleanor::$services[Eleanor::$service]['login'])
 		Eleanor::ApplyLogin(Eleanor::$services[$n]['login']);
 	Eleanor::$service=$n;
@@ -226,9 +225,16 @@ function BeAs($n)
 
 		$Eleanor->Url->special=$Eleanor->Url->furl ? '' : Eleanor::$filename.'?';
 		if(Language::$main!=LANGUAGE)
-			$Eleanor->Url->special.=$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[Language::$main]['uri']),false,false).$Eleanor->Url->GetDel();
+			$Eleanor->Url->special.=$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[Language::$main]['uri']),false,false);
 		if(isset($Eleanor->module,$Eleanor->module['name']))
 			$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
+
+		$theme=Eleanor::$Login->IsUser() ? Eleanor::$Login->GetUserValue('theme') : Eleanor::GetCookie('theme');
+		if(!Eleanor::$vars['templates'] or !in_array($theme,Eleanor::$vars['templates']))
+			$theme=false;
+		Eleanor::InitTemplate($theme ? $theme : Eleanor::$services['user']['theme']);
 	}
+	else
+		Eleanor::InitTemplate(Eleanor::$services[$n]['theme']);
 	ApplyLang();
 }

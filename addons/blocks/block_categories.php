@@ -8,9 +8,11 @@
 	=====
 	*Pseudonym
 */
-if(isset($GLOBALS['Eleanor']->Categories))
-{	$u=uniqid();
-	$Fbc=function($a,$c='<ul>') use ($Fbc)
+$n=isset($GLOBALS['Eleanor']->module['section']) ? $GLOBALS['Eleanor']->module['section'] : 'def';
+$cache=Eleanor::$Cache->Get('categories_'.$n.'_'.Language::$main);
+
+if($cache===false and isset($GLOBALS['Eleanor']->Categories))
+{	$Fbc=function($a,$c='<ul>') use (&$Fbc)
 	{
 		$parents=reset($a);
 		$l=strlen($parents['parents']);
@@ -40,18 +42,15 @@ if(isset($GLOBALS['Eleanor']->Categories))
 	};
 	$mn=isset($GLOBALS['Eleanor']->module['name']) ? $GLOBALS['Eleanor']->module['name'] : '';
 
-	return$Fbc($GLOBALS['Eleanor']->Categories->dump,'<ul class="blockcategories" id="q'.$u.'">').'<script type="text/javascript">//<![CDATA[
-$(function(){	$("#q'.$u.' li:has(ul)").addClass("subcat").each(function(i){		var img=$("<img>").css({cursor:"pointer","margin-right":"3px"}).prop({src:"'.Eleanor::$Template->default['theme'].'images/minus.gif",title:"+"}).prependTo(this).click(function(){			if(localStorage.getItem("bc-'.$mn.'"+i))
-			{				$(this).prop({src:"'.Eleanor::$Template->default['theme'].'images/plus.gif",title:"+"}).next().next().hide();
-				localStorage.removeItem("bc-'.$mn.'"+i);			}			else
-			{
-				$(this).prop({src:"'.Eleanor::$Template->default['theme'].'images/minus.gif",title:"-"}).next().next().show();
-				try
-				{
-					localStorage.setItem("bc-'.$mn.'"+i,"1");
-				}catch(e){}
-			}
-		});
-		if(!localStorage.getItem("bc-'.$mn.'"+i))
-			img.prop({src:"'.Eleanor::$Template->default['theme'].'images/plus.gif",title:"+"}).next().next().hide();
-	}).find("ul").css("margin-left","4px");});//]]></script>';}
+	$cache=$Fbc($GLOBALS['Eleanor']->Categories->dump,'');
+	Eleanor::$Cache->Put('categories_'.$n.'_'.Language::$main,$cache);
+}
+
+try
+{
+	return$cache ? Eleanor::$Template->BlockCategories($cache,null) : false;
+}
+catch(EE$E)
+{
+	return'Template BlockCategories does not exists.';
+}

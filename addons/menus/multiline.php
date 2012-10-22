@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 $parent=isset($parent) ? (int)$parent : false;
 $exclude=isset($exclude) ? (int)$exclude : 0;
 $menu=Eleanor::$Cache->Get('menu_multiline_'.Language::$main.$parent);
@@ -74,13 +75,7 @@ if($menu===false)
 	if(!class_exists('ApiMenu',false))
 		include Eleanor::$root.'modules/menu/api.php';
 
-	$menu=ApiMenu::BuildMultilineMenu($menu,'<nav><ul id="linemenu" class="topmenu">').'</nav><script type="text/javascript">//<![CDATA[
-$(function(){
-	CORE.AddScript("js/menu_multilevel.js",function(){
-		$("#linemenu").MultiLevelMenu();
-	});
-});//]]></script>';
-
+	$menu=ApiMenu::BuildMultilineMenu($menu,'');
 	Eleanor::$Cache->Put('menu_multiline_'.Language::$main.$parent,$menu);
 }
 return$menu;

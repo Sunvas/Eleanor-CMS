@@ -27,6 +27,8 @@ switch($step)
 {	case 5:
 		if(isset($_GET['tzo']))
 			$_SESSION['tzo']=(int)$_GET['tzo'];
+		if(isset($_GET['dst']))
+			$_SESSION['dst']=(bool)$_GET['dst'];
 		header('HTTP/1.1 301 Moved Permanently');
 		header('Location: '.(isset($_POST['update']) ? 'update' : 'install').'.php?s='.session_id());
 		die;
@@ -104,7 +106,16 @@ switch($step)
 				.'</form></div><div class="wpbtm"><b>&nbsp;</b></div></div><script type="text/javascript">//<![CDATA[
 $(function(){
 	$("form:first").attr("action",function(){
-		return this.action+"&tzo="+(new Date()).getTimezoneOffset()/60;
+		var today=new Date,
+			yr=today.getFullYear(),
+			dst_start=new Date("March 14, "+yr+" 02:00:00"),
+			dst_end=new Date("November 07, "+yr+" 02:00:00"),
+			day=dst_start.getDay();
+		dst_start.setDate(14-day);
+		day=dst_end.getDay();
+		dst_end.setDate(7-day);
+
+		return this.action+"&tzo="+(new Date()).getTimezoneOffset()+"&dst="+(today>=dst_start && today < dst_end ? 1 : 0);
 	});
 });//]]></script>';
 			break;

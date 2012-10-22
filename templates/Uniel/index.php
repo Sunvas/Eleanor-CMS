@@ -7,6 +7,7 @@ $ltpl=Eleanor::$Language['tpl'];?><!DOCTYPE html>
 <html prefix="og: http://ogp.me/ns#">
 <head>
 {head}
+<script type="text/javascript" src="js/menu_multilevel.js"></script>
 <link media="screen" href="<?php echo$theme?>style/main.css" type="text/css" rel="stylesheet" />
 <link rel="shortcut icon" href="favicon.ico" />
 </head>
@@ -28,7 +29,7 @@ if(Eleanor::$Permissions->IsAdmin())
 ?>
 <div class="wrapper">
 <div id="headerboxic"><div class="dleft"><div class="dright">
-	<a class="logotype" href="http://<?php echo Eleanor::$domain.Eleanor::$site_path?>"><img src="<?php echo$theme?>images/eleanorcms.png" alt="Eleanor CMS" title="Eleanor CMS" /></a>
+	<a class="logotype" href="<?php echo$GLOBALS['Eleanor']->Url->special?>"><img src="<?php echo$theme?>images/eleanorcms.png" alt="<?php echo Eleanor::$vars['site_name']?>" title="<?php echo Eleanor::$vars['site_name']?>" /></a>
 	<span class="headbanner">
 		<!-- Баннер 468x60-->
 		<!-- <a href="link.html" title="Ваш баннер"><img src="<?php echo$theme?>images/spacer.png" alt="Ваш баннер" /></a> -->
@@ -47,7 +48,8 @@ if(Eleanor::$vars['multilang'])
 }
 ?>
 </div>
-<?php echo include Eleanor::$root.'addons/menus/multiline.php'; ?>
+<?php echo'<nav><ul class="topmenu">',include Eleanor::$root.'addons/menus/multiline.php'; ?>
+</nav><script type="text/javascript">/*<![CDATA[*/ $(function(){ $(".topmenu").MultiLevelMenu(); });//]]></script>
 </div></div></div>
 
 <div class="container">
@@ -78,7 +80,7 @@ echo'<div id="maincol'.($br ? 'R' : '').'">
 
 <div id="footmenu"><div class="dleft"><div class="dright">
 	<a title="<?php echo$ltpl['to_top']?>" onclick="scroll(0,0); return false" href="#" class="top-top"><img src="<?php echo$theme?>images/top-top.png" alt="" /></a>
-	<span class="menu"><?php echo include Eleanor::$root.'addons/menus/line.php'; ?></span>
+	<span class="menu"><?php echo join(include Eleanor::$root.'addons/menus/single.php'); ?></span>
 </div></div></div>
 
 <div id="footer"><div class="dleft"><div class="dright">

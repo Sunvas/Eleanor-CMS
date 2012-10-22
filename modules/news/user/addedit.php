@@ -8,11 +8,9 @@
 	=====
 	*Pseudonym
 */
-Eleanor::$Template->queue[]=$Eleanor->module['config']['usercorrecttpl'];
-
 function AddEdit($id,$errors=array(),$gn=array())
 {global$Eleanor,$title;
-	SetData();
+	SetData($Eleanor->module['config']['usercorrecttpl']);
 	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
 	$isu=Eleanor::$Login->IsUser();
 	if($id)
@@ -519,7 +517,7 @@ function Save($id,$gn=array())
 	}
 
 	Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
-	SetData();
+	SetData($Eleanor->module['config']['usercorrecttpl']);
 	$u=array('u'=>array(Eleanor::FilterLangValues($lvalues['uri']),'nid'=>$id));
 	if($maincat and $Eleanor->Url->furl)
 	{

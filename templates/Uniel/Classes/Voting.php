@@ -37,10 +37,7 @@ class TplVoting
 	*/	public static function Voting($voting,$qs,$status)
 	{		$l=Eleanor::$Language['voting'];		$r=sprintf($l['nums'],$voting['votes']).(!$status && (int)$voting['end']>0 ? '<br />'.sprintf($l['tlimit'],Eleanor::$Language->Date($voting['end'],'fdt')) : '');		foreach($qs as $k=>&$v)
 		{
-			if($v['multiple'] and !$status)
-				$qid=uniqid();
-			else
-				$qid=false;
+			$qid=$v['multiple'] && !$status ? uniqid() : false;
 
 			$sum=$v['multiple'] ? max($v['answers']) : array_sum($v['answers']);
 			$div=$sum==0 ? 1 : $sum;
@@ -75,20 +72,20 @@ class TplVoting
 			default:
 				$r.=Eleanor::Button($l['vote']);
 		}
-		return$r;	}
+		return$r;
+	}
 
 	/*
 		¬ывод формы опроса, включающей и сам опрос
 		ќписание переменных $voting,$qs,$status смотрите в методе Voting
-		$request - дополнительные параметры AJAX запроса
+		$request - параметры AJAX запроса
 	*/	public static function VotingCover($voting,$qs,$status,$request)
 	{		$q=static::Voting($voting,$qs,$status);		if($status=='voted')
 			return$q;
 		$u=uniqid('v');
 
 		$GLOBALS['jscripts'][]='js/voting.js';		return'<form id="'.$u.'">'.$q.'</form><script type="text/javascript">//<![CDATA[
-$(function(){	new Voting({		module:"'.$GLOBALS['Eleanor']->module['name'].'",
-		form:"#'.$u.'",
+$(function(){	new Voting({		form:"#'.$u.'",
 		similar:".voting-'.$voting['id'].'",
 		type:"'.$status.'",
 		request:'.Eleanor::JsVars($request,false,true).',

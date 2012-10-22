@@ -66,7 +66,8 @@ class TplUserNewsCorrect
 
 	/*
 		—траница удалени€ новости
-		$t - текст-подтверждение удалени€
+		$a - массив с данными удал€емой новости.  лючи:
+			title - название новости
 		$back - URL возврата
 	*/
 	public static function DeleteNews($a,$back)

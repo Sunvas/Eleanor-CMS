@@ -8,10 +8,12 @@
 	=====
 	*Pseudonym
 */
-$parent=isset($parent) ? (int)$parent : '';
-$menu=Eleanor::$Cache->Get('menu_line'.Language::$main.$parent);
+if(!defined('CMS'))die;
+$parent=isset($parent) ? (int)$parent : 0;
+$menu=Eleanor::$Cache->Get('menu_single'.Language::$main.$parent);
 if($menu===false)
-{	$p=$menu='';
+{	$p='';
+	$menu=array();
 	if($parent)
 	{		$R=Eleanor::$Db->Query('SELECT `parents` FROM `'.P.'menu` WHERE `id`='.$parent.' LIMIT 1');
 		if(!list($p)=$R->fetch_row())
@@ -33,6 +35,6 @@ if($menu===false)
 		}
 		else
 			$url=$a['url'];
-		$menu.='<a href="'.$url.'"'.$a['params'].'>'.$a['title'].'</a>';	}
-	Eleanor::$Cache->Put('menu_line'.Language::$main.$parent,$menu);}
+		$menu[]='<a href="'.$url.'"'.$a['params'].'>'.$a['title'].'</a>';	}
+	Eleanor::$Cache->Put('menu_single'.Language::$main.$parent,$menu);}
 return$menu;

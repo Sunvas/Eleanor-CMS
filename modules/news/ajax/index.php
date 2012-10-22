@@ -104,9 +104,9 @@ else
 			$R=Eleanor::$Db->Query('SELECT `voting` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.(Eleanor::$Permissions->IsAdmin() ? '' : ' AND (`status`=1'.($uid==0 ? '' : ' OR `author_id`='.$uid).')').' LIMIT 1');
 			if(!$a=$R->fetch_assoc())
 				return Error();
-			$V=new Voting($a['voting']);
+			$V=new Voting_Ajax($a['voting']);
 			$V->mid=$Eleanor->module['id'];
-			if($V->DoAjax())
+			if($V->Process())
 				Eleanor::$Db->Update($Eleanor->module['config']['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
 		break;
 		case'comments':

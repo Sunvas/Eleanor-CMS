@@ -626,7 +626,10 @@ class Controls extends BaseClass
 			case'select':
 			case'input':
 			case'date':
+				$co['options']+=array('htmlsafe'=>false);
 				$res=$this->GetPostVal($co['name'],$co['default']);
+				if($co['options']['htmlsafe'])
+					$res=FilterArrays::Filter($res);
 			break;
 			case'items':
 				$co+=array('default'=>array());

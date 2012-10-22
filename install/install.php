@@ -259,19 +259,28 @@ else
 			$user=isset($_POST['user']) ? (string)$_POST['user'] : '';
 			$pass=isset($_POST['pass']) ? (string)$_POST['pass'] : '';
 			$pref=isset($_POST['pref']) ? (string)$_POST['pref'] : 'el_';
-			$sitename=isset($_POST['sitename']) ? $_POST['sitename'] : '';
+			$sitename=isset($_POST['sitename']) ? (string)$_POST['sitename'] : '';
 			$langs=isset($_POST['languages']) ? (array)$_POST['languages'] : array();
-			$email=isset($_POST['email']) ? $_POST['email'] : '';
+			$email=isset($_POST['email']) ? (string)$_POST['email'] : '';
 			$furl=$_SERVER['REQUEST_METHOD']=='POST' ? isset($_POST['furl']) : $canurl;
-			if(isset($_SESSION['tzo']))
-			{
-				$tzo='Etc/GMT';
-				if($_SESSION['tzo']!=0)
-					$tzo.=($_SESSION['tzo']>0 ? '+' : '').$_SESSION['tzo'];
+			if(isset($_SESSION['tzo'],$_SESSION['dst']))
+			{				$tzo=array();
+				$tal=timezone_abbreviations_list();
+				foreach($tal as &$tv)
+					foreach($tv as &$v)
+						if($v['offset']/60==-$_SESSION['tzo'] and $v['dst']==$_SESSION['dst'])
+							$tzo[]=$v['timezone_id'];
+				#—юда можно добавить по€са по-умолчанию
+				if(in_array('Europe/Kiev',$tzo))
+					$tzo='Europe/Kiev';
+				elseif(in_array('Europe/Moscow'))
+					$tzo='Europe/Moscow';
+				else
+					$tzo=reset($tzo);
 			}
 			else
 				$tzo=date_default_timezone_get();
-			$timezone=isset($_POST['timezone']) ? $_POST['timezone'] : $tzo;
+			$timezone=isset($_POST['timezone']) ? (string)$_POST['timezone'] : $tzo;
 			$languages='';
 			foreach(Eleanor::$langs as $k=>&$v)
 				if($k!=Language::$main)

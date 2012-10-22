@@ -874,7 +874,13 @@ final class Eleanor extends BaseClass
 		$ad='';
 		foreach($a as $k=>&$v)
 			if($v!==false)
-				$ad.=is_int($k) ? ' '.$v : ' '.$k.'='.(strpos($v,'"')===false ? '"'.$v.'"' : '\''.$v.'\'');
+				if(is_int($k))
+					$ad.=' '.$v;
+				else
+				{					$ad.=' '.$k;
+					if($v!==true)
+						$ad.='='.(strpos($v,'"')===false ? '"'.$v.'"' : '\''.$v.'\'');
+				}
 		return$ad;
 	}
 

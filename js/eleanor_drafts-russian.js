@@ -1,2 +1,2 @@
-CORE.Lang({	savedraft:"Сохранить черновик",
+﻿CORE.Lang({	savedraft:"Сохранить черновик",
 	draftsaved:"Черновик сохранен"})

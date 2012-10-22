@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright © Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
@@ -16,7 +16,7 @@ CORE.AcRegister={	max_name:15,	module:"",
 		else if(name.length>this.max_name)
 			F(CORE.lang.NICK_TOO_LONG(this.max_name,name.length));
 		else
-			CORE.Ajax(
+			return CORE.Ajax(
 				{
 					module:this.module,
 					language:CORE.language,
@@ -39,7 +39,7 @@ CORE.AcRegister={	max_name:15,	module:"",
 		if(typeof th.emailserrors[email]!="undefined")
 			F(th.emailserrors[email]);
 		else
-			CORE.Ajax(
+			return CORE.Ajax(
 				{
 					module:this.module,
 					language:CORE.language,

@@ -1,4 +1,4 @@
-CORE.Lang({
+﻿CORE.Lang({
 	//global_func
 	page_jump:"Введіть номер сторінки, на яку Ви бажаєте перейти",
 	nothing_selected:"Ви нічого не вибрали!",

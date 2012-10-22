@@ -1,5 +1,5 @@
-/*
-	Copyright © Eleanor CMS
+п»ї/*
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,15 +11,15 @@ $.fn.DragAndDrop=function(opts)
 {
 	opts=$.extend(
 		{
-			items:"li",//Пункты, которые нужно двигать
-			move:false,//Объект, за который двигаются пункты (если пустой - двигать за сами пункты)
-			exclude:"input,textarea,a[href],select",//Если move - пустой, при клике на этих объектах внутри items, движение не будет происходить,
-			replace:"<li>",//Объект будет местом, куда нужно положить двигаемый пункт
-			clean:false,//Флаг, при включени которого скрипт не делает список перемещающимся, а наоборот: убирает с объектов свои обработчики
-			alpha:0.5,//Прозрачность при перемещении
-			//Опции при перетаскивании из одного списка в другой
-			between:false,//Флаг включения такой возможности.
-			empty:"<li>",//Объект, который будет в списке в том случае, если из списка будут удалены все движимые пункты
+			items:"li",//РџСѓРЅРєС‚С‹, РєРѕС‚РѕСЂС‹Рµ РЅСѓР¶РЅРѕ РґРІРёРіР°С‚СЊ
+			move:false,//РћР±СЉРµРєС‚, Р·Р° РєРѕС‚РѕСЂС‹Р№ РґРІРёРіР°СЋС‚СЃСЏ РїСѓРЅРєС‚С‹ (РµСЃР»Рё РїСѓСЃС‚РѕР№ - РґРІРёРіР°С‚СЊ Р·Р° СЃР°РјРё РїСѓРЅРєС‚С‹)
+			exclude:"input,textarea,a[href],select",//Р•СЃР»Рё move - РїСѓСЃС‚РѕР№, РїСЂРё РєР»РёРєРµ РЅР° СЌС‚РёС… РѕР±СЉРµРєС‚Р°С… РІРЅСѓС‚СЂРё items, РґРІРёР¶РµРЅРёРµ РЅРµ Р±СѓРґРµС‚ РїСЂРѕРёСЃС…РѕРґРёС‚СЊ,
+			replace:"<li>",//РћР±СЉРµРєС‚ Р±СѓРґРµС‚ РјРµСЃС‚РѕРј, РєСѓРґР° РЅСѓР¶РЅРѕ РїРѕР»РѕР¶РёС‚СЊ РґРІРёРіР°РµРјС‹Р№ РїСѓРЅРєС‚
+			clean:false,//Р¤Р»Р°Рі, РїСЂРё РІРєР»СЋС‡РµРЅРё РєРѕС‚РѕСЂРѕРіРѕ СЃРєСЂРёРїС‚ РЅРµ РґРµР»Р°РµС‚ СЃРїРёСЃРѕРє РїРµСЂРµРјРµС‰Р°СЋС‰РёРјСЃСЏ, Р° РЅР°РѕР±РѕСЂРѕС‚: СѓР±РёСЂР°РµС‚ СЃ РѕР±СЉРµРєС‚РѕРІ СЃРІРѕРё РѕР±СЂР°Р±РѕС‚С‡РёРєРё
+			alpha:0.5,//РџСЂРѕР·СЂР°С‡РЅРѕСЃС‚СЊ РїСЂРё РїРµСЂРµРјРµС‰РµРЅРёРё
+			//РћРїС†РёРё РїСЂРё РїРµСЂРµС‚Р°СЃРєРёРІР°РЅРёРё РёР· РѕРґРЅРѕРіРѕ СЃРїРёСЃРєР° РІ РґСЂСѓРіРѕР№
+			between:false,//Р¤Р»Р°Рі РІРєР»СЋС‡РµРЅРёСЏ С‚Р°РєРѕР№ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё.
+			empty:"<li>",//РћР±СЉРµРєС‚, РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ РІ СЃРїРёСЃРєРµ РІ С‚РѕРј СЃР»СѓС‡Р°Рµ, РµСЃР»Рё РёР· СЃРїРёСЃРєР° Р±СѓРґСѓС‚ СѓРґР°Р»РµРЅС‹ РІСЃРµ РґРІРёР¶РёРјС‹Рµ РїСѓРЅРєС‚С‹
 			//Callbacks
 			OnEnd:function(obj){}
 		},
@@ -30,7 +30,8 @@ $.fn.DragAndDrop=function(opts)
 		inmove=false,
 		idr,
 		MoveDown=function(e,el,i,l)
-		{			if($(e.target).is(opts.exclude) || e.which!=1)
+		{
+			if($(e.target).is(opts.exclude) || e.which!=1)
 				return;
 			e.preventDefault();
 			if(inmove)
@@ -42,7 +43,8 @@ $.fn.DragAndDrop=function(opts)
 				mey=e.pageY-el.offset().top,
 				dw=$(document).width(),
 				dh=$(document).height(),
-				DocMove=function(e){					e.stopPropagation();
+				DocMove=function(e){
+					e.stopPropagation();
 					var left=e.pageX-mex,
 						top=e.pageY-mey,
 						elw=el.width(),
@@ -56,16 +58,23 @@ $.fn.DragAndDrop=function(opts)
 						left:left>0 ? left : 0,
 						top:top>0 ? top : 0
 					});
-					$.each(lists,function(li,lv){						var br=false;						$.each(lv,function(ii,iv){							if(ii==i)
+					$.each(lists,function(li,lv){
+						var br=false;
+						$.each(lv,function(ii,iv){
+							if(ii==i)
 								return;
 							var pos=iv.o.offset();
 							if(pos.left<e.pageX && pos.top<e.pageY && (pos.left+iv.o.width())>e.pageX && (pos.top+iv.o.height())>e.pageY)
-							{								if(li==l)
-								{									if(ii<idr)
-									{										if(e.pageY-pos.top>elh)
+							{
+								if(li==l)
+								{
+									if(ii<idr)
+									{
+										if(e.pageY-pos.top>elh)
 											return;
 										do
-										{											if(idr==parseInt(idr))
+										{
+											if(idr==parseInt(idr))
 												idr--;
 											else
 												idr=parseInt(idr);
@@ -81,7 +90,8 @@ $.fn.DragAndDrop=function(opts)
 										if(iv.o.height()-e.pageY+pos.top>elh)
 											return;
 										do
-										{											idr=idr>=0 ? parseInt(idr)+1 : 0;
+										{
+											idr=idr>=0 ? parseInt(idr)+1 : 0;
 											var tmp=$(opts.replace).hide();
 											tmp.insertAfter(lists[li][idr].o);
 											lists[li][idr].o.insertAfter(r);
@@ -93,15 +103,20 @@ $.fn.DragAndDrop=function(opts)
 									return false;
 								}
 								else if(opts.between)
-								{									//Здесь должен быть алгоритм перемещения пунктов между списками, но он недодуман ввиду отсутствия стимула. #ToDo! на будущее									//r.insertAfter(iv.o);								}
-							}						});
+								{
+									//Р—РґРµСЃСЊ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р°Р»РіРѕСЂРёС‚Рј РїРµСЂРµРјРµС‰РµРЅРёСЏ РїСѓРЅРєС‚РѕРІ РјРµР¶РґСѓ СЃРїРёСЃРєР°РјРё, РЅРѕ РѕРЅ РЅРµРґРѕРґСѓРјР°РЅ РІРІРёРґСѓ РѕС‚СЃСѓС‚СЃС‚РІРёСЏ СЃС‚РёРјСѓР»Р°. #ToDo! РЅР° Р±СѓРґСѓС‰РµРµ
+									//r.insertAfter(iv.o);
+								}
+							}
+						});
 						if(br)
 							return false;
 					});
 					return false;
 				};
 
-			el.stop(true,true).fadeTo("fast",opts.alpha).css({				left:el.offset().left,
+			el.stop(true,true).fadeTo("fast",opts.alpha).css({
+				left:el.offset().left,
 				top:el.offset().top,
 				position:"absolute"
 			}).after(r);
@@ -112,7 +127,8 @@ $.fn.DragAndDrop=function(opts)
 					left:r.offset().left,
 					top:r.offset().top
 				},200,function(){
-					$(this).replaceAll(r).css({						position:"",
+					$(this).replaceAll(r).css({
+						position:"",
 						left:"",
 						top:""
 					});
@@ -121,11 +137,16 @@ $.fn.DragAndDrop=function(opts)
 					ScanItems();
 				}).fadeTo("fast",1);
 			}).mousemove(DocMove);
-			return false;		},
+			return false;
+		},
 		ScanItems=function()
-		{			lists=[];
-			$.each(th,function(){				var items=[];
-				$(opts.items,this).each(function(){					var el=$(this),						h=el,
+		{
+			lists=[];
+			$.each(th,function(){
+				var items=[];
+				$(opts.items,this).each(function(){
+					var el=$(this),
+						h=el,
 						i=items.length,
 						l=lists.length;
 					if(opts.move)
@@ -133,14 +154,19 @@ $.fn.DragAndDrop=function(opts)
 					h.off("mousedown");
 					if(opts.clean)
 						return;
-					h.mousedown(function(e){						return MoveDown(e,el,i,l);					});
-					items.push({						o:el,
+					h.mousedown(function(e){
+						return MoveDown(e,el,i,l);
+					});
+					items.push({
+						o:el,
 						l:l,
-						i:i					});
+						i:i
+					});
 				});
 				if(items.length>0)
 					lists.push(items);
-			});		}
+			});
+		}
 	ScanItems();
 	return this;
 }

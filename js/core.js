@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright © Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.su, http://eleanor-cms.com, http://eleanor-cms.net, http://eleanor.su
 	E-mail: support@eleanor-cms.ru
@@ -75,7 +75,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 			info
 		);
 		CORE.in_ajax.push(true);
-		$.ajax({			type:"POST",
+		return $.ajax({			type:"POST",
 			url:CORE.site_host+CORE.site_path+CORE.ajax_file,
 			data:arr,
 			beforeSend:info.OnBegin,

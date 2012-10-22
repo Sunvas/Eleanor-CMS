@@ -68,8 +68,8 @@ class Blocks
 						{							$vars=$a['vars'] ? (array)unserialize($a['vars']) : array();
 							if($a['config'])
 								$vars['CONFIG']=$a['config'] ? (array)unserialize($a['config']) : array();							$a['text']=Eleanor::LoadFileTemplate(Eleanor::$root.$a['file'],$vars);
-							if(is_object($a['text']) and $a['text'] instanceof Template and $a['text']->s=='')
-								$a['text']=false;
+							if(is_object($a['text']) and $a['text'] instanceof Template)
+								$a['text']=(string)$a['text'];
 						}
 					}
 					else

@@ -64,14 +64,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 			{				OnBegin:function(){ CORE.ShowLoading() },
 				OnEnd:function(){ CORE.HideLoading() },
 				OnSuccess:function(){},
-				OnFail:function(s)
-				{					if($.isPlainObject(s))
-					{						var r="";
-						$.each(s,function(k,v){							r+=$.isNumeric(k) && CORE.Lang(v) ? CORE.Lang(v) : v;
-							r+="\n";						})
-						s=r;					}
-					alert(s);
-				}			},
+				OnFail:function(s){ alert(s) }			},
 			info
 		);
 		CORE.in_ajax.push(true);

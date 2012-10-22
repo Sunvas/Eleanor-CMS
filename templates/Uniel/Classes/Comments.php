@@ -226,23 +226,20 @@ class TplComments
 	{		$lang=Eleanor::$Language['comments'];
 		$ltpl=Eleanor::$Language['tpl'];		$author=isset($authors[$c['author_id']]) ? $authors[$c['author_id']] : false;
 		$group=$author && isset($groups[$author['_group']]) ? $groups[$author['_group']] : false;
-		if(!$author)
-			$avatar='images/avatars/guest.png';
-		else
-			switch($author['avatar_location'] ? $author['avatar_type'] : '')
-			{
-				case'local':
-					$avatar='images/avatars/'.$author['avatar_location'];
-				break;
-				case'upload':
-					$avatar=Eleanor::$uploads.'/avatars/'.$author['avatar_location'];
-				break;
-				case'url':
-					$avatar=$author['avatar_location'];
-				break;
-				default:
-					$avatar='images/avatars/user.png';
-			}
+		switch($author && $author['avatar_location'] ? $author['avatar_type'] : '')
+		{
+			case'local':
+				$avatar='images/avatars/'.$author['avatar_location'];
+			break;
+			case'upload':
+				$avatar=Eleanor::$uploads.'/avatars/'.$author['avatar_location'];
+			break;
+			case'url':
+				$avatar=$author['avatar_location'];
+			break;
+			default:
+				$avatar=Eleanor::$vars['noavatar'];
+		}
 		static$maw,$mah;
 		if(!isset($maw,$mah))
 			list($maw,$mah)=explode(' ',Eleanor::$vars['avatar_size']);

@@ -10,7 +10,7 @@
 */
 $parent=isset($parent) ? (int)$parent : false;
 $exclude=isset($exclude) ? (int)$exclude : 0;
-$menu=Eleanor::$Cache->Get('menu_multiline_'.Language::$main.$parent);
+$menu=Eleanor::$Cache->Get('menu_multiblock_'.Language::$main.$parent);
 if($menu===false)
 {
 	$p='';
@@ -74,13 +74,15 @@ if($menu===false)
 	if(!class_exists('ApiMenu',false))
 		include Eleanor::$root.'modules/menu/api.php';
 
-	$menu=ApiMenu::BuildMultilineMenu($menu,'<nav><ul id="linemenu" class="topmenu">').'</nav><script type="text/javascript">//<![CDATA[
+	$menu=ApiMenu::BuildMultilineMenu($menu,'<nav><ul id="blockmenu" class="blockmenu">').'</nav><script type="text/javascript">//<![CDATA[
 $(function(){
 	CORE.AddScript("js/menu_multilevel.js",function(){
-		$("#linemenu").MultiLevelMenu();
+		var li=$("#blockmenu").MultiLevelMenu({type:"col"}).children("li"),
+			h=li.outerHeight();
+		$("#blockmenu").height(h*li.size());
 	});
 });//]]></script>';
 
-	Eleanor::$Cache->Put('menu_multiline_'.Language::$main.$parent,$menu);
+	Eleanor::$Cache->Put('menu_multiblock_'.Language::$main.$parent,$menu);
 }
 return$menu;

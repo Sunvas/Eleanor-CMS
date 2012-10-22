@@ -77,7 +77,7 @@ class Strings extends BaseClass
 							$a[$param]=$m[0][0];
 						else
 						{
-							$a[$param]=true;#ќбрубаем "вис€чие" параметры.
+							$a[$param]=$param;#ќбрубаем "вис€чие" параметры.
 							break 2;
 						}
 						$cur=$m[0][1]+strlen($m[0][0]);
@@ -89,7 +89,7 @@ class Strings extends BaseClass
 				if(isset($m[2]))
 					$finp=true;
 				else
-					$a[$param]=true;#ќбрубаем "вис€чие" параметры.
+					$a[$param]=$param;#ќбрубаем "вис€чие" параметры.
 				$cur=$m[0][1]+strlen($m[0][0]);
 			}
 			else

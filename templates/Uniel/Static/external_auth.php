@@ -2,7 +2,7 @@
 /*
 	Ёлемент шаблона. ќтображает кнопки дл€ осуществлени€ внешней авторизации, использу€ систему идентификации Loginza. http://loginza.ru
 */
-if(!defined('CMS'))die;?><a style="text-decoration:none" href="#" class="externals loginza">
+if(!defined('CMS'))die;?><a style="text-decoration:none" href="#" class="externals">
 <img src="http://loginza.ru/img/providers/vkontakte.png" title="¬ онтакте" />
 <img src="http://loginza.ru/img/providers/facebook.png" title="Facebook" />
 <img src="http://loginza.ru/img/providers/google.png" title="Google Accounts" />

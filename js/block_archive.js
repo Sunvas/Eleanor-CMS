@@ -13,35 +13,32 @@ CORE.Archive=function(opts)
 			month:today.getMonth(),
 			year:today.getFullYear(),
 			event:"archive",
-			container:"",
-			yearp:".y-prev",
-			yearn:".y-next",
-			monthp:".m-prev",
-			monthn:".m-next"		},
+			container:".blockcalendar",
+			yearp:".yearplus",
+			yearm:".yearminus",
+			monthp:".monthplus",
+			monthm:".monthminus"		},
 		opts	);
 	var c=$(opts.container),
-		cache={},
 		Go=function()
-		{			var k=opts.year+"-"+opts.month;			if(typeof cache[k]=="undefined")
-				CORE.Ajax(
-					{
-						module:opts.module,
-						language:CORE.language,
-						event:"archive",
-						month:opts.month,
-						year:opts.year
-					},
-					function(r)
-					{						cache[r.year+"-"+r.month]=r.archive;
-						c.html(r.archive);
-						opts.month=r.month;
-						opts.year=r.year;
-					}
-				);
-			else
-				c.html(cache[k]);
+		{
+			CORE.Ajax(
+				{
+					module:opts.module,
+					language:CORE.language,
+					event:"archive",
+					month:opts.month,
+					year:opts.year
+				},
+				function(r)
+				{
+					c.html(r.archive);
+					opts.month=r.month;
+					opts.year=r.year;
+				}
+			)
 		},
-		YearN=function(){
+		YearP=function(){
 			if(opts.year<today.getFullYear())
 			{
 				opts.year++;
@@ -49,29 +46,28 @@ CORE.Archive=function(opts)
 			}
 			return false;
 		},
-		YearP=function(){
+		YearM=function(){
 			if(opts.year>1991)
 			{
 				opts.year--;
 				Go();
 			}
 			return false;
-		};
-	cache[opts.year+"-"+opts.month]=c.html();
+		}
 
-	c.on("click",opts.yearp,YearN)
-	.on("click",opts.yearn,YearP)
-	.on("click",opts.monthn,function(){		if(opts.month>=12)
+	c.on("click",opts.yearp,YearP)
+	.on("click",opts.yearm,YearM)
+	.on("click",opts.monthp,function(){		if(opts.month>=12)
 		{			opts.month=1;
-			YearN();		}
+			YearP();		}
 		else
 		{			opts.month++;
 			Go();		}
 		return false;	})
-	.on("click",opts.monthp,function(){		if(opts.month<=1)
+	.on("click",opts.monthm,function(){		if(opts.month<=1)
 		{
 			opts.month=12;
-			YearP();
+			YearM();
 		}
 		else
 		{

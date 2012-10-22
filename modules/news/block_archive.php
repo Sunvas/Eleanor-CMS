@@ -51,10 +51,11 @@ else
 
 include_once dirname(__file__).'/block_archive_funcs.php';
 $days=ArchiveDays($y,$m,$conf,$mname);
+$lang=Eleanor::$Language->Load(dirname(__file__).'/lang_blocks-*.php',false);
 
 try
 {
-	return Eleanor::$Template->BlockArchive($days,$mname,false,$months);
+	return Eleanor::$Template->BlockArchive($days,$lang,$mname,false,$months);
 }
 catch(EE$E)
 {	return'BlockArchive is missed';}

@@ -9,26 +9,25 @@ global$Eleanor;
 $ma=array_keys($Eleanor->modules['sections'],'account');
 $ma=reset($ma);
 if(Eleanor::$Login->IsUser()):
-	$user=Eleanor::$Login->GetUserValue(array('name','avatar_type','avatar_location'));
-	switch($user['avatar_location'] ? $user['avatar_type'] : '')
+	switch(Eleanor::$Login->user['avatar_type'] && Eleanor::$Login->user['avatar_location'] ? Eleanor::$Login->user['avatar_type'] : '')
 	{
 		case'local':
-			$avatar='images/avatars/'.$user['avatar_location'];
+			$avatar='images/avatars/'.Eleanor::$Login->user['avatar_location'];
 		break;
 		case'upload':
-			$avatar=Eleanor::$uploads.'/avatars/'.$user['avatar_location'];
+			$avatar=Eleanor::$uploads.'/avatars/'.Eleanor::$Login->user['avatar_location'];
 		break;
 		case'url':
-			$avatar=$user['avatar_location'];
+			$avatar=Eleanor::$Login->user['avatar_location'];
 		break;
 		default:
-			$avatar='images/avatars/user.png';
+			$avatar=Eleanor::$vars['noavatar'];
 	}
 ?>
 <div class="blocklogin"><div class="dbottom"><div class="dtop">
 	<div class="dcont">
-	<?php if($avatar):?><a href="<?php echo Eleanor::$vars['link_options']?>"><img style="float:left;margin-right:10px;width:40px;" src="<?php echo$avatar?>" alt="<?php echo$user['name']?>" /></a><?php endif?>
-	<h5 style="padding-top: 4px;"><?php echo sprintf($ltpl['hello'],'<a href="'.Eleanor::$vars['link_options'].'">'.$user['name'].'</a>')?></h5>
+	<?php if($avatar):?><a href="<?php echo Eleanor::$vars['link_options']?>"><img style="float:left;margin-right:10px;width:40px;" src="<?php echo$avatar?>" alt="<?php echo Eleanor::$Login->GetUserValue('name')?>" /></a><?php endif?>
+	<h5 style="padding-top: 4px;"><?php echo$ltpl['hello']?><a href="<?php echo Eleanor::$vars['link_options']?>"><?php echo Eleanor::$Login->GetUserValue('name')?></a>!</h5>
 	<div><?php if(Eleanor::$Permissions->IsAdmin()):?><a href="<?php echo Eleanor::$services['admin']['file']?>"><?php echo$ltpl['adminka']?></a> | <?php endif; ?><a href="<?php echo$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>$ma,'do'=>'logout'),false,'')?>"><?php echo$ltpl['exit']?></a>
 <?php if($GLOBALS['Eleanor']->multisite):
 echo Eleanor::Select(false,Eleanor::Option($ltpl['msjump'],'',true),array('id'=>'msjump','style'=>'width:100%','onchange'=>'CORE.MSJump($(this).val())'))?>
@@ -68,7 +67,7 @@ $(function(){
 CORE.MSQueue.done(function(qw){	var al=$(".externals");	$.each(qw,function(k,v){		var a=$("<a>").prop({			href:"#",
 			title:v.name,
 			style:"font-weight:bold"		}).text(v.title).click(function(){			CORE.MSLogin(k);
-			return false;		});		al.each(function(){			$(this).append("<br />").append(a);
+			return false;		})		al.each(function(){			$(this).append("<br />").append(a);
 			a=a.clone(true);		});	})});
 //]]></script>
 <?php endif;endif;?>

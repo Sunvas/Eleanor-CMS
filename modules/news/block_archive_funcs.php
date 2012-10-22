@@ -30,13 +30,9 @@ function ArchiveDays($y,$m,$conf,$mname,$dates=false)
 
 			$R=Eleanor::$Db->Query('SELECT MIN(`pinned`) `min`,MAX(`pinned`) `max` FROM `'.$conf['t'].'` WHERE `status`=1 AND `pinned`>\'0000-00-00 00:00:00\'');
 			$b=$R->fetch_assoc();
-			if(isset($b['min'],$b['max']))
-			{
-				$R=Eleanor::$Db->Query('SELECT LEAST(\''.$a['min'].'\',\''.$b['min'].'\') `min`,GREATEST(\''.$a['max'].'\',\''.$b['max'].'\') `max`');
-				$data+=$R->fetch_assoc();
-			}
-			else
-				$data+=$a;
+
+			$R=Eleanor::$Db->Query('SELECT LEAST(\''.$a['min'].'\',\''.$b['min'].'\') `min`,GREATEST(\''.$a['max'].'\',\''.$b['max'].'\') `max`');
+			$data+=$R->fetch_assoc();
 		}
 		if($data['min'])
 		{			#Поскольку мы можем запросить август 2012го, но минимальная новость датирована лишь 20м августа, сбрасываем "минимальный" день с 20го на 1й

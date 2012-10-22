@@ -22,7 +22,7 @@ $Eleanor->Url->delimiter=Eleanor::$vars['url_static_delimiter'];
 $Eleanor->Url->defis=Eleanor::$vars['url_static_defis'];
 $Eleanor->Url->ending=Eleanor::$vars['url_static_ending'];
 
-if(isset($_GET['newtpl']) and Eleanor::$vars['templates'] and in_array($_GET['newtpl'],Eleanor::$vars['templates']))
+if(isset($_GET['newtpl']) and Eleanor::$vars['templates'] and $themes=unserialize(Eleanor::$vars['templates']) and in_array($_GET['newtpl'],$themes))
 {
 	if(Eleanor::$Login->IsUser())
 		UserManager::Update(array('theme'=>$_GET['newtpl']));
@@ -111,7 +111,7 @@ if(Eleanor::$vars['multilang'])
 	}
 
 	if(LANGUAGE!=Language::$main)
-		$Eleanor->Url->special.=$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[Language::$main]['uri']),false,false);
+		$Eleanor->Url->special.=$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[Language::$main]['uri']),false,false).$Eleanor->Url->GetDel();
 
 	foreach(Eleanor::$lvars as $k=>&$v)
 		Eleanor::$vars[$k]=Eleanor::FilterLangValues($v);
@@ -474,6 +474,7 @@ function MainPage($tm=false,$ending='')
 		return ExitPage();
 	}while(false);
 
+	$Eleanor->module=array('general'=>true,'section'=>'mainpage');
 	#“ут мы по-умолчанию грузим модуль главной страницы, который настраиваетс€ в админке. Ќо никто не мешает пихануть сюда что-то свое.
 	Modules::Load(Eleanor::$root.'modules/mainpage/');
 }

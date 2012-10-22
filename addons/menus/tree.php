@@ -10,7 +10,7 @@
 */
 $parent=isset($parent) ? (int)$parent : false;
 $exclude=isset($exclude) ? (int)$exclude : 0;
-$menu=Eleanor::$Cache->Get('menu_multiline_'.Language::$main.$parent);
+$menu=Eleanor::$Cache->Get('menu_tree_'.Language::$main.$parent);
 if($menu===false)
 {
 	$p='';
@@ -26,10 +26,13 @@ if($menu===false)
 	$menu=$to1sort=$to2sort=$db=$excl=array();
 	$R=Eleanor::$Db->Query('SELECT `id`,`title`,`url`,`eval_url`,`params`,`parents`,`pos`,`status` FROM `'.P.'menu` LEFT JOIN `'.P.'menu_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\')'.($p ? ' AND `parents` LIKE \''.$p.'%\'' : '').' ORDER BY `parents` ASC, `pos` ASC');
 	while($a=$R->fetch_assoc())
-	{		foreach($excl as $v)
+	{
+		foreach($excl as $v)
 			if(strpos($a['parents'],$v)===0)
-				continue;		if($a['id']==$exclude or !$a['status'])
-		{			$excl[]=$a['parents'].$a['id'].',';
+				continue;
+		if($a['id']==$exclude or !$a['status'])
+		{
+			$excl[]=$a['parents'].$a['id'].',';
 			continue;
 		}
 
@@ -74,13 +77,29 @@ if($menu===false)
 	if(!class_exists('ApiMenu',false))
 		include Eleanor::$root.'modules/menu/api.php';
 
-	$menu=ApiMenu::BuildMultilineMenu($menu,'<nav><ul id="linemenu" class="topmenu">').'</nav><script type="text/javascript">//<![CDATA[
+	$u=uniqid();
+	$menu=ApiMenu::BuildMultilineMenu($menu,'<nav><ul class="blockcategories" id="q'.$u.'">').'</nav><script type="text/javascript">//<![CDATA[
 $(function(){
-	CORE.AddScript("js/menu_multilevel.js",function(){
-		$("#linemenu").MultiLevelMenu();
-	});
+	$("#q'.$u.' li:has(ul)").addClass("subcat").each(function(i){
+		var img=$("<img>").css({cursor:"pointer","margin-right":"3px"}).prop({src:"'.Eleanor::$Template->default['theme'].'images/minus.gif",title:"+"}).prependTo(this).click(function(){
+			if(localStorage.getItem("bm"+i))
+			{				$(this).prop({src:"'.Eleanor::$Template->default['theme'].'images/plus.gif",title:"+"}).next().next().hide();
+				localStorage.removeItem("bm"+i);
+			}
+			else
+			{
+				$(this).prop({src:"'.Eleanor::$Template->default['theme'].'images/minus.gif",title:"-"}).next().next().show();
+				try
+				{
+					localStorage.setItem("bm"+i,"1");
+				}catch(e){}
+			}
+		});
+		if(!localStorage.getItem("bm"+i))
+			img.prop({src:"'.Eleanor::$Template->default['theme'].'images/plus.gif",title:"+"}).next().next().hide();
+	}).find("ul").css("margin-left","4px");
 });//]]></script>';
 
-	Eleanor::$Cache->Put('menu_multiline_'.Language::$main.$parent,$menu);
+	Eleanor::$Cache->Put('menu_tree_'.Language::$main.$parent,$menu);
 }
 return$menu;

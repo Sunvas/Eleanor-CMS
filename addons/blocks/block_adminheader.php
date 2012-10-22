@@ -107,25 +107,24 @@ if($AL->IsUser())
 	echo'<div class="clr"></div></div>
 	<script type="text/javascript">//<![CDATA[
 $(function(){	$("a.mlink").MainMenu();
-	var ab=$("#adminblockh"),
-		h=$("#adminblockf").height()+"px",
-		abf=$("#adminblockf");
+	var d=$("#adminblockh");
 	if(localStorage.getItem("ahfu"))
 	{
-		ab.addClass("active");
-		abf.addClass("fixmenupanel").next().css("margin-top",h)
+		d.addClass("active");
+		$("#adminblockf").addClass("fixmenupanel");
+		$(".wrapper:first").css("margin-top","39px")
 	}
 
-	$("#adminblockh a").click(function(){		abf.toggleClass("fixmenupanel");
-		if(ab.is(".active"))
-		{			ab.removeClass("active");
-			abf.next().css("margin-top",0);
+	$("#adminblockh a").click(function(){		$("#adminblockf").toggleClass("fixmenupanel");
+		if(d.is(".active"))
+		{			d.removeClass("active");
+			$(".wrapper:first").css("margin-top",0)
 			scroll(0,0);
 			localStorage.removeItem("ahfu");
 		}
 		else
-		{			ab.addClass("active");
-			abf.next().css("margin-top",h);
+		{			$(".wrapper:first").css("margin-top","39px")
+			d.addClass("active");
 			localStorage.setItem("ahfu","1");
 		}
 		return false;	});

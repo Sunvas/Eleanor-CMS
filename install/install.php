@@ -273,7 +273,7 @@ else
 				#—юда можно добавить по€са по-умолчанию
 				if(in_array('Europe/Kiev',$tzo))
 					$tzo='Europe/Kiev';
-				elseif(in_array('Europe/Moscow'))
+				elseif(in_array('Europe/Moscow',$tzo))
 					$tzo='Europe/Moscow';
 				else
 					$tzo=reset($tzo);

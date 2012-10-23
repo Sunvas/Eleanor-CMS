@@ -1115,7 +1115,7 @@ $(function(){
 			_main - флаг основной группы
 	*/
 	public static function AcUserInfo($groups)
-	{
+	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$user=$GLOBALS['Eleanor']->module['user'];
 		$C=static::Menu('view','main','main');
 		$ogr=$mgr='';
@@ -1159,13 +1159,13 @@ $(function(){
 				$gender=static::$lang['nogender'];
 		}
 		$personal=(string)$Lst->begin()
-			->item(static::$lang['gender'],$gender)
-			->item(static::$lang['bio'],$user['bio'] ? $user['bio'] : '&mdash;')
-			->item(static::$lang['interests'],$user['interests'] ? $user['interests'] : '&mdash;')
-			->item(static::$lang['location'],$user['location'] ? $user['location'] : '&mdash;')
-			->item(static::$lang['site'],$user['site'] ? $user['site'] : '&mdash;')
-			->item(static::$lang['signature'],$user['signature'] ? $user['signature'] : '&mdash;')
-			->item(static::$lang['timezone'],$user['timezone'] ? $user['timezone'] : '<i>'.static::$lang['by_default'].'</i>')
+			->item($lang['gender'],$gender)
+			->item($lang['bio'],$user['bio'] ? $user['bio'] : '&mdash;')
+			->item($lang['interests'],$user['interests'] ? $user['interests'] : '&mdash;')
+			->item($lang['location'],$user['location'] ? $user['location'] : '&mdash;')
+			->item($lang['site'],$user['site'] ? $user['site'] : '&mdash;')
+			->item($lang['signature'],$user['signature'] ? $user['signature'] : '&mdash;')
+			->item($lang['timezone'],$user['timezone'] ? $user['timezone'] : '<i>'.$lang['by_default'].'</i>')
 			->end();
 
 		$user['skype']=htmlspecialchars($user['skype'],ELENT,CHARSET,false);
@@ -1175,7 +1175,7 @@ $(function(){
 			->item('Jabber',$user['jabber'] ? $user['jabber'] : '&mdash;')
 			->item('Skype',$user['skype'] ? '<a href="skype:'.$user['skype'].'">'.$user['skype'].'</a>' : '&mdash;')
 			->item('ICQ',$user['icq'] ? '<img src="http://status.icq.com/online.gif?icq='.$user['icq'].'&amp;img=5" alt="'.$icq.'" title="'.$icq.'" /> '.$icq : '&mdash;')
-			->item(static::$lang['vk'],$user['vk'] ? $user['vk'] : '&mdash;')
+			->item($lang['vk'],$user['vk'] ? $user['vk'] : '&mdash;')
 			->item('Twitter',$user['twitter'] ? $user['twitter'] : '&mdash;')
 			->end();
 
@@ -1193,8 +1193,8 @@ $(function(){
 			$Lst->item(static::$lang['lang'],$user['language'] && isset(Eleanor::$langs[$user['language']]) ? '<span title="'.$user['language'].'">'.Eleanor::$langs[$user['language']]['name'].'</span>' : '<i>'.static::$lang['by_default'].'</i>');
 		$Lst->end()
 			->tabs(
-				array(static::$lang['personal'],$personal),
-				array(static::$lang['connect'],$connect)
+				array($lang['personal'],$personal),
+				array($lang['connect'],$connect)
 			);
 		return$C.$Lst;
 	}

@@ -280,7 +280,7 @@ $(function(){
 		ќписание остальных переменных доступно в методе List
 	*/
 	public static function TagsList($tag,$data,$cnt,$page,$pp,$links)
-	{		return static::TopMenu(sprintf(static::$lang['wt'],$tag['name']))
+	{		return static::TopMenu(reset($GLOBALS['title']))
 			.($data['items'] ? self::List_($data).Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,-$page,$links['pages']) : Eleanor::$Template->Message(sprintf(static::$lang['notag'],$tag['name']),'info'));	}
 
 	/*

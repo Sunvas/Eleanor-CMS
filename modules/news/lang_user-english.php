@@ -5,12 +5,15 @@ return array(
 	'my'=>'My news',
 	'deleted'=>'Successfully removed',
 	'delc'=>'Confirm delete',
-	'search_limit'=>'You can use the search again in %s seconds! Wait %s seconds.',
-	'sym_limit'=>'The search query must be at least %s characters!',
+	'search_limit'=>function($s1,$s2){ return'You can use the search again in '.$s1.' second'.($s1>1 ? 's' : '').'! Wait '.$s2.' second'.($s2>1 ? 's' : '').'.'; },
+	'sym_limit'=>function($ch){ return'The search query must be at least '.$ch.' character'.($ch>1 ? 's' : '').'!'; },
 	'notofind'=>'Not specified search criteria',
 	'categs'=>'Categories',
 	'tags'=>'Tags',
 	'search'=>'Search',
+	'from'=>'News from category &quot;%s&quot;',
+	'for'=>'News for %s',
+	'wt'=>'News with tag &quot;%s&quot;',
 
 	#For user/addedit.php
 	'adding'=>'Adding news',

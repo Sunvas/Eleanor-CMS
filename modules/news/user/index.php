@@ -44,7 +44,7 @@ if(isset($_GET['do']))
 			$R=Eleanor::$Db->Query('SELECT `id`,`name`,`cnt` FROM `'.$mc['tt'].'` WHERE `name`=\''.Eleanor::$Db->Escape($tag,false).'\' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
 			if(!$tag=$R->fetch_assoc())
 				return ExitPage();
-			$title[]=$tag['name'];
+			$title[]=sprintf($lang['wt'],$tag['name']);
 
 			/*
 				$R=Eleanor::$Db->Query('SELECT COUNT(`tag`) FROM `'.$mc['rt'].'` WHERE `tag`='.$tag['id']);
@@ -211,12 +211,12 @@ if(isset($_GET['do']))
 					);
 					if($ch=$T->Check('search',false))
 					{
-						$error=sprintf($lang['search_limit'],Eleanor::$Permissions->SearchLimit(),$ch['_datets']-time());
+						$error=$lang['search_limit'](Eleanor::$Permissions->SearchLimit(),$ch['_datets']-time());
 						break;
 					}
 					if($values['text'] and mb_strlen($values['text'])<3)
 					{
-						$error=sprintf($lang['sym_limit'],3);
+						$error=$lang['sym_limit'](3);
 						break;
 					}
 					$seladd=$order='';

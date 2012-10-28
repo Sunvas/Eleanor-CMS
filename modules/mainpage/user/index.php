@@ -56,6 +56,7 @@ $c=ob_get_contents();
 ob_end_clean();
 $Eleanor->started=false;
 $title=false;
-unset($Eleanor->module['description']);
+if(isset($Eleanor->module))
+	unset($Eleanor->module['description']);
 Start();
 echo$c;

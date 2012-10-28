@@ -100,6 +100,22 @@ else
 					file_get_contents(Eleanor::$root.'robots.txt')
 				)
 			);
+			file_put_contents(
+				Eleanor::$root.'.htaccess',
+				str_replace(
+					array(
+						'{full}',
+						'{shost}',
+						'{sprotocol}'
+					),
+					array(
+						PROTOCOL.Eleanor::$punycode.$path,
+						preg_quote(Eleanor::$punycode),
+						preg_quote(PROTOCOL),
+					),
+					file_get_contents(Eleanor::$root.'.htaccess')
+				)
+			);
 			$url1='http://'.Eleanor::$domain.$path.'index.php';
 			$url2='http://'.Eleanor::$domain.$path.'admin.php';
 			$title=$lang['install_finished'];

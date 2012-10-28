@@ -35,8 +35,42 @@ switch($step)
 			$navi=$title=$lang['finish'];
 			Install::IncludeDb();
 
+			$path=preg_replace('#install/$#','',Eleanor::$site_path);
+			file_put_contents(
+				Eleanor::$root.'robots.txt',
+				str_replace(
+					array(
+						'{domain}',
+						'{protocol}',
+						'{site_path}'
+					),
+					array(
+						Eleanor::$domain,
+						PROTOCOL,
+						$path,
+					),
+					file_get_contents(Eleanor::$root.'robots.txt')
+				)
+			);
+			file_put_contents(
+				Eleanor::$root.'.htaccess',
+				str_replace(
+					array(
+						'{full}',
+						'{shost}',
+						'{sprotocol}'
+					),
+					array(
+						PROTOCOL.Eleanor::$punycode.$path,
+						preg_quote(Eleanor::$punycode),
+						preg_quote(PROTOCOL),
+					),
+					file_get_contents(Eleanor::$root.'.htaccess')
+				)
+			);
+
 			$text='<div class="wpbox wpbwhite"><div class="wptop"><b>&nbsp;</b></div><div class="wpmid"><div class="wpcont"><div class="information" style="text-align:center"><h4 style="color: green;">'.$title.'</h4></div><div class="information">'.sprintf($lang['upd_fin'],ELEANOR_VERSION).'</div><div class="submitline">'
-			.sprintf($lang['mback'],PROTOCOL.Eleanor::$punycode.dirname(Eleanor::$site_path).'/').'</div></div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';
+				.sprintf($lang['mback'],PROTOCOL.Eleanor::$punycode.dirname(Eleanor::$site_path).'/').'</div></div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';
 			break;
 		}
 	case 4:

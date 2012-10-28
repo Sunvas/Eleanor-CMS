@@ -254,20 +254,20 @@ function AddEdit($id,$errors=array())
 				if(!Eleanor::$vars['multilang'] and (!$temp['language'] or $temp['language']==Language::$main))
 				{
 					foreach(array_slice($temp,1) as $tk=>$tv)
-						$values[$tk]['value']=$tv;
+						$values[$tk]=$tv;
 					if(!$temp['language'])
 						break;
 				}
 				elseif(!$temp['language'] and Eleanor::$vars['multilang'])
 				{
 					foreach(array_slice($temp,1) as $tk=>$tv)
-						$values[$tk]['value'][Language::$main]=$tv;
+						$values[$tk][Language::$main]=$tv;
 					$values['_onelang']=true;
 					break;
 				}
 				elseif(Eleanor::$vars['multilang'] and isset(Eleanor::$langs[$temp['language']]))
 					foreach(array_slice($temp,1) as $tk=>$tv)
-						$values[$tk]['value'][$temp['language']]=$tv;
+						$values[$tk][$temp['language']]=$tv;
 			if(!is_array($values['title']) or count($values['title'])==1 and isset($values['title'][LANGUAGE]))
 				$values['_onelang']=true;
 			if(Eleanor::$vars['multilang'])
@@ -326,7 +326,7 @@ function AddEdit($id,$errors=array())
 			{
 				$values['innertitle'][$k]=isset($_POST['innertitle'][$k]) ? (string)$_POST['innertitle'][$k] : '';
 				$values['title'][$k]=isset($_POST['title'][$k]) ? (string)$_POST['title'][$k] : '';
-				$values['text'][$k]=isset($_POST['text'][$k]) ? $Eleanor->Editor_result->GetHtml($_POST['text'][$k],true) : '';
+				$values['text'][$k]=isset($_POST['text'][$k]) ? $Eleanor->Editor_result->GetHtml((string)$_POST['text'][$k],true) : '';
 			}
 		else
 		{

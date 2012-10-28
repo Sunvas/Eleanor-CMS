@@ -75,16 +75,16 @@ class TPLSpam
 			foreach($items as $k=>&$v)
 			{				switch($v['status'])
 				{					case'runned':
-						$status='<progress data-id="'.$v['id'].'" style="width:100%" value="'.$v['sent'].'" max="'.$v['total'].'" title="'.($pers=$v['total']>0 ? round($v['sent']/$v['total']*100,2) : 0).'%"><span>'.$pers.'</span>%</progress><br /><a href="'.$a['_astop'].'">'.$lang['stop'].'</a> <a href="'.$a['_apause'].'">'.$lang['pause'].'</a>';
+						$status='<progress data-id="'.$v['id'].'" style="width:100%" value="'.$v['sent'].'" max="'.$v['total'].'" title="'.($pers=$v['total']>0 ? round($v['sent']/$v['total']*100,2) : 0).'%"><span>'.$pers.'</span>%</progress><br /><a href="'.$v['_astop'].'">'.$lang['stop'].'</a> <a href="'.$v['_apause'].'">'.$lang['pause'].'</a>';
 					break;					case'paused':
-						$status=$lang['paused'].' '.$v['statusdate'].'<br /><a href="'.$a['_astop'].'">'.$lang['stop'].'</a> <a href="'.$a['_arun'].'">'.$lang['run'].'</a>';
+						$status=$lang['paused'].' '.$v['statusdate'].'<br /><a href="'.$v['_astop'].'">'.$lang['stop'].'</a> <a href="'.$v['_arun'].'">'.$lang['run'].'</a>';
 					break;
 					case'finished':
-						$status='<span style="color:green">'.$lang['finished'].' '.$v['statusdate'].'</span><br /><a href="'.$a['_arun'].'">'.$lang['+run'].'</a>';
+						$status='<span style="color:green">'.$lang['finished'].' '.$v['statusdate'].'</span><br /><a href="'.$v['_arun'].'">'.$lang['+run'].'</a>';
 					break;
 					case'stopped':
 					default:
-						$status='<span style="color:red">'.$lang['stopped'].' '.$v['statusdate'].'</span><br /><a href="'.$a['_arun'].'">'.$lang['run'].'</a>';
+						$status='<span style="color:red">'.$lang['stopped'].' '.$v['statusdate'].'</span><br /><a href="'.$v['_arun'].'">'.$lang['run'].'</a>';
 				}
 				$Lst->item(
 					'<a href="'.$v['_aedit'].'">'.$v['title'].'</a>',

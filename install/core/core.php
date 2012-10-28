@@ -86,6 +86,9 @@ class Install
 		elseif(!is_writeable(Eleanor::$root.'cache'))
 			$towrite[]='<span style="color:red">/cache</span>';
 
+		if(!is_writeable(Eleanor::$root.'.htaccess'))
+			$towrite[]='<span style="color:red">.htaccess</span>';
+
 		if(!defined('UPDATE'))
 			if(!is_dir(Eleanor::$root.'install'))
 				$toex[]='<span style="color:red">/install</span>';

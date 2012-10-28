@@ -132,7 +132,6 @@ class Url extends BaseClass
 			if($e===true)
 				$e='';
 
-			//die(var_dump($p,$r,$this->d_prefix));
 			$r=$r ? $pr.join('&amp;',$r).($e===false ? '&amp;' : $e) : ($e===false ? $pr : preg_replace('#(&amp;|&|\?)$#','',$pr).$e);
 		}
 		return$r;
@@ -235,7 +234,7 @@ class Url extends BaseClass
 		if($rep===false)#ToDo! parent::framework
 			$rep=Eleanor::$vars['url_rep_space'];
 
-		$s=preg_replace(array('`('.preg_quote($this->defis,'#').'|'.preg_quote($this->delimiter,'#').'|[\\\\=\s#,"\'\\/:*\?&\+<>%\|])+`','#('.preg_quote($this->ending,'#').')+$#'),$rep,$s);
+		$s=preg_replace(array('`('.preg_quote($this->defis,'`').'|'.preg_quote($this->delimiter,'`').'|[\\\\=\s#,"\'\\/:*\?&\+<>%\|])+`','#('.preg_quote($this->ending,'#').')+$#'),$rep,$s);
 		$rep=preg_quote($rep,'#');
 		return preg_replace('#^('.$rep.')+|('.$rep.')+$#','',$s);
 	}
@@ -280,21 +279,19 @@ class Url extends BaseClass
 	public function __construct($qs=false)
 	{
 		if($qs===false)
-			$qs=$_SERVER['QUERY_STRING'];
-		if($qs)
-		{			if(strpos($qs,'!')===0)
-			{				$qs=substr($qs,1);				$ap=strpos($qs,'&');
-				$cp=$ap===false ? false : strpos($qs,'=',$ap);
-			}
-			else
-			{
-				$cp=strpos($qs,'=');
-				$ap=strpos($qs,'&');
-			}
-			$this->is_static=$cp===false || $ap!==false && $cp>$ap;
-			if($this->is_static and $ap!==false)
+			$qs=isset($_SERVER['REDIRECT_QUERY_STRING']) ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
+		if(strpos($qs,'!')===0)
+		{
+			$qs=substr($qs,1);
+			$ap=strpos($qs,'!&');
+
+			if($ap!==false)
 				$qs=substr($qs,0,$ap);
+			elseif(preg_match('#.*!$#',$qs)>0)
+				$qs=substr($qs,0,-1);
+
 			$this->string=static::Decode($qs);
+			$this->is_static=true;
 		}
 		$this->file=Eleanor::$filename;
 	}

@@ -42,11 +42,10 @@ class TplIndex
 			'hash'=>false,
 		);
 		$h=$a['hash'] ? '#'.$a['hash'] : '';
-		$pages=ceil($a[0]/$a['pp']);
-
-		if($reverse=$a['page']<0)
+		if($reverse=$a['page']<0)
 			$a['page']=-$a['page'];
 
+		$pages=$reverse ? (int)$a[0]/$a['pp'] : ceil($a[0]/$a['pp']);
 		if($pages>1)
 		{			$js=static::PageUrl($a,'{page}');
 			$js=str_replace('%7Bpage%7D','{page}',$js);

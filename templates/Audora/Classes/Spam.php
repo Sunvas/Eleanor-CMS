@@ -281,7 +281,7 @@ class TPLSpam
 					array(substr($v['last_visit'],0,-3),'center'),
 					$Lst('func',
 						array($v['_aedit'],$ltpl['edit'],$editimg),
-						$v['_adel'] ? array($v['_adel'],Eleanor::$Language['main']['delete'],$delimg) : false
+						$v['_adel'] ? array($v['_adel'],$ltpl['delete'],$delimg) : false
 					)
 				);
 			}

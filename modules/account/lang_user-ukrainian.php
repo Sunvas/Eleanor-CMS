@@ -18,8 +18,8 @@ return array(
 	#Для user/guest/login.php	'TEMPORARILY_BLOCKED'=>'У зв\'язку з частим введенням неправильного пароля, аккаунт заблоковано!<br />Повторіть спробу через %s хвилин(и).',
 
 	#Для user/guest/register.php
-	'NAME_TOO_LONG'=>'Довжина імені користувача не повинна перевищувати %s символів. Ви ввели %s символів.',
-	'PASS_TOO_SHORT'=>'Довжина пароля повинна бути мінімум %s символів. Ви ввели тільки %s символів.',
+	'NAME_TOO_LONG'=>function($l,$e){ return'Довжина імені користувача не повинна перевищувати '.$l.Ukrainian::Plural($l,array(' символ',' символи',' символів')).' символів. Ви ввели '.$e.Ukrainian::Plural($e,array(' символ',' символи',' символів')).' символів.'; },
+	'PASS_TOO_SHORT'=>function($l,$e){ return'Довжина пароля повинна бути мінімум '.$l.Ukrainian::Plural($l,array(' символ',' символи',' символів')).' символів. Ви ввели тільки '.$e.Ukrainian::Plural($e,array(' символ',' символи',' символів')).' символів.'; },
 	'form_reg'=>'Форма реєстрації',
 	'reg_fin'=>'Реєстрація завершена!',
 	'wait_act'=>'Очікування активації',
@@ -33,6 +33,9 @@ return array(
 
 	#Для user/user/changepass.php
 	'changing_pass'=>'Зміна пароля',
+
+	#Для user/user/externals.php
+	'externals'=>'Зовнішні сервіси',
 
 	#Для user/user/settings.php
 	'site'=>'Сайт',

@@ -31,12 +31,12 @@ class CacheMachineMemCache implements CacheMachineInterface
 
 	public function __destruct()
 	{		$this->Put('',$this->n);
-		memcache_close($this->L);
+		if($this->L)
+			memcache_close($this->L);
 	}
 
 	public function Put($k,$v,$t=0)
-	{
-		$r=memcache_set($this->L,$this->u.$k,$v,(is_bool($v) or is_int($v) or is_float($v)) ? 0 : MEMCACHE_COMPRESSED,$t);
+	{		$r=$this->L ? memcache_set($this->L,$this->u.$k,$v,(is_bool($v) or is_int($v) or is_float($v)) ? 0 : MEMCACHE_COMPRESSED,$t) : false;
 		if($r)
 			$this->n[$k]=$t+time();
 		return$r;

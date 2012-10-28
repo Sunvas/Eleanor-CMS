@@ -362,7 +362,7 @@ a.bbe_ytext span {
 a.bbe_ytext:hover { background-position: 0 -42px; }
 a.bbe_ytext:hover span { background-position: 100% -63px; }
 
-.bb_smiles { border: 1px solid #cccccc; background-color: #f0f0f0; width: 170px; height: 200px; overflow: auto; }
+.bb_smiles { border: 1px solid #cccccc; background-color: #f0f0f0; width: 170px; height: 200px; overflow: auto; position:absolute; display:none; }
 .bb_smiles a { float: left; width: 51px; height: 42px; }
 
 /* Blocks */

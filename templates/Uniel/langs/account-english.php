@@ -71,7 +71,6 @@ return array(
 	'your_curr_pass'=>'Your current password',
 	'en_ycp'=>'Enter your current password',
 	'new_pass_me'=>'New password',
-	'externals'=>'External services',
 	'optssaved'=>'Options successfully saved',
 	'SITE_ERROR'=>'Site address is entered incorrectly!',
 	'AVATAR_NOT_EXISTS'=>'Chosen avatar does not exist',

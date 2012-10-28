@@ -69,7 +69,7 @@ if(isset($_GET['do']))
 			if($tag['cnt'] and $offset>=$tag['cnt'])
 				$offset=max(0,$cnt-$limit);
 
-			$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `id` IN (SELECT `id` FROM `'.$mc['rt'].'` WHERE `tag`='.$tag['id'].') AND `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
+			$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `id` IN (SELECT `id` FROM `'.$mc['rt'].'` WHERE `tag`='.$tag['id'].') AND `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
 			$d=FormatList($R);
 			if(!$d)
 				return;
@@ -79,7 +79,7 @@ if(isset($_GET['do']))
 				'first_page'=>$Eleanor->Url->Construct(array('do'=>'tag','tag'=>$tnd),true,''),
 				'pages'=>$Eleanor->Url->Construct(array('do'=>'tag','tag'=>$tnd,array('page'=>'{page}')),true,''),
 			);
-			$c=Eleanor::$Template->TagsList($tag,$d,$tag['cnt']-$np,$page,Eleanor::$vars['publ_per_page'],$links);
+			$c=Eleanor::$Template->TagsList($tag,$d,$tag['cnt'],$page,Eleanor::$vars['publ_per_page'],$links);
 			Start();
 			echo$c;
 		break;
@@ -113,7 +113,7 @@ if(isset($_GET['do']))
 
 				if($cnt and $offset>=$cnt)
 					$offset=max(0,$cnt-Eleanor::$vars['publ_per_page']);
-				$R=$cnt>0 ? Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND '.$where.' ORDER BY `ldate` DESC LIMIT '.$offset.', '.Eleanor::$vars['publ_per_page']) : false;
+				$R=$cnt>0 ? Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND '.$where.' ORDER BY `ldate` DESC LIMIT '.$offset.', '.Eleanor::$vars['publ_per_page']) : false;
 				$d=FormatList($R);
 				if(!$d)
 					return;
@@ -308,7 +308,7 @@ if(isset($_GET['do']))
 					if($cnt and $offset>=$cnt)
 						$offset=max(0,$cnt-Eleanor::$vars['publ_per_page']);
 					$values=$sess['values'];
-					$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext``,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting`'.$sess['seladd'].' FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND '.$sess['query'].' LIMIT '.$offset.', '.Eleanor::$vars['publ_per_page']);
+					$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting`'.$sess['seladd'].' FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND '.$sess['query'].' LIMIT '.$offset.', '.Eleanor::$vars['publ_per_page']);
 					$data=FormatList($R,false,$values['text'] ? array('hl'=>array('hl'=>$values['text'])) : array());
 				}while(false);
 
@@ -373,7 +373,7 @@ if(isset($_GET['do']))
 
 				if($cnt and $offset>=$cnt)
 					$offset=max(0,$cnt-$limit);
-				$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) LIKE \''.$d.'%\' ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
+				$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) LIKE \''.$d.'%\' ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
 				$data=FormatList($R);
 				if(!$data)
 					return;
@@ -381,7 +381,7 @@ if(isset($_GET['do']))
 					'first_page'=>$Eleanor->Url->Prefix(''),
 					'pages'=>$Eleanor->Url->Construct(array('do'=>$d,array('page'=>'{page}')),true,''),
 				);
-				$c=Eleanor::$Template->DateList($d,$data,$cnt-$np,$page,Eleanor::$vars['publ_per_page'],$links);
+				$c=Eleanor::$Template->DateList($d,$data,$cnt,-$page,Eleanor::$vars['publ_per_page'],$links);
 				$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct(array('do'=>$d),true,'');
 				Start();
 				echo$c;			}
@@ -393,7 +393,7 @@ elseif($id or $puri)
 	$uid=(int)Eleanor::$Login->GetUserValue('id');
 	$gn=$uid==0 ? GetGN() : array();
 
-	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_sokr`,`r_average`,`r_total`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,`text`,`meta_title`,`meta_descr`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND '.$where.' LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_sokr`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,`text`,`meta_title`,`meta_descr`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND '.$where.' LIMIT 1');
 	if(!$a=$R->fetch_assoc())
 		return ExitPage();
 	$ed=Eleanor::$Permissions->IsAdmin() || ($uid>0 and $a['author_id']==$uid or $uid==0 and in_array($a['id'],$gn));
@@ -461,7 +461,7 @@ elseif($id or $puri)
 		$Eleanor->Rating->marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
 		if(false!==$z=array_search(0,$Eleanor->Rating->marks))
 			unset($Eleanor->Rating->marks[$z]);
-		$rating=$Eleanor->Rating->Show(array($a['id']=>array('total'=>$a['r_total'],'average'=>$a['r_average'],'addon'=>array('event'=>'rating','id'=>$a['id']))));
+		$rating=$Eleanor->Rating->Show(array($a['id']=>array('total'=>$a['r_total'],'average'=>$a['r_average'],'sum'=>$a['r_sum'],'addon'=>array('event'=>'rating','id'=>$a['id']))));
 		$rating=reset($rating);
 	}
 	else
@@ -567,7 +567,7 @@ elseif($cid or $curls)
 
 	if($cnt and $offset>=$cnt)
 		$offset=max(0,$cnt-$limit);
-	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND `lcats` '.$cwhere.' ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
+	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND `lcats` '.$cwhere.' ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
 	$d=FormatList($R);
 	if(!$d)
 		return;
@@ -577,7 +577,7 @@ elseif($cid or $curls)
 		'pages'=>$Eleanor->Url->Construct($cu+array('page'=>array('page'=>'{page}'))),
 	);
 
-	$c=Eleanor::$Template->CategoryList($category,$d,$cnt-$np,$page,Eleanor::$vars['publ_per_page'],$links);
+	$c=Eleanor::$Template->CategoryList($category,$d,$cnt,-$page,Eleanor::$vars['publ_per_page'],$links);
 	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($cu+array('page'=>array('page'=>$page==$pages ? false : $page)),true,false);
 
 	#Поддержка соцсетей:
@@ -620,14 +620,14 @@ function Main()
 	if($cnt and $offset>=$cnt)
 		$offset=max(0,$cnt-$limit);
 
-	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
+	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
 	$d=FormatList($R,empty($Eleanor->module['general']));
 	if(!$d)
 		return;
 	$links=array(
 		'first_page'=>$Eleanor->Url->Prefix(),
 	);
-	$c=Eleanor::$Template->ShowList($d,$cnt-$np,$page,Eleanor::$vars['publ_per_page'],$links);
+	$c=Eleanor::$Template->ShowList($d,$cnt,-$page,Eleanor::$vars['publ_per_page'],$links);
 	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct(array('page'=>array('page'=>$page==$pages ? false : $page)));
 	Start();
 	echo$c;
@@ -663,7 +663,7 @@ function FormatList($R,$caching=true,$anurl=array())
 				);
 			}
 			if(Eleanor::$vars['publ_rating'] and $a['status']==1)
-				$rating[$a['id']]=array('total'=>$a['r_total'],'average'=>$a['r_average'],'addon'=>array('event'=>'rating','id'=>$a['id']))+($uid && $uid==$a['author_id'] ? array('can'=>false) : array());
+				$rating[$a['id']]=array('total'=>$a['r_total'],'average'=>$a['r_average'],'sum'=>$a['r_sum'],'addon'=>array('event'=>'rating','id'=>$a['id']))+($uid && $uid==$a['author_id'] ? array('can'=>false) : array());
 
 			$a['tags']=$a['tags'] ? explode(',,',trim($a['tags'],',')) : array();
 			$tags=array_merge($tags,$a['tags']);

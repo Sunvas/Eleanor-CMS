@@ -221,7 +221,7 @@ $(function(){
 					$ownbb[]=array(
 						't'=>$bb['tags'],
 						's'=>$class::SINGLE,
-						'l'=>isset($lang['ownbb_'.$bb['handler']]) ? $lang['ownbb_'.$bb['handler']] : false,
+						'l'=>isset($lang[$bb['handler']]) ? $lang[$bb['handler']] : false,
 					);
 				}
 		}

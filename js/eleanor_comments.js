@@ -105,7 +105,7 @@ CORE.Comments=function(opts)
 					})
 				),
 				function(r)
-				{					opts.pages=r.pages;
+				{					$(".cnt",container).text(r.cnt);					opts.pages=r.pages;
 					if(p!=r.page)
 					{						if(r.page==op)
 							return;
@@ -198,6 +198,7 @@ CORE.Comments=function(opts)
 							else
 								ex.empty().hide();
 					}				});
+				$(".cnt",container).text(opts.nextn);
 			}
 			$(".status",container).show().removeClass("load error").addClass("ok").text(CORE.Lang(r ? "comments_loaded" : "comments_nonew"));
 			Finish();
@@ -281,7 +282,7 @@ CORE.Comments=function(opts)
 	}).on("click",".cb-insertnick",function(){
 		EDITOR.Insert("[b]"+$(this).text()+"[/b], ");
 		return false;
-	}).on("click",".cb-delete",function(){		if(confirm(CORE.Lang("comments_del",["#"+$(this).closest(".comment").find(".cb-findcomment").text(),$(this).data("answers")+1])))
+	}).on("click",".cb-delete",function(){		if(confirm(CORE.Lang("comments_del",[$(this).closest(".comment").find(".cb-findcomment").text(),$(this).data("answers")+1])))
 			DeleteComments([$(this).data("id")]);
 		return false;	}).on("click",".cb-edit",function(){		var th=$(this);		CORE.QAjax(
 			$.extend(
@@ -324,8 +325,7 @@ CORE.Comments=function(opts)
 			}
 		);
 		return false;
-	}).on("click",".cb-qquote",function(){
-		var o=$(this),
+	}).on("click",".cb-qquote",function(){		var o=$(this),
 			name=o.data("name"),
 			text=o.closest(".comment").find(".text:first").html(),
 			sel,sele,m;
@@ -369,7 +369,7 @@ CORE.Comments=function(opts)
 		if(oldanswer)
 			oldanswer.show();
 		oldanswer=id ? p.find(".cb-qquote,.cb-answer").hide() : false;
-		$(opts.nc).find("[name=parent]").val(id ? id : opts.parent).end().find(".answerto").html(id ? CORE.Lang("comments_answer",["<a href=\""+window.location.href+"#comment"+id+"\">#"+p.find(".cb-findcomment").text()+"</a>",p.find(".cb-qquote").data("date")])+" <a href=\"#\" class=\"cb-answer\">x</a>" : CORE.Lang("comments_addc"))		return false;	});
+		$(opts.nc).find("[name=parent]").val(id ? id : opts.parent).end().find(".answerto").html(id ? CORE.Lang("comments_answer",["<a href=\""+window.location.href+"#comment"+id+"\">"+p.find(".cb-findcomment").text()+"</a>"])+" <a href=\"#\" class=\"cb-answer\">X</a>" : CORE.Lang("comments_addc"))		return false;	});
 
 	$(opts.nc).submit(function(){
 		var name=$("input[name=name]",this),

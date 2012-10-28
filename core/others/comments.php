@@ -166,7 +166,7 @@ class Comments extends BaseClass
 			return false;
 		}
 
-		$pspol=$this->CalcOffsetPage($q,$cnt);#list($pages,$page,$offset,$limit,$np)
+		$pspol=$this->CalcOffsetPage($q,$cnt);#list($pages,$page,$offset,$limit)
 
 		$actcnt=$st[0]+$st[1];
 		$pagpq=$this->GetPAGPQ($where,$st,$pspol[2],$this->reverse ? $pspol[3] : $actcnt,$this->reverse ? $actcnt-max(0,$pspol[2]-$st[-1]) : $pspol[2],$parent,$uid,$parent ? array($parent['id']) : false);
@@ -175,8 +175,7 @@ class Comments extends BaseClass
 			'first_page'=>$this->Url(),
 			'pages'=>$this->Url(array($this->upref.'page'=>true)),
 		);
-
-		return Eleanor::$Template->ShowComments($this->rights,$pagpq,$postquery,$dataquery,$cnt-$pspol[4],$this->pp,$pspol[1],$pspol[0],$this->reverse,$st,$uid ? false : (string)Eleanor::GetCookie($this->gc.'-name'),$El->Captcha->disabled ? false : $El->Captcha->GetCode(),$links);
+		return Eleanor::$Template->ShowComments($this->rights,$pagpq,$postquery,$dataquery,$cnt,$this->pp,$pspol[1],$pspol[0],$st,$uid ? false : (string)Eleanor::GetCookie($this->gc.'-name'),$El->Captcha->disabled ? false : $El->Captcha->GetCode(),$links);
 	}
 
 #Служебное
@@ -197,6 +196,7 @@ class Comments extends BaseClass
 				$limit+=$np;
 			else
 				$offset+=$np;
+			$page=-$page;
 		}
 		else
 		{
@@ -209,7 +209,7 @@ class Comments extends BaseClass
 		}
 		if($cnt and $offset>=$cnt)
 			$offset=max(0,$cnt-$limit);
-		return array($pages,$page,$offset,$limit,$np);
+		return array($pages,$page,$offset,$limit);
 	}
 
 	protected function GetStatuses($w,$uid)

@@ -107,10 +107,10 @@ class AccountExternals
 					switch($mess)
 					{
 						case'NAME_TOO_LONG':
-							return static::Register($loginza,array('NAME_TOO_LONG'=>sprintf($lang['NAME_TOO_LONG'],$E->addon['max'],$E->addon['you'])));
+							return static::Register($loginza,array('NAME_TOO_LONG'=>$lang['NAME_TOO_LONG']($E->addon['max'],$E->addon['you'])));
 						break;
 						case'PASS_TOO_SHORT':
-							return static::Register($loginza,array('PASS_TOO_SHORT'=>sprintf($lang['PASS_TOO_SHORT'],$E->addon['min'],$E->addon['you'])));
+							return static::Register($loginza,array('PASS_TOO_SHORT'=>$lang['PASS_TOO_SHORT']($E->addon['min'],$E->addon['you'])));
 						break;
 						default:
 							return static::Register($loginza,array($mess));

@@ -5,9 +5,7 @@ return array(
 	'email_in_use'=>'Цей e-mail вже використовується іншим користувачем!',
 
 	#Для ajax/user/register.php
-	'name_too_long'=>function($n)
-	{		return'Довжина ника перевищує припустиму межу в '.$n.Ukrainian::Plural($n,array(' символ',' символи',' символів'));
-	},
+	'NAME_TOO_LONG'=>function($l,$e){ return'Довжина імені користувача не повинна перевищувати '.$l.Ukrainian::Plural($l,array(' символ',' символи',' символів')).' символів. Ви ввели '.$e.Ukrainian::Plural($e,array(' символ',' символи',' символів')).' символів.'; },
 	'error_name'=>'Введено неприпустимий нік',
 	'name_in_use'=>'Цей нік вже використовується іншим користувачем!',
 );

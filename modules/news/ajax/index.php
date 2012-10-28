@@ -71,14 +71,15 @@ else
 			$R=Eleanor::$Db->Query('SELECT `id`,`r_total`,`r_average`,`r_sum` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.(Eleanor::$Permissions->IsAdmin() ? '' : ' AND `status`=1').' LIMIT 1');
 			if(!$a=$R->fetch_assoc())
 				return Error();
-			$Eleanor->Rating->table=$Eleanor->module['config']['t'];
-			$Eleanor->Rating->mid=$Eleanor->module['id'];
-			$Eleanor->Rating->tremark=Eleanor::$vars['publ_remark'].'d';
-			$Eleanor->Rating->once=Eleanor::$vars['publ_mark_users'];
-			$Eleanor->Rating->marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
-			if(false!==$z=array_search(0,$Eleanor->Rating->marks))
-				unset($Eleanor->Rating->marks[$z]);
-			if($Eleanor->Rating->DoAjax($id,$a))
+			$R=new Rating_Ajax;
+			$R->table=$Eleanor->module['config']['t'];
+			$R->mid=$Eleanor->module['id'];
+			$R->tremark=Eleanor::$vars['publ_remark'].'d';
+			$R->once=Eleanor::$vars['publ_mark_users'];
+			$R->marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
+			if(false!==$z=array_search(0,$R->marks))
+				unset($R->marks[$z]);
+			if($R->Process($id,$a))
 				Eleanor::$Db->Update($Eleanor->module['config']['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
 		break;
 		case'getmore':

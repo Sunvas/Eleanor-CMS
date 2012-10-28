@@ -8,7 +8,7 @@ $ltpl=Eleanor::$Language['tpl'];
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo DISPLAY_CHARSET?>" />
-<title><?php echo Eleanor::$Language['main']['site_close_text']?></title>
+<title><?=$ltpl['site_close_text']?></title>
 <base href="<?php echo PROTOCOL.Eleanor::$punycode.Eleanor::$site_path?>" />
 <style type="text/css">/*<![CDATA[*/
 body {

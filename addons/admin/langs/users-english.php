@@ -53,8 +53,8 @@ return array(
 	'NAME_EXISTS'=>'This user name already exists',
 	'EMAIL_EXISTS'=>'This e-mail already exists',
 	'EMPTY_EMAIL'=>'E-mail not entered',
-	'NAME_TOO_LONG'=>'User name length should not exceed %s characters. Your - %s characters.',
-	'PASS_TOO_SHORT'=>'The password should be at least %s characters. Your - %s characters.',
+	'NAME_TOO_LONG'=>function($l,$e){ return'User name length should not exceed '.$l.' character'.($l>1 ? 's' : '').'. Your - '.$e.' character'.($e>1 ? 's' : '').'.'; },
+	'PASS_TOO_SHORT'=>function($l,$e){ return'The password should be at least '.$l.' character'.($l>1 ? 's' : '').'. Your - '.$e.' character'.($e>1 ? 's' : '').'.'; },
 
 	#For template /template/*/Classes/UsersOnline.php
 	'user_info'=>'Information about the visitor',

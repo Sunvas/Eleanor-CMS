@@ -72,7 +72,7 @@ class TplUserContacts
 	*/
 	public static function Sent()
 	{		return Eleanor::$Template->Menu(array(
-			'title'=>static::$lang['st'],
+			'title'=>Eleanor::$Language['contacts']['st'],
 		))->Message(sprintf(static::$lang['sent'],$GLOBALS['Eleanor']->Url->Prefix()),'info');	}
 }
 TplUserContacts::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/contacts-*.php',false);

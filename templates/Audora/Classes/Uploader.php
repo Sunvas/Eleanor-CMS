@@ -29,7 +29,7 @@ class TplUploader
 	{		array_push($GLOBALS['jscripts'],'js/eleanor_uploader.js','js/jquery.poshytip.js');
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="templates/Audora/style/uploader.css" media="screen" /><link type="text/css" rel="stylesheet" href="addons/swfupload/css.css" />';
 		$lang=Eleanor::$Language['uploader'];
-		$ltpl=Eleanor::$Language['tpl'];		if($maxu)
+		if($maxu)
 		{			$types=$types ? '*.'.join(';*.',$types) : '*.*';			array_push(
 				$GLOBALS['jscripts'],
 				'addons/swfupload/swfupload.js',
@@ -89,7 +89,7 @@ class TplUploader
 						$icons.='<a href="#" class="up-create_folder" title="'.$lang['add_folder'].'"><img src="images/uploader/add_folder.png" alt="" /></a>';
 					break;
 					case'update':
-						$icons.='<a href="#" class="up-update" title="'.$ltpl['update'].'"><img src="images/uploader/refresh.png" alt="" /></a>';
+						$icons.='<a href="#" class="up-update" title="'.$lang['update'].'"><img src="images/uploader/refresh.png" alt="" /></a>';
 					break;
 					case'watermark':
 						$icons.='<a href="#" class="up-watermark" title="'.$lang['watermark'].'"><img style="background-image:url(images/uploader/watermark.png)" src="images/spacer.png" alt="" /></a>';
@@ -130,7 +130,6 @@ class TplUploader
 	*/
 	public static function UplContent($buttons,$short,$path,$dirs,$files,$previews,$prev)
 	{		$lang=Eleanor::$Language['uploader'];
-		$ltpl=Eleanor::$Language['tpl'];
 		$r='';
 		if($short)
 		{			$a=explode('/',ltrim($short,'/'));			$r.='<li><a href="#" class="up-go" data-goal=".." title="'.$lang['go_up'].'"><img class="typeicon" src="images/uploader/folder_up.gif" alt="" style="width:25px;height:16px;" /></a><b>';
@@ -149,7 +148,7 @@ class TplUploader
 						$icons.='<a href="#" class="up-go" data-goal="{goal}" title="'.$lang['open_folder'].'"><img src="images/uploader/open_folder.png" style="width:16px;height:16px;" /></a>';
 					break;
 					case'folder_delete':
-						$icons.='<a href="#" class="up-delete" data-goal="{goal}" title="'.$ltpl['delete'].'"><img src="images/uploader/delete.png" style="width:16px;height:16px;" /></a>';
+						$icons.='<a href="#" class="up-delete" data-goal="{goal}" title="'.$lang['delete'].'"><img src="images/uploader/delete.png" style="width:16px;height:16px;" /></a>';
 					break;
 					case'folder_rename':
 						$icons.='<a href="#" class="up-rename" data-goal="{goal}" title="'.$lang['rename'].'"><img src="images/uploader/rename.png" style="width:16px;height:16px;" /></a>';
@@ -173,13 +172,13 @@ class TplUploader
 						break;
 						case'edit':
 							if($v['edit'])
-								$icons.='<a href="#" class="up-edit" data-goal="'.$v['file'].'" title="'.$ltpl['edit'].'"><img src="'.$images.'edit.png" style="width:16px;height:16px;" /></a>';
+								$icons.='<a href="#" class="up-edit" data-goal="'.$v['file'].'" title="'.$lang['edit'].'"><img src="'.$images.'edit.png" style="width:16px;height:16px;" /></a>';
 						break;
 						case'file_rename':
 							$icons.='<a href="#" class="up-rename" data-goal="'.$v['file'].'" title="'.$lang['rename'].'"><img src="images/uploader/rename.png" style="width:16px;height:16px;" /></a>';
 						break;
 						case'file_delete':
-							$icons.='<a href="#" class="up-delete" data-goal="'.$v['file'].'" title="'.$ltpl['delete'].'"><img src="images/uploader/delete.png" style="width:16px;height:16px;" /></a>';
+							$icons.='<a href="#" class="up-delete" data-goal="'.$v['file'].'" title="'.$lang['delete'].'"><img src="images/uploader/delete.png" style="width:16px;height:16px;" /></a>';
 					}
 			$t=Eleanor::$Language->Date($v['date']);
 			$si=Files::BytesToSize($v['size']);

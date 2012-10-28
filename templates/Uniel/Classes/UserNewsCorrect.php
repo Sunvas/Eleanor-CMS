@@ -82,7 +82,7 @@ class TplUserNewsCorrect
 		$GLOBALS['head']['autocomplete']='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 		if(Eleanor::$vars['multilang'])
 		{			$mchecks=$ml=array();
-			foreach(Eleanor::static::$langs as $k=>&$v)
+			foreach(Eleanor::$langs as $k=>&$v)
 			{				$mchecks[$k]=(!$id or !empty($values['title'][$k]) or !empty($values['announcement'][$k]) or !empty($values['text'][$k]) or !empty($values['uri'][$k]) or !empty($values['meta_title'][$k]) or !empty($values['meta_descr'][$k]));
 				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
 				$ml['announcement'][$k]=$GLOBALS['Eleanor']->Editor->Area('announcement['.$k.']',Eleanor::FilterLangValues($values['announcement'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>6,'rows'=>10)));

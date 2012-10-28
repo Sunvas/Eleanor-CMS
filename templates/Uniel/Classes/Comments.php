@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class TplComments
-{	/*
+{	public static
+		$lang=array();	/*
 		Элемент шаблона: отображение комментариев
 		$rights - массив прав пользователя в комментариях, ключи:
 			edit - право редактировать свои комментарии. Если число - это количество секунд, по истечению которых после написания комментария право теряется.
@@ -59,37 +60,36 @@ class TplComments
 		$cnt - количество комментариев всего
 		$pp - количество комментариев на страницу
 		$page - номер текущей страницы на которой мы находимся
-		$reverse - флаг включения режима комментариев "новые сверху"
 		$statuses - массив количества комментариев каждого статуса. Ключи массива - числовые выражения статуса комментариев
 		$gname - имя гостя, если зашли под пользователем, эта переменная равна false
 		$captcha - капча при написании комментария
 		$links
 			first_page - ссылка на первую страницу комментариев
 			pages - ссылка на каждую последующую страницу комментариев
-	*/	public static function ShowComments($rights,$pagpq,$postquery,$dataquery,$cnt,$pp,$page,$pages,$reverse,$statuses,$gname,$captcha,$links)
-	{		array_push($GLOBALS['jscripts'],'js/eleanor_comments.js','js/eleanor_comments-'.Language::$main.'.js');		$lang=Eleanor::$Language['comments'];
-
+	*/	public static function ShowComments($rights,$pagpq,$postquery,$dataquery,$cnt,$pp,$page,$pages,$statuses,$gname,$captcha,$links)
+	{		array_push($GLOBALS['jscripts'],'js/eleanor_comments.js','js/eleanor_comments-'.Language::$main.'.js');
 		$editor='';
 		if($rights['post']!==false)
 		{			$Lst=Eleanor::LoadListTemplate('table-form');			$editor.=
-				($rights['post']==-1 ? Eleanor::$Template->Message($lang['needch'],'info') : '')
+				($rights['post']==-1 ? Eleanor::$Template->Message(static::$lang['needch'],'info') : '')
 				.$Lst->form(array('id'=>'newcomment'))->begin()
-				.'<tr class="infolabel first"><td colspan="2" class="answerto">'.$lang['addc'].'</td></tr>'
-				.($gname===false ? '' : $Lst->item($lang['yn'],Eleanor::Edit('name',$gname,array('tabindex'=>1))))
-				.$Lst->item($lang['yc'],$GLOBALS['Eleanor']->Editor->Area('text','',array('bb'=>array('tabindex'=>2))))
-				.($captcha ? $Lst->item(array($lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'descr'=>$lang['captcha_'])) : '')
-				.$Lst->button(Eleanor::Control('parent','hidden',$pagpq[3] ? $pagpq[3]['id'] : 0).Eleanor::Button($lang['addc']))
+				.'<tr class="infolabel first"><td colspan="2" class="answerto">'.static::$lang['addc'].'</td></tr>'
+				.($gname===false ? '' : $Lst->item(static::$lang['yn'],Eleanor::Edit('name',$gname,array('tabindex'=>1))))
+				.$Lst->item(static::$lang['yc'],$GLOBALS['Eleanor']->Editor->Area('text','',array('bb'=>array('tabindex'=>2))))
+				.($captcha ? $Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'descr'=>static::$lang['captcha_'])) : '')
+				.$Lst->button(Eleanor::Control('parent','hidden',$pagpq[3] ? $pagpq[3]['id'] : 0).Eleanor::Button(static::$lang['addc']))
 				->end()->endform();
 		}
-		$pager=$reverse ? Eleanor::$Template->Pages(array($cnt,$pages=>$links['first_page'],'hash'=>'comments'),$pp,-$page,$links['pages'],'C.GoToPage') : Eleanor::$Template->Pages(array($cnt,$links['firt_page'],'hash'=>'comments'),$pp,$page,$links['pages'],'C.GoToPage');
+		$reverse=$page<0;
+		$pager=Eleanor::$Template->Pages(array($cnt,$reverse ? $pages : 1=>$links['first_page'],'hash'=>'comments'),$pp,$page,$links['pages'],'C.GoToPage');
 		if($pagpq[3])
-			Eleanor::LoadOptions('user-profile');		return Eleanor::$Template->Title($lang['vc']).'<div id="comments">'
-			.($rights['status'] ? '<div class="moderate"'.($pagpq[0] ? '' : ' style="display:none"').'>'.static::CommentsModerate($rights,$lang).'</div>' : '')
-			.($pagpq[3] ? '<div class="parent">'.static::CommentsPost($rights,$pagpq[3]['id'],$pagpq[3],true,$pagpq[1],$pagpq[2],$pagpq[4],$lang).'</div>' : '')
-			.'<div class="nocomments"'.($pagpq[0] ? ' style="display:none">' : '>'.Eleanor::$Template->Message($pagpq[3] ? $lang['anc'] : $lang['nc'],'info')).'</div>'
-			.'<div class="comments'.($pagpq[3] ? ' children' : '').'"'.($pagpq[0] ? '>'.static::CommentsPosts($rights,$pagpq,$lang) : ' style="display:none">').'</div>'
+			Eleanor::LoadOptions('user-profile');		return Eleanor::$Template->Title(static::$lang['vc']).'<div id="comments">'
+			.($rights['status'] ? '<div class="moderate"'.($pagpq[0] ? '>'.static::CommentsModerate($rights) : ' style="display:none">').'</div>' : '')
+			.($pagpq[3] ? '<div class="parent">'.static::CommentsPost($rights,$pagpq[3]['id'],$pagpq[3],true,$pagpq[1],$pagpq[2],$pagpq[4],static::$lang).'</div>' : '')
+			.'<div class="nocomments"'.($pagpq[0] ? ' style="display:none">' : '>'.Eleanor::$Template->Message($pagpq[3] ? static::$lang['anc'] : static::$lang['nc'],'info')).'</div>'
+			.'<div class="comments'.($pagpq[3] ? ' children' : '').'"'.($pagpq[0] ? '>'.static::CommentsPosts($rights,$pagpq,static::$lang) : ' style="display:none">').'</div>'
 			.'<div class="paginator"'.($pager ? '>'.$pager : ' style="display:none">').'</div>
-			<div class="status" id="commentsinfo"></div><div style="text-align:center;margin-bottom:15px"><a href="#" class="link-button cb-lnc" style="width:250px"><b>'.$lang['lnp'].'</b></a></div>'
+			<div class="status" id="commentsinfo"></div><div style="text-align:center;margin-bottom:15px"><a href="#" class="link-button cb-lnc" style="width:250px"><b>'.static::$lang['lnp'].'</b></a></div>'
 			.$editor.'</div><script type="text/javascript">/*<![CDATA[*/var C;$(function(){C=new CORE.Comments('.Eleanor::JsVars(array(
 				'lastpost'=>time(),
 				'postquery'=>$postquery,
@@ -113,7 +113,7 @@ class TplComments
 			5 - секунды
 	*/
 	public static function CommentsAddedAfter($diff)
-	{		return'<br /><br /><span class="small">'.call_user_func_array(Eleanor::$Language['comments']['added_after'],$diff).':</span><br />';	}
+	{		return'<br /><br /><span class="small">'.call_user_func_array(static::$lang['added_after'],$diff).':</span><br />';	}
 
 	/*
 		Элемент массива. Оформления цитаты
@@ -127,7 +127,7 @@ class TplComments
 	public static function CommentsQuote($q)
 	{		return'<blockquote class="extend"><div class="top">'
 		.sprintf(
-			Eleanor::$Language['comments']['cite'],
+			static::$lang['cite'],
 			($q['name'] || $q['date'] ? ' ('.$q['name'].' @ '.$q['date'].')' : '')
 			.($q['id'] ? ' <a href="'.$q['find'].'" data-id="'.$q['id'].'" class="cb-gocomment" target="_blank"><img src="'.Eleanor::$Template->default['theme'].'images/findpost.gif" /></a>' : '')
 		)
@@ -152,18 +152,17 @@ class TplComments
 		Элемент шаблона: Загрузка страницы на AJAX.
 		Описание входящих параметров смотрите в методе ShowComments (выше).
 	*/
-	public static function CommentsLoadPage($rights,$pagpq,$cnt,$pp,$page,$pages,$reverse,$parent,$links)
+	public static function CommentsLoadPage($rights,$pagpq,$cnt,$pp,$page,$pages,$parent,$links)
 	{
-		$r=array('paginator'=>$reverse ? Eleanor::$Template->Pages(array($cnt,$pages=>$links['first_page'],'hash'=>'comments'),$pp,-$page,$links['pages'],'C.GoToPage') : Eleanor::$Template->Pages(array($cnt,$links['first_page'],'hash'=>'comments'),$pp,$page,$links['pages'],'C.GoToPage'));
+		$r=array('paginator'=>Eleanor::$Template->Pages(array($cnt,$page<0 ? $pages : 1=>$links['first_page'],'hash'=>'comments'),$pp,$page,$links['pages'],'C.GoToPage'));
 		if($pagpq)
 		{
 			if($pagpq[0])
 				$r['comments']=static::CommentsPosts($rights,$pagpq);
 			else
 			{
-				$lang=Eleanor::$Language['comments'];
 				$r['moderate']=$r['comments']='';
-				$r['nocomments']=Eleanor::$Template->Message($parent ? $lang['anc'] : $lang['nc'],'info');
+				$r['nocomments']=Eleanor::$Template->Message($parent ? static::$lang['anc'] : static::$lang['nc'],'info');
 			}
 		}
 		return$r;
@@ -181,8 +180,7 @@ class TplComments
 	*/
 	public static function CommentsEdit($a)
 	{
-		$lang=Eleanor::$Language['comments'];
-		return'<form>'.$GLOBALS['Eleanor']->Editor->Area('text'.$a['id'],$a['text']).'<div style="text-align:center">'.Eleanor::Button($lang['save']).' '.Eleanor::Button(Eleanor::$Language['tpl']['cancel'],'button',array('class'=>'cb-cancel')).'</div></form>';
+		return'<form>'.$GLOBALS['Eleanor']->Editor->Area('text'.$a['id'],$a['text']).'<div style="text-align:center">'.Eleanor::Button(static::$lang['save']).' '.Eleanor::Button(static::$lang['cancel'],'button',array('class'=>'cb-cancel')).'</div></form>';
 	}
 
 	/*
@@ -208,9 +206,8 @@ class TplComments
 
 	protected static function CommentsModerate($rights)
 	{
-		$lang=Eleanor::$Language['comments'];
 		$GLOBALS['jscripts'][]='js/checkboxes.js';
-		return Eleanor::Select('',Eleanor::Option($lang['withsel'],'').Eleanor::Option($lang['doact'],1).Eleanor::Option($lang['toblock'],0).Eleanor::Option($lang['tomod'],-1).($rights['mdelete'] ? Eleanor::Option(Eleanor::$Language['tpl']['delete'],'delete') : ''),array('class'=>'modevent')).' '.Eleanor::Check('',false,array('id'=>'masscheck'));
+		return Eleanor::Select('',Eleanor::Option(static::$lang['withsel'],'').Eleanor::Option(static::$lang['doact'],1).Eleanor::Option(static::$lang['toblock'],0).Eleanor::Option(static::$lang['tomod'],-1).($rights['mdelete'] ? Eleanor::Option(Eleanor::$Language['tpl']['delete'],'delete') : ''),array('class'=>'modevent')).' '.Eleanor::Check('',false,array('id'=>'masscheck'));
 	}
 
 	protected static function CommentsPosts($rights,$pagpq)
@@ -223,8 +220,7 @@ class TplComments
 	}
 
 	protected static function CommentsPost($rights,$id,$c,$mass,$authors,$groups,$quotes)
-	{		$lang=Eleanor::$Language['comments'];
-		$ltpl=Eleanor::$Language['tpl'];		$author=isset($authors[$c['author_id']]) ? $authors[$c['author_id']] : false;
+	{		$la=static::$lang['answers'];		$ltpl=Eleanor::$Language['tpl'];		$author=isset($authors[$c['author_id']]) ? $authors[$c['author_id']] : false;
 		$group=$author && isset($groups[$author['_group']]) ? $groups[$author['_group']] : false;
 		if(!$author)
 			$avatar='images/avatars/guest.png';
@@ -250,11 +246,11 @@ class TplComments
 		switch($c['status'])
 		{
 			case -1:
-				$status='<span style="color:orange;font-weight:bold">'.$lang['stmodwait'].'</span>';
+				$status='<span style="color:orange;font-weight:bold">'.static::$lang['stmodwait'].'</span>';
 				$data['postn']='?';
 			break;
 			case 0:
-				$status='<span style="color:red;font-weight:bold">'.$lang['stblocked'].'</span>';
+				$status='<span style="color:red;font-weight:bold">'.static::$lang['stblocked'].'</span>';
 			break;
 			default:
 				$status='';
@@ -276,7 +272,7 @@ class TplComments
 		<div class="rcolomn">
 			<div class="heading">
 				<span class="argr">'
-				.($c['_n'] ? '#<a href="'.$c['_afind'].'" class="cb-findcomment">'.($c['status'] ? $c['_n'] : '?').'</a>' : '')
+				.($c['_n'] ? '<a href="'.$c['_afind'].'" class="cb-findcomment">#'.($c['status'] ? $c['_n'] : '?').'</a>' : '')
 				.($mass && in_array($c['status'],array(-1,0,1)) ? ' '.Eleanor::Check('mass[]',false,array('value'=>$id)) : '')
 				.'</span><h2>'
 				.Eleanor::$Language->Date($c['date'],'fdt').', '.($group ? '<a href="'.Eleanor::$Login->UserLink($author['name'],$c['author_id']).'" title="'.$group['title'].'" class="cb-insertnick">'.$group['html_pref'].$c['author'].$group['html_end'].'</a>' : '<span class="cb-insertnick">'.$c['author'].'</span>').' </h2>'
@@ -289,10 +285,10 @@ class TplComments
 		<div class="clr"></div>
 	</div>
 	<div class="commentinfo buttons">'
-		.($c['_achilden'] ? '<a href="'.$c['_achilden'].'#comments" class="answers">'.$lang['answers']($c['answers']).'</a>' : '')
+		.($c['_achilden'] ? '<a href="'.$c['_achilden'].'#comments" class="answers">'.$la($c['answers']).'</a>' : '')
 		.($c['status']==1 && $rights['post']
-			? '<span class="argr"><a href="#" class="cb-qquote" data-id="'.$id.'" data-date="'.$c['date'].'" data-name="'.$c['author'].'">'.$lang['qquote'].'</a></span>'
-				.(isset($c['_n']) ? '<span class="argr"><a href="#" class="cb-answer" data-id="'.$id.'">'.$lang['answer'].'</a></span>' : '')
+			? '<span class="argr"><a href="#" class="cb-qquote" data-id="'.$id.'" data-date="'.$c['date'].'" data-name="'.$c['author'].'">'.static::$lang['qquote'].'</a></span>'
+				.(isset($c['_n']) ? '<span class="argr"><a href="#" class="cb-answer" data-id="'.$id.'">'.static::$lang['answer'].'</a></span>' : '')
 			: '')
 		.($c['_edit'] ? '<span class="argr"><a href="#" class="cb-edit" data-id="'.$id.'">'.$ltpl['edit'].'</a></span>' : '')
 		.($c['_delete'] ? '<span class="argr"><a href="#" class="cb-delete" data-id="'.$id.'"'.(isset($c['_n']) ? '' : ' data-recount="1"').'>'.$ltpl['delete'].'</a></span>' : '')
@@ -300,3 +296,4 @@ class TplComments
 	</div>
 </div></div>';	}
 }
+TplComments::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/comments-*.php',false);

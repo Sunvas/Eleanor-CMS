@@ -82,7 +82,7 @@ return array(
 	'EMPTY_NAME'=>'Login field blank!',
 	'EMPTY_PASSWORD'=>'Password field blank!',
 	'EMAIL_ERROR'=>'E-mail address entered incorrectly!',
-	'NAME_TOO_LONG'=>'Length login exceeds the set limit of %s characters!',
 	'NAME_EXISTS'=>'This user name already exists!',
-	'PASS_TOO_SHORT'=>'The password should be at least %s characters long. Your - %s characters.',
+	'NAME_TOO_LONG'=>function($l,$e){ return'User name length should not exceed '.$l.' character'.($l>1 ? 's' : '').'. Your - '.$e.' character'.($e>1 ? 's' : '').'.'; },
+	'PASS_TOO_SHORT'=>function($l,$e){ return'The password should be at least '.$l.' character'.($l>1 ? 's' : '').'. Your - '.$e.' character'.($e>1 ? 's' : '').'.'; },
 );

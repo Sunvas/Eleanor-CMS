@@ -3,14 +3,14 @@
 	Элемент шаблона. Отображает кнопки для осуществления внешней авторизации, используя систему идентификации Loginza. http://loginza.ru
 */
 if(!defined('CMS'))die;?><a style="text-decoration:none" href="#" class="externals loginza">
-<img src="http://loginza.ru/img/providers/vkontakte.png" title="ВКонтакте" />
-<img src="http://loginza.ru/img/providers/facebook.png" title="Facebook" />
-<img src="http://loginza.ru/img/providers/google.png" title="Google Accounts" />
-<img src="http://loginza.ru/img/providers/twitter.png" title="Twitter" />
-<img src="http://loginza.ru/img/providers/yandex.png" title="Yandex" />
-<img src="http://loginza.ru/img/providers/mailru.png" title="Mail.ru" />
-<img src="http://loginza.ru/img/providers/openid.png" title="OpenID" />
-<img src="http://loginza.ru/img/providers/webmoney.png" title="WebMoney" /></a>
+<img src="http://loginza.ru/img/providers/vkontakte.png" title="ВКонтакте" alt="ВКонтакте" />
+<img src="http://loginza.ru/img/providers/facebook.png" title="Facebook" alt="Facebook" />
+<img src="http://loginza.ru/img/providers/google.png" title="Google Accounts" alt="Google Accounts" />
+<img src="http://loginza.ru/img/providers/twitter.png" title="Twitter" alt="Twitter" />
+<img src="http://loginza.ru/img/providers/yandex.png" title="Yandex" alt="Yandex" />
+<img src="http://loginza.ru/img/providers/mailru.png" title="Mail.ru" alt="Mail.ru" />
+<img src="http://loginza.ru/img/providers/openid.png" title="OpenID" alt="OpenID" />
+<img src="http://loginza.ru/img/providers/webmoney.png" title="WebMoney" alt="WebMoney" /></a>
 <script type="text/javascript">//<![CDATA[
 if(typeof CORE.Loginza=="undefined")
 {

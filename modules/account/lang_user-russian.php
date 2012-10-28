@@ -19,8 +19,8 @@ return array(
 	'TEMPORARILY_BLOCKED'=>'В связи с частым вводом неправильного пароля, аккаунт заблокирован!<br />Повторите попытку через %s  минут(ы).',
 
 	#Для user/guest/register.php
-	'NAME_TOO_LONG'=>'Длина имени пользователя не должна превышать %s символов. Вы ввели %s символов.',
-	'PASS_TOO_SHORT'=>'Минимальная длина пароля %s символов. Вы ввели только %s символов.',
+	'NAME_TOO_LONG'=>function($l,$e){ return'Длина имени пользователя не должна превышать '.$l.Russian::Plural($l,array(' символ',' символа',' символов')).' символов. Вы ввели '.$e.Russian::Plural($e,array(' символ',' символа',' символов')).' символов.'; },
+	'PASS_TOO_SHORT'=>function($l,$e){ return'Минимальная длина пароля '.$l.Russian::Plural($l,array(' символ',' символа',' символов')).' символов. Вы ввели только '.$e.Russian::Plural($e,array(' символ',' символа',' символов')).' символов.'; },
 	'form_reg'=>'Форма регистрации',
 	'reg_fin'=>'Регистрация завершена!',
 	'wait_act'=>'Ожидание активации',
@@ -34,6 +34,9 @@ return array(
 
 	#Для user/user/changepass.php
 	'changing_pass'=>'Изменение пароля',
+
+	#Для user/user/externals.php
+	'externals'=>'Внешние сервисы',
 
 	#Для user/user/settings.php
 	'site'=>'Сайт',

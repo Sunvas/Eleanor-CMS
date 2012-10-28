@@ -19,8 +19,8 @@ return array(
 	'TEMPORARILY_BLOCKED'=>'Due to frequent entering an incorrect password, your account blocked!<br />Please try again in %s minute (s).',
 
 	#For user/guest/register.php
-	'NAME_TOO_LONG'=>'User name length should not exceed %s characters. Your - %s characters.',
-	'PASS_TOO_SHORT'=>'The password should be at least %s characters. Your - %s characters.',
+	'NAME_TOO_LONG'=>function($l,$e){ return'User name length should not exceed '.$l.' character'.($l>1 ? 's' : '').'. Your - '.$e.' character'.($e>1 ? 's' : '').'.'; },
+	'PASS_TOO_SHORT'=>function($l,$e){ return'The password should be at least '.$l.' character'.($l>1 ? 's' : '').'. Your - '.$e.' character'.($e>1 ? 's' : '').'.'; },
 	'form_reg'=>'Registration form',
 	'reg_fin'=>'Registration complete!',
 	'wait_act'=>'Waiting for activation',
@@ -34,6 +34,9 @@ return array(
 
 	#For user/user/changepass.php
 	'changing_pass'=>'Change password',
+
+	#For user/user/externals.php
+	'externals'=>'External services',
 
 	#For user/user/settings.php
 	'site'=>'Website',

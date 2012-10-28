@@ -17,9 +17,6 @@ return array(
 	'no'=>'No',
 	'yes'=>'Yes',
 
-	#For Classes/Comments.php :: CommentsEdit
-	'cancel'=>'Cancel',
-
 	#For Denied
 	'site_close_text'=>'The site is temporarily unavailable! There are interesting works',
 

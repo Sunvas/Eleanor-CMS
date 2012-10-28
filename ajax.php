@@ -109,7 +109,7 @@ function Error($e='')
 	{		$le=Eleanor::$Language['errors'];
 		if(!$e)
 			$e=$le['happened'];
-		elseif(isset($le[$e]))
+		elseif(is_string($e) and isset($le[$e]))
 			$e=$le[$e];
 		Start();
 	}
@@ -138,7 +138,7 @@ function SomeAjax()
 	{
 		switch($type)
 		{
-			case'bbpreview':
+			case'preview':
 				if(isset($_POST['service']))
 					BeAs($_POST['service']);
 				$Eleanor->Editor->type='bb';

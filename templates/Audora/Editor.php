@@ -4,7 +4,6 @@
 
 	@var идентификатор редактора
 	@var HTML код редактора
-	@var массив кнопок внизу редактора
 	@var массив смайлов
 	@var массив "своих" BB кодов
 */
@@ -25,8 +24,9 @@ foreach($ownbb as &$v)
 	$obb.='<a href="#" class="bbe_ytext" onclick="EDITOR.Insert(\'['.$v['t'].']\',\''.($v['s'] ? '' : '[/'.$v['t'].']').'\',0,\''.$id.'\'); return false;"'.($v['l'] ? ' title="'.$v['l'].'"' : '').'><span>['.$v['t'].']</span></a>';
 $sm=uniqid('sm-');
 if($obb or $smiles)
-	echo'<div>'.$html
-		.($smiles
+	echo'<div>',
+		$html,
+		$smiles
 			? '<div class="bb_footpanel"><b><a href="#" id="a-'.$sm.'" class="bbf_smiles">'.$l['smiles'].'</a></b></div>
 <script type="text/javascript">//<![CDATA[
 $(function(){
@@ -35,11 +35,11 @@ $(function(){
 		top:true,
 		rel:"#'.$sm.'"
 	});
-	$("#'.$sm.' a").click(function(){		EDITOR.Insert(" "+$(this).data("em")+" ","'.$id.'");
+	$("#'.$sm.' a").click(function(){		EDITOR.Insert(" "+$(this).data("em")+" ","",false,"'.$id.'");
 		D.hide();
 		return false;	});
-});//]]></script><div class="bb_smiles" id="'.$sm.'" style="position:absolute;display:none;">'.join($smiles).'</div>'
-		: '')
-		.'<div class="bb_yourpanel">'.$obb.'<div class="clr"></div></div></div>';
+});//]]></script><div class="bb_smiles" id="'.$sm.'">'.join($smiles).'</div>'
+		: '',
+		'<div class="bb_yourpanel">',$obb,'<div class="clr"></div></div></div>';
 else
-	echo$html.'<div class="clr"></div>';
+	echo$html,'<div class="clr"></div>';

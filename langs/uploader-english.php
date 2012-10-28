@@ -34,4 +34,7 @@ return array(
 	'create_file'=>'Create file',
 	'save'=>'Save',
 	'cancel'=>'Cancel',
+	'edit'=>'Edit',
+	'update'=>'Update',
+	'delete'=>'Delete',
 );

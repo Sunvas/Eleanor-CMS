@@ -867,7 +867,7 @@ $(function(){
 		$im - индекс пункта меню
 	*/
 	protected static function Menu($section='',$ih='',$im='')
-	{		$ltpl=Eleanor::$Language['tpl'];
+	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];		$ltpl=Eleanor::$Language['tpl'];
 
 		$menu=array();
 		foreach($GLOBALS['Eleanor']->module['handlers'] as $k=>&$v)
@@ -903,7 +903,7 @@ $(function(){
 							$t=static::$lang['change_pass'];
 						break;
 						case array('user',0,'externals'):
-							$t=static::$lang['externals'];
+							$t=$lang['externals'];
 						break;
 						case array('guest','index','main'):
 							$t=$ltpl['enter'];

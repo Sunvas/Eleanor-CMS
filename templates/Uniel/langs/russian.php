@@ -17,9 +17,6 @@ return array(
 	'no'=>'Нет',
 	'yes'=>'Да',
 
-	#Для Classes/Comments.php :: CommentsEdit
-	'cancel'=>'Отмена',
-
 	#Для Denied
 	'site_close_text'=>'Сайт временно недоступен! Ведутся интересные работы',
 

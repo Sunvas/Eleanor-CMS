@@ -42,7 +42,7 @@ class AccountRegister
 				$name=isset($_POST['name']) ? trim((string)$_POST['name']) : '';
 				$long=false;
 				if(!$name or Eleanor::$vars['max_name_length'] and $long=mb_strlen($name)>(int)Eleanor::$vars['max_name_length'])
-					return Result($long ? $lang['name_too_long'](Eleanor::$vars['max_name_length']) : $lang['error_name']);
+					return Result($long ? $lang['NAME_TOO_LONG'](Eleanor::$vars['max_name_length'],$long) : $lang['error_name']);
 				try
 				{
 					UserManager::IsNameBlocked($name);

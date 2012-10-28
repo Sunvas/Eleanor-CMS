@@ -1080,6 +1080,7 @@ class Settings extends BaseClass
 					'protected'=>0,
 					'keyword'=>$attrs['name'],
 					'onexists'=>'ignore',
+					'pos'=>0,
 				);
 				foreach(array('title','descr') as $need)
 					if(!isset($G->{$need}))
@@ -1278,7 +1279,7 @@ class Settings extends BaseClass
 			}
 			else
 			{
-				$id=Eleanor::$Db->Insert(P.'config_groups',$ins=array('name'=>$v['name'],'protected'=>$v['protected'],'keyword'=>$v['keyword'],'pos'=>(in_array($v['pos'],$grspos) and max($grspos)>$v['pos']) ? $v['pos'] : max($grspos)+1));
+				$id=Eleanor::$Db->Insert(P.'config_groups',$ins=array('name'=>$v['name'],'protected'=>$v['protected'],'keyword'=>$v['keyword'],'pos'=>in_array($v['pos'],$grspos) && max($grspos)>$v['pos'] ? $v['pos'] : max($grspos)+1));
 				if($id)
 				{
 					$exgrs[$v['name']]=array($id,$v['protected']);

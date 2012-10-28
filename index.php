@@ -301,7 +301,6 @@ function Finish($s)
 			Eleanor::$Language['main']['page_status'],
 			round(array_sum(explode(' ',microtime()))-array_sum(explode(' ',$start)),3),
 			Eleanor::$Db->queries,
-			Eleanor::$gzip ? 'GZIP.' : '',
 			round(memory_get_usage()/1048576,3),
 			round(memory_get_peak_usage()/1048576,3)
 		);

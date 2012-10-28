@@ -40,7 +40,7 @@ class TplUserNews
 		$lang=array();	/*
 		Внутренний метод. Важный момент Cron
 	*/	protected static function TopMenu($tit=false)
-	{		$GLOBALS['jscripts'][]='js/module_publications.js';
+	{		$GLOBALS['jscripts'][]=Eleanor::$Template->default['theme'].'js/publications.js';
 		#Cron
 		$cron=$GLOBALS['Eleanor']->module['cron'] ? '<img src="'.$GLOBALS['Eleanor']->module['cron'].'" style="width:1px;height1px;" />' : '';
 		#[E] Cron
@@ -60,7 +60,8 @@ class TplUserNews
 	}
 
 	protected static function List_($data,$shst=false)
-	{		$T=clone Eleanor::$Template;
+	{		$GLOBALS['head'][__class__]=Eleanor::JsVars(array('module'=>$GLOBALS['Eleanor']->module['name']),true,false,'');
+		$T=clone Eleanor::$Template;
 		$lc=static::$lang['comments_'];
 		foreach($data['items'] as $k=>&$v)
 		{
@@ -99,10 +100,7 @@ class TplUserNews
 				'text'=>$v['announcement'].($v['_hastext'] ? '<div id="more-'.$k.'" style="display:none"></div>' : '').($ntags ? '<div class="tags">'.sprintf(static::$lang['tags_'],rtrim($ntags,', ')).'</div>' : ''),
 			));
 		}
-		return$T.'<script type="text/javascript">//<![CDATA[
-$(function(){
-	CORE.Publications.Init("div.base","'.$GLOBALS['Eleanor']->module['name'].'");
-})//]]></script>';	}
+		return$T;	}
 
 	/*
 		Список новостей на главной сайта и главной модуля
@@ -153,7 +151,7 @@ $(function(){
 	*/
 	public static function DateList($date,$data,$cnt,$page,$pp,$links)
 	{
-		return static::TopMenu(reset($GLOBALS['title'])).self::List_($data).Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,-$page,$links['pages']);
+		return static::TopMenu(reset($GLOBALS['title'])).self::List_($data).Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,$page,$links['pages']);
 	}
 
 	/*
@@ -178,7 +176,7 @@ $(function(){
 	*/
 	public static function CategoryList($category,$data,$cnt,$page,$pp,$links)
 	{		return self::ShowCategories($category['id']).self::List_($data)
-			.Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,-$page,$links['pages']);
+			.Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,$page,$links['pages']);
 	}
 
 	/*
@@ -281,7 +279,7 @@ $(function(){
 	*/
 	public static function TagsList($tag,$data,$cnt,$page,$pp,$links)
 	{		return static::TopMenu(reset($GLOBALS['title']))
-			.($data['items'] ? self::List_($data).Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,-$page,$links['pages']) : Eleanor::$Template->Message(sprintf(static::$lang['notag'],$tag['name']),'info'));	}
+			.($data['items'] ? self::List_($data).Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,$page,$links['pages']) : Eleanor::$Template->Message(sprintf(static::$lang['notag'],$tag['name']),'info'));	}
 
 	/*
 		Страница поиска новостей
@@ -299,7 +297,7 @@ $(function(){
 		Описание остальных переменных доступно в методе List
 	*/
 	public static function Search($values,$error,$md,$tags,$data,$cnt,$page,$pp)
-	{		$tagopts='';
+	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];		$tagopts='';
 		foreach($tags as $k=>&$v)
 			$tagopts.=Eleanor::Option($v,$k,in_array($k,$values['tags']));
 		$Lst=Eleanor::LoadListTemplate('table-form');
@@ -310,7 +308,7 @@ $(function(){
 				foreach($data['items'] as &$v)
 				{
 					$v['title']=Strings::MarkWords($mw,$v['title']);
-					$v['text']=Strings::MarkWords($mw,$v['text']);
+					$v['announcement']=Strings::MarkWords($mw,$v['announcement']);
 				}
 			}
 			$results='<br /><br />'.self::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,$GLOBALS['Eleanor']->Url->Construct(array('do'=>'search','md'=>$md,array('page'=>'{page}')),true,''));
@@ -322,9 +320,9 @@ $(function(){
 			.($cnt===0 ? Eleanor::$Template->Message(static::$lang['notfound'],'info') : '')
 			.'<form method="post">'
 			.$Lst->begin()
-				->item(static::$lang['text'],Eleanor::Edit('text',$values['text']))
+				->item(static::$lang['what'],Eleanor::Edit('text',$values['text']))
 				->item(static::$lang['swhere'],Eleanor::Select('where',Eleanor::Option(static::$lang['title'],'title',$values['where']=='t').Eleanor::Option(static::$lang['ta'],'ta',$values['where']=='ta').Eleanor::Option(static::$lang['tat'],'tat',$values['where']=='tat')))
-				->item(static::$lang['categs'],Eleanor::Items('categs',$GLOBALS['Eleanor']->Categories->GetOptions($values['categs'])).'<br /><label>'.Eleanor::Radio('c','and',$values['c']=='and').static::$lang['and'].'</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>'.Eleanor::Radio('c','or',$values['c']=='or').static::$lang['or'].'</label>')
+				->item($lang['categs'],Eleanor::Items('categs',$GLOBALS['Eleanor']->Categories->GetOptions($values['categs'])).'<br /><label>'.Eleanor::Radio('c','and',$values['c']=='and').static::$lang['and'].'</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>'.Eleanor::Radio('c','or',$values['c']=='or').static::$lang['or'].'</label>')
 				->item(static::$lang['tags'],Eleanor::Items('tags',$tagopts).'<br /><label>'.Eleanor::Radio('t','and',$values['t']=='and').static::$lang['and'].'</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>'.Eleanor::Radio('t','or',$values['t']=='or').static::$lang['or'].'</label>')
 				->item(static::$lang['sortby'],Eleanor::Select('sort',Eleanor::Option(static::$lang['sdate'],'date',$values['sort']=='date').Eleanor::Option(static::$lang['srel'],'relevance',$values['sort']=='relevance')).'</label>')
 				->button(Eleanor::Button(static::$lang['find']))
@@ -365,10 +363,10 @@ $(function(){
 	*/
 	public static function Show($a,$category,$rating,$voting,$comments,$hl)
 	{		if($hl)
-		{			$a['title']=Strings::MarkWords($mw,$a['title']);
-			$a['text']=Strings::MarkWords($mw,$a['text']);
+		{			$a['title']=Strings::MarkWords($hl,$a['title']);
+			$a['text']=Strings::MarkWords($hl,$a['text']);
 			if($a['announcement'])
-				$a['announcement']=Strings::MarkWords($mw,$a['announcement']);
+				$a['announcement']=Strings::MarkWords($hl,$a['announcement']);
 		}
 		$tags='';
 		foreach($a['_tags'] as &$v)

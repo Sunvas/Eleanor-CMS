@@ -12,6 +12,7 @@ h1, h2, h3, h4, h5, pre, code, address, caption, cite, table, font { font-size: 
 h1, h2, h3, h4, h5, body { font-family: Tahoma, Arial, Verdana, sans-serif; }
 h1, h2, h3, h4, h5 { line-height: 1.2em; }
 h1 { font-size: 2em; } h2 { font-size: 1.6em; font-family: Arial, Verdana, sans-serif; letter-spacing: -0.01em; } h3 { font-size: 1.20em; font-weight: bold; } h4 { font-size: 1.2em; font-weight: bold; } h5 { font-weight: bold; font-size: 1.0em; }
+wbr { display: inline-block; }
 a { color: #469ebf; text-decoration: none; outline: none; }
 a:hover { text-decoration: underline; }
 input, textarea, select { font-size: 1em; font-family: Tahoma, Arial, Verdana, sans-serif; outline: none; }

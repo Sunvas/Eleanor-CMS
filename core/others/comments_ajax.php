@@ -109,7 +109,7 @@ class Comments_Ajax extends Comments
 				$El->Captcha->Destroy();
 				if(!$cach)
 				{
-					Error(array('error'=>$lang['error_captcha'],'captcha'=>true));
+					Error(array('error'=>$lang['WRONG_CAPTCHA'],'captcha'=>true));
 					break;
 				}
 				$R=Eleanor::$Db->Query('SELECT `id`,`date`,`author_id`,`text` FROM `'.$this->table.'` WHERE '.$where.' AND `status`='.$this->rights['post'].' ORDER BY `sortdate` DESC LIMIT 1');
@@ -238,18 +238,17 @@ class Comments_Ajax extends Comments
 					'sortdate'=>$lastpost,
 					'nextn'=>$nextn+max(0,$cnt-$st[-1]),
 				)+($parent ? array('answers'=>$parent['answers'],'parent'=>$parent['id']) : array()));
-				return array('merged'=>$merged,'event'=>$ev);
+				return array('merged'=>false,'event'=>$ev);
 			break;
 			case'page':
 				$st=$this->GetStatuses($where,$uid);
 				$cnt=array_sum($st);
 
-				$pspol=$this->CalcOffsetPage($post,$cnt);#list($pages,$page,$offset,$limit,$np)
+				$pspol=$this->CalcOffsetPage($post,$cnt);#list($pages,$page,$offset,$limit)
 				$ps=isset($post['pages']) ? (int)$post['pages'] : 0;
 				if(!empty($post['nochangepages']) and $pspol[0]>$ps)
 				{
 					$pspol[0]=$ps;
-					$pspol[4]=0;
 					$cnt=$ps*$this->pp;
 				}
 
@@ -267,10 +266,11 @@ class Comments_Ajax extends Comments
 				);
 
 				Result(array(
+					'cnt'=>$cnt,
 					'url'=>$this->Url(array($this->upref.'page'=>$this->reverse && $pspol[1]==$pspol[0] || !$this->reverse && $pspol[1]==1 ? false : $pspol[1])),
 					'page'=>$pspol[1],
 					'pages'=>$pspol[0],
-					'template'=>Eleanor::$Template->CommentsLoadPage($this->rights,$pagpq,$cnt-$pspol[4],$this->pp,$pspol[0],$pspol[1],$this->reverse,$parent,$links),
+					'template'=>Eleanor::$Template->CommentsLoadPage($this->rights,$pagpq,$cnt,$this->pp,$pspol[0],$pspol[1],$parent,$links),
 				));
 			break;
 			case'delete':

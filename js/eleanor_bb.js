@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright © Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
@@ -12,9 +12,9 @@
 	http://forum.vingrad.ru/forum/topic-84449.html
 */
 CORE.BBEditor=function(opts)
-{	opts=$.extend({id:"",service:false,smiles:false,ownbb:false},opts);	var th=this,
-		div=$("#div_"+opts.id),		textarea=div.find('textarea:first');
-	div.find("a").each(function(){		var m=this.className.match(/bbe_([a-z0-9\-]+)/),
+{	opts=$.extend({id:"",service:false,smiles:false,ownbb:false,Preview:function(){}},opts);	var th=this,
+		div=$("#ed-"+opts.id),		textarea=div.find("textarea:first");
+	div.find("a").each(function(){		var m=$(this).prop("className").match(/bb_([a-z0-9\-]+)/),
 			f;
 		if(!m)
 			return;
@@ -81,40 +81,40 @@ CORE.BBEditor=function(opts)
 			case "preview":
 				f=function(){th.Preview();return false}
 			break;
-			case "splus":
+			case "plus":
 				f=function(){th.Plus();return false}
 			break;
-			case "sminus":
+			case "minus":
 				f=function(){th.Minus();return false}
 			break;
 			case "font":
 				new DropDown({					selector:this,
 					left:true,
 					top:false,
-					rel:"#div_"+opts.id+" .bb_fonts",
+					rel:"#ed-"+opts.id+" .bb_fonts",
 					limiter:textarea
 				});
 			break;
 		}
 		if(f)
 			$(this).click(f);
-	}).end().find("select").each(function(){		var m=this.className.match(/bbe_([a-z0-9\-]+)/),
+	}).end().find("select").each(function(){		var m=$(this).prop("className").match(/bb_([a-z0-9\-]+)/),
 			f;
 		if(!m)
 			return;
 		switch(m[1])
 		{
 			case "color":
-				f=function(){if(this.value){th.Color(this.value);$("option:first",this).prop("selected",true)}}
+				f=function(){var v=$(this).val();if(v){th.Color(v);$("option:first",this).prop("selected",true)}}
 			break;
 			case "font":
-				f=function(){if(this.value){th.Font(this.value);$("option:first",this).prop("selected",true)}}
+				f=function(){var v=$(this).val();if(v){th.Font(v);$("option:first",this).prop("selected",true)}}
 			break;
 			case "background":
-				f=function(){if(this.value){th.BackGround(this.value);$("option:first",this).prop("selected",true)}}
+				f=function(){var v=$(this).val();if(v){th.BackGround(v);$("option:first",this).prop("selected",true)}}
 			break;
 			case "size":
-				f=function(){if(this.value){th.Size(this.value);$("option:first",this).prop("selected",true)}}
+				f=function(){var v=$(this).val();if(v){th.Size(v);$("option:first",this).prop("selected",true)}}
 			break;
 		}
 		if(f)
@@ -333,18 +333,12 @@ CORE.BBEditor=function(opts)
 		});	}
 
 	this.Preview=function()
-	{		var req={type:"bbpreview",text:this.GetText()}
+	{		var req={type:"preview",text:this.GetText(),editor:"bb"}
 		if(opts.service)			req.service=opts.service;
 		if(opts.smiles)
 			req.smiles=true;		if(opts.ownbb)
 			req.ownbb=true;
-		CORE.Ajax(
-			req,
-			function(result)
-			{				var pr=$("<div class=\"preview\">").width($("#div_"+opts.id).parent().width()).insertAfter($("#div_"+opts.id).parent().children("div.preview").remove().end().find("div.bb_yourpanel")),					button_hide=$("<br /><div style=\"text-align:center\"><input type=\"button\" class=\"button\" value=\""+CORE.Lang('hide')+"\" /></div>").find("input").click(function(){					pr.remove();				}).end();
-				CORE.ResizeBigImages(pr.html(result).append(button_hide).show());
-			}
-		);
+		CORE.Ajax(req,opts.Preview);
 	}
 
 	this.IsEmail=function(C)

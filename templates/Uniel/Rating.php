@@ -34,12 +34,14 @@ else
 
 if($can)
 {	$u=uniqid('r');
-	$GLOBALS['jscripts'][]='js/rating.js';
-	echo'<div class="rate" title="'.$title.'" id="'.$u.'">
+	$GLOBALS['jscripts'][]=$theme.'js/rating.js';
+	echo'<div class="rate" title="',$title,'" id="',$u,'">
 	<div class="noactive">
-		<div class="active" style="width:'.$average.'%;" data-now="'.$average.'%"></div>
+		<div class="active" style="width:',$average,'%;" data-now="',$average,'%"></div>
 	</div>
-</div><script type="text/javascript">/*<![CDATA[*/$(function(){new Rating("'.$GLOBALS['Eleanor']->module['name'].'","#'.$u.'",'.'['.join(',',$marks).']'.(isset($addon) ? ','.Eleanor::JsVars($addon,false,true) : '').');});//]]></script>';
+</div><script type="text/javascript">/*<![CDATA[*/$(function(){new Rating("',$GLOBALS['Eleanor']->module['name'],'","#',$u,'",[',join(',',$marks),']',
+	isset($addon) ? ','.Eleanor::JsVars($addon,false,true) : '',
+	');});//]]></script>';
 }
 else
 	echo'<div class="rate" title="'.$title.'">

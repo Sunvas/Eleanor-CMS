@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright © Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.su, http://eleanor-cms.com, http://eleanor-cms.net, http://eleanor.su
 	E-mail: support@eleanor-cms.ru
@@ -327,7 +327,7 @@ EDITOR=
 	Insert:function(pre,after,F,id)
 	{
 		if(typeof id=="undefined")
-			id=F||after||this.active;
+			id=this.active;
 		if(id && this.editors[id])
 			try
 			{

@@ -44,7 +44,7 @@ if(Eleanor::$vars['multilang'])
 	$langs=Eleanor::$langs;
 	unset($langs[Language::$main]);
 	foreach($langs as $k=>$v)
-		echo'<a href="'.Eleanor::$filename.'?language='.$k.'" title="'.$v['name'].'"><b>'.substr($k,0,3).'</b></a>';
+		echo'<a href="',Eleanor::$filename,'?language=',$k,'" title="',$v['name'],'"><b>',substr($k,0,3),'</b></a>';
 }
 ?>
 </div>
@@ -57,15 +57,15 @@ if(Eleanor::$vars['multilang'])
 <?php
 $br=Blocks::Get('right');
 $bl=Blocks::Get('left');
-echo'<div id="maincol'.($br ? 'R' : '').'">
+echo'<div id="maincol',$br ? 'R' : '','">
 			<div class="baseblock"><div class="dtop"><div class="dbottom">
-				<div class="dcont">'
-				.Blocks::Get('center_up')
-				.'<!-- CONTEXT LINKS -->{module}<!-- /CONTEXT LINKS -->'
-				.Blocks::Get('center_down')
-				.'</div>
+				<div class="dcont">',
+				Blocks::Get('center_up'),
+				'<!-- CONTEXT LINKS -->{module}<!-- /CONTEXT LINKS -->',
+				Blocks::Get('center_down'),
+				'</div>
 			</div></div></div>
-		</div>'.($br ? '<div id="rightcol">'.$br.'</div>' : '');
+		</div>',$br ? '<div id="rightcol">'.$br.'</div>' : '';
 ?>
 	</div>
 	<div id="leftcol">
@@ -102,9 +102,9 @@ echo'<div id="maincol'.($br ? 'R' : '').'">
 	#Âíèìàíèå! ÑÀÌÎÂÎËÜÍÎÅ ÓÁÈÐÀÍÈÅ ÊÎÏÈÐÀÉÒÎÂ ×ÐÅÂÀÒÎ ÁËÎÊÈÐÎÂÊÎÉ ÍÀ ÎÔÈÖÈÀËÜÍÎÌ ÑÀÉÒÅ ÑÈÑÒÅÌÛ È ÏÐÅÑËÅÄÓÅÒÑß ÏÎ ÇÀÊÎÍÓ!
 	#ÊÎÏÈÐÀÉÒÛ ÌÅÍßÒÜ/ÏÐÀÂÈÒÜ ÍÅËÜÇß! ÑÎÂÑÅÌ!! ÎÍÈ ÄÎËÆÍÛ ÎÑÒÀÂÀÒÜÑß ÍÅÈÇÌÅÍÍÛÌÈ ÄÎ ÁÈÒÀ! Òàêæå íåäîïóñòèìî è èõ ñêðûòèå!
 	echo'Powered by '.ELEANOR_COPYRIGHT?></div>
-	<div>{page status}</div>
-	<div>{debug}</div>
-</div>
+[page status]	<div>{page status}</div>
+[/page status][debug]	<div>{debug}</div>
+[/debug]</div>
 </div>
 
 </body>

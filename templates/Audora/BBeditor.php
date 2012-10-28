@@ -15,36 +15,36 @@ if(!defined('CMS'))die;
 $GLOBALS['head']['bbeditor']='<link rel="stylesheet" type="text/css" href="templates/Audora/style/bbeditor.css" media="screen" />';
 $l=Eleanor::$Language['bbeditor'];
 ?><!-- BB EDITOR TEXTAREA+PANEL -->
-<div class="bb_editor" id="div_<?php echo$id?>">
+<div class="bb_editor" id="ed-<?php echo$id?>">
 
 <!-- BB PANEL -->
 <div class="bb_panel">
 <div class="bb_rpanel">
-	<a href="#" title="<?php echo$l['preview']?>" class="bbe_preview"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['increase_field']?>" class="bbe_splus"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['decrease_field']?>" class="bbe_sminus"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['preview']?>" class="bb_preview"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['increase_field']?>" class="bb_plus"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['decrease_field']?>" class="bb_minus"><img src="images/spacer.png" alt="" /></a>
 </div>
-	<a href="#" title="<?php echo$l['bold']?>" class="bbe_bold"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['italic']?>" class="bbe_italic"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['underline']?>" class="bbe_uline"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['strike']?>" class="bbe_strike"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['left']?>" class="bbe_left"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['center']?>" class="bbe_center"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['right']?>" class="bbe_right"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['justify']?>" class="bbe_justify"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['hr']?>" class="bbe_hr"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['link']?>" class="bbe_url"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['email']?>" class="bbe_mail"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['image']?>" class="bbe_img"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['ul']?>" class="bbe_ul"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['ol']?>" class="bbe_ol"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['li']?>" class="bbe_li"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['tm']?>" class="bbe_tm"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['copyright']?>" class="bbe_c"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['registered']?>" class="bbe_r"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['font']?>" class="bbe_font"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['tab']?>" class="bbe_tab"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['nobb']?>" class="bbe_nobb"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['bold']?>" class="bb_bold"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['italic']?>" class="bb_italic"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['underline']?>" class="bb_uline"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['strike']?>" class="bb_strike"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['left']?>" class="bb_left"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['center']?>" class="bb_center"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['right']?>" class="bb_right"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['justify']?>" class="bb_justify"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['hr']?>" class="bb_hr"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['link']?>" class="bb_url"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['email']?>" class="bb_mail"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['image']?>" class="bb_img"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['ul']?>" class="bb_ul"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['ol']?>" class="bb_ol"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['li']?>" class="bb_li"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['tm']?>" class="bb_tm"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['copyright']?>" class="bb_c"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['registered']?>" class="bb_r"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['font']?>" class="bb_font"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['tab']?>" class="bb_tab"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$l['nobb']?>" class="bb_nobb"><img src="images/spacer.png" alt="" /></a>
 <div class="clr"></div>
 </div>
 <!--END BB PANEL -->
@@ -53,7 +53,7 @@ $l=Eleanor::$Language['bbeditor'];
 	<table><tr>
 	<td><?php echo$l['color']?>:</td>
 	<td>
-		<select class="bbe_color" size="1">
+		<select class="bb_color" size="1">
 		<option value="0"><?php echo$l['select']?></option>
 		<option style="background-color: black; color: #ffffff;">black</option>
 		<option style="background-color: gray; color: #ffffff;">gray</option>
@@ -77,7 +77,7 @@ $l=Eleanor::$Language['bbeditor'];
 		</tr><tr>
 	<td><?php echo$l['background']?>:</td>
 	<td>
-		<select class="bbe_background" size="1">
+		<select class="bb_background" size="1">
 		<option value="0"><?php echo$l['select']?></option>
 		<option style="background-color: black; color: #ffffff;">black</option>
 		<option style="background-color: gray; color: #ffffff;">gray</option>
@@ -101,12 +101,12 @@ $l=Eleanor::$Language['bbeditor'];
 		</tr><tr>
 	<td><?php echo$l['size']?>:</td>
 	<td>
-		<select class="bbe_size" size="1"><option value="0"><?php echo$l['select']?></option><option>8</option><option>10</option><option>12</option><option>14</option><option>16</option><option>18</option><option>20</option><option>22</option><option>24</option><option>26</option><option>28</option><option>30</option><option>32</option></select>
+		<select class="bb_size" size="1"><option value="0"><?php echo$l['select']?></option><option>8</option><option>10</option><option>12</option><option>14</option><option>16</option><option>18</option><option>20</option><option>22</option><option>24</option><option>26</option><option>28</option><option>30</option><option>32</option></select>
 	</td>
 	</tr><tr>
 	<td><?php echo$l['font']?>:</td>
 	<td>
-		<select class="bbe_font" size="1">
+		<select class="bb_font" size="1">
 		<option value="0"><?php echo$l['select']?></option>
 		<option style="font-family: Arial, Helvetica, sans-serif;">Arial</option>
 		<option style="font-family: 'Times New Roman', Times, serif;">Times New Roman</option>
@@ -121,5 +121,11 @@ $l=Eleanor::$Language['bbeditor'];
 </div>
 
 </div>
-<script type="text/javascript">/*<![CDATA[*/new CORE.BBEditor({id:"<?php echo$id,'"',$ownbb ? ',ownbb:true' : '',$smiles ? ',smiles:true' : '',',service:"',Eleanor::$service?>"});//]]></script>
+<script type="text/javascript">/*<![CDATA[*/new CORE.BBEditor({id:"<?php echo$id,'"',$ownbb ? ',ownbb:true' : '',$smiles ? ',smiles:true' : '',',service:"',Eleanor::$service?>",Preview:function(html){	{
+		var pr=$("<div class=\"preview\">").width($("#ed-<?php echo$id?>").parent().width()).insertAfter($("#ed-<?php echo$id?>").parent().children("div.preview").remove().end().find("div.bb_yourpanel")),
+			hide=$("<div style=\"text-align:center\"><input type=\"button\" class=\"button\" value=\""+CORE.Lang('hide')+"\" /></div>").find("input").click(function(){
+				pr.remove();
+			}).end();
+		pr.html(html+"<br />").append(hide).show();
+	}}});//]]></script>
 <!-- END BB EDITOR TEXTAREA+PANEL -->

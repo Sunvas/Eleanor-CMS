@@ -28,39 +28,39 @@ class OwnBbCode_attach extends OwnBbCode
 		if($is_our)
 			$p['file']=PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$p['file'];
 		$type=isset($p['type']) ? $p['type'] : substr(strrchr($p['file'],'.'),1);
-		switch(strtolower($type))
+		$type=strtolower($type);
+		switch($type)
 		{
-			case'flv':
 			case'mp4':
-				$p['width']=isset($p['width']) ? (int)$p['width'] : 520;
-				$p['height']=isset($p['height']) ? (int)$p['height'] : 330;
-				$autobuf='false';
-				$ahc='true';
+			case'webm';
+			case'ogv':
+				$GLOBALS['head'][__class__]='<link rel="stylesheet" type="text/css" href="addons/flowplayer/skin/minimalist.css" />';
+				$GLOBALS['jscripts'][]='addons/flowplayer/flowplayer.min.js';
+				return'<div class="flowplayer" data-swf="addons/flowplayer/flowplayer.swf">
+					<video>
+						<source type="video/'.$type.'" src="'.$p['file'].'" />
+					</video>
+				</div>'.(basename($_SERVER['SCRIPT_FILENAME'])==Eleanor::$services['ajax']['file'] ? '<script type="text/javascript">//<![CDATA[
+				$(function(){					$(".flowplayer").flowplayer();				})//]]></script>' : '');
+			case'flv':
 			case'mp3':
 				$p['width']=isset($p['width']) ? (int)$p['width'] : 400;
 				$p['height']=isset($p['height']) ? (int)$p['height'] : 30;
-				if(!isset($autobuf))
-					$autobuf='false';
-				if(isset($p['autobuf']))
-					$autobuf='true';
-				if(!isset($ahc))
-					$ahc='false';
-				if(isset($p['ahc']))
-					$ahc='true';
-				$align=(isset($p['align']) and in_array($p['align'],array('left','center','right'))) ? 'float:'.$p['align'] : '';
+
+				$align=isset($p['align']) && in_array($p['align'],array('left','center','right')) ? 'float:'.$p['align'] : '';
 				$GLOBALS['jscripts'][]='addons/flowplayer/flowplayer-3.2.11.min.js';
 				$pl=uniqid('player_');
 				return'<a href="'.$p['file'].'" style="display:block;width:'.$p['width'].'px;height:'.$p['height'].'px;'.$align.'" id="'.$pl.'"></a>
 <script type="text/javascript">//<![CDATA[
-flowplayer("'.$pl.'","addons/flowplayer/flowplayer-3.2.14.swf",{
+flowplayer("'.$pl.'","addons/flowplayer/flowplayer-3.2.15.swf",{
 	// pause on first frame of the video
 	clip: {
 		autoPlay: false,
-		autoBuffering: '.$autobuf.'
+		autoBuffering: false
 	},
 	plugins:{
 		controls:{
-			autoHide: '.$ahc.'
+			autoHide: true
 		}
 	}
 });

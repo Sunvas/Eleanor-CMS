@@ -58,11 +58,16 @@ CodeMirror.defineMode("htmlembedded", function(config, parserConfig) {
       };
     },
     
+    electricChars: "/{}:",
 
-    electricChars: "/{}:"
+    innerMode: function(state) {
+      if (state.token == scriptingDispatch) return {state: state.scriptState, mode: scriptingMode};
+      else return {state: state.htmlState, mode: htmlMixedMode};
+    }
   };
 }, "htmlmixed");
 
 CodeMirror.defineMIME("application/x-ejs", { name: "htmlembedded", scriptingModeSpec:"javascript"});
 CodeMirror.defineMIME("application/x-aspx", { name: "htmlembedded", scriptingModeSpec:"text/x-csharp"});
 CodeMirror.defineMIME("application/x-jsp", { name: "htmlembedded", scriptingModeSpec:"text/x-java"});
+CodeMirror.defineMIME("application/x-erb", { name: "htmlembedded", scriptingModeSpec:"ruby"});

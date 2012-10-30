@@ -10,21 +10,13 @@
 */
 class ControlUploadFile extends BaseClass implements ControlsBase
 {
-	public
+	public static
 		$Language;
 
-	private
-		$bypost=array(),
-		$Obj;
+	private static
+		$bypost;
 
-	public function __construct($Obj)
-	{
-		$this->Obj=$Obj;
-		$this->Language=new Language;
-		$this->Language->queue[]='uploadfile-*.php';
-	}
-
-	public function GetSettings()
+	public static function GetSettings()
 	{
 		$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
@@ -32,8 +24,8 @@ class ControlUploadFile extends BaseClass implements ControlsBase
 		return array(
 			'uploadfile',#Группа контрола
 			'path'=>array(
-				'title'=>$this->Language['path_to_save'],
-				'descr'=>$this->Language['path_to_save_'],
+				'title'=>static::$Language['path_to_save'],
+				'descr'=>static::$Language['path_to_save_'],
 				'type'=>'edit',
 				'options'=>array(
 					'addon'=>array(
@@ -50,7 +42,7 @@ class ControlUploadFile extends BaseClass implements ControlsBase
 						{
 							$path=Eleanor::FormatPath($v,Eleanor::$uploads);
 							if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
-								throw new EE($this->Language['no_upload_path'],EE::INFO);
+								throw new EE(static::$Language['no_upload_path'],EE::INFO);
 							$v=strpos($path,$uppath)===0 ? substr($path,strlen($uppath)) : substr($path,strlen(Eleanor::$root));
 							$v=str_replace(DIRECTORY_SEPARATOR,'/',$v);
 						}
@@ -59,7 +51,7 @@ class ControlUploadFile extends BaseClass implements ControlsBase
 					{
 						$path=Eleanor::FormatPath($a['value'],Eleanor::$uploads);
 						if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
-							throw new EE($this->Language['no_upload_path'],EE::INFO);
+							throw new EE(static::$Language['no_upload_path'],EE::INFO);
 						$a['value']=strpos($path,$uppath)===0 ? substr($path,strlen($uppath)) : substr($path,strlen(Eleanor::$root));
 						$a['value']=str_replace(DIRECTORY_SEPARATOR,'/',$a['value']);
 					}
@@ -89,8 +81,8 @@ $(function(){
 });//]]></script>'
 			),
 			'types'=>array(
-				'title'=>$this->Language['file_types'],
-				'descr'=>$this->Language['file_types_'],
+				'title'=>static::$Language['file_types'],
+				'descr'=>static::$Language['file_types_'],
 				'type'=>'edit',
 				'default'=>$ml ? array(''=>array()) : array(),
 				'save'=>function($a)
@@ -140,8 +132,8 @@ $(function(){
 				},
 			),
 			'max_size'=>array(
-				'title'=>$this->Language['max_size_f'],
-				'descr'=>$this->Language['max_size_fd'],
+				'title'=>static::$Language['max_size_f'],
+				'descr'=>static::$Language['max_size_fd'],
 				'type'=>'edit',
 				'default'=>$ml ? array(''=>'') : '',
 				'save'=>function($a)
@@ -169,8 +161,8 @@ $(function(){
 				},
 			),
 			'filename_eval'=>array(
-				'title'=>$this->Language['filename'],
-				'descr'=>$this->Language['filename_'],
+				'title'=>static::$Language['filename'],
+				'descr'=>static::$Language['filename_'],
 				'default'=>$ml ? array(''=>'') : '',
 				'type'=>'text',
 				'save'=>function($a)
@@ -186,7 +178,7 @@ $(function(){
 							$err=ob_get_contents();
 							ob_end_clean();
 							Eleanor::getInstance()->e_g_l=error_get_last();
-							throw new EE($this->Language['error_eval'].$err,EE::INFO);
+							throw new EE(static::$Language['error_eval'].$err,EE::INFO);
 						}
 						ob_end_clean();
 					};
@@ -196,7 +188,7 @@ $(function(){
 		);
 	}
 
-	public function Control($a)
+	public static function Control($a,$Obj)
 	{
 		$a['options']+=array(
 			'types'=>array(),
@@ -205,10 +197,10 @@ $(function(){
 		);
 		$a['options']['types']=$a['options']['types'] ? (array)$a['options']['types'] : array();
 
-		if($a['bypost'] and $value=$this->Obj->GetPostVal($a['name'],false))
+		if($a['bypost'] and $value=$Obj->GetPostVal($a['name'],false))
 		{
 			$writed=isset($value['type']) and $value['type']=='w';
-			$a['value']=isset($this->bypost[$a['controlname']]) ? $this->bypost[$a['controlname']] : $a['default'];
+			$a['value']=isset(static::$bypost[$a['controlname']]) ? static::$bypost[$a['controlname']] : $a['default'];
 		}
 		else
 			$writed=strpos($a['value'],'://')!==false;
@@ -251,19 +243,19 @@ $(function(){
 				});
 			});
 			//]]></script>';
-			$r.='<li><span style="vertical-align:15%">'.sprintf($f ? $this->Language['uploaded_file'] : $this->Language['writed_file'],'<a href="'.$a['value'].'" target="_blank"'.($img ? ' id="a-'.$id.'"' : '').'>'.basename($a['value']).'</span></a>');
+			$r.='<li><span style="vertical-align:15%">'.sprintf($f ? static::$Language['uploaded_file'] : static::$Language['writed_file'],'<a href="'.$a['value'].'" target="_blank"'.($img ? ' id="a-'.$id.'"' : '').'>'.basename($a['value']).'</span></a>');
 			if($f)
-				$r.='<label style="margin:0px 15px">'.Eleanor::Check($a['controlname'].'[delete]').'<span style="vertical-align:15%"> '.$this->Language['delete'].'</span></label>';
+				$r.='<label style="margin:0px 15px">'.Eleanor::Check($a['controlname'].'[delete]').'<span style="vertical-align:15%"> '.static::$Language['delete'].'</span></label>';
 			$r.='</li>';
 		}
-		return$scripts.$r.'<li class="upload"'.($writed ? ' style="display:none"' : '').'>'.Eleanor::Control($a['controlname'].'[file]','file',false,array('onchange'=>'$(this).closest(\'form\').attr(\'enctype\',\'multipart/form-data\')')).'<br /><a class="small" href="#" onclick="$(\'li.upload\').hide();$(\'li.write\').show();$(\'#type-'.$id.'\').val(\'w\');return false">'.$this->Language['write'].'</a></li>'
-				.'<li class="write"'.($writed ? '' : ' style="display:none"').'>'.Eleanor::Edit($a['controlname'].'[text]','',array('id'=>'text-'.$id)).'<br /><a class="small" href="#" onclick="var f=$(this).closest(\'form\');f.find(\'li.upload\').show();f.find(\'li.write\').hide();$(\'#type-'.$id.'\').val(\'u\');return false">'.$this->Language['upload'].'</a></li>'
-				.($a['options']['max_size'] ? '<li class="upload"'.($writed ? ' style="display:none"' : '').'><span class="small" style="font-weight:bold">'.sprintf($this->Language['max_size'],Files::BytesToSize($a['options']['max_size'])).'</span></li>' : '')
-				.($a['options']['types'] ? '<li><span class="small" style="font-weight:bold">'.sprintf($this->Language['allowed_types'],join(', ',$a['options']['types'])).'</span></li>' : '')
+		return$scripts.$r.'<li class="upload"'.($writed ? ' style="display:none"' : '').'>'.Eleanor::Control($a['controlname'].'[file]','file',false,array('onchange'=>'$(this).closest(\'form\').attr(\'enctype\',\'multipart/form-data\')')).'<br /><a class="small" href="#" onclick="$(\'li.upload\').hide();$(\'li.write\').show();$(\'#type-'.$id.'\').val(\'w\');return false">'.static::$Language['write'].'</a></li>'
+				.'<li class="write"'.($writed ? '' : ' style="display:none"').'>'.Eleanor::Edit($a['controlname'].'[text]','',array('id'=>'text-'.$id)).'<br /><a class="small" href="#" onclick="var f=$(this).closest(\'form\');f.find(\'li.upload\').show();f.find(\'li.write\').hide();$(\'#type-'.$id.'\').val(\'u\');return false">'.static::$Language['upload'].'</a></li>'
+				.($a['options']['max_size'] ? '<li class="upload"'.($writed ? ' style="display:none"' : '').'><span class="small" style="font-weight:bold">'.sprintf(static::$Language['max_size'],Files::BytesToSize($a['options']['max_size'])).'</span></li>' : '')
+				.($a['options']['types'] ? '<li><span class="small" style="font-weight:bold">'.sprintf(static::$Language['allowed_types'],join(', ',$a['options']['types'])).'</span></li>' : '')
 				.'</ul>'.Eleanor::Control($a['controlname'].'[type]','hidden',$writed ? 'w' : 'u',array('id'=>'type-'.$id));
 	}
 
-	public function Save($a)
+	public static function Save($a,$Obj)
 	{
 		$a['options']+=array(
 			'types'=>array(),
@@ -280,7 +272,7 @@ $(function(){
 		$writed=strpos($a['value'],'://')!==false;
 		$vpath=$a['value'] ? Eleanor::FormatPath($a['value']) : false;
 		$f=$vpath && !$writed && is_file($vpath) && dirname($a['value'])==($a['options']['path'] ? trim($a['options']['path'],'/\\') : Eleanor::$uploads) && strpos('://',$vpath)===false;
-		if($f and $this->Obj->GetPostVal(array_merge($a['name'],array('delete')),false))
+		if($f and $Obj->GetPostVal(array_merge($a['name'],array('delete')),false))
 		{
 			Files::Delete($vpath);
 			$newv='';
@@ -288,24 +280,24 @@ $(function(){
 
 		$a['name']=(array)$a['name'];
 		$a['options']['types']=(array)$a['options']['types'];
-		if($this->Obj->GetPostVal(array_merge($a['name'],array('type')),'w')=='w' and $text=$this->Obj->GetPostVal(array_merge($a['name'],array('text')),false))
+		if($Obj->GetPostVal(array_merge($a['name'],array('type')),'w')=='w' and $text=$Obj->GetPostVal(array_merge($a['name'],array('text')),false))
 		{
 			if($a['options']['types'] and preg_match('#\.('.join('|',$a['options']['types']).')$#i',$text)==0)
-				throw new EE($this->Language['error_ext'],EE::INFO);
+				throw new EE(static::$Language['error_ext'],EE::INFO);
  			return$text;
 		}
 
-		$this->Obj->POST=&$_FILES;
-		$tmp=$this->Obj->GetPostVal(array_merge(array('tmp_name'),$a['name'],array('file')),false);
-		$name=$this->Obj->GetPostVal(array_merge(array('name'),$a['name'],array('file')),false);
+		$Obj->POST=&$_FILES;
+		$tmp=$Obj->GetPostVal(array_merge(array('tmp_name'),$a['name'],array('file')),false);
+		$name=$Obj->GetPostVal(array_merge(array('name'),$a['name'],array('file')),false);
 		if(!$tmp or !$name or !is_uploaded_file($tmp))
 			return$newv;
 
 		$path=$a['options']['path'] ? Eleanor::FormatPath($a['options']['path']) : Eleanor::$root.Eleanor::$uploads.'/';
 		if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
-			throw new EE($this->Language['no_upload_path'],EE::INFO);
+			throw new EE(static::$Language['no_upload_path'],EE::INFO);
 		if($a['options']['types'] and preg_match('#\.('.join('|',$a['options']['types']).')$#i',$name)==0)
-			throw new EE($this->Language['error_ext'],EE::INFO);
+			throw new EE(static::$Language['error_ext'],EE::INFO);
 		if(is_callable($a['options']['filename']))
 			$filename=call_user_func($a['options']['filename'],array('filename'=>$name)+$a,$this);
 		elseif($a['options']['filename_eval'])
@@ -331,13 +323,13 @@ $(function(){
 			if(substr($a['options']['path'],-1)!='/')
 				$a['options']['path'].='/';
 			$a['options']['path'].=$filename;
-			$this->bypost[$this->Obj->GenName($a['name'])]=$a['options']['path'];
+			static::$bypost[$Obj->GenName($a['name'])]=$a['options']['path'];
 			return$a['options']['path'];
 		}
 		return$newv;
 	}
 
-	public function Result($a,$co)
+	public static function Result($a,$Obj,$co)
 	{
 		Eleanor::LoadOptions('editor');
 		$h=$a['value'];
@@ -346,3 +338,5 @@ $(function(){
 		return'<a href="'.$h.'">'.$a['value'].'</a>';
 	}
 }
+ControlUploadFile::$Language=new Language;
+ControlUploadFile::$Language->queue[]='uploadfile-*.php';

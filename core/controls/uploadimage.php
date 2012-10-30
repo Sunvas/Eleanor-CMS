@@ -11,20 +11,13 @@
 
 class ControlUploadImage extends BaseClass implements ControlsBase
 {
-	public
+	public static
 		$Language;
 
-	private
-		$Obj;
+	private static
+		$bypost;
 
-	public function __construct($Obj)
-	{
-		$this->Obj=$Obj;
-		$this->Language=new Language;
-		$this->Language->queue[]='uploadimage-*.php';
-	}
-
-	public function GetSettings()
+	public static function GetSettings()
 	{
 		$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
@@ -32,8 +25,8 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 		return array(
 			'uploadimage',#Группа контрола
 			'path'=>array(
-				'title'=>$this->Language['path_to_save'],
-				'descr'=>$this->Language['path_to_save_'],
+				'title'=>static::$Language['path_to_save'],
+				'descr'=>static::$Language['path_to_save_'],
 				'type'=>'edit',
 				'options'=>array(
 					'addon'=>array(
@@ -50,7 +43,7 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 						{
 							$path=Eleanor::FormatPath($v,Eleanor::$uploads);
 							if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
-								throw new EE($this->Language['no_upload_path'],EE::INFO);
+								throw new EE(static::$Language['no_upload_path'],EE::INFO);
 							$v=strpos($path,$uppath)===0 ? substr($path,strlen($uppath)) : substr($path,strlen(Eleanor::$root));
 							$v=str_replace(DIRECTORY_SEPARATOR,'/',$v);
 						}
@@ -59,7 +52,7 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 					{
 						$path=Eleanor::FormatPath($a['value'],Eleanor::$uploads);
 						if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
-							throw new EE($this->Language['no_upload_path'],EE::INFO);
+							throw new EE(static::$Language['no_upload_path'],EE::INFO);
 						$a['value']=strpos($path,$uppath)===0 ? substr($path,strlen($uppath)) : substr($path,strlen(Eleanor::$root));
 						$a['value']=str_replace(DIRECTORY_SEPARATOR,'/',$a['value']);
 					}
@@ -89,8 +82,8 @@ $(function(){
 });//]]></script>'
 			),
 			'types'=>array(
-				'title'=>$this->Language['file_types'],
-				'descr'=>$this->Language['file_types_'],
+				'title'=>static::$Language['file_types'],
+				'descr'=>static::$Language['file_types_'],
 				'type'=>'edit',
 				'default'=>$ml ? array(''=>array('png','jpeg','jpg','bmp','gif')) : array('png','jpeg','jpg','bmp','gif'),
 				'save'=>function($a)
@@ -140,8 +133,8 @@ $(function(){
 				},
 			),
 			'max_size'=>array(
-				'title'=>$this->Language['max_size_f'],
-				'descr'=>$this->Language['max_size_f_'],
+				'title'=>static::$Language['max_size_f'],
+				'descr'=>static::$Language['max_size_f_'],
 				'type'=>'edit',
 				'default'=>$ml ? array(''=>'') : '',
 				'save'=>function($a)
@@ -169,8 +162,8 @@ $(function(){
 				},
 			),
 			'filename_eval'=>array(
-				'title'=>$this->Language['filename'],
-				'descr'=>$this->Language['filename_'],
+				'title'=>static::$Language['filename'],
+				'descr'=>static::$Language['filename_'],
 				'default'=>$ml ? array(''=>'') : '',
 				'type'=>'text',
 				'save'=>function($a)
@@ -186,7 +179,7 @@ $(function(){
 							$err=ob_get_contents();
 							ob_end_clean();
 							Eleanor::getInstance()->e_g_l=error_get_last();
-							throw new EE($this->Language['error_eval'].$err,EE::INFO);
+							throw new EE(static::$Language['error_eval'].$err,EE::INFO);
 						}
 						ob_end_clean();
 					};
@@ -194,8 +187,8 @@ $(function(){
 				},
 			),
 			'max_image_size'=>array(
-				'title'=>$this->Language['maximsize'],
-				'descr'=>$this->Language['maximsize_'],
+				'title'=>static::$Language['maximsize'],
+				'descr'=>static::$Language['maximsize_'],
 				'default'=>$ml ? array(''=>'0 0') : '0 0',
 				'type'=>'text',
 				'save'=>function($a)
@@ -216,43 +209,43 @@ $(function(){
 				},
 			),
 			'nosmaller'=>array(
-				'title'=>$this->Language['nosmaller'],
-				'descr'=>$this->Language['nosmaller_'],
+				'title'=>static::$Language['nosmaller'],
+				'descr'=>static::$Language['nosmaller_'],
 				'default'=>$ml ? array(''=>false) : false,
 				'type'=>'check',
 			),
 			'resize'=>array(
-				'title'=>$this->Language['onmaxupload'],
-				'descr'=>$this->Language['onmaxupload_'],
+				'title'=>static::$Language['onmaxupload'],
+				'descr'=>static::$Language['onmaxupload_'],
 				'default'=>$ml ? array(''=>false) : false,
 				'type'=>'select',
 				'options'=>array(
 					'options'=>array(
-						'd'=>$this->Language['disable_upload'],
-						'b'=>$this->Language['bybigger'],
-						's'=>$this->Language['bysmaller'],
-						'w'=>$this->Language['bywidth'],
-						'h'=>$this->Language['byheight'],
+						'd'=>static::$Language['disable_upload'],
+						'b'=>static::$Language['bybigger'],
+						's'=>static::$Language['bysmaller'],
+						'w'=>static::$Language['bywidth'],
+						'h'=>static::$Language['byheight'],
 					),
 				),
 			),
 			'source'=>array(
-				'title'=>$this->Language['source'],
+				'title'=>static::$Language['source'],
 				'descr'=>'',
 				'default'=>array('upload','address'),
 				'type'=>'items',
-				'save_eval'=>'if(count(array_intersect(array(\'upload\',\'address\'),$a[\'value\']))==0)throw new EE(\''.$this->Language['must1t'].'\',EE::INFO);',
+				'save_eval'=>'if(count(array_intersect(array(\'upload\',\'address\'),$a[\'value\']))==0)throw new EE(\''.static::$Language['must1t'].'\',EE::INFO);',
 				'options'=>array(
 					'options'=>array(
-						'address'=>$this->Language['address'],
-						'upload'=>$this->Language['upload'],
+						'address'=>static::$Language['address'],
+						'upload'=>static::$Language['upload'],
 					),
 				),
 			)
 		);
 	}
 
-	public function Control($a)
+	public static function Control($a,$Obj)
 	{
 		$a['options']+=array(
 			'types'=>array('jpg','png','gif','bmp','jpeg'),
@@ -275,7 +268,7 @@ $(function(){
 		if(!$saddr and !$sup)
 			return'';
 
-		if($a['bypost'] and $sessid=$this->Obj->GetPostVal($a['name'],false))
+		if($a['bypost'] and $sessid=$Obj->GetPostVal($a['name'],false))
 		{
 			Eleanor::StartSession($sessid);
 			if(isset($_SESSION[__class__][$a['controlname']]))
@@ -401,7 +394,7 @@ $(function(){
 					},
 				upload_progress_handler:function(file,bytesLoaded)
 					{
-						$(".cancel",I).text("'.$this->Language['cancel'].' ("+Math.ceil(bytesLoaded/file.size*100)+"%)");
+						$(".cancel",I).text("'.static::$Language['cancel'].' ("+Math.ceil(bytesLoaded/file.size*100)+"%)");
 					},
 				upload_error_handler:function(file, errorCode, message)
 					{
@@ -422,7 +415,7 @@ $(function(){
 					},
 				button_placeholder_id:"i'.$id.'-upload",
 				button_image_url:"'.PROTOCOL.Eleanor::$domain.Eleanor::$site_path.'images/uploader/uploadbtn.png",
-				button_text:\'<span class="upbtntext">'.$this->Language['upload'].'</span>\',
+				button_text:\'<span class="upbtntext">'.static::$Language['upload'].'</span>\',
 				button_text_style:".upbtntext { font-size: 11px; color: #6D6A65; font-family: Tahoma, Arial, sans-serif; font-weight: bold; }",
 				button_text_left_padding:16,
 				button_text_top_padding:4,
@@ -482,29 +475,35 @@ $(function(){
 			});' : '').'
 		});//]]></script><div id="i'.$id.'">'
 			.($sup ? '<span id="i'.$id.'-upload"></span>' : '')
-			.($saddr ? '<a class="imagebtn enter" href="#">'.$this->Language['address'].'</a><div class="clr"></div><div class="enterhere">'.$this->Language['enter_address'].Eleanor::Edit('','',array('style'=>'width:70%')).' '.Eleanor::Button('OK','button').'</div>' : '')
+			.($saddr ? '<a class="imagebtn enter" href="#">'.static::$Language['address'].'</a><div class="clr"></div><div class="enterhere">'.static::$Language['enter_address'].Eleanor::Edit('','',array('style'=>'width:70%')).' '.Eleanor::Button('OK','button').'</div>' : '')
 			.'<div style="padding:5px 0;">
-				<span style="width:'.($a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '180').'px;height:'.($a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '145').'px;text-decoration:none;max-height:100%;max-width:100%;display:none;" class="screenblock"><b>'.$this->Language['upload_image'].'</b><br /><span>'.sprintf('<b>%s</b> <small>x</small> <b>%s</b> <small>px</small>',$a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '&infin;',$a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '&infin;').'</span></span>
+				<span style="width:'.($a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '180').'px;height:'.($a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '145').'px;text-decoration:none;max-height:100%;max-width:100%;display:none;" class="screenblock"><b>'.static::$Language['upload_image'].'</b><br /><span>'.sprintf('<b>%s</b> <small>x</small> <b>%s</b> <small>px</small>',$a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '&infin;',$a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '&infin;').'</span></span>
 				<a href="#" class="aimage" style="display:none;"><img style="border:1px solid #c9c7c3;max-width:'.($a['options']['max_image_size'][0]>0 ? $a['options']['max_image_size'][0] : '100%').';max-height:'.($a['options']['max_image_size'][1]>0 ? $a['options']['max_image_size'][1] : '100%').'" src="images/spacer.png" /></a>
 			</div>
-			<a class="imagebtn delete" style="display:none;" href="#">'.$this->Language['delete'].'</a>'
+			<a class="imagebtn delete" style="display:none;" href="#">'.static::$Language['delete'].'</a>'
 			.($sup ? '<a class="imagebtn cancel" href="#" style="display:none;"></a>' : '')
 			.Eleanor::Control($a['controlname'],'hidden',$sid).'</div>';
 	}
 
-	public function Save($a)
+	public static function Save($a,$Obj)
 	{
 		$a['options']+=array(
 			'filename_eval'=>null,
 			'filename'=>null,
 		);
-		if(!$sessid=$this->Obj->GetPostVal($a['name'],''))
+		if(!$sessid=$Obj->GetPostVal($a['name'],''))
 			return'';
 
-		$name=$this->Obj->GenName($a['name']);
+		$name=$Obj->GenName($a['name']);
 		Eleanor::StartSession($sessid);
 		if(!isset($_SESSION[__class__][$name]))
-			throw new EE($this->Language['session_lost'],EE::INFO);
+		{
+			if($Obj->throw)
+				throw new EE(static::$Language['session_lost'],EE::INFO);
+			else
+				$Obj->errors[]='SESSION_LOST';
+			return;
+		}
 		$sarr=$_SESSION[__class__][$name];
 
 		if(!$sarr['new'])
@@ -543,10 +542,16 @@ $(function(){
 
 		$path=($sarr['path'] ? Eleanor::FormatPath($sarr['path']) : Eleanor::$root.Eleanor::$uploads).DIRECTORY_SEPARATOR;
 		if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
-			throw new EE($this->Language['no_upload_path'],EE::INFO);
+		{
+			if($Obj->throw)
+				throw new EE(static::$Language['no_upload_path'],EE::INFO);
+			else
+				$Obj->errors[]='NO_UPLOAD_PATH';
+			return;
+		}
 
 		if(is_callable($a['options']['filename']))
-			$filename=call_user_func($a['options']['filename'],array('filename'=>basename($snew))+$a,$this);
+			$filename=call_user_func($a['options']['filename'],array('filename'=>basename($snew))+$a,__class__);
 		elseif($a['options']['filename_eval'])
 		{
 			ob_start();
@@ -556,12 +561,12 @@ $(function(){
 				$err=ob_get_contents();
 				ob_end_clean();
 				Eleanor::getInstance()->e_g_l=error_get_last();
-				if($this->Obj->throw)
+				if($Obj->throw)
 					throw new EE('Error in filename eval: <br />'.$err,EE::DEV,array('code'=>1));
 				else
-					$this->Obj->errors['ERROR_FILENAME']=$err;
+					$Obj->errors['ERROR_FILENAME']=$err;
 			}
-			$filename=$func(array('filename'=>basename($snew))+$a,$this);
+			$filename=$func(array('filename'=>basename($snew))+$a,__class__);
 			ob_end_clean();
 		}
 		else
@@ -587,12 +592,12 @@ $(function(){
 		return$sarr['preview'] ? $r : reset($r);
 	}
 
-	public function Result($a,$co)
+	public static function Result($a,$Obj,$co)
 	{
 		$a['options']+=array('retempty'=>true,'onlyimage'=>true,'max_image_size'=>'0 0','alt'=>'');
 		$a['options']['max_image_size']=explode(' ',$a['options']['max_image_size']);
 		if(!$a['value'])
-			return$a['options']['retempty'] ? null : '<span style="width:'.($a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '180').'px;height:'.($a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '145').'px;text-decoration:none;max-height:100%;max-width:100%;" class="screenblock"><b>'.$this->Language['noimage'].'</b></span>';
+			return$a['options']['retempty'] ? null : '<span style="width:'.($a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '180').'px;height:'.($a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '145').'px;text-decoration:none;max-height:100%;max-width:100%;" class="screenblock"><b>'.static::$Language['noimage'].'</b></span>';
 		if(is_array($a['value']))
 			list($img,$prev)=$a['value'];
 		else
@@ -616,13 +621,13 @@ $(function(){
 });//]]></script>';
 	}
 
-	public function DoAjax()
+	public static function DoAjax()
 	{
 		$session=isset($_POST['session']) ? (string)$_POST['session'] : '';
 		$name=isset($_POST['name']) ? (string)$_POST['name'] : '';
 		Eleanor::StartSession($session);
 		if(!isset($_SESSION[__class__][$name]))
-			return Error($this->Language['session_lost']);
+			return Error(static::$Language['session_lost']);
 		$a=$_SESSION[__class__][$name];
 		$type=isset($_POST['do']) ? $_POST['do'] : '';
 		switch($type)
@@ -634,16 +639,16 @@ $(function(){
 				if(strpos($a['new'],'://')!==false && is_file($f=Eleanor::FormatPath($a['new'])))
 				{
 					if($a['types'] and !in_array(substr(strrchr($a['new'],'.'),1),$a['types']))
-						return Error(sprintf($this->Language['only_types'],join(', ',$a['types'])));
+						return Error(sprintf(static::$Language['only_types'],join(', ',$a['types'])));
 					if(!$sizes=@getimagesize($f))
-						return Error($this->Language['not_image']);
+						return Error(static::$Language['not_image']);
 					list($w,$h)=$sizes;
 					if($a['max_image_size'][0]>0 and $a['max_image_size'][0]<$w)
-						return Error(sprintf($this->Language['bigger_w'],$a['max_image_size'][0],$w));
+						return Error(sprintf(static::$Language['bigger_w'],$a['max_image_size'][0],$w));
 					if($a['max_image_size'][1]>0 and $a['max_image_size'][1]<$h)
-						return Error(sprintf($this->Language['bigger_h'],$a['max_image_size'][1],$h));
+						return Error(sprintf(static::$Language['bigger_h'],$a['max_image_size'][1],$h));
 					if($a['nosmaller'] and ($a['max_image_size'][1]>0 and $a['max_image_size'][1]>$h or $a['max_image_size'][0]>0 and $a['max_image_size'][0]>$w))
-						return Error(sprintf($this->Language['smaller'],$w,$h,$a['max_image_size'][0] ? $a['max_image_size'][0] : '&infin;',$a['max_image_size'][1] ? $a['max_image_size'][1] : '&infin;'));
+						return Error(sprintf(static::$Language['smaller'],$w,$h,$a['max_image_size'][0] ? $a['max_image_size'][0] : '&infin;',$a['max_image_size'][1] ? $a['max_image_size'][1] : '&infin;'));
 				}
 			break;
 			case'delete':
@@ -656,7 +661,7 @@ $(function(){
 		Result(true);
 	}
 
-	public function DoUpload()
+	public static function DoUpload()
 	{
 		$session=isset($_POST['session']) ? (string)$_POST['session'] : '';
 		$name=isset($_POST['name']) ? (string)$_POST['name'] : '';
@@ -669,19 +674,19 @@ $(function(){
 			return Error('No file!');
 
 		if(!$sizes=@getimagesize($_FILES['image']['tmp_name']))
-			return Error($this->Language['not_image']);
+			return Error(static::$Language['not_image']);
 		list($w,$h)=$sizes;
 		if($a['nosmaller'] and ($a['max_image_size'][1]>0 and $a['max_image_size'][1]>$h or $a['max_image_size'][0]>0 and $a['max_image_size'][0]>$w))
-			return Error(sprintf($this->Language['smaller'],$w,$h,$a['max_image_size'][0] ? $a['max_image_size'][0] : '&infin;',$a['max_image_size'][1] ? $a['max_image_size'][1] : '&infin;'));
+			return Error(sprintf(static::$Language['smaller'],$w,$h,$a['max_image_size'][0] ? $a['max_image_size'][0] : '&infin;',$a['max_image_size'][1] ? $a['max_image_size'][1] : '&infin;'));
 
 		$max_w=$a['max_image_size'][0]>0 && $a['max_image_size'][0]<$w;
 		$max_h=$a['max_image_size'][1]>0 && $a['max_image_size'][1]<$h;
 		if($a['resize']=='d')
 		{
 			if($max_w)
-				return Error(sprintf($this->Language['bigger_w'],$a['max_image_size'][0],$w));
+				return Error(sprintf(static::$Language['bigger_w'],$a['max_image_size'][0],$w));
 			if($max_h)
-				return Error(sprintf($this->Language['bigger_h'],$a['max_image_size'][1],$h));
+				return Error(sprintf(static::$Language['bigger_h'],$a['max_image_size'][1],$h));
 		}
 		if(!is_dir(Eleanor::$root.DIRECTORY_SEPARATOR.Eleanor::$uploads.'/temp/'))
 			Files::MkDir(Eleanor::$root.DIRECTORY_SEPARATOR.Eleanor::$uploads.'/temp/');
@@ -718,3 +723,5 @@ $(function(){
 		Result($a['preview'] ? array('file'=>$a['new'][0],'preview'=>$a['new'][1]) : array('file'=>$a['new']));
 	}
 }
+ControlUploadImage::$Language=new Language;
+ControlUploadImage::$Language->queue[]='uploadimage-*.php';

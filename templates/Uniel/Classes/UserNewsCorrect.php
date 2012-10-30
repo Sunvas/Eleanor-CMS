@@ -12,6 +12,7 @@
 */
 class TplUserNewsCorrect
 {	public static
+		$lang,
 		$tpl=array();	/*
 		Внутенний метод. Важный момент Cron
 	*/	protected static function TopMenu($tit=false)
@@ -109,8 +110,10 @@ class TplUserNewsCorrect
 		$Lst->item(static::$lang['title'],Eleanor::$Template->LangEdit($ml['title'],null))
 			->item('URI',Eleanor::$Template->LangEdit($ml['uri'],null));
 		if($GLOBALS['Eleanor']->Categories->dump)
-			$Lst->item(static::$lang['categs'],Eleanor::Items('cats',$GLOBALS['Eleanor']->Categories->GetOptions($values['cats']),10,array('id'=>'cs','tabindex'=>3)))
+		{			$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+			$Lst->item($lang['categs'],Eleanor::Items('cats',$GLOBALS['Eleanor']->Categories->GetOptions($values['cats']),10,array('id'=>'cs','tabindex'=>3)))
 				->item(static::$lang['maincat'],Eleanor::Select('_maincat',$GLOBALS['Eleanor']->Categories->GetOptions($values['_maincat']),array('id'=>'mc','tabindex'=>4)));
+		}
 		$Lst->item(array(static::$lang['tags'],Eleanor::$Template->LangEdit($ml['tags'],null),'descr'=>static::$lang['ftags_']))
 			->item(array(static::$lang['announcement'],Eleanor::$Template->LangEdit($ml['announcement'],null),'descr'=>static::$lang['announcement_']))
 			->item(static::$lang['text'],Eleanor::$Template->LangEdit($ml['text'],null))

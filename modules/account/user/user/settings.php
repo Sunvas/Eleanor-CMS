@@ -247,7 +247,7 @@ class AccountSettings
 			),
 		);
 		$saved=false;
-		if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
+		if($master and $_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 		{			$C=new Controls;			$C->arrname=array();
 			$C->throw=false;
 			$values=$C->SaveControls($controls);

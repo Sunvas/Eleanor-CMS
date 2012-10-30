@@ -11,24 +11,16 @@
 
 class ControlChecks extends BaseClass implements ControlsBase
 {
-	private
-		$Obj;
-
-	public function __construct($Obj)
+	public static function GetSettings($Obj)
 	{
-		$this->Obj=$Obj;
+		return$Obj->GetSettings('items');
 	}
 
-	public function GetSettings()
-	{
-		return $this->Obj->GetSettings('items');
-	}
-
-	public function Control($a)
+	public static function Control($a,$Obj)
 	{
 		$a['options']+=array('explode'=>false,'delim'=>',','break'=>'<br />','addon'=>array(),'options'=>array(),'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
 		if($a['bypost'])
-			$value=(array)$this->Obj->GetPostVal($a['name'],$a['value']);
+			$value=(array)$Obj->GetPostVal($a['name'],$a['value']);
 		else
 		{
 			$value=array();
@@ -63,10 +55,10 @@ class ControlChecks extends BaseClass implements ControlsBase
 		return join($a['options']['break'],$html);
 	}
 
-	public function Save($a)
+	public static function Save($a,$Obj)
 	{
 		$a+=array('default'=>array());
-		$res=$this->Obj->GetPostVal($a['name'],$a['default']);
+		$res=$Obj->GetPostVal($a['name'],$a['default']);
 		if(!is_array($res))
 			$res=array();
 		$a['options']+=array('explode'=>false,'delim'=>',');
@@ -75,7 +67,7 @@ class ControlChecks extends BaseClass implements ControlsBase
 		return$res;
 	}
 
-	public function Result($a,$controls)
+	public static function Result($a,$Obj,$controls)
 	{
 		$a['options']+=array('explode'=>false,'delim'=>',','retvalue'=>false,'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
 		if(!is_array($a['value']))

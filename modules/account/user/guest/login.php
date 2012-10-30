@@ -32,7 +32,10 @@ class AccountLogin
 				try
 				{
 					Eleanor::$Login->Login((array)$_POST['login'],array('captcha'=>$captcha));
-					return GoAway(isset($_POST['back']) ? $_POST['back'] : false);
+					$back=isset($_POST['back']) ? $_POST['back'] : false;
+					if(Eleanor::$Login->GetUserValue('groups')==array(GROUP_WAIT))
+						$back=false;
+					return GoAway($back);
 				}
 				catch(EE$E)
 				{

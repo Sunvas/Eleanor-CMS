@@ -14,23 +14,23 @@ interface ControlsBase
 	/*
 		Получение настроек контрола. Для его настройки
 	*/
-	public function GetSettings();
+	public static function GetSettings();
 
 	/*Отображение контрола
 		$name - рекомендуемое имя.
 		$a - массив данных, включая $a['options']
 	*/
-	public function Control($a);
+	public static function Control($a,$Obj);
 
 	/*
 		Сохранение контрола
 	*/
-	public function Save($a);
+	public static function Save($a,$Obj);
 
 	/*
 		Показ результата контрола
 	*/
-	public function Result($a,$controls);
+	public static function Result($a,$Obj,$controls);
 }
 
 class Controls extends BaseClass
@@ -40,8 +40,7 @@ class Controls extends BaseClass
 		$errors=array(),#В случае, если $throw==false, в этот массив будут помещаться ошибки
 		$arrname=array('controls'),#Название массива, в котором будут передаваться контролы. Внимаение! Если необходимо задать многомерные массив типа control[a][b][c] - необходимо присвоить массив array('a','b','c')
 		$POST,#Откуда брать значения POST запроса. Если null - из $_POST-a, если нет - то из этого массива
-		$langs=array(),#Массив языков
-		$objects=array();#Объекты контролов (для объектных).
+		$langs=array();#Массив языков
 
 	protected static
 		$controls;#Массив доступных контролов.
@@ -544,12 +543,8 @@ class Controls extends BaseClass
 					self::ScanControls();
 				if(!class_exists('Control'.$co['type'],false) and (!in_array($co['type'],self::$controls) or !include(Eleanor::$root.'core/controls/'.$co['type'].'.php')))
 					throw new EE('Unknown control '.$co['type'],EE::DEV);
-				if(!isset($this->objects[$co['type']]))
-				{
-					$cl='Control'.$co['type'];
-					$this->objects[$co['type']]=new $cl($this);
-				}
-				$html=$this->objects[$co['type']]->Control($co,$controls);
+				$cl='Control'.$co['type'];
+				$html=$cl::Control($co,$this,$controls);
 		}
 		return is_string($html) ? $co['prepend'].$html.$co['append'] : $html;
 	}
@@ -645,12 +640,8 @@ class Controls extends BaseClass
 					self::ScanControls();
 				if(!class_exists('Control'.$co['type'],false) and (!in_array($co['type'],self::$controls) or !include(Eleanor::$root.'core/controls/'.$co['type'].'.php')))
 					throw new EE('Unknown control 1'.$co['type'],EE::DEV);
-				if(!isset($this->objects[$co['type']]))
-				{
-					$cl='Control'.$co['type'];
-					$this->objects[$co['type']]=new $cl($this);
-				}
-				$res=$this->objects[$co['type']]->Save($co);
+				$cl='Control'.$co['type'];
+				$res=$cl::Save($co,$this,$controls);
 		}
 		if($res===$co['default'])
 			return$res;
@@ -798,12 +789,8 @@ class Controls extends BaseClass
 					self::ScanControls();
 				if(!class_exists('Control'.$co['type'],false) and (!in_array($co['type'],self::$controls) or !include(Eleanor::$root.'core/controls/'.$co['type'].'.php')))
 					throw new EE('Unknown control 1'.$co['type'],EE::DEV);
-				if(!isset($this->objects[$co['type']]))
-				{
-					$cl='Control'.$co['type'];
-					$this->objects[$co['type']]=new $cl($this);
-				}
-				$res=$this->objects[$co['type']]->Result($co,$controls);
+				$cl='Control'.$co['type'];
+				$res=$cl::Result($co,$this,$controls);
 		}
 		if($res===$co['default'])
 			return$res;

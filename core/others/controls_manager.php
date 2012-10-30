@@ -481,12 +481,8 @@ class Controls_Manager extends Controls
 					self::ScanControls();
 				if(!class_exists('Control'.$type,false) and (!in_array($type,self::$controls) or !include(Eleanor::$root.'core/controls/'.$type.'.php')))
 					throw new EE('Unknown control '.$type,EE::DEV);
-				if(!isset($this->objects[$type]))
-				{
-					$cl='Control'.$type;
-					$this->objects[$type]=new $cl($this);
-				}
-				$res=$this->objects[$type]->GetSettings();
+				$cl='Control'.$co['type'];
+				$res=$cl::GetSettings($this);
 		}
 		return$res;
 	}

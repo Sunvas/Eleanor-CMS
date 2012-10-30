@@ -1150,13 +1150,13 @@ $(function(){
 		switch($user['gender'])
 		{
 			case 0:
-				$gender=static::$lang['female'];
+				$gender=$lang['female'];
 			break;
 			case 1:
-				$gender=static::$lang['male'];
+				$gender=$lang['male'];
 			break;
 			default:
-				$gender=static::$lang['nogender'];
+				$gender=$lang['nogender'];
 		}
 		$personal=(string)$Lst->begin()
 			->item($lang['gender'],$gender)

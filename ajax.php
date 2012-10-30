@@ -164,8 +164,7 @@ function SomeAjax()
 			case'uploadimage':
 				include Eleanor::$root.'core/others/controls.php';
 				include Eleanor::$root.'core/controls/uploadimage.php';
-				$Obj=new ControlUploadImage($Eleanor->Controls);
-				$Obj->DoAjax();
+				ControlUploadImage::DoAjax();
 			break;
 			case'uploader':
 				if(isset($_POST['service']))

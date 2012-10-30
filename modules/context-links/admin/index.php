@@ -59,16 +59,18 @@ $Eleanor->sc=array(
 			{
 				foreach($a['value'] as $k=>&$v)
 					if($v and $controls['from'][$k]!='')
-					{
+					{						Eleanor::$nolog=true;
 						preg_replace($controls['from'][$k],'','text');
+						Eleanor::$nolog=false;
 						if(preg_last_error()!=PREG_NO_ERROR)
 							throw new EE($lang['rege'],EE::INFO);
 					}
 				return$a['value'];
 			}
 			if($a['value'] and $controls['from']!='')
-			{
+			{				Eleanor::$nolog=true;
 				preg_replace($controls['from'],'','text');
+				Eleanor::$nolog=false;
 				if(preg_last_error()!=PREG_NO_ERROR)
 					throw new EE($lang['rege'],EE::INFO);
 			}

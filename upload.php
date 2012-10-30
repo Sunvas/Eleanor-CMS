@@ -161,8 +161,7 @@ function SomeUpload()
 			case'uploadimage':
 				include Eleanor::$root.'core/others/controls.php';
 				include Eleanor::$root.'core/controls/uploadimage.php';
-				$Obj=new ControlUploadImage($Eleanor->Controls);
-				$Obj->DoUpload();
+				ControlUploadImage::DoUpload();
 			break;
 			default:
 				ExitPage();

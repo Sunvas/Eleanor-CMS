@@ -83,20 +83,20 @@ class TPLSitemap
 			{				if($v['free'])
 					$status=$v['lastrun']===null ? '<span style="color:red">Error</span>' : '<span style="color:green" title="'.$lang['pnrun'].'">'.((int)$v['lastrun']>0 ? Eleanor::$Language->Date($v['lastrun'],'fdt') : '&empty;').' - '.($v['nextrun'] ? Eleanor::$Language->Date($v['nextrun'],'fdt') : '&empty;').'</span>';
 				else
-					$status='<progress data-id="'.$v['id'].'" style="width:100%" value="'.$v['already'].'" max="'.($v['total']>0 ? $v['total'] : 1).'" title="'.($pers=$v['total']>0 ? round($v['already']/$v['total']*100,2) : 0).'%"><span>'.$pers.'</span>%</progress>';				$ms='';
+					$status='<progress data-id="'.$k.'" style="width:100%" value="'.$v['already'].'" max="'.($v['total']>0 ? $v['total'] : 1).'" title="'.($pers=$v['total']>0 ? round($v['already']/$v['total']*100,2) : 0).'%"><span>'.$pers.'</span>%</progress>';				$ms='';
 				foreach($v['modules'] as &$mv)
 					if(isset($modules[$mv]))
 						$ms.=$modules[$mv].', ';
 
 				$Lst->item(
-					'<a id="it'.$v['id'].'" href="'.$a['_aedit'].'">'.($v['title'] ? $v['title'] : '&mdash;').'</a>',
+					'<a id="it'.$k.'" href="'.$v['_aedit'].'">'.($v['title'] ? $v['title'] : '&mdash;').'</a>',
 					$v['file'],
 					$ms ? rtrim($ms,', ') : '&mdash;',
 					$status,
 					$Lst('func',
 						$ms ? array($v['_aswap'],$v['status'] ? $ltpl['deactivate'] : $ltpl['activate'],$v['status'] ? $images.'active.png' : $images.'inactive.png') : false,
-						array($a['_aedit'],$ltpl['edit'],$images.'edit.png'),
-						array($a['_adel'],$ltpl['delete'],$images.'delete.png')
+						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),
+						array($v['_adel'],$ltpl['delete'],$images.'delete.png')
 					),
 					Eleanor::Check('mass[]',false,array('value'=>$k))
 				);

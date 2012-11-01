@@ -167,7 +167,7 @@ class AccountLostPass
 					Eleanor::ExecBBLogic($l['passrem'],$repl)
 				);
 				$GLOBALS['title'][]=$lang['wait_pass1'];
-				return Eleanor::$Template->AcRemindPassSent();			}
+				return Eleanor::$Template->AcRemindPassStep2();			}
 		}
 		return self::RemindPass();
 	}
@@ -191,6 +191,6 @@ class AccountLostPass
 			'password2'=>'',
 		);
 		$GLOBALS['title'][]=sprintf($lang['new_pass'],$user['name']);
-		return Eleanor::$Template->AcRemindNewPass($values,$GLOBALS['Eleanor']->Captcha->disabled ? false : $GLOBALS['Eleanor']->Captcha->GetCode(),$errors);
+		return Eleanor::$Template->AcRemindPassStep3($values,$GLOBALS['Eleanor']->Captcha->disabled ? false : $GLOBALS['Eleanor']->Captcha->GetCode(),$errors);
 	}
 }

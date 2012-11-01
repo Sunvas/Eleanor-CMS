@@ -526,8 +526,8 @@ function ShowList()
 			Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
 		}while(false);
 
-	$R3=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\')'.$where);
-	list($cnt)=$R3->fetch_row();
+	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\')'.$where);
+	list($cnt)=$R->fetch_row();
 	if($page<=0)
 		$page=1;
 	if(isset($_GET['new-pp']) and 4<$pp=(int)$_GET['new-pp'])

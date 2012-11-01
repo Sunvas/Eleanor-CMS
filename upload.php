@@ -95,6 +95,7 @@ function Start()
 	if($Eleanor->started)
 		return;
 	Eleanor::$content_type='text/plain';
+	Eleanor::LoadOptions('users-on-site');
 	Eleanor::AddSession();
 	Eleanor::HookOutPut();
 	$Eleanor->started=true;

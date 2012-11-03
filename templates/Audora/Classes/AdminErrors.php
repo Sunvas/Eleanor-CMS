@@ -45,6 +45,9 @@ class TPLAdminErrors
 			sort_log - ссылка на сортировку списка $items по флагу логирования (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внтури которой происходит отображение перечня $items
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$cnt,$pp,$qs,$page,$links)
 	{		static::Menu('list');
@@ -107,8 +110,8 @@ $(function(){
 	One2AllCheckboxes("#checks-form","#mass-check","[name=\"mass[]\"]",true);
 });//]]></script>
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['to_pages'],$Lst->perpage($pp,$qs)).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
-			.Eleanor::$Template->Pages($cnt,$pp,$page,$qs)
+			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);
 	}
 

@@ -171,9 +171,10 @@ class Comments extends BaseClass
 		$actcnt=$st[0]+$st[1];
 		$pagpq=$this->GetPAGPQ($where,$st,$pspol[2],$this->reverse ? $pspol[3] : $actcnt,$this->reverse ? $actcnt-max(0,$pspol[2]-$st[-1]) : $pspol[2],$parent,$uid,$parent ? array($parent['id']) : false);
 
+		$THIS=$this;#PHP 5.4
 		$links=array(
 			'first_page'=>$this->Url(),
-			'pages'=>$this->Url(array($this->upref.'page'=>true)),
+			'pages'=>function($n)use($THIS){ return$THIS->Url(array($THIS->upref.'page'=>$n)); },
 		);
 		return Eleanor::$Template->ShowComments($this->rights,$pagpq,$postquery,$dataquery,$cnt,$this->pp,$pspol[1],$pspol[0],$st,$uid ? false : (string)Eleanor::GetCookie($this->gc.'-name'),$El->Captcha->disabled ? false : $El->Captcha->GetCode(),$links);
 	}

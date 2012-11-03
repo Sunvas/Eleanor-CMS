@@ -357,8 +357,8 @@ $(window).load(function(){
 			title - название группы
 			html_pref - HTML префикс группы
 			html_end - HTML окончание группы
-		$cnt - количество статических страниц всего
-		$pp - количество статических страниц на страницу
+		$cnt - количество блоков всего
+		$pp - количество блоков на страницу
 		$qs - массив параметров адресной строки для каждого запроса
 		$page - номер текущей страницы, на которой мы сейчас находимся
 		$links - перечень необходимых ссылок, массив с ключами:
@@ -367,6 +367,9 @@ $(window).load(function(){
 			sort_showto - ссылка на сортировку списка $items по дате начала показа (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_showfrom - ссылка на сортировку списка $items по дате окончания показа (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внтури которой происходит отображение перечня $items
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$groups,$cnt,$pp,$qs,$page,$links)
 	{		static::Menu('list');
@@ -451,8 +454,8 @@ $(function(){
 	BlocksList();
 });//]]></script>
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-		.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['bpp'],$Lst->perpage($pp,$qs)).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($ltpl['deactivate'],'d').Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
-		.Eleanor::$Template->Pages($cnt,$pp,$page,$qs));
+		.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['bpp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($ltpl['deactivate'],'d').Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
 	}
 
 	/*

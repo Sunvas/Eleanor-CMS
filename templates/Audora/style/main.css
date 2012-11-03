@@ -46,7 +46,7 @@
 .hmenusub a:hover span { border-color: #dadada; }
 
 /*blockwel*/
-.blockwel { overflow: auto; height: 154px; border: 1px dotted #ccc; margin: 2px 0 0 2px; }
+.blockwel { overflow: hidden; height: 154px; border: 1px dotted #ccc; margin: 2px 0 0 2px; }
 .blockwel .pad { padding: 5px 8px; line-height: 1.25em; }
 .blockwel .dtitle { margin: 0 0 0.4em 0; }
 

@@ -48,7 +48,9 @@ class TplCategoriesManager
 			sort_pos - ссылка на сортировку списка $items по позиции (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внутри которой происходит отображение перечня $items
-			pp - ссылка для формирования списка количества пунктов на страницу
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 		$lang - массив языковых параметров, ключи и значения смотрите в файле langs/categories_manage-*.php
 	*/
 	public static function CMList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links,$lang)
@@ -96,7 +98,7 @@ class TplCategoriesManager
 			($nav ? '<table class="filtertable"><tr><td style="font-weight:bold">'.join(' &raquo; ',$nav).'</td></tr></table>' : '')
 			.'<form action="'.$links['form_items'].'" method="post">'
 			.$Lst->end().'<div class="submitline" style="text-align:left">'.sprintf($lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div></form>'
-			.Eleanor::$Template->Pages($cnt,$pp,$page,$qs)
+			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);
 	}
 

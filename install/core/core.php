@@ -36,13 +36,19 @@ function GoAway($info=false)
 	die;
 }
 
-function Error($e='')
+function Error($e='',$extra=array())
 {global$Eleanor;
-	if($m=isset($Eleanor))
-		Start();
-	if(!headers_sent())
-		header('Retry-After: 7200',true,503);
-	die($m ? '<code>'.$e.'</code>' : $e);
+	$e=Eleanor::LoadFileTemplate(
+		Eleanor::$root.'templates/error.html',
+		array(
+			'title'=>'Error',
+			'error'=>$e,
+			'extra'=>$extra,
+		)
+	);
+	Eleanor::$content_type='text/html';
+	Eleanor::HookOutPut(false,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503,$e);
+	die;
 }
 
 function Result($s)

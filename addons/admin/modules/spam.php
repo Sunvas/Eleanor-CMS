@@ -158,6 +158,14 @@ function ShowList()
 	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.P.'spam`');
 	list($cnt)=$R->fetch_row();
 	$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
+	if(isset($_REQUEST['fi']) and is_array($_REQUEST['fi']))
+	{
+		if($_SERVER['REQUEST_METHOD']=='POST')
+			$page=1;
+		$qs['']['fi']=array();
+		#filters... ?
+	}
+
 	if($page<=0)
 		$page=1;
 	if(isset($_GET['new-pp']) and 4<$pp=(int)$_GET['new-pp'])
@@ -227,7 +235,10 @@ function ShowList()
 		'sort_innertitle'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'innertitle','so'=>$qs['sort']=='innertitle' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_status'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'status','so'=>$qs['sort']=='status' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_id'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'id','so'=>$qs['sort']=='id' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page)),
+		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page>1 ? $page : false)),
+		'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+		'first_page'=>$Eleanor->Url->Construct($qs),
+		'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 	);
 	$c=Eleanor::$Template->ShowList($items,$cnt,$pp,$page,$qs,$links);
 	Start();

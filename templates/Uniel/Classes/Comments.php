@@ -60,12 +60,13 @@ class TplComments
 		$cnt - количество комментариев всего
 		$pp - количество комментариев на страницу
 		$page - номер текущей страницы на которой мы находимся
+		$pages - количество страниц всего
 		$statuses - массив количества комментариев каждого статуса. Ключи массива - числовые выражения статуса комментариев
 		$gname - имя гостя, если зашли под пользователем, эта переменная равна false
 		$captcha - капча при написании комментария
 		$links
 			first_page - ссылка на первую страницу комментариев
-			pages - ссылка на каждую последующую страницу комментариев
+			pages - функция-генератор ссылок на остальные страницы
 	*/	public static function ShowComments($rights,$pagpq,$postquery,$dataquery,$cnt,$pp,$page,$pages,$statuses,$gname,$captcha,$links)
 	{		array_push($GLOBALS['jscripts'],'js/eleanor_comments.js','js/eleanor_comments-'.Language::$main.'.js');
 		$editor='';
@@ -81,7 +82,7 @@ class TplComments
 				->end()->endform();
 		}
 		$reverse=$page<0;
-		$pager=Eleanor::$Template->Pages(array($cnt,$reverse ? $pages : 1=>$links['first_page'],'hash'=>'comments'),$pp,$page,$links['pages'],'C.GoToPage');
+		$pager=Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$reverse ? $pages : 1=>$links['first_page']),'C.GoToPage','comments');
 		if($pagpq[3])
 			Eleanor::LoadOptions('user-profile');		return Eleanor::$Template->Title(static::$lang['vc']).'<div id="comments">'
 			.($rights['status'] ? '<div class="moderate"'.($pagpq[0] ? '>'.static::CommentsModerate($rights) : ' style="display:none">').'</div>' : '')
@@ -154,7 +155,7 @@ class TplComments
 	*/
 	public static function CommentsLoadPage($rights,$pagpq,$cnt,$pp,$page,$pages,$parent,$links)
 	{
-		$r=array('paginator'=>Eleanor::$Template->Pages(array($cnt,$page<0 ? $pages : 1=>$links['first_page'],'hash'=>'comments'),$pp,$page,$links['pages'],'C.GoToPage'));
+		$r=array('paginator'=>Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$page<0 ? $pages : 1=>$links['first_page']),'C.GoToPage','comments'));
 		if($pagpq)
 		{
 			if($pagpq[0])

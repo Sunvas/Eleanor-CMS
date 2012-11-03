@@ -56,7 +56,10 @@ if(isset($_GET['do']))
 					$items[$a['id']]=array_slice($a,1);
 				}
 			}
-			$c=Eleanor::$Template->ShowList($items,$cnt,$page,$pp);
+			$links=array(
+				'pp'=>function($n){ return$GLOBALS['Eleanor']->Url->Construct(array('do'=>'recovernames','new-pp'=>$n)); },
+			);
+			$c=Eleanor::$Template->ShowList($items,$cnt,$page,$pp,$links);
 			Start();
 			echo$c;
 		break;

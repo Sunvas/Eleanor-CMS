@@ -368,7 +368,10 @@ function ShowList()
 		'sort_path'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'path','so'=>$qs['sort']=='path' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_show'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'show','so'=>$qs['sort']=='show' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_pos'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'pos','so'=>$qs['sort']=='pos' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page)),
+		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page>1 ? $page : false)),
+		'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+		'first_page'=>$Eleanor->Url->Construct($qs),
+		'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 	);
 	$c=Eleanor::$Template->SmilesList($items,$cnt,$page,$pp,$qs,$links);
 	Start();

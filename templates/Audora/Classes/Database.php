@@ -51,8 +51,12 @@ class TplDatabase
 		$cnt - число задач всего
 		$page - страница, на которой мы сейчас находимся
 		$pp - число задач на страницу
+		$links - перечень необходимых ссылок, массив с ключами:
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
-	public static function ShowList($items,$cnt,$page,$pp)
+	public static function ShowList($items,$cnt,$page,$pp,$links)
 	{		static::Menu('list');
 		$lang=Eleanor::$Language['db'];
 		$ltpl=Eleanor::$Language['tpl'];		$Lst=Eleanor::LoadListTemplate('table-list',4)->begin($lang['tables'],$lang['fields'],$lang['status'],array($ltpl['functs'],80));
@@ -74,7 +78,7 @@ class TplDatabase
 			}
 		else
 			$Lst->empty($lang['notasks']);
-		return Eleanor::$Template->Cover($Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['tpp'],$Lst->perpage($pp)).'</div></div>'.Eleanor::$Template->Pages($cnt,$pp,$page))
+		return Eleanor::$Template->Cover($Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['tpp'],$Lst->perpage($pp,$links['pp'])).'</div></div>'.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])))
 			.'<script type="text/javascript">/*<![CDATA[*/$(function(){new ProgressList("'.$GLOBALS['Eleanor']->module['name'].'","'.Eleanor::$services['cron']['file'].'");})//]]></script>';	}
 
 /*

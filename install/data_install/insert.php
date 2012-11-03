@@ -1029,11 +1029,11 @@ QUERY;
 if($rus)
 	$insert['menu_l(rus)']=<<<QUERY
 INSERT INTO `{$prefix}menu_l` (`id`, `language`, `title`, `url`, `eval_url`, `params`) VALUES
-(1, 'russian', 'Личный кабинет', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''аккаунт''),false);', ''),
-(2, 'russian', 'Новости', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''новости''),false);', ''),
+(1, 'russian', 'Личный кабинет', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''аккаунт''),false,false);', ''),
+(2, 'russian', 'Новости', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''новости''),false,false);', ''),
 (3, 'russian', 'Поиск', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''поиск''),false);', ' rel="search"'),
 (4, 'russian', 'Карта сайта', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''карта сайта''),false);', ''),
-(5, 'russian', 'Информация', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''страницы''),false);', ''),
+(5, 'russian', 'Информация', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''страницы''),false,false);', ''),
 (6, 'russian', 'Обратная связь', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''обратная связь''),false);', ' rel="contact"'),
 (7, 'russian', 'Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
 (8, 'russian', 'Официальный сайт Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
@@ -1046,11 +1046,11 @@ QUERY;
 if($eng)
 	$insert['menu_l(eng)']=<<<QUERY
 INSERT INTO `{$prefix}menu_l` (`id`, `language`, `title`, `url`, `eval_url`, `params`) VALUES
-(1, 'english', 'Personal cabinet', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''account''),false);', ''),
-(2, 'english', 'News', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''news''),false);', ''),
+(1, 'english', 'Personal cabinet', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''account''),false,false);', ''),
+(2, 'english', 'News', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''news''),false,false);', ''),
 (3, 'english', 'Search', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''search''),false);', ' rel="search"'),
 (4, 'english', 'Sitemap', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''sitemap''),false);', ''),
-(5, 'english', 'Information', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''pages''),false);', ''),
+(5, 'english', 'Information', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''pages''),false,false);', ''),
 (6, 'english', 'Contacts', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''contacts''),false);', ' rel="contact"'),
 (7, 'english', 'Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
 (8, 'english', 'Official site Eleanor CMS', 'http://eleanor-cms.ru/eng/', '', ''),
@@ -1063,11 +1063,11 @@ QUERY;
 if($ukr)
 	$insert['menu_l(ukr)']=<<<QUERY
 INSERT INTO `{$prefix}menu_l` (`id`, `language`, `title`, `url`, `eval_url`, `params`) VALUES
-(1, 'ukrainian', 'Особистий кабінет', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''аккаунт''),false);', ''),
-(2, 'ukrainian', 'Новини', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''новини''),false);', ''),
+(1, 'ukrainian', 'Особистий кабінет', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''аккаунт''),false,false);', ''),
+(2, 'ukrainian', 'Новини', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''новини''),false,false);', ''),
 (3, 'ukrainian', 'Пошук', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''пошук''),false);', ' rel="search"'),
 (4, 'ukrainian', 'Мапа сайту', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''мапа сайту''),false);', ''),
-(5, 'ukrainian', 'Інформація', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''сторінки''),false);', ''),
+(5, 'ukrainian', 'Інформація', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''сторінки''),false,false);', ''),
 (6, 'ukrainian', 'Зворотній зв''язок', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''зворотній зв\\\\''язок''),false);', ' rel="contact"'),
 (7, 'ukrainian', 'Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
 (8, 'ukrainian', 'Офіційний сайт Eleanor CMS', 'http://eleanor-cms.ru/%D1%83%D0%BA%D1%80/', '', ''),

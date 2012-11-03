@@ -511,9 +511,13 @@ if(isset($_GET['do']))
 				}
 			}
 			$values=array(
-				''=>isset($_POST['name']) ? (string)$_POST['name'] : '',
+				'name'=>isset($_POST['name']) ? (string)$_POST['name'] : '',
 			);
-			$c=Eleanor::$Template->FindUsers($users,$groups,$total,$pp,$qs,$page,$values);
+			$links=array(
+				'first_page'=>$Eleanor->Url->Construct($qs),
+				'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
+			);
+			$c=Eleanor::$Template->FindUsers($users,$groups,$total,$pp,$page,$values,$links);
 			Start('');
 			echo$c;
 		break;
@@ -609,6 +613,9 @@ if(isset($_GET['do']))
 				'sort_ip'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'ip','so'=>$qs['sort']=='ip' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 				'sort_enter'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'enter','so'=>$qs['sort']=='enter' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 				'sort_location'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'location','so'=>$qs['sort']=='location' && $qs['so']=='asc' ? 'desc' : 'asc'))),
+				'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+				'first_page'=>$Eleanor->Url->Construct($qs),
+				'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 			);
 			$c=Eleanor::$Template->UsersOnline($items,$groups,$cnt,$pp,$qs,$page,$links);
 			Start();
@@ -826,7 +833,10 @@ function ShowList()
 		'sort_visit'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'last_visit','so'=>$qs['sort']=='last_visit' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_ip'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'ip','so'=>$qs['sort']=='ip' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_id'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'id','so'=>$qs['sort']=='id' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page)),
+		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page>1 ? $page : false)),
+		'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+		'first_page'=>$Eleanor->Url->Construct($qs),
+		'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 	);
 	$c=Eleanor::$Template->ShowList($items,$groups,$cnt,$pp,$qs,$page,$links);
 	Start();

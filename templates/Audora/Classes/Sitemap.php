@@ -44,9 +44,9 @@ class TPLSitemap
 			_aswap - ссылка на инвертирование статуса активности sitemap-a
 			_aedit - ссылка на редактирование sitemap-а
 			_adel - ссылка на удаление sitemap-а
-		$cnt - количество страниц ошибок всего
+		$cnt - количество sitemap-ов всего
 		$modules - массив название модулей. Формат id=>название модуля
-		$pp - количество страниц ошибок на страницу
+		$pp - количество sitemap-ов на страницу
 		$qs - массив параметров адресной строки для каждого запроса
 		$page - номер текущей страницы, на которой мы сейчас находимся
 		$links - перечень необходимых ссылок, массив с ключами:
@@ -54,6 +54,9 @@ class TPLSitemap
 			sort_status - ссылка на сортировку списка $items по статусу (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внтури которой происходит отображение перечня $items
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/	public static function ShowList($items,$cnt,$modules,$page,$pp,$qs,$links)
 	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$lang=Eleanor::$Language['sitemap'];
@@ -125,8 +128,8 @@ $(function(){
 });//]]></script>
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
 		.$Lst->end()
-		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['smpp'],$Lst->perpage($pp,$qs)).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
-		.Eleanor::$Template->Pages($cnt,$pp,$page,$qs));	}
+		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['smpp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));	}
 
 	/*
 		Шаблон создания/редактирования sitemap-а

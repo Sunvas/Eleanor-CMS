@@ -32,7 +32,7 @@ class Url extends BaseClass
 		else
 			$suf=false;
 
-		$r=$or=array();#resul & results object		if($this->furl)
+		$r=array();#result		if($this->furl)
 		{			if($e===true)
 				$e=$this->ending;
 			elseif($e===false)
@@ -40,52 +40,24 @@ class Url extends BaseClass
 			foreach($p as $pk=>&$pv)
 				if(is_array($pv))
 				{					$add=true;					foreach($pv as $k=>&$v)
-					{
 						if(is_int($k))
 						{							if($v or (string)$v=='0')
 							{
 								$add=false;
-								if($v===true)
-								{									$r[$pk]=null;
-									$or[$pk]=function($v)
-									{
-										if($v or (string)$v=='0')
-											return Url::Encode($v);#ToDo! PHP 5.4 Url=>static
-									};								}
-								else
-									$r[]=static::Encode($v);
+								$r[]=static::Encode($v);
 							}
 						}
 						elseif($add)
-						{							if($v===true)
-							{								$r[$pk]=null;
-								$THIS=$this;#ToDo! PHP 5.4 убрать этот костыль (смотри ниже) use ($THIS)
-								$or[$pk]=function($v) use ($k,$THIS)
-								{
-									if($v or (string)$v=='0')
-										return Url::Encode($k).$THIS->defis.Url::Encode($v);#ToDo! PHP 5.4 Url=>static
-								};							}
-							elseif($v or (string)$v=='0')
+						{							if($v or (string)$v=='0')
 								$r[]=static::Encode($k).$this->defis.static::Encode($v);						}
 						else
-						{							$add=true;
-							continue;						}
-					}
+							$add=true;
 				}
-				elseif($pv===true)
-				{					$r[$pk]=null;
-					$or[$pk]=function($v)
-					{
-						if($v or (string)$v=='0')
-							return Url::Encode($v);#ToDo! PHP 5.4 Url=>static
-					};				}
 				elseif($pv or (string)$pv=='0')
 					$r[]=static::Encode($pv);
 
 			if($pr===true)
 				$pr=$this->s_prefix;
-			if($or)
-				return new UrlFunc($r,$or,$this->delimiter,$pr,$suf ? '?'.$suf : '',$e);
 			$r=$r ? $pr.join($this->delimiter,$r).$e : $pr;
 
 			if($suf)
@@ -97,27 +69,7 @@ class Url extends BaseClass
 				{
 					foreach($pv as $k=>&$v)
 						if(is_string($k) and ($v or (string)$v=='0'))
-						{
-							if($v===true)
-							{
-								$r[$pk]=null;
-								$or[$pk]=function($v) use ($k)
-								{
-									if($v or (string)$v=='0')
-										return urlencode($k).'='.urlencode($v);
-								};
-							}
-							else
-								$r[]=urlencode($k).'='.urlencode($v);
-						}
-				}
-				elseif($pv===true)
-				{
-					$r[$pk]=null;
-					$or[$pk]=function($v) use ($pk)
-					{						if($v or (string)$v=='0')
-							return urlencode($pk).'='.urlencode($v);
-					};
+							$r[]=urlencode($k).'='.urlencode($v);
 				}
 				elseif($pv or (string)$pv=='0')
 					$r[]=urlencode($pk).'='.urlencode($pv);
@@ -126,8 +78,6 @@ class Url extends BaseClass
 				$r[]=$suf;
 			if($pr===true)
 				$pr=$this->file.$this->d_prefix;
-			if($or)
-				return new UrlFunc($r,$or,'&amp;',$pr);
 
 			if($e===true)
 				$e='';
@@ -241,7 +191,7 @@ class Url extends BaseClass
 
 	public function Prefix($e=true)
 	{		if($this->furl)
-			return$e===false ? $this->s_prefix : preg_replace('#'.preg_quote($this->delimiter,'#').'$#','',$this->s_prefix).($e===true ? '' : $e);
+			return$e===false ? $this->s_prefix : preg_replace('#'.preg_quote($this->delimiter,'#').'$#','',$this->s_prefix).($e===true ? $this->ending : $e);
 
 		$p=$this->file.$this->d_prefix;
 		return$e===false ? $p : preg_replace('#(&amp;|&|\?)$#','',$p).($e===true ? '' : $e);

@@ -37,7 +37,7 @@ class TPLAdminCL
 			_aedit - ссылка на редактирование контекстной ссылки
 			_adel - ссылка на удаление контекстной ссылки
 		$cnt - число пунктов меню всего
-		$pp - количество пунктов меню на страницу
+		$pp - количество контекстных ссылок на страницу
 		$qs - массив параметров адресной строки для каждого запроса
 		$page - номер текущей страницы, на которой мы сейчас находимся
 		$links - перечень необходимых ссылок, массив с ключами:
@@ -48,6 +48,9 @@ class TPLAdminCL
 			sort_date_till - ссылка на сортировку списка $items по дате завершения преобразований (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_status - ссылка на сортировку списка $items по статусу активности (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внутри которой происходит отображение перечня $items
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$cnt,$pp,$qs,$page,$links)
 	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
@@ -110,8 +113,8 @@ $(function(){
 });//]]></script>
 		</form>'
 		.'<form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($l['to_pages'],$Lst->perpage($pp,$qs)).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
-			.Eleanor::$Template->Pages($cnt,$pp,$page,$qs)
+			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($l['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);	}
 
 	/*

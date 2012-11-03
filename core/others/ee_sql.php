@@ -20,7 +20,10 @@ class EE_SQL extends EE
 		$params+=array('query'=>false,'no'=>false,'error'=>false);
 		$d=debug_backtrace();
 
-		$d=isset($d[1],$d[2],$d[0]['class'],$d[1]['class']) && $d[0]['class']=='EE_SQL' && $d[1]['class']=='Db' ? $d[2] : $d[0];
+		if(isset($d[1],$d[2],$d[0]['class'],$d[1]['class']) and $d[0]['class']=='EE_SQL' and $d[1]['class']=='Db')
+			$d=isset($d[1]['function']) && $d[1]['function']=='Query' ? $d[1] : $d[2];
+		else
+			$d=$d[0];
 		$this->file=$d['file'];
 		$this->line=$d['line'];
 

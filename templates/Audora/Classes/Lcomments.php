@@ -43,8 +43,8 @@ class TPLLComments
 		$titles - массив заголовков и ссылок на комментарии. Формат: id=>array(), ключи внутреннего массива:
 			0 - заголовок контентины
 			1 - ссылка на комментарий
-		$cnt - количество статических страниц всего
-		$pp - количество статических страниц на страницу
+		$cnt - количество комментариев всего
+		$pp - количество комментариев на страницу
 		$qs - массив параметров адресной строки для каждого запроса
 		$page - номер текущей страницы, на которой мы сейчас находимся
 		$links - перечень необходимых ссылок, массив с ключами:
@@ -54,6 +54,9 @@ class TPLLComments
 			sort_ip - ссылка на сортировку списка $items по ip (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внутри которой происходит отображение перечня $items
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 		$ong - флаг отображения интерфейса на главной странице админки
 	*/
 	public static function CommentsList($items,$modules,$titles,$cnt,$pp,$qs,$page,$links,$ong)
@@ -126,8 +129,8 @@ $(function(){
 });//]]></script>
 </form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
 		.$Lst
-		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['cpp'],$Lst->perpage($pp,$qs)).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k').Eleanor::Option($ltpl['active'],'a').Eleanor::Option($ltpl['inactive'],'d').Eleanor::Option($lang['blocked'],'b')).Eleanor::Button('Ok').'</div></form>'
-		.Eleanor::$Template->Pages($cnt,$pp,$page,$qs));
+		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['cpp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k').Eleanor::Option($ltpl['active'],'a').Eleanor::Option($ltpl['inactive'],'d').Eleanor::Option($lang['blocked'],'b')).Eleanor::Button('Ok').'</div></form>'
+		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
 	}
 
 	/*

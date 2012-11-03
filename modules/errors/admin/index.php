@@ -342,7 +342,10 @@ function ShowList()
 		'sort_mail'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'mail','so'=>$qs['sort']=='mail' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_log'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'log','so'=>$qs['sort']=='log' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_id'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'id','so'=>$qs['sort']=='id' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page)),
+		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page>1 ? $page : false)),
+		'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+		'first_page'=>$Eleanor->Url->Construct($qs),
+		'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 	);
 	$c=Eleanor::$Template->ShowList($items,$cnt,$pp,$qs,$page,$links);
 	Start();

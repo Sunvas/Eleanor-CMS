@@ -255,6 +255,9 @@ function ShowList()
 		'sort_task'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'task','so'=>$qs['sort']=='task' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_free'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'free','so'=>$qs['sort']=='free' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_id'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'id','so'=>$qs['sort']=='id' && $qs['so']=='asc' ? 'desc' : 'asc'))),
+		'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+		'first_page'=>$Eleanor->Url->Construct($qs),
+		'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 	);
 	$s=Eleanor::$Template->ShowList($items,$cnt,$page,$pp,$qs,$links);
 	Start();

@@ -56,6 +56,9 @@ class TplUsers
 			sort_ip - ссылка на сортировку списка $items по ip (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внутри которой происходит отображение перечня $items
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/	public static function ShowList($items,$groups,$cnt,$pp,$qs,$page,$links)
 	{		static::Menu('list');		$lang=Eleanor::$Language['users'];
 		$ltpl=Eleanor::$Language['tpl'];		$GLOBALS['jscripts'][]='js/checkboxes.js';
@@ -159,8 +162,8 @@ $(function(){
 });//]]></script>
 		</form>
 		<form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-		.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['upp'],$Lst->perpage($pp,$qs)).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'d')).Eleanor::Button('Ok').'</div></form>'
-		.Eleanor::$Template->Pages($cnt,$pp,$page,$qs));	}
+		.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['upp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'d')).Eleanor::Button('Ok').'</div></form>'
+		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));	}
 
 	/*
 		Страница добавления/редактирования пользователя
@@ -483,6 +486,9 @@ $(function(){
 			sort_ip - ссылка на сортировку списка $items по ip (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_enter - ссылка на сортировку списка $items по дате входа (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_location - ссылка на сортировку списка $items по местоположению (возрастанию/убыванию в зависимости от текущей сортировки)
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function UsersOnline($items,$groups,$cnt,$pp,$qs,$page,$links)
 	{		static::Menu('online');
@@ -583,8 +589,8 @@ $(function(){
 	})'.($fs ? '' : '.click()').';
 });//]]></script>
 		</form>'
-		.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['spp'],$Lst->perpage($pp,$qs)).'</div></div>'
-		.Eleanor::$Template->Pages($cnt,$pp,$page,$qs));
+		.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['spp'],$Lst->perpage($pp,$links['pp'])).'</div></div>'
+		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
 	}
 
 	/*
@@ -599,12 +605,15 @@ $(function(){
 			html_end - HTML суффикс группы
 		$total - количество пользователей всего
 		$pp - количество пользователей на страницу
-		$qs - массив параметров для адресной строки
 		$page - номер текущей страницы, на которой мы находимся
 		$values - значение контролов формы для поиска. Массив с ключами:
 			name - имя пользователя
+		$links - перечень необходимых ссылок, массив с ключи:
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
-	public static function FindUsers($users,$groups,$total,$pp,$qs,$page,$values)
+	public static function FindUsers($users,$groups,$total,$pp,$page,$values,$links)
 	{		$n=($page-1)*$pp;
 		foreach($users as $k=>&$v)
 		{			if(isset($groups[$v['_group']]))
@@ -644,7 +653,7 @@ $(function(){	$("table a").click(function(){		window.opener.AuthorSelected($(t
 	<td><ul><li>'.implode('</li><li>',array_splice($users,0,10)).'</li></ul></td>
 	<td><ul><li>'.implode('</li><li>',array_splice($users,0,10)).'</li></ul></td>
 	<td><ul><li>'.implode('</li><li>',$users).'</li></ul></td>
-	</tr>').'<tr><td colspan="3">'.Eleanor::$Template->Pages($total,$pp,$page,$qs).'<div class="clr"></div><hr /><form method="post">'.Eleanor::Edit('name',$values['name'],array('tabindex'=>1)).Eleanor::Button($lang['find'],'submit',array('tabindex'=>2)).'</form></td></tr></table></body></html>';	}
+	</tr>').'<tr><td colspan="3">'.Eleanor::$Template->Pages($total,$pp,$page,array($links['pages'],$links['first_page'])).'<div class="clr"></div><hr /><form method="post">'.Eleanor::Edit('name',$values['name'],array('tabindex'=>1)).Eleanor::Button($lang['find'],'submit',array('tabindex'=>2)).'</form></td></tr></table></body></html>';	}
 
 	/*
 		Шаблон страницы с редактированием форматов писем

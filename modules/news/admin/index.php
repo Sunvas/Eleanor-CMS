@@ -174,7 +174,10 @@ if(isset($_GET['do']))
 				'sort_name'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'name','so'=>$qs['sort']=='name' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 				'sort_cnt'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'cnt','so'=>$qs['sort']=='cnt' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 				'sort_id'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'id','so'=>$qs['sort']=='id' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-				'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page)),
+				'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page>1 ? $page : false)),
+				'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+				'first_page'=>$Eleanor->Url->Construct($qs),
+				'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 			);
 			$c=Eleanor::$Template->TagsList($items,$cnt,$pp,$qs,$page,$links);
 			Start();
@@ -574,7 +577,10 @@ function ShowList()
 		'sort_title'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'title','so'=>$qs['sort']=='title' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_date'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'date','so'=>$qs['sort']=='date' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_author'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'author','so'=>$qs['sort']=='author' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page)),
+		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page>1 ? $page : false)),
+		'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+		'first_page'=>$Eleanor->Url->Construct($qs),
+		'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 	);
 	$c=Eleanor::$Template->ShowList($items,$Eleanor->Categories->dump,$cnt,$pp,$qs,$page,$links);
 	Start();

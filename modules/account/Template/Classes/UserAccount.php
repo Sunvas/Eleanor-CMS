@@ -43,8 +43,11 @@ class TplUserAccount
 		$cnt - количество сессий всего
 		$pp - сессий на страницу
 		$page - номер текущей страницы
+		$links - массив ссылок, ключи:
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
-	public static function AcUsersOnline($items,$groups,$cnt,$pp,$page)
+	public static function AcUsersOnline($items,$groups,$cnt,$pp,$page,$links)
 	{
 
 	}

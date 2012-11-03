@@ -133,12 +133,14 @@ class TplUserNews
 			rating - массив результирующего кода рейтинга новостей. ‘ормат: id=>код рейтинга
 		$cnt - количество новостей всего
 		$page - номер страницы, на которой мы сейчас находимс€
+		$pages - количество страницы всего, полезно при обратной нумерации
 		$pp - число новостей на страницу
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
+			pages - функци€-генератор ссылок на остальные страницы
 	*/
-	public static function ShowList($data,$cnt,$page,$pp,$links)
-	{		return static::TopMenu().static::List_($data).Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,-$page);
+	public static function ShowList($data,$cnt,$page,$pages,$pp,$links)
+	{		return static::TopMenu().static::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$pages=>$links['first_page']));
 	}
 
 	/*
@@ -146,24 +148,24 @@ class TplUserNews
 		$data - дата
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
-			pages - формат ссылок на остальные страницы
+			pages - функци€-генератор ссылок на остальные страницы
 		ќписание остальных переменных доступно в методе List
 	*/
-	public static function DateList($date,$data,$cnt,$page,$pp,$links)
+	public static function DateList($date,$data,$cnt,$page,$pages,$pp,$links)
 	{
-		return static::TopMenu(reset($GLOBALS['title'])).self::List_($data).Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,$page,$links['pages']);
+		return static::TopMenu(reset($GLOBALS['title'])).self::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$pages=>$links['first_page']));
 	}
 
 	/*
 		—траница вывода новостей пользовател€ (своих)
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
-			pages - формат ссылок на остальные страницы
+			pages - функци€-генератор ссылок на остальные страницы
 		ќписание остальных переменных доступно в методе List
 	*/
 	public static function MyList($data,$cnt,$page,$pp,$links)
 	{
-		return static::TopMenu(reset($GLOBALS['title'])).self::List_($data,false).Eleanor::$Template->Pages(array($cnt,1=>$links['first_page']),$pp,$page,$links['pages']);
+		return static::TopMenu(reset($GLOBALS['title'])).self::List_($data,false).Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']));
 	}
 
 	/*
@@ -174,9 +176,9 @@ class TplUserNews
 			description - описание категории
 		ќписание остальных переменных доступно в методе List
 	*/
-	public static function CategoryList($category,$data,$cnt,$page,$pp,$links)
+	public static function CategoryList($category,$data,$cnt,$page,$pages,$pp,$links)
 	{		return self::ShowCategories($category['id']).self::List_($data)
-			.Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,$page,$links['pages']);
+			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$pages=>$links['first_page']));
 	}
 
 	/*
@@ -274,12 +276,12 @@ class TplUserNews
 		$data - дата
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
-			pages - формат ссылок на остальные страницы
+			pages - функци€-генератор ссылок на остальные страницы
 		ќписание остальных переменных доступно в методе List
 	*/
-	public static function TagsList($tag,$data,$cnt,$page,$pp,$links)
+	public static function TagsList($tag,$data,$cnt,$page,$pages,$pp,$links)
 	{		return static::TopMenu(reset($GLOBALS['title']))
-			.($data['items'] ? self::List_($data).Eleanor::$Template->Pages(array($cnt,ceil($cnt/$pp)=>$links['first_page']),$pp,$page,$links['pages']) : Eleanor::$Template->Message(sprintf(static::$lang['notag'],$tag['name']),'info'));	}
+			.($data['items'] ? self::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$pages=>$links['first_page'])) : Eleanor::$Template->Message(sprintf(static::$lang['notag'],$tag['name']),'info'));	}
 
 	/*
 		—траница поиска новостей
@@ -292,26 +294,32 @@ class TplUserNews
 			c - поиск в массиве категорий » или »Ћ» (and,or)
 			t - поиск в массиве тегов » или »Ћ» (and,or)
 		$error - ошибка, если пуста€, значит ошибки нет
-		$md - идентификатор поиска
 		$tags - массив тегов, формат id=>им€ тега
+		$links - массив ссылок, ключи:
+			first_page - ссылка на первую страницу пагинатора
+			pages - функци€-генератор ссылок на остальные страницы
 		ќписание остальных переменных доступно в методе List
 	*/
-	public static function Search($values,$error,$md,$tags,$data,$cnt,$page,$pp)
-	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];		$tagopts='';
+	public static function Search($values,$error,$tags,$data,$cnt,$page,$pp,$links)
+	{
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+		$tagopts='';
 		foreach($tags as $k=>&$v)
 			$tagopts.=Eleanor::Option($v,$k,in_array($k,$values['tags']));
 		$Lst=Eleanor::LoadListTemplate('table-form');
 
 		if($data and $data['items'])
-		{			if($values['text'])
-			{				$mw=preg_split('/\s+/',$values['text']);
+		{
+			if($values['text'])
+			{
+				$mw=preg_split('/\s+/',$values['text']);
 				foreach($data['items'] as &$v)
 				{
 					$v['title']=Strings::MarkWords($mw,$v['title']);
 					$v['announcement']=Strings::MarkWords($mw,$v['announcement']);
 				}
 			}
-			$results='<br /><br />'.self::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,$GLOBALS['Eleanor']->Url->Construct(array('do'=>'search','md'=>$md,array('page'=>'{page}')),true,''));
+			$results='<br /><br />'.self::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']));
 		}
 		else
 			$results='';

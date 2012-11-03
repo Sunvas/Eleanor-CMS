@@ -50,6 +50,9 @@ class TPLSmiles
 			sort_show - ссылка на сортировку списка $items по отображению в редакторе (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внутри которой происходит отображение перечня $items
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/	public static function SmilesList($items,$cnt,$page,$pp,$qs,$links)
 	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$lang=Eleanor::$Language['smiles'];
@@ -152,10 +155,10 @@ class TPLSmiles
 			clearTimeout(to);
 	})
 })//]]></script>'.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'
-			.sprintf($lang['smpp'],$Lst->perpage($pp,$qs))
+			.sprintf($lang['smpp'],$Lst->perpage($pp,$links['pp']))
 			.'</div>'.$ltpl['with_selected']
 			.Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($ltpl['deactivate'],'d').Eleanor::Option($ltpl['delete'],'k'))
-			.Eleanor::Button('Ok').'</div></form>'.Eleanor::$Template->Pages($cnt,$pp,$page,$qs));
+			.Eleanor::Button('Ok').'</div></form>'.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
 	}
 
 	/*

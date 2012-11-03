@@ -174,7 +174,10 @@ if(isset($_GET['do']))
 				'sort_title'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'title','so'=>$qs['sort']=='title' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 				'sort_showto'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'showto','so'=>$qs['sort']=='showto' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 				'sort_showfrom'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'showfrom','so'=>$qs['sort']=='showfrom' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-				'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page)),
+				'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page>1 ? $page : false)),
+				'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+				'first_page'=>$Eleanor->Url->Construct($qs),
+				'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 			);
 
 			$c=Eleanor::$Template->ShowList($items,$groups,$cnt,$pp,$qs,$page,$links);

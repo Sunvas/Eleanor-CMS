@@ -50,6 +50,10 @@ if($groups)
 		$groups[$a['id']]=array_slice($a,1)+array('_href'=>$Eleanor->Url->Construct(array('edit'=>$a['id'])));
 	}
 }
-$c=Eleanor::$Template->AcUsersOnline($items,$groups,$cnt,$pp,$page);
+$links=array(
+	'first_page'=>$Eleanor->Url->Prefix(),
+	'pages'=>function($n){ return$GLOBALS['Eleanor']->Url->Construct(array(array('page'=>$n))); },
+);
+$c=Eleanor::$Template->AcUsersOnline($items,$groups,$cnt,$pp,$page,$links);
 Start();
 echo$c;

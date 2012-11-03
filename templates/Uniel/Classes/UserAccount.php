@@ -50,8 +50,11 @@ class TplUserAccount
 		$cnt - количество сессий всего
 		$pp - сессий на страницу
 		$page - номер текущей страницы
+		$links - массив ссылок, ключи:
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
-	public static function AcUsersOnline($items,$groups,$cnt,$pp,$page)
+	public static function AcUsersOnline($items,$groups,$cnt,$pp,$page,$links)
 	{
 		$ltpl=Eleanor::$Language['tpl'];
 
@@ -118,7 +121,7 @@ class TplUserAccount
 		else
 			$Lst->empty(static::$lang['snf']);
 
-		return Eleanor::$Template->Title(end($GLOBALS['title']))->OpenTable().$Lst->end().Eleanor::$Template->Pages($cnt,$pp,$page)->CloseTable();
+		return Eleanor::$Template->Title(end($GLOBALS['title']))->OpenTable().$Lst->end().Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))->CloseTable();
 	}
 
 	/*

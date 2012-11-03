@@ -44,11 +44,12 @@ class TplUserNews
 			rating - массив результирующего кода рейтинга новостей. Формат: id=>код рейтинга
 		$cnt - количество новостей всего
 		$page - номер страницы, на которой мы сейчас находимся
+		$pages - количество страницы всего, полезно при обратной нумерации
 		$pp - число новостей на страницу
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
 	*/
-	public static function ShowList($data,$cnt,$page,$pp,$links)
+	public static function ShowList($data,$cnt,$page,$pages,$pp,$links)
 	{
 	}
 
@@ -57,10 +58,10 @@ class TplUserNews
 		$data - дата
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
-			pages - формат ссылок на остальные страницы
+			pages - функция-генератор ссылок на остальные страницы
 		Описание остальных переменных доступно в методе List
 	*/
-	public static function DateList($date,$data,$cnt,$page,$pp,$links)
+	public static function DateList($date,$data,$cnt,$page,$pages,$pp,$links)
 	{
 
 	}
@@ -69,7 +70,7 @@ class TplUserNews
 		Страница вывода новостей пользователя (своих)
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
-			pages - формат ссылок на остальные страницы
+			pages - функция-генератор ссылок на остальные страницы
 		Описание остальных переменных доступно в методе List
 	*/
 	public static function MyList($data,$cnt,$page,$pp,$links)
@@ -107,10 +108,10 @@ class TplUserNews
 		$data - дата
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
-			pages - формат ссылок на остальные страницы
+			pages - функция-генератор ссылок на остальные страницы
 		Описание остальных переменных доступно в методе List
 	*/
-	public static function TagsList($tag,$data,$cnt,$page,$pp,$links)
+	public static function TagsList($tag,$data,$cnt,$page,$pages,$pp,$links)
 	{	}
 
 	/*
@@ -124,11 +125,13 @@ class TplUserNews
 			c - поиск в массиве категорий И или ИЛИ (and,or)
 			t - поиск в массиве тегов И или ИЛИ (and,or)
 		$error - ошибка, если пустая, значит ошибки нет
-		$md - идентификатор поиска
 		$tags - массив тегов, формат id=>имя тега
+		$links - массив ссылок, ключи:
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 		Описание остальных переменных доступно в методе List
 	*/
-	public static function Search($values,$error,$md,$tags,$data,$cnt,$page,$pp)
+	public static function Search($values,$error,$tags,$data,$cnt,$page,$pp,$links)
 	{
 	}
 

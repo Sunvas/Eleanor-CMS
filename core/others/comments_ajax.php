@@ -260,9 +260,10 @@ class Comments_Ajax extends Comments
 				else
 					$pagpq=false;
 
+				$THIS=$this;#PHP 5.4
 				$links=array(
 					'first_page'=>$this->Url(),
-					'pages'=>$this->Url(array($this->upref.'page'=>true)),
+					'pages'=>function($n)use($THIS){ return$THIS->Url(array($THIS->upref.'page'=>$n)); },
 				);
 
 				Result(array(

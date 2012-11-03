@@ -312,7 +312,10 @@ function ShowList()
 		'sort_date_from'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'date_from','so'=>$qs['sort']=='date_from' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_date_till'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'date_till','so'=>$qs['sort']=='date_till' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 		'sort_status'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'status','so'=>$qs['sort']=='status' && $qs['so']=='asc' ? 'desc' : 'asc'))),
-		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page)),
+		'form_items'=>$Eleanor->Url->Construct($qs+array('page'=>$page>1 ? $page : false)),
+		'pp'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('new-pp'=>$n)); },
+		'first_page'=>$Eleanor->Url->Construct($qs),
+		'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 	);
 	$c=Eleanor::$Template->ShowList($items,$cnt,$pp,$qs,$page,$links);
 	Start();

@@ -56,6 +56,9 @@ class TPLTasks
 			sort_free - ссылка на сортировку списка $items по флагу завершенности (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_status - ссылка на сортировку списка $items по статусу (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$cnt,$page,$pp,$qs,$links)
 	{		static::Menu('list');
@@ -98,8 +101,8 @@ class TPLTasks
 
 		return Eleanor::$Template->Cover(
 			$Lst->end()
-			.'<div class="submitline" style="text-align:left">'.sprintf($lang['tpp'],$Lst('perpage',$pp)).'</div>'
-			.Eleanor::$Template->Pages($cnt,$pp,$page,$qs)
+			.'<div class="submitline" style="text-align:left">'.sprintf($lang['tpp'],$Lst->perpage($pp,$links['pp'])).'</div>'
+			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);
 	}
 

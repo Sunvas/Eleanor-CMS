@@ -135,12 +135,11 @@ return array(
 	{
 		return'<div class="submitline" style="text-align:right">'.$b.($left ? '<div style="float:left">'.$left.'</div>' : '').'</div>';
 	},
-	'perpage'=>function($pp,$query=array(),$npp='new-pp',$p=array(30,50,100,500))
+	'perpage'=>function($pp,$Furl,$p=array(30,50,100,500))
 	{
 		$pps='';
-		$isa=is_array($query);
 		foreach($p as &$v)
-			$pps.=$v==$pp ? ' '.$v.' |' : ' <a href="'.($isa ? $GLOBALS['Eleanor']->Url->Construct($query+array($npp=>$v)) : $query($v)).'">'.$v.'</a> |';
+			$pps.=$v==$pp ? ' '.$v.' |' : ' <a href="'.$Furl($v).'">'.$v.'</a> |';
 		return rtrim($pps,'|');
 	},
 );

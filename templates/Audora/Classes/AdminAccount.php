@@ -46,6 +46,9 @@ class TPLAdminAccount
 			sort_ip - ссылка на сортировку списка $items по ip адресу (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внутри которой происходит отображение перечня $items
+			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			first_page - ссылка на первую страницу пагинатора
+			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function InactiveUsers($items,$sletters,$cnt,$pp,$page,$qs,$links)
 	{		static::Menu('list');
@@ -134,8 +137,8 @@ $(function(){
 		</form>
 		<form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && ($(\'select\',this).val()==\'dr\' || confirm(\''.$ltpl['are_you_sure'].'\')))">'
 		.$Lst->end()
-		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['to_pages'],$Lst->perpage($pp,$qs)).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($lang['sendlet'],'s').Eleanor::Option($ltpl['delete'],'d').Eleanor::Option($lang['delr'],'dr')).Eleanor::Button('Ok').'</div></form>'
-		.Eleanor::$Template->Pages($cnt,$pp,$page,$qs));
+		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($lang['sendlet'],'s').Eleanor::Option($ltpl['delete'],'d').Eleanor::Option($lang['delr'],'dr')).Eleanor::Button('Ok').'</div></form>'
+		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
 	}
 
 	/*

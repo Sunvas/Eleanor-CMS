@@ -420,12 +420,15 @@ class Categories_Manager extends Categories
 			}
 		}
 
+		$THIS=$this;#PHP 5.4 убрать костыль!
 		$links=array(
 			'sort_title'=>$El->Url->Construct(array_merge($qs,array($this->pp.'sort'=>'title',$this->pp.'so'=>$qs['sort']=='title' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 			'sort_pos'=>$El->Url->Construct(array_merge($qs,array($this->pp.'sort'=>'pos',$this->pp.'so'=>$qs['sort']=='pos' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 			'sort_id'=>$El->Url->Construct(array_merge($qs,array($this->pp.'sort'=>'id',$this->pp.'so'=>$qs['sort']=='id' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 			'form_items'=>$El->Url->Construct($qs+array($this->pp.'page'=>$page)),
-			'pp'=>$El->Url->Construct($qs+array($this->pp.'new-pp'=>true)),
+			'pp'=>function($n) use ($El,$qs,$THIS){ return$El->Url->Construct($qs+array($THIS->pp.'new-pp'=>$n)); },
+			'first_page'=>$El->Url->Construct($qs),
+			'pages'=>function($n)use($El,$qs){ return$El->Url->Construct($qs+array('page'=>$n)); },
 		);
 		return Eleanor::$Template->CMList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links,$this->Language);
 	}

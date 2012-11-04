@@ -262,11 +262,8 @@ function Start($tpl='index',$code=200)
 	{
 		$u=isset($Eleanor->module['general']) ? PROTOCOL.Eleanor::$punycode.Eleanor::$site_path : $Eleanor->origurl;
 		$ru=PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'];
-		if(CHARSET!='utf-8')
-		{
-			$u=mb_convert_encoding($u,CHARSET,'utf-8');
-			$ru=mb_convert_encoding($ru,CHARSET,'utf-8');
-		}
+		$ru=Url::Decode($ru);
+		$u=Url::Decode($u);
 		if(strcasecmp($u,$ru)!=0)
 			$Lst->link(array('rel'=>'canonical','href'=>$u));
 	}

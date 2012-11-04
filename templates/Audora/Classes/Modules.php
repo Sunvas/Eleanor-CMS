@@ -61,7 +61,7 @@ class TPLModules
 			{
 				$v['services']=array_intersect($v['services'],array_keys(Eleanor::$services));
 				foreach($v['services'] as &$sv)
-					$services.='<a href="'.$serpref.$GLOBALS['Eleanor']->Url->Construct(array('edit'=>$sv),false).'">'.$sv.'</a>, ';
+					$services.='<a href="'.$serpref.'edit='.$sv.'">'.$sv.'</a>, ';
 				$services=trim($services,', ');
 			}
 

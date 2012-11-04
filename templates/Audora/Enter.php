@@ -37,7 +37,7 @@ if(Eleanor::$vars['multilang'])
 	foreach(Eleanor::$langs as $k=>&$lng)
 	{
 		$img='<img src="images/lang_flags/'.$k.'.png" title="'.$lng['name'].'" alt="'.$lng['name'].'" />';
-		echo'<li>'.($k==Language::$main ? '<span class="active">'.$img.'</span>' : '<a href="'.Eleanor::$filename.'?'.$Eleanor->Url->Construct(array('language'=>$k),false).'">'.$img.'</a>').'</li>';
+		echo'<li>'.($k==Language::$main ? '<span class="active">'.$img.'</span>' : '<a href="'.Eleanor::$filename.'?language='.$k.'">'.$img.'</a>').'</li>';
 	}
 	echo'</ul></div>';
 }

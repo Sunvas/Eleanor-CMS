@@ -61,7 +61,10 @@ class AccountExternals
 		while($a=$R->fetch_assoc())
 			$items[]=$a;
 
+		$links=array(
+			'return'=>PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'loginza'),true,''),
+		);
 		$GLOBALS['title'][]=$lang['externals'];
-		return Eleanor::$Template->Loginza($items,$added,$error);
+		return Eleanor::$Template->Loginza($items,$added,$error,$links);
 	}
 }

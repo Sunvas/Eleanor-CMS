@@ -29,14 +29,15 @@ class TplUserNewsCorrect
 		#[E] Cron
 
 		if(isset($GLOBALS['Eleanor']->module['general']))
-			return$task;		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];		return Eleanor::$Template->Menu(array(
+			return$task;		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+		$links=&$GLOBALS['Eleanor']->module['links'];		return Eleanor::$Template->Menu(array(
 			'menu'=>array(
-				array($GLOBALS['Eleanor']->Url->Prefix(),static::$lang['all']),
-				$GLOBALS['Eleanor']->Categories->dump ? array($GLOBALS['Eleanor']->Url->Construct(array('do'=>'categories'),true,''),$lang['categs']) : false,
-				$GLOBALS['Eleanor']->module['tags'] ? array($GLOBALS['Eleanor']->Url->Construct(array('do'=>'tags'),true,''),$lang['tags']) : false,
-				array($GLOBALS['Eleanor']->Url->Construct(array('do'=>'search'),true,''),$lang['search'],'addon'=>array('rel'=>'search')),
-				Eleanor::$vars['publ_add'] ? array($GLOBALS['Eleanor']->Url->Construct(array('do'=>'add'),true,''),static::$lang['add']) : false,
-				Eleanor::$vars['publ_add'] ? array($GLOBALS['Eleanor']->Url->Construct(array('do'=>'my'),true,''),$lang['my']) : false,
+				array($links['base'],static::$lang['all']),
+				$links['categories'] ? array($links['categories'],$lang['categs']) : false,
+				$links['tags'] ? array($links['tags'],$lang['tags']) : false,
+				array($links['search'],$lang['search'],'addon'=>array('rel'=>'search')),
+				$links['add'] ? array($links['add'],static::$lang['add']) : false,
+				$links['my'] ? array($links['my'],$lang['my']) : false,
 			),
 			'title'=>($tit ? $tit : $lang['n']).$task,
 		));

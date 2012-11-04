@@ -179,7 +179,10 @@ function AddEdit($id,$error='')
 		$back='';
 	else
 		$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
-	$c=Eleanor::$Template->AddEdit($id,$values,$modules,$error,$back,$bypost);
+	$links=array(
+		'delete'=>
+	);
+	$c=Eleanor::$Template->AddEdit($id,$values,$modules,$error,$back,$bypost,$links);
 	Start();
 	echo$c;
 }

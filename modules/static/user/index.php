@@ -192,7 +192,10 @@ function ShowGeneral()
 function Substance()
 {global$Eleanor,$title;
 	$title[]=Eleanor::$Language[$Eleanor->module['config']['n']]['substance'];
-	$s=Eleanor::$Template->StaticSubstance($Eleanor->Plug->GetOrderedList());
+	$ol=$Eleanor->Plug->GetOrderedList();
+	foreach($ol as $k=>&$v)
+		$v['_a']=$Eleanor->Url->Construct($Eleanor->Plug->GetUrl($k));
+	$s=Eleanor::$Template->StaticSubstance($ol);
 	Start();
 	echo$s;
 }

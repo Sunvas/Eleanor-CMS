@@ -755,7 +755,7 @@ function SetData($tpl=false)
 		$tags=array();
 		$R=Eleanor::$Db->Query('SELECT `name`,`cnt` FROM `'.$Eleanor->module['config']['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `cnt`>0 ORDER BY `cnt` DESC LIMIT 50');
 		while($a=$R->fetch_assoc())
-		{			$a['_a']=$Eleanor->Url->Construct(array('tag'=>htmlspecialchars_decode($a['name'],ELENT)),true,'');
+		{			$a['_a']=$Eleanor->Url->Construct(array(array('tag'=>htmlspecialchars_decode($a['name'],ELENT))));
 			$tags[]=$a;
 		}
 		Eleanor::$Cache->Put($Eleanor->module['config']['n'].'_tags_'.Language::$main,$tags,3600);

@@ -1241,8 +1241,10 @@ $(function(){
 			identity - ссылка на пользователя внешнего сервиса
 			provider - название провайдера внешней авторизации
 		$error - ошибка, если пустая - значит ошибок нет
+		$links - перечень необходимых ссылок, массив с ключами:
+			return - ссылка возврата
 	*/
-	public static function Loginza($items,$added,$error)
+	public static function Loginza($items,$added,$error,$links)
 	{
 		$ltpl=Eleanor::$Language['tpl'];
 		$C=static::Menu('user','externals','main');
@@ -1283,7 +1285,7 @@ $(function(){
 <img src="http://loginza.ru/img/providers/loginza.png" title="Loginza" />
 <img src="http://loginza.ru/img/providers/myopenid.png" title="MyOpenID" />
 <img src="http://loginza.ru/img/providers/openid.png" title="OpenID" />
-<img src="http://loginza.ru/img/providers/webmoney.png" title="WebMoney" /></a><br />'.($s ? '<div id="externals">'.rtrim($s,', ').'</div><br />' : '').'<a href="https://loginza.ru/api/widget?token_url='.urlencode(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'loginza'),true,'')).'" class="loginza link-button" style="width:150px"><b>'.static::$lang['add'].'</b></a></div>';
+<img src="http://loginza.ru/img/providers/webmoney.png" title="WebMoney" /></a><br />'.($s ? '<div id="externals">'.rtrim($s,', ').'</div><br />' : '').'<a href="https://loginza.ru/api/widget?token_url='.urlencode($links['return']).'" class="loginza link-button" style="width:150px"><b>'.static::$lang['add'].'</b></a></div>';
 	}
 
 	/*

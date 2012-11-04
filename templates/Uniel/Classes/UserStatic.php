@@ -64,6 +64,7 @@ class TplUserStatic
 	/*
 		Вывод содержания статических страниц (перечень всех страниц).
 		$a - массив всех статических страниц, хранимых в базе. Формат: id=>array(), ключи внутреннего массива:
+			_a - ссылка на статическую страницу
 			uri - строка-идентификатор статической страницы
 			title - название статической страницы
 			parents - идентификаторы всех родителей статической страницы, разделенных запятыми (если они, конечно, есть)
@@ -82,7 +83,7 @@ class TplUserStatic
 		$c='<ul>';#Content
 		$n=-1;
 		$nonp=true;#No new page
-		foreach($a as $k=>&$v)
+		foreach($a as &$v)
 		{
 			++$n;
 			$nl=strlen($v['parents']);
@@ -99,7 +100,7 @@ class TplUserStatic
 			}
 			if($n>0)
 				$c.='</li>';
-			$c.='<li><a href="'.$GLOBALS['Eleanor']->Url->Construct($GLOBALS['Eleanor']->Plug->GetUrl($k)).'">'.$v['title'].'</a>';
+			$c.='<li><a href="'.$v['_a'].'">'.$v['title'].'</a>';
 			$nonp=true;
 		}
 		return$c.'</li></ul>';

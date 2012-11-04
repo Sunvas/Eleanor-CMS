@@ -111,8 +111,10 @@ class TPLAdminMainpage
 		$error - текст ошибки, если пусто - ошибки нет
 		$back - URL для возврата
 		$bypost - флаг загрузки содержимого из POST запроса
+		$links - перечень необходимых ссылок, массив с ключами:
+			delete - ссылка на удаление или false
 	*/
-	public static function AddEdit($id,$values,$modules,$error,$back)
+	public static function AddEdit($id,$values,$modules,$error,$back,$links)
 	{		static::Menu($id ? '' : 'add');		$ltpl=Eleanor::$Language['tpl'];
 		$mops='';
 		foreach($modules as $k=>&$v)
@@ -126,7 +128,7 @@ class TPLAdminMainpage
 			->begin()
 			->item($lang['module'],Eleanor::Select('id',$mops,array('tabindex'=>1)))
 			->item(array($lang['pos'],'tip'=>$lang['pos_'],Eleanor::Control('pos','number',$values['pos'],array('tabindex'=>2,'min'=>1))))
-			->button($back.Eleanor::Button('OK','submit',array('tabindex'=>10)).($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>3,'onclick'=>'if(confirm(\''.$ltpl['are_you_sure'].'\'))window.location=\''.$GLOBALS['Eleanor']->Url->Construct(array('delete'=>$id,'noback'=>1)).'\'')) : ''))
+			->button($back.Eleanor::Button('OK','submit',array('tabindex'=>10)).($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>3,'onclick'=>'if(confirm(\''.$ltpl['are_you_sure'].'\'))window.location=\''.$links['delete'].'\'')) : ''))
 			->end()
 			->endform();
 		return Eleanor::$Template->Cover((string)$Lst,$error);

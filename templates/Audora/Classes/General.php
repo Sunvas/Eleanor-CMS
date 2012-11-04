@@ -194,7 +194,7 @@ $(function(){
 		if($values['ini_get_v'] or $values['ini_get'])
 			$Lst->item(htmlspecialchars($values['ini_get'],ELENT,CHARSET),$values['ini_get_v'] ? htmlspecialchars($values['ini_get_v'],ELENT,CHARSET) : '&mdash;');
 		return Eleanor::$Template->Cover(
-			$Lst->button('<a href="'.$GLOBALS['Eleanor']->Url->Construct().'">'.Eleanor::$Language['tpl']['goback'].'</a>')->end()
+			$Lst->button('<a href="'.$GLOBALS['Eleanor']->Url->Prefix().'">'.Eleanor::$Language['tpl']['goback'].'</a>')->end()
 		);
 	}
 

@@ -19,7 +19,7 @@ if(typeof CORE.Loginza=="undefined")
 if(!isset($GLOBALS['Eleanor']->loginzaurl))
 {
 	$ma=array_keys($GLOBALS['Eleanor']->modules['sections'],'account');
-	$GLOBALS['Eleanor']->loginzaurl=urlencode(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.($ma ? $GLOBALS['Eleanor']->Url->Construct(array('lang'=>(Eleanor::$vars['multilang'] and Language::$main!=LANGUAGE) ? Eleanor::$langs[Language::$main]['uri'] : false,'module'=>reset($ma),'do'=>'externals'),false,'') : ''));
+	$GLOBALS['Eleanor']->loginzaurl=urlencode(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('lang'=>(Eleanor::$vars['multilang'] and Language::$main!=LANGUAGE) ? Eleanor::$langs[Language::$main]['uri'] : false,'module'=>reset($ma),'do'=>'externals'),false,''));
 }
 echo$GLOBALS['Eleanor']->loginzaurl.'&amp;lang='.substr(Language::$main,0,3);?>");
 		CORE.AddScript("http://loginza.ru/js/widget.js");

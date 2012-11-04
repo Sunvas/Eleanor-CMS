@@ -5,9 +5,6 @@
 	@var URL, куда отправлять сохраняемые данные
 */
 $url=isset($v_0) ? $v_0 : array();
-if(is_array($url))
-	$url=$GLOBALS['Eleanor']->Url->Construct($url);
-
 $GLOBALS['head']['draft']='<script type="text/javascript">//<![CDATA[
 CORE.drafts=[];
 $(function(){	var first=true,

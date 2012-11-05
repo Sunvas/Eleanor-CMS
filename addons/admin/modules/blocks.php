@@ -19,7 +19,7 @@
 if(!defined('CMS'))die;
 global$Eleanor,$title;
 $lang=Eleanor::$Language->Load('addons/admin/langs/blocks-*.php','blocks');
-Eleanor::$Template->queue[]='blocks';
+Eleanor::$Template->queue[]='Blocks';
 
 $Eleanor->module['links']=array(
 	'main'=>$Eleanor->Url->Prefix(),

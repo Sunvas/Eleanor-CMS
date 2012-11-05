@@ -1,4 +1,4 @@
-/**
+﻿/**
  *                                                        ____   _____
  *  Dynarch Calendar -- JSCal2, version 1.9               \  /_  /   /
  *  Built at 2011/03/13 10:28 GMT                          \  / /   /

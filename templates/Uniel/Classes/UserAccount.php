@@ -266,6 +266,7 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 
 		$C=static::Menu('guest','register','main');
 
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$errname=$erremail=$errpass=$errpass2='';
 		if($errors)
 		{			foreach($errors as $k=>&$v)
@@ -311,7 +312,7 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 			->form(array('id'=>'regform'))
 			->begin()
 			->item(array(static::$lang['name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>1,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_name'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="name-error" style="color:red;display:none;">'.$errname.'</div>','tip'=>static::$lang['name_'],'imp'=>true,'td1'=>array('style'=>'width:150px;')))
-			->item(static::$lang['full_name'],Eleanor::Edit('full_name',$values['full_name'],array('tabindex'=>2,'style'=>'width:80%')))
+			->item($lang['full_name'],Eleanor::Edit('full_name',$values['full_name'],array('tabindex'=>2,'style'=>'width:80%')))
 			->item(array('E-mail',Eleanor::Edit('email',$values['email'],array('tabindex'=>3,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_email'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="email-error" style="color:red;display:none;">'.$erremail.'</div>','tip'=>static::$lang['email_'],'imp'=>true))
 			->item(array(static::$lang['pass'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>4)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>static::$lang['pass_']))
 			->item(static::$lang['rpass'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>5)).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>');

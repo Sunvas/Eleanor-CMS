@@ -11,7 +11,7 @@
 if(!defined('CMS'))die;
 global$Eleanor;
 $event=isset($_POST['event']) ? (string)$_POST['event'] : '';
-Eleanor::$Template->queue[]='blocks';
+Eleanor::$Template->queue[]='Blocks';
 switch($event)
 {	case'settitle':
 		$id=isset($_POST['id']) ? (int)$_POST['id'] : 0;

@@ -1,4 +1,4 @@
-Calendar.LANG("rus", "Русский", {
+﻿Calendar.LANG("rus", "Русский", {
 
 	fdow: 1,		// first day of week for this locale; 0 = Sunday, 1 = Monday, etc.
 

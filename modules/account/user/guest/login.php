@@ -45,7 +45,7 @@ class AccountLogin
 						switch($error)
 						{
 							case'TEMPORARILY_BLOCKED':
-								$errors['TEMPORARILY_BLOCKED']=sprintf($lang['TEMPORARILY_BLOCKED'],round($E->addon['remain']/60));
+								$errors['TEMPORARILY_BLOCKED']=sprintf($lang['TEMPORARILY_BLOCKED'],round($E->extra['remain']/60));
 							break;
 							case'CAPTCHA':
 								$errors[]='ENTER_CAPTCHA';
@@ -55,7 +55,7 @@ class AccountLogin
 						}
 						return AccountIndex::Content(true,$errors);
 					}
-					throw new EE($E->getMessage(),EE::ENV,$E->addon);
+					throw new EE($E->getMessage(),EE::ENV,array(),$E);
 				}
 		}
 		return class_exists('AccountIndex',false) ? AccountIndex::Content(true) : null;

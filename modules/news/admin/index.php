@@ -37,7 +37,7 @@ $Eleanor->module['links']=array(
 	'addt'=>$Eleanor->Url->Construct(array('do'=>'addt')),
 	'options'=>$Eleanor->Url->Construct(array('do'=>'options')),
 	'categories'=>$Eleanor->Url->Construct(array('do'=>'categories')),
-	//'addonf'=>$Eleanor->Url->Construct(array('do'=>'addonf'),
+	//'addf'=>$Eleanor->Url->Construct(array('do'=>'addf'),
 );
 
 $Eleanor->sc_post=false;
@@ -55,7 +55,7 @@ $Eleanor->sc=array(
 					$sel.=Eleanor::Option($v['name'],$k,in_array($k,$a['value']));
 				return$sel;
 			},
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>1
 			),
 		),
@@ -67,7 +67,7 @@ $Eleanor->sc=array(
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>2
 			),
 		),
@@ -226,7 +226,7 @@ if(isset($_GET['do']))
 			Start('');
 			echo'ok';
 		break;
-		//case'addonf':
+		//case'addf':
 		//	$title='Дополнительные поля';
 		//	#ToDo!
 		//	Start();

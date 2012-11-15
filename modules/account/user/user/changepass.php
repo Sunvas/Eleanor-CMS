@@ -59,7 +59,7 @@ class AccountChangePass
 					switch($mess)
 					{
 						case'PASS_TOO_SHORT':
-							$errors['PASS_TOO_SHORT']=sprintf($lang['PASS_TOO_SHORT'],$E->addon['min'],$E->addon['you']);
+							$errors['PASS_TOO_SHORT']=sprintf($lang['PASS_TOO_SHORT'],$E->extra['min'],$E->extra['you']);
 						break;
 						default:
 							$errors[]=$mess;

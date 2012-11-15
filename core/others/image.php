@@ -75,7 +75,7 @@ class Image extends BaseClass
 	public static function Preview($path,array$o=array())
 	{
 		if(!is_file($path))
-			throw new EE('File not found! ('.$path.')',EE::INFO);
+			throw new EE('File not found! ('.$path.')',EE::DEV);
 		if(!list($w,$h)=getimagesize($path))
 			throw new EE('Image failed!',EE::ENV);
 		$o+=array(
@@ -155,7 +155,7 @@ class Image extends BaseClass
 	public static function WaterMark($path,$o=array())
 	{
 		if(!is_file($path))
-			throw new EE('File not found!',EE::INFO);
+			throw new EE('File not found!',EE::DEV);
 		$o+=array(
 			'types'=>array('bmp','png','jpg'),#Типы файлов для которых разршен ватермарк
 			'alpha'=>0,#Прозрачность ватермарка в процентах от 0 до 100%
@@ -185,7 +185,7 @@ class Image extends BaseClass
 		if(!in_array(strtolower(pathinfo($path,PATHINFO_EXTENSION)),$o['types']))
 			return false;
 		if(false===$img=self::CreateImage($path))
-			throw new EE('Unable to create image!',EE::INFO);
+			throw new EE('Unable to create image!',EE::ENV);
 		$iw=imagesx($img);
 		$ih=imagesy($img);
 
@@ -198,7 +198,7 @@ class Image extends BaseClass
 			if(false===$wimg=self::CreateImage($o['image']))
 			{
 				imagedestroy($img);
-				throw new EE('Unable to load watermark image!',EE::INFO);
+				throw new EE('Unable to load watermark image!',EE::ENV);
 			}
 			$wiw=imagesx($wimg);
 			$wih=imagesy($wimg);

@@ -35,7 +35,7 @@ class TplUserNewsCorrect
 				array($links['base'],static::$lang['all']),
 				$links['categories'] ? array($links['categories'],$lang['categs']) : false,
 				$links['tags'] ? array($links['tags'],$lang['tags']) : false,
-				array($links['search'],$lang['search'],'addon'=>array('rel'=>'search')),
+				array($links['search'],$lang['search'],'extra'=>array('rel'=>'search')),
 				$links['add'] ? array($links['add'],static::$lang['add']) : false,
 				$links['my'] ? array($links['my'],$lang['my']) : false,
 			),
@@ -131,6 +131,11 @@ class TplUserNewsCorrect
 
 		if($back)
 			$back=Eleanor::Control('back','hidden',$back);
+
+		if($errors)
+			foreach($errors as $k=>&$v)
+				if(is_int($k) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 
 		return static::TopMenu(reset($GLOBALS['title']))
 			.($errors ? Eleanor::$Template->Message($errors,'error') : '')

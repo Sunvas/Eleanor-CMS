@@ -48,10 +48,10 @@ class LoginBase extends BaseClass implements LoginClass
 		}
 	}
 
-	public function Login(array$data,array$addon=array())
+	public function Login(array$data,array$extra=array())
 	{		if(!isset($data['name'],$data['password']))
-			throw new EE('EMPTY_DATA',EE::INFO);
-		$this->AuthByName($data['name'],$data['password'],$addon);
+			throw new EE('EMPTY_DATA',EE::UNIT);
+		$this->AuthByName($data['name'],$data['password'],$extra);
 
 		$data+=array('rememberme'=>true);
 		Eleanor::SetCookie(static::UNIQUE,base64_encode((isset($this->user['login_key']) ? $this->user['login_key'] : '').'|'.$this->user['id']),$data['rememberme'] ? false : 0,true);
@@ -123,12 +123,12 @@ class LoginBase extends BaseClass implements LoginClass
 		return$El->Url->special.$El->Url->Construct($a,false,'');
 	}
 
-	public function AuthByName($name,$pass,array$addon=array())
-	{		$addon+=array('ismd'=>false,'captcha'=>false);
+	public function AuthByName($name,$pass,array$extra=array())
+	{		$extra+=array('ismd'=>false,'captcha'=>false);
 		if(Eleanor::$Db===Eleanor::$UsersDb)
-		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`pass_salt`,`pass_hash`,`ban_date`,`ban_explain`,`u`.`language`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`failed_logins`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `u`.`name`='.Eleanor::$Db->Escape($name).' LIMIT 1');
+		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`pass_salt`,`pass_hash`,`banned_until`,`ban_explain`,`u`.`language`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`failed_logins`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `u`.`name`='.Eleanor::$Db->Escape($name).' LIMIT 1');
 			if(!$user=$R->fetch_assoc())
-				throw new EE('NOT_FOUND',EE::INFO);
+				throw new EE('NOT_FOUND',EE::UNIT);
 			#На случай, если синхронизация у нас в виде одной БД.
 			if($user['groups']===null)
 			{				UserManager::Sync($user['id']);
@@ -136,9 +136,9 @@ class LoginBase extends BaseClass implements LoginClass
 				$user+=$R->fetch_assoc();			}
 		}
 		else
-		{			Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`pass_salt`,`pass_hash`,`register`,`last_visit`,`ban_date`,`ban_explain`,`language`,`timezone` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($name).' AND `temp`=0 LIMIT 1');
+		{			Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`pass_salt`,`pass_hash`,`register`,`last_visit`,`banned_until`,`ban_explain`,`language`,`timezone` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($name).' AND `temp`=0 LIMIT 1');
 			if(!$user=Eleanor::$UsersDb->fetch_assoc())
-				throw new EE('NOT_FOUND',EE::INFO);
+				throw new EE('NOT_FOUND',EE::UNIT);
 			UserManager::Sync(array($user['id']=>array('full_name'=>$user['full_name'],'name'=>$user['name'],'register'=>$user['register'],'language'=>$user['language'])));
 			$R=Eleanor::$Db->Query('SELECT `id`,`forum_id`,`email`,`groups`,`groups_overload`,`failed_logins`,`login_keys`,`ip`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.P.'users_site` INNER JOIN `'.P.'users_extra` USING(`id`) WHERE `id`='.$user['id'].' LIMIT 1');
 			$user+=$R->fetch_assoc();		}
@@ -158,21 +158,21 @@ class LoginBase extends BaseClass implements LoginClass
 						return 0;
 					return$a>$b ? -1 : 1;
 				});
-				if(isset($fls[$acnt-1]) and (Eleanor::$vars['antibrute']==1 or !$addon['captcha']) and strtotime($user['last_visit'])<$fls[$acnt-1][0])
+				if(isset($fls[$acnt-1]) and (Eleanor::$vars['antibrute']==1 or !$extra['captcha']) and strtotime($user['last_visit'])<$fls[$acnt-1][0])
 				{					$lt=$t-$fls[$acnt-1][0];
 					if($lt<$atime)
 					{
 						if(Eleanor::$vars['antibrute']==2)
 						{
 							Eleanor::SetCookie('Captcha_'.get_class($this),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
-							throw new EE('CAPTCHA',EE::INFO,array('remain'=>$atime-$lt));
+							throw new EE('CAPTCHA',EE::UNIT,array('remain'=>$atime-$lt));
 						}
-						throw new EE('TEMPORARILY_BLOCKED',EE::INFO,array('remain'=>$atime-$lt));
+						throw new EE('TEMPORARILY_BLOCKED',EE::UNIT,array('remain'=>$atime-$lt));
 					}
 				}
 			}
 		}
-		if($user['pass_hash']===UserManager::PassHash($user['pass_salt'],$pass,$addon['ismd']))
+		if($user['pass_hash']===UserManager::PassHash($user['pass_salt'],$pass,$extra['ismd']))
 			$this->SetUser($user);
 		else
 		{			if(Eleanor::$vars['antibrute'])
@@ -186,21 +186,21 @@ class LoginBase extends BaseClass implements LoginClass
 					$lt=$t-$fls[$acnt-1][0];
 					if($lt<$atime and strtotime($user['last_visit'])<$fls[$acnt-1][0])
 						if(Eleanor::$vars['antibrute']==1)
-							throw new EE('TEMPORARILY_BLOCKED',EE::INFO,array('remain'=>$atime-$lt));
+							throw new EE('TEMPORARILY_BLOCKED',EE::UNIT,array('remain'=>$atime-$lt));
 						else
 						{
 							Eleanor::SetCookie('Captcha_'.get_class($this),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
-							throw new EE('WRONG_PASSWORD',EE::INFO,array('captcha'=>true,'remain'=>$atime-$lt));
+							throw new EE('WRONG_PASSWORD',EE::UNIT,array('captcha'=>true,'remain'=>$atime-$lt));
 						}
 				}
 			}
-			throw new EE('WRONG_PASSWORD',EE::INFO);
+			throw new EE('WRONG_PASSWORD',EE::UNIT);
 		}
 	}
 
 	public function AuthByKey($id,$k)
 	{		if(Eleanor::$Db===Eleanor::$UsersDb)
-		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`ban_date`,`ban_explain`,`u`.`language`,`staticip`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
+		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`banned_until`,`ban_explain`,`u`.`language`,`staticip`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
 			if(!$user=$R->fetch_assoc())
 				return false;
 			#На случай, если синхронизация у нас в виде одной БД.
@@ -212,7 +212,7 @@ class LoginBase extends BaseClass implements LoginClass
 			}
 		}
 		else
-		{			$R2=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`ban_date`,`ban_explain`,`language`,`timezone`,`staticip` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' AND `temp`=0 LIMIT 1');
+		{			$R2=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`banned_until`,`ban_explain`,`language`,`timezone`,`staticip` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' AND `temp`=0 LIMIT 1');
 			if(!$user=$R2->fetch_assoc())
 				return false;
 			UserManager::Sync(array($user['id']=>array('full_name'=>$user['full_name'],'name'=>$user['name'],'register'=>$user['register'],'language'=>$user['language'])));
@@ -242,7 +242,7 @@ class LoginBase extends BaseClass implements LoginClass
 	{
 		if(Eleanor::$Db===Eleanor::$UsersDb)
 		{
-			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`ban_date`,`ban_explain`,`u`.`language`,`staticip`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`banned_until`,`ban_explain`,`u`.`language`,`staticip`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
 			if(!$user=$R->fetch_assoc())
 				return false;
 			#На случай, если синхронизация у нас в виде одной БД.
@@ -255,7 +255,7 @@ class LoginBase extends BaseClass implements LoginClass
 		}
 		else
 		{
-			Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`ban_date`,`ban_explain`,`language`,`timezone`,`staticip` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' AND `temp`=0 LIMIT 1');
+			Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`banned_until`,`ban_explain`,`language`,`timezone`,`staticip` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' AND `temp`=0 LIMIT 1');
 			if(!$user=Eleanor::$UsersDb->fetch_assoc())
 				return false;
 			UserManager::Sync(array($user['id']=>array('full_name'=>$user['full_name'],'register'=>$user['register'],'name'=>$user['name'],'language'=>$user['language'])));
@@ -289,8 +289,8 @@ class LoginBase extends BaseClass implements LoginClass
 
 	public function ApplyCheck()
 	{
-		if($this->user['ban_date'] and 0<strtotime($this->user['ban_date'])-time())
-			throw new EE($this->user['ban_explain'],EE::BAN,array('date'=>$this->user['ban_date']));
+		if($this->user['banned_until'] and 0<strtotime($this->user['banned_until'])-time())
+			throw new EE($this->user['ban_explain'],EE::USER,array('ban'=>'user','banned_until'=>$this->user['banned_until']));
 	}
 
 	public function GetUserValue($param,$safe=true,$query=true)

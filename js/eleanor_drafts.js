@@ -11,6 +11,7 @@ CORE.DRAFT=function(opts)
 {	opts=$.extend({			url:"",//URL для сохранения
 			interval:10,//Интеревал сохранения в секундах
 			form:false,//Форма, которую нужно сохранять
+			enabled:true,//Флаг включенности
 			OnSave:false,//Событие после сохранения
 			OnChange:false,//Событие после изменения какого-нибудь контрола		},
 		opts
@@ -25,10 +26,10 @@ CORE.DRAFT=function(opts)
 		{			if(to)
 				clearInterval(to);
 			to=false;
-			th.changed=false;		},
+		},
 		frame,oa,ot;
 
-	this.changed=false;
+	this.enabled=opts.enabled;
 	this.OnSave=$.Callbacks("unique");
 	this.OnChange=$.Callbacks("unique");
 	if(opts.OnSave)
@@ -37,10 +38,13 @@ CORE.DRAFT=function(opts)
 		this.OnChange.add(opts.OnChange);
 
 	this.Change=function()//Функция насильного уведомления о том, что содержимое изменилось
-	{		th.OnChange.fire();
-		ClearTO();
-		th.changed=true;
-		to=setTimeout(th.Save,opts.interval*1000);
+	{
+		if(th.enabled)
+		{
+			th.OnChange.fire();
+			ClearTO();
+			to=setTimeout(th.Save,opts.interval*1000);
+		}
 	}
 
 	this.Save=function()//Функция насильного сохранения черновика
@@ -52,6 +56,7 @@ CORE.DRAFT=function(opts)
 		{			id=new Date().getTime();
 			frame=$("<iframe name=\"f"+id+"\">").css({"position":"absolute","left":"-1000px","top":"-1000px"}).width("1px").height("1px").appendTo("body").load(function(){				inload=false;
 				th.OnSave.fire($(this.contentWindow.document.body).text());
+				frame.remove();
 			});
 			oa=f.attr("action")||"";
 			ot=f.attr("target")||"";

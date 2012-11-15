@@ -180,7 +180,7 @@ function AddEdit($id,$error='')
 	else
 		$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
 	$links=array(
-		'delete'=>
+		'delete'=>$id ? $Eleanor->Url->Construct(array('delete'=>$id)) : false,
 	);
 	$c=Eleanor::$Template->AddEdit($id,$values,$modules,$error,$back,$bypost,$links);
 	Start();

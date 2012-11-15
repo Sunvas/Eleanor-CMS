@@ -29,7 +29,7 @@ $Eleanor->sc=array(
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>false,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>1
 			),
 		),
@@ -42,7 +42,7 @@ $Eleanor->sc=array(
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>false,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>3
 			),
 		),
@@ -63,7 +63,7 @@ $Eleanor->sc=array(
 						preg_replace($controls['from'][$k],'','text');
 						Eleanor::$nolog=false;
 						if(preg_last_error()!=PREG_NO_ERROR)
-							throw new EE($lang['rege'],EE::INFO);
+							$Obj->errors['REG_ERROR']=$lang['rege'];
 					}
 				return$a['value'];
 			}
@@ -72,13 +72,13 @@ $Eleanor->sc=array(
 				preg_replace($controls['from'],'','text');
 				Eleanor::$nolog=false;
 				if(preg_last_error()!=PREG_NO_ERROR)
-					throw new EE($lang['rege'],EE::INFO);
+					$Obj->errors['REG_ERROR']=$lang['rege'];
 			}
 			return$a['value'];
 		},
 		'options'=>array(
 			'htmlsafe'=>false,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>2
 			),
 		),
@@ -91,7 +91,7 @@ $Eleanor->sc=array(
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>false,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>4,
 			),
 		),
@@ -104,7 +104,7 @@ $Eleanor->sc=array(
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>false,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>5,
 			),
 		),
@@ -127,7 +127,7 @@ $Eleanor->sc=array(
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>false,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>6,
 			),
 		),
@@ -140,7 +140,7 @@ $Eleanor->sc=array(
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
 			'time'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>7,
 			),
 		),
@@ -153,7 +153,7 @@ $Eleanor->sc=array(
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
 			'time'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>8,
 			),
 		),
@@ -165,7 +165,7 @@ $Eleanor->sc=array(
 		'type'=>'check',
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>9,
 			),
 		),

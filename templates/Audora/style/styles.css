@@ -172,10 +172,10 @@ table.conts { border: 0 none; width: 100%; }
 
 			/*warning, info*/
 		.warning { padding: 8px; text-align: left; margin: auto; margin-bottom: 5px;
-			-moz-border-radius-bottomleft:4px;
-			-moz-border-radius-bottomright:4px;
-			-moz-border-radius-topleft:4px;
-			-moz-border-radius-topright:4px;
+			-o-border-radius:4px;
+			-moz-border-radius:4px;
+			-webkit-border-radius:4px;
+			border-radius:4px;
 			border: 1px solid #d3d3d3;
 			background-color: #fafafa;
 		}
@@ -183,7 +183,10 @@ table.conts { border: 0 none; width: 100%; }
 		.warning div { margin-left: 56px; }
 		.warning div div { margin: 0; }
 		.warning h4 { margin-top: 0; }
-		.warning img.info { float: left; }
+		.warning .info  { float: left; }
+		.warning .repair { font-weight:bold; text-align:right; border-top:1px gray dashed; }
+
+.logs { max-height:500px; overflow:scroll; }
 
 /*loading*/
 #loading {
@@ -196,10 +199,10 @@ table.conts { border: 0 none; width: 100%; }
 	-moz-opacity: 0.6;
 	-khtml-opacity: 0.6;
 	opacity: 0.6;
-	-moz-border-radius-bottomleft:10px;
-	-moz-border-radius-bottomright:10px;
-	-moz-border-radius-topleft:10px;
-	-moz-border-radius-topright:10px;
+	-o-border-radius:10px;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	border-radius:10px;
 	z-index:1000;
 }
 

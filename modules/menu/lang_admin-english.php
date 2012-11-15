@@ -8,7 +8,7 @@ return array(
 	'url'=>'Link address',
 	'eval_url'=>'PHP code link',
 	'eval_url_'=>'For the dynamic generation of links. Must contain the keyword return. For example: return$Eleanor->Url->Construct(array())',
-	'params'=>'Addon options links',
+	'params'=>'Extra options links',
 	'params_'=>'For example: onclick="alert()"',
 	'pos'=>'Position',
 	'pos_'=>'Leave blank to append',

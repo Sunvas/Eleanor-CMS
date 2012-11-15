@@ -10,7 +10,7 @@
 */
 global$Eleanor;
 $event=isset($_POST['event']) ? (string)$_POST['event'] : '';
-Eleanor::$Template->queue[]='smiles';
+Eleanor::$Template->queue[]='Smiles';
 switch($event)
 {	case'setemotion':
 		$id=isset($_POST['id']) ? (int)$_POST['id'] : 0;

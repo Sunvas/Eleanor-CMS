@@ -9,7 +9,7 @@ return array(
 	'edit_menu'=>'Edit menu',
 	'pages'=>'Pages:',
 	'main_m'=>'Main features',
-	'addon_m'=>'Additional features',
+	'extra_m'=>'Additional features',
 	'select_user'=>'Choose a user',
 	'warning'=>'Warning',
 	'error'=>'Mistake',

@@ -49,7 +49,7 @@ if(Eleanor::$vars['multilang'])
 else
 	Eleanor::$lvars=array();
 if(Eleanor::$Permissions->IsBanned())
-	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::BAN);
+	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::USER,array('ban'=>'group'));
 
 $m=isset($_REQUEST['module']) ? (string)$_REQUEST['module'] : false;
 if($m)
@@ -177,7 +177,7 @@ function Start($ch=array())
 	.($ch['category'] ? '<category>'.htmlspecialchars($ch['category'],ELENT,CHARSET,false).'</category>' : '')
 	.($ch['ttl'] ? '<ttl>'.(int)$ch['ttl'].'</ttl>' : '')
 	.$image
-	.(isset($ch['addon']) ? $ch['addon'] : '');
+	.(isset($ch['extra']) ? $ch['extra'] : '');
 	$Eleanor->started=true;
 }
 
@@ -193,8 +193,6 @@ function Error($e=false,$extra=array())
 	$le=Eleanor::$Language['errors'];
 	if(empty($extra['ban']))
 	{
-		if(isset($extra['date']))
-			$e=$le['banlock']($extra['date'],$e);
 		$e=Eleanor::LoadFileTemplate(
 			Eleanor::$root.'templates/error.html',
 			array(
@@ -207,6 +205,9 @@ function Error($e=false,$extra=array())
 			header('Retry-After: 7200');
 	}
 	else
+	{
+		if(isset($extra['banned_until']))
+			$e=$le['banlock']($extra['banned_until'],$e);
 		$e=Eleanor::LoadFileTemplate(
 			Eleanor::$root.'templates/ban.html',
 			array(
@@ -215,6 +216,7 @@ function Error($e=false,$extra=array())
 				'extra'=>$extra,
 			)
 		);
+	}
 
 	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#Ошибка могла вылететь и в момент создания объекта $Eleanor
 	{
@@ -229,7 +231,7 @@ function Error($e=false,$extra=array())
 	else
 	{
 		Eleanor::$content_type='text/html';
-		Eleanor::HookOutPut(false,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503,$e);
+		Eleanor::HookOutPut(false,isset($adoon['httpcode']) ? (int)$extra['httpcode'] : 503,$e);
 		die;
 	}
 }
@@ -319,7 +321,7 @@ function Rss($v)
 	.($v['guid'] ? '<guid isPermaLink="false">'.htmlspecialchars($v['guid'],ELENT,CHARSET,false).'</guid>' : '')
 	.($v['pubDate'] ? '<pubDate>'.(is_int($v['pubDate']) ? date('r',$v['pubDate']) : $v['pubDate']).'</pubDate>' : '')
 	.($v['source'] ? '<source>'.htmlspecialchars($v['source'],ELENT,CHARSET,false).'</source>' : '')
-	.$cats.$en.(isset($v['addon']) ? $v['addon'] : '')
+	.$cats.$en.(isset($v['extra']) ? $v['extra'] : '')
 	.'</item>';
 }
 

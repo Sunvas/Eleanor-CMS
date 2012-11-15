@@ -55,7 +55,7 @@ class TplAdminMenu
 			sort_pos - ссылка на сортировку списка $items по позиции (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внтури которой происходит отображение перечня $items
-			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			pp - фукнция-генератор ссылок на изменение количества пунктов меню отображаемых на странице
 			first_page - ссылка на первую страницу пагинатора
 			pages - функция-генератор ссылок на остальные страницы
 	*/
@@ -105,7 +105,7 @@ class TplAdminMenu
 					$Lst('func',
 						array($v['_aswap'],$v['status'] ? $ltpl['deactivate'] : $ltpl['activate'],$v['status'] ? $images.'active.png' : $images.'inactive.png'),
 						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),
-						array($v['_adel'],$ltpl['delete'],$images.'delete.png','addon'=>array('onclick'=>'return confirm(\''.$ltpl['are_you_sure'].'\')'))
+						array($v['_adel'],$ltpl['delete'],$images.'delete.png','extra'=>array('onclick'=>'return confirm(\''.$ltpl['are_you_sure'].'\')'))
 					),
 					Eleanor::Check('mass[]',false,array('value'=>$k))
 				);

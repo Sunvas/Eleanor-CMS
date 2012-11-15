@@ -22,7 +22,7 @@ if(Eleanor::$vars['site_closed'] and !Eleanor::$Permissions->ShowClosedSite() an
 ApplyLang();
 
 if(Eleanor::$Permissions->IsBanned())
-	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::BAN);
+	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::USER,array('ban'=>'group'));
 
 $m=isset($_REQUEST['module']) ? (string)$_REQUEST['module'] : false;
 if($m)
@@ -142,8 +142,7 @@ function Error($e=false,$extra=array())
 	$csh=!headers_sent();
 	$le=Eleanor::$Language['errors'];
 	if(empty($extra['ban']))
-	{		if(isset($extra['date']))
-			$e=$le['banlock']($extra['date'],$e);
+	{
 		$e=Eleanor::LoadFileTemplate(
 			Eleanor::$root.'templates/error.html',
 			array(
@@ -156,6 +155,9 @@ function Error($e=false,$extra=array())
 			header('Retry-After: 7200');
 	}
 	else
+	{
+		if(isset($extra['banned_until']))
+			$e=$le['banlock']($extra['banned_until'],$e);
 		$e=Eleanor::LoadFileTemplate(
 			Eleanor::$root.'templates/ban.html',
 			array(
@@ -164,6 +166,7 @@ function Error($e=false,$extra=array())
 				'extra'=>$extra,
 			)
 		);
+	}
 
 	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#Ошибка могла вылететь и в момент создания объекта $Eleanor
 	{
@@ -178,7 +181,7 @@ function Error($e=false,$extra=array())
 	else
 	{
 		Eleanor::$content_type='text/html';
-		Eleanor::HookOutPut(false,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503,$e);
+		Eleanor::HookOutPut(false,isset($adoon['httpcode']) ? (int)$extra['httpcode'] : 503,$e);
 		die;
 	}
 }

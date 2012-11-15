@@ -51,7 +51,7 @@ class TPLServices
 			$Lst->item(
 				array($v['name'],'href'=>$v['_aedit']),
 				array($v['file'],'style'=>$v['protected'] ? 'font-weight:bold' : ''),
-				$v['theme'] ? array($v['theme'],'center','href'=>$GLOBALS['Eleanor']->Url->file.'?'.$GLOBALS['Eleanor']->Url->Construct(array('section'=>'management','module'=>'themes_editor','files'=>$v['theme']),false),'hrefaddon'=>array('title'=>$lang['etpl'])) : array('&mdash;','center'),
+				$v['theme'] ? array($v['theme'],'center','href'=>$GLOBALS['Eleanor']->Url->file.'?'.$GLOBALS['Eleanor']->Url->Construct(array('section'=>'management','module'=>'themes_editor','files'=>$v['theme']),false),'hrefextra'=>array('title'=>$lang['etpl'])) : array('&mdash;','center'),
 				array($v['login'],'center'),
 				$Lst('func',
 					$v['protected'] ? false : array($v['_adel'],$ltpl['delete'],$images.'delete.png'),

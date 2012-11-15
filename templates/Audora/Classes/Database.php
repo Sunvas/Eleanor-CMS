@@ -52,7 +52,7 @@ class TplDatabase
 		$page - страница, на которой мы сейчас находимся
 		$pp - число задач на страницу
 		$links - перечень необходимых ссылок, массив с ключами:
-			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			pp - фукнция-генератор ссылок на изменение количества задач отображаемых на странице
 			first_page - ссылка на первую страницу пагинатора
 			pages - функция-генератор ссылок на остальные страницы
 	*/
@@ -70,9 +70,9 @@ class TplDatabase
 					join(', ',array_merge($v['options']['ids'],$v['options']['names'])),
 					array($v['data']['done'] ? '<span style="color:green">'.sprintf($lang['done'],Eleanor::$Language->Date($v['lastrun'],'fdt'),$v['data']['updated']).'</span>' : $status,'center'),
 					$Lst('func',
-						$v['_aswap'] ? array($v['_aswap'],$v['status'] ? $ltpl['deactivate'] : $ltpl['activate'],$v['status'] ? $images.'active.png' : $images.'inactive.png','addon'=>array('id'=>'swap-'.$v['id'])) : false,
+						$v['_aswap'] ? array($v['_aswap'],$v['status'] ? $ltpl['deactivate'] : $ltpl['activate'],$v['status'] ? $images.'active.png' : $images.'inactive.png','extra'=>array('id'=>'swap-'.$v['id'])) : false,
 						$v['_aedit'] ? array($v['_aedit'],$ltpl['edit'],$images.'edit.png') : false,
-						array($a['_adel'],$lptl['delete'],$images.'delete.png','addon'=>array('onclick'=>'return confirm(\''.$lptl['are_you_sure'].'\')'))
+						array($a['_adel'],$lptl['delete'],$images.'delete.png','extra'=>array('onclick'=>'return confirm(\''.$lptl['are_you_sure'].'\')'))
 					)
 				);
 			}

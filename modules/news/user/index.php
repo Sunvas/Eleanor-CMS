@@ -463,7 +463,7 @@ elseif($id or $puri)
 		$Eleanor->Rating->marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
 		if(false!==$z=array_search(0,$Eleanor->Rating->marks))
 			unset($Eleanor->Rating->marks[$z]);
-		$rating=$Eleanor->Rating->Show(array($a['id']=>array('total'=>$a['r_total'],'average'=>$a['r_average'],'sum'=>$a['r_sum'],'addon'=>array('event'=>'rating','id'=>$a['id']))));
+		$rating=$Eleanor->Rating->Show(array($a['id']=>array('total'=>$a['r_total'],'average'=>$a['r_average'],'sum'=>$a['r_sum'],'extra'=>array('event'=>'rating','id'=>$a['id']))));
 		$rating=reset($rating);
 	}
 	else
@@ -666,7 +666,7 @@ function FormatList($R,$caching=true,$anurl=array())
 				);
 			}
 			if(Eleanor::$vars['publ_rating'] and $a['status']==1)
-				$rating[$a['id']]=array('total'=>$a['r_total'],'average'=>$a['r_average'],'sum'=>$a['r_sum'],'addon'=>array('event'=>'rating','id'=>$a['id']))+($uid && $uid==$a['author_id'] ? array('can'=>false) : array());
+				$rating[$a['id']]=array('total'=>$a['r_total'],'average'=>$a['r_average'],'sum'=>$a['r_sum'],'extra'=>array('event'=>'rating','id'=>$a['id']))+($uid && $uid==$a['author_id'] ? array('can'=>false) : array());
 
 			$a['tags']=$a['tags'] ? explode(',,',trim($a['tags'],',')) : array();
 			$tags=array_merge($tags,$a['tags']);

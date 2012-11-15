@@ -20,15 +20,15 @@ class LoginAdmin extends LoginBase implements LoginClass
 	protected static
 		$Instance;
 
-	public function Login(array$data,array$addon=array())
+	public function Login(array$data,array$extra=array())
 	{
 		if(!isset($data['name'],$data['password']))
-			throw new EE('EMPTY_DATA',EE::INFO);
-		$this->AuthByName($data['name'],$data['password'],$addon);
+			throw new EE('EMPTY_DATA',EE::UNIT);
+		$this->AuthByName($data['name'],$data['password'],$extra);
 		if(!$this->CheckPermission())
 		{
 			$this->Logout();
-			throw new EE('ACCESS_DENIED',EE::INFO);
+			throw new EE('ACCESS_DENIED',EE::UNIT);
 		}
 
 		#:-)

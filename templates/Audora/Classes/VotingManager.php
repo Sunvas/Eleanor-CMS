@@ -101,7 +101,7 @@ class TplVotingManager
 		}
 		$c=(string)$Lst->end();
 		return$Lst->begin(
-				array($lang['va'],'colspan'=>2,'style'=>'min-width:170px','tableaddon'=>array('class'=>'tabstyle variants','data-max'=>max($k,$n1,$n2))),
+				array($lang['va'],'colspan'=>2,'style'=>'min-width:170px','tableextra'=>array('class'=>'tabstyle variants','data-max'=>max($k,$n1,$n2))),
 				$noans ? false : $lang['votes'],
 				'&nbsp;'
 			)

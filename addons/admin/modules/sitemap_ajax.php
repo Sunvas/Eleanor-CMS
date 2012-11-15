@@ -10,7 +10,7 @@
 */
 global$Eleanor;
 $event=isset($_POST['event']) ? (string)$_POST['event'] : '';
-Eleanor::$Template->queue[]='sitemap';
+Eleanor::$Template->queue[]='Sitemap';
 switch($event)
 {	case'loadmsetts':
 		$ids=isset($_POST['mids']) ? (array)$_POST['mids'] : array();

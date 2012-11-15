@@ -15,9 +15,7 @@ if($AL->IsUser())
 {	global$Eleanor;	$af=Eleanor::$services['admin']['file'];
 	$hfu=Eleanor::$Cache->Get('ahfu'.Language::$main,false);
 	if($hfu===false)
-	{		$furl=$Eleanor->Url->furl;
-		$Eleanor->Url->furl=false;
-		$manag='';
+	{		$manag='';
 		$premodules=$modules=array();
 		require Eleanor::$root.'addons/admin/info.php';
 		$di='images/modules/default-small.png';
@@ -32,7 +30,7 @@ if($AL->IsUser())
 				if(is_file(Eleanor::$root.$v['image']))
 					$img=$v['image'];
 			}
-			$manag.='<li><a href="'.$af.'?'.$Eleanor->Url->Construct(array('section'=>'management','module'=>$k),false,false).'"><span><img src="'.$img.'" alt="" />'.$v['title'].'</span></a></li>';
+			$manag.='<li><a href="'.$af.'?section=management&amp;module='.urlencode($k).'"><span><img src="'.$img.'" alt="" />'.$v['title'].'</span></a></li>';
 		}
 
 		$R=Eleanor::$Db->Query('SELECT `sections`,`title_l` `title`,`descr_l` `descr`,`protected`,`image` FROM `'.P.'modules` WHERE `services`=\'\' OR `services` LIKE \'%,admin,%\' AND `active`=1');
@@ -62,14 +60,13 @@ if($AL->IsUser())
 					else
 						continue;
 				$titles[]=$a['title'];
-				$premodules[]='<li><a href="'.$af.'?'.$Eleanor->Url->Construct(array('section'=>'modules','module'=>reset($sections)),false,false).'" title="'.$a['descr'].'"><span><img src="'.$img.'" alt="" />'.$a['title'].'</span></a></li>';
+				$premodules[]='<li><a href="'.$af.'?section=modules&amp;module='.urlencode(reset($sections)).'" title="'.$a['descr'].'"><span><img src="'.$img.'" alt="" />'.$a['title'].'</span></a></li>';
 			}
 		}
 		asort($titles,SORT_STRING);
 		foreach($titles as $k=>&$v)
 			$modules[]=$premodules[$k];
 
-		$Eleanor->Url->furl=$furl;
 		Eleanor::$Cache->Put('hfu'.Language::$main,array($manag,$modules),3600,false);
 	}
 	else

@@ -18,7 +18,7 @@ class ControlChecks extends BaseClass implements ControlsBase
 
 	public static function Control($a,$Obj)
 	{
-		$a['options']+=array('explode'=>false,'delim'=>',','break'=>'<br />','addon'=>array(),'options'=>array(),'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
+		$a['options']+=array('explode'=>false,'delim'=>',','break'=>'<br />','extra'=>array(),'options'=>array(),'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
 		if($a['bypost'])
 			$value=(array)$Obj->GetPostVal($a['name'],$a['value']);
 		else
@@ -27,8 +27,8 @@ class ControlChecks extends BaseClass implements ControlsBase
 			if($a['value'])
 				$value=$a['options']['explode'] ? explode($a['options']['delim'],Strings::CleanForExplode($a['value'],$a['options']['explode'])) : (array)$a['value'];
 		}
-		if(!is_array($a['options']['addon']))
-			$a['options']['addon']=array();
+		if(!is_array($a['options']['extra']))
+			$a['options']['extra']=array();
 		if(!is_array($a['options']['options']))
 			$a['options']['options']=array();
 		if(is_callable($a['options']['callback']) and (!isset($a['options']['type']) or $a['options']['type']=='callback'))
@@ -51,7 +51,7 @@ class ControlChecks extends BaseClass implements ControlsBase
 		if(!is_array($a['options']['options']))
 			throw new EE('Incorrect options!',EE::DEV,array('code'=>1));
 		foreach($a['options']['options'] as $k=>&$v)
-			$html[]='<label>'.Eleanor::Check($a['controlname'].'[]',in_array($k,$value),array('value'=>$k)+$a['options']['addon']).' '.$v.'</label>';
+			$html[]='<label>'.Eleanor::Check($a['controlname'].'[]',in_array($k,$value),array('value'=>$k)+$a['options']['extra']).' '.$v.'</label>';
 		return join($a['options']['break'],$html);
 	}
 

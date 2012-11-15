@@ -11,9 +11,9 @@
 if(!defined('CMS'))die;
 global$Eleanor,$title;
 
-$Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-Eleanor::$Template->queue[]=$Eleanor->module['config']['admintpl'];
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_admin-*.php',$Eleanor->module['config']['n']);
+$Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
+Eleanor::$Template->queue[]=$mc['admintpl'];
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_admin-*.php',$mc['n']);
 
 $Eleanor->module['links']=array(
 	'list'=>$Eleanor->Url->Prefix(),
@@ -60,7 +60,7 @@ $Eleanor->sc=array(
 		'type'=>'select',
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
-			'addon'=>array(
+			'extra'=>array(
 				'id'=>'image',
 			),
 			'callback'=>function($a)
@@ -95,7 +95,7 @@ $Eleanor->sc=array(
 			return$a;
 		},
 		'options'=>array(
-			'addon'=>array(
+			'extra'=>array(
 				'maxlenght'=>3,
 			),
 		),
@@ -222,7 +222,7 @@ if(isset($_GET['do']))
 		case'draft':
 			$id=isset($_POST['_draft']) ? (int)$_POST['_draft'] : 0;
 			unset($_POST['_draft'],$_POST['back']);
-			Eleanor::$Db->Replace(P.'drafts',array('key'=>$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id,'value'=>serialize($_POST)));
+			Eleanor::$Db->Replace(P.'drafts',array('key'=>$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id,'value'=>serialize($_POST)));
 			Eleanor::$content_type='text/plain';
 			Start('');
 			echo'ok';
@@ -243,15 +243,15 @@ elseif(isset($_GET['delete']))
 	$id=(int)$_GET['delete'];
 	if(!Eleanor::$our_query)
 		return GoAway();
-	$R=Eleanor::$Db->Query('SELECT `title` FROM `'.$Eleanor->module['config']['t'].'` LEFT JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `id`='.$id.' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `title` FROM `'.$mc['t'].'` LEFT JOIN `'.$mc['tl'].'` USING(`id`) WHERE `id`='.$id.' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
 	if(!$a=$R->fetch_assoc())
 		return GoAway(true);
 	if(isset($_POST['ok']))
 	{
-		Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id);
-		Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`='.$id.' LIMIT 1');
-		Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`='.$id);
-		Eleanor::$Db->Delete(P.'drafts','`key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
+		Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$mc['n'].DIRECTORY_SEPARATOR.$id);
+		Eleanor::$Db->Delete($mc['t'],'`id`='.$id.' LIMIT 1');
+		Eleanor::$Db->Delete($mc['tl'],'`id`='.$id);
+		Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
 		return GoAway(empty($_POST['back']) ? true : $_POST['back']);
 	}
 	$title=$lang['delc'];

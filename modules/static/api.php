@@ -194,7 +194,7 @@ class ApiStatic extends BaseClass
 				'bypost'=>&$post,
 				'options'=>array(
 					'type'=>'number',
-					'addon'=>array(
+					'extra'=>array(
 						'tabindex'=>$ti++,
 						'min'=>0.1,
 						'max'=>1,
@@ -209,7 +209,7 @@ class ApiStatic extends BaseClass
 				'bypost'=>&$post,
 				'options'=>array(
 					'type'=>'number',
-					'addon'=>array(
+					'extra'=>array(
 						'tabindex'=>$ti++,
 						'min'=>0.1,
 						'max'=>1,

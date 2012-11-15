@@ -503,7 +503,7 @@ class Editor_Result extends BaseClass
 				}
 				/*
 					if($wcnt>100)
-						thow new EE('Слишком много смайлов!',EE::INFO);
+						thow new EE('Слишком много смайлов!',EE::USER);
 				*/
 			}
 

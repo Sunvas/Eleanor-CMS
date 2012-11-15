@@ -62,7 +62,7 @@ $Eleanor->sc=array(
 				}
 				return$sel;
 			},
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>1
 			),
 		),
@@ -79,19 +79,19 @@ $Eleanor->sc=array(
 				foreach(Eleanor::$langs as $k=>&$v)
 				{
 					$r['options'][$k]=$a['options'];
-					$r['options'][$k]['addon']['id']='title-'.$k;
+					$r['options'][$k]['extra']['id']='title-'.$k;
 				}
 			else
 			{
 				$r['options']=$a['options'];
-				$r['options']['addon']['id']='title';
+				$r['options']['extra']['id']='title';
 			}
 			return$r;
 		},
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>2
 			),
 		),
@@ -106,7 +106,7 @@ $Eleanor->sc=array(
 			'htmlsafe'=>true,
 			'4alt'=>'title',
 		),
-		'addon'=>array(
+		'extra'=>array(
 			'no'=>array('tabindex'=>3)
 		),
 	),
@@ -122,19 +122,19 @@ $Eleanor->sc=array(
 				foreach(Eleanor::$langs as $k=>&$v)
 				{
 					$r['options'][$k]=$a['options'];
-					$r['options'][$k]['addon']['onfocus']='if(!$(this).val())$(this).val($(\'#title-'.$k.'\').val())';
+					$r['options'][$k]['extra']['onfocus']='if(!$(this).val())$(this).val($(\'#title-'.$k.'\').val())';
 				}
 			else
 			{
 				$r['options']=$a['options'];
-				$r['options']['addon']['onfocus']='if(!$(this).val())$(this).val($(\'#title\').val())';
+				$r['options']['extra']['onfocus']='if(!$(this).val())$(this).val($(\'#title\').val())';
 			}
 			return$r;
 		},
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>4,
 			),
 		),
@@ -146,7 +146,7 @@ $Eleanor->sc=array(
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>5,
 			),
 		),
@@ -158,7 +158,7 @@ $Eleanor->sc=array(
 		'type'=>'check',
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>6,
 			),
 		),

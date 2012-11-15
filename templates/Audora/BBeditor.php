@@ -6,7 +6,7 @@
 		id - идентификатор редактора
 		name - имя контрола редактора
 		value - значение редактора
-		addon - дополнительные параметры textarea
+		extra - дополнительные параметры textarea
 		smiles - флаг включения смайлов в предпросмотре
 		ownbb - флаг включения "своих" BB кодов в предпросмотре
 	)
@@ -48,7 +48,7 @@ $l=Eleanor::$Language['bbeditor'];
 <div class="clr"></div>
 </div>
 <!--END BB PANEL -->
-	<div class="dtarea"><?php echo Eleanor::Text($name,$value,$addon+array('style'=>'width:99.5%','rows'=>10))?></div>
+	<div class="dtarea"><?php echo Eleanor::Text($name,$value,$extra+array('style'=>'width:99.5%','rows'=>10))?></div>
 	<div class="bb_fonts" style="position:absolute;display:none;">
 	<table><tr>
 	<td><?php echo$l['color']?>:</td>

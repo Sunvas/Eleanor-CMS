@@ -29,7 +29,7 @@ if($m and isset($info[$m]))
 }
 
 Eleanor::$Template->queue[]='Management';
-$general=$addon=$titles=array();
+$general=$extra=$titles=array();
 foreach($info as $name=>&$t)
 	$titles[$name]=$t['title'];
 asort($titles,SORT_STRING);
@@ -38,10 +38,10 @@ foreach($titles as $name=>&$q)
 		continue;
 	$a['_a']=$Eleanor->Url->Construct(array('module'=>$name));
 	if(empty($a['main']))
-		$addon[]=$a;
+		$extra[]=$a;
 	else
 		$general[]=$a;
 }
-$c=Eleanor::$Template->ManagCover($general,$addon,$error);
+$c=Eleanor::$Template->ManagCover($general,$extra,$error);
 Start();
 echo$c;

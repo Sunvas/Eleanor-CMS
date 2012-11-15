@@ -102,7 +102,7 @@ class TplUsers
 					array($v['email'],'center'),
 					rtrim($grs,' ,'),
 					array(substr($v['last_visit'],0,-3),'center'),
-					array($v['ip'],'center','href'=>'http://eleanor-cms.ru/whois/'.$v['ip'],'hrefaddon'=>array('target'=>'_blank')),
+					array($v['ip'],'center','href'=>'http://eleanor-cms.ru/whois/'.$v['ip'],'hrefextra'=>array('target'=>'_blank')),
 					$Lst('func',
 						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),
 						$v['_adel'] ? array($v['_adel'],$ltpl['delete'],$images.'delete.png') : false
@@ -184,7 +184,7 @@ $(function(){
 			staticip - флаг статического IP пользователя
 			_atype - тип аватара пользователя: загруженный или локальный (из галереи)
 			avatar_location - расположение аватара
-			ban_date - дата снятия бана
+			banned_until - дата снятия бана
 			ban_explain - описание причин бана
 			_overskip - данные для перезагрузки параметров разрешений групп
 			_externalauth - массив внешних авторизаций. Ключи внутреннего массива:
@@ -280,7 +280,7 @@ $(function(){
 		$general=(string)$Lst;
 
 		$block=(string)$Lst->begin()
-			->item($lang['ban-to'],Dates::Calendar('ban_date',$values['ban_date'],true))
+			->item($lang['ban-to'],Dates::Calendar('banned_until',$values['banned_until'],true))
 			->item($lang['ban-exp'],$GLOBALS['Eleanor']->Editor->Area('ban_explain',$values['ban_explain'],array('bypost'=>$bypost)))
 			->end();
 
@@ -337,7 +337,7 @@ $(function(){
 				);
 				$Ls=Eleanor::LoadListTemplate('table-list',4)
 					->begin(
-						array('Browser &amp; IP','colspan'=>2,'tableaddon'=>array('id'=>'sessions')),
+						array('Browser &amp; IP','colspan'=>2,'tableextra'=>array('id'=>'sessions')),
 						$lang['datee'],
 						array($ltpl['delete'],70)
 					);
@@ -364,7 +364,7 @@ $(function(){
 						if($v['_candel'])
 						{
 							$del=$Ls('func',
-								array('#',$ltpl['delete'],$images.'delete.png','addon'=>array('data-key'=>$k,'data-cl'=>$cl))
+								array('#',$ltpl['delete'],$images.'delete.png','extra'=>array('data-key'=>$k,'data-cl'=>$cl))
 							);
 							$del[1]='center';
 						}
@@ -373,7 +373,7 @@ $(function(){
 
 						$Ls->item(
 							$icon ? array('<a href="#" data-ua="'.$ua.'"><img title="'.$iconh.'" src="'.$icon.'" /></a>','style'=>'width:16px') : array('<a href="#" data-ua="'.$ua.'">?</a>','center'),
-							array($v[1],'center','href'=>'http://eleanor-cms.ru/whois/'.$v[1],'hrefaddon'=>array('target'=>'_blank')),
+							array($v[1],'center','href'=>'http://eleanor-cms.ru/whois/'.$v[1],'hrefextra'=>array('target'=>'_blank')),
 							array(Eleanor::$Language->Date($v[0],'fdt'),'center'),
 							$del
 						);
@@ -509,7 +509,7 @@ $(function(){
 
 		$Lst=Eleanor::LoadListTemplate('table-list',6)
 			->begin(
-				array($lang['who'],'colspan'=>2,'tableaddon'=>array('id'=>'onlinelist')),
+				array($lang['who'],'colspan'=>2,'tableextra'=>array('id'=>'onlinelist')),
 				array('IP','sort'=>$qs['sort']=='ip' ? $qs['so'] : false,'href'=>$links['sort_ip']),
 				array($lang['ets'],'sort'=>$qs['sort']=='enter' ? $qs['so'] : false,'href'=>$links['sort_enter']),
 				array($lang['pl'],'sort'=>$qs['sort']=='location' ? $qs['so'] : false,'href'=>$links['sort_location']),
@@ -553,7 +553,7 @@ $(function(){
 				$Lst->item(
 					$icon ? array('<img title="'.$iconh.'" src="'.$icon.'" />','style'=>'width:1px') : false,
 					$icon ? $name : array($name,'colspan'=>2),
-					array($ip,'center','href'=>'http://eleanor-cms.ru/whois/'.$ip,'hrefaddon'=>array('target'=>'_blank')),
+					array($ip,'center','href'=>'http://eleanor-cms.ru/whois/'.$ip,'hrefextra'=>array('target'=>'_blank')),
 					array(($v['_online'] ? '<span style="color:green" title="'.sprintf($lang['expire'],Eleanor::$Language->Date($v['expire'],'fdt')).'">' : '<span style="color:red" title="'.sprintf($lang['expired'],Eleanor::$Language->Date($v['expire'],'fdt')).'">').Eleanor::$Language->Date($v['enter'],'fdt').'</span>','center'),
 					$user ? $loc : array($loc,'colspan'=>2),
 					$user ? $Lst('func',

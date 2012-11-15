@@ -206,7 +206,7 @@ switch($step)
 				<li class="ffield"><span class="label">'.$lang['db_user'].'</span><div class="ffdd"><h4>'.htmlspecialchars($_POST['user'],ELENT,CHARSET).'</h4></div></li>
 				<li class="ffield"><span class="label">'.$lang['db_pass'].'</span><div class="ffdd"><h4>'.htmlspecialchars($_POST['pass'],ELENT,CHARSET).'</h4></div></li>
 				<li class="ffield"><span class="label">'.$lang['db_pref'].'</span><div class="ffdd"><h4>'.htmlspecialchars($_POST['pref'],ELENT,CHARSET).'</h4></div></li>
-				<li class="ffield"><span class="label">'.$lang['addonl'].'</span><div class="ffdd"><h4>'.($langs ? implode(', ',$langs) : $lang['no']).'</h4></div></li>
+				<li class="ffield"><span class="label">'.$lang['addl'].'</span><div class="ffdd"><h4>'.($langs ? implode(', ',$langs) : $lang['no']).'</h4></div></li>
 				</ul>
 				<div class="submitline">'.Eleanor::Control('s','hidden',session_id())
 				.Eleanor::Button($lang['back'],'button',array('class'=>'button','onclick'=>'history.go(-1)','tabindex'=>2),2)
@@ -455,10 +455,10 @@ switch($step)
 			</li>
 		</ul>
 		<br />
-		<h3 class="subhead">'.$lang['addonl'].'</h3>
+		<h3 class="subhead">'.$lang['addl'].'</h3>
 		<ul class="reset formfield">
 			<li class="ffield">
-				<span class="label">'.$lang['addonl_'].'</span>
+				<span class="label">'.$lang['addl_'].'</span>
 				</span><div class="ffdd">'.Eleanor::Items('languages',$languages,5,array('class'=>'f_text','tabindex'=>6)).'</div>
 			</li>
 		</ul>

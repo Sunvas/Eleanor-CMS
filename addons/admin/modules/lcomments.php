@@ -308,8 +308,7 @@ function ChangeStatus($ids,$newst)
 				$Api->UpdateNumComments($cn);
 			}
 			catch(EE$E)
-			{				if($E->addon['log'])
-					$E->LogIt($E->addon['logfile'],$E->getMessage());			}		}
+			{				$E->Log();			}		}
 }
 
 function CommentsModules($ids=false)

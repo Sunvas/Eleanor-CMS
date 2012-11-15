@@ -10,7 +10,7 @@
 */
 global$Eleanor;
 $event=isset($_POST['event']) ? $_POST['event'] : '';
-Eleanor::$Template->queue[]='spam';
+Eleanor::$Template->queue[]='Spam';
 switch($event)
 {	case'search':
 		Eleanor::$Language->Load('addons/admin/langs/spam-*.php','spam');

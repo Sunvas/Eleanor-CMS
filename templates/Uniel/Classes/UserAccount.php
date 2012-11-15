@@ -25,7 +25,7 @@ class TplUserAccount
 		$Lst=Eleanor::LoadListTemplate('table-list',2)
 			->begin(static::$lang['group'],static::$lang['descr']);
 		foreach($groups as $k=>&$v)
-			$Lst->item(array($v['html_pref'].$v['title'].$v['html_end'],'traddon'=>array('id'=>'group-'.$k)),$v['descr']);
+			$Lst->item(array($v['html_pref'].$v['title'].$v['html_end'],'trextra'=>array('id'=>'group-'.$k)),$v['descr']);
 		return$c.$Lst->end().Eleanor::$Template->CloseTable();
 	}
 
@@ -112,7 +112,7 @@ class TplUserAccount
 				$Lst->item(
 					$icon ? array('<img title="'.$iconh.'" src="'.$icon.'" />','style'=>'width:16px') : false,
 					$icon ? $name : array($name,'colspan'=>2),
-					$isa ? array($ip,'center','href'=>'http://eleanor-cms.ru/whois/'.$ip,'hrefaddon'=>array('target'=>'_blank')) : false,
+					$isa ? array($ip,'center','href'=>'http://eleanor-cms.ru/whois/'.$ip,'hrefextra'=>array('target'=>'_blank')) : false,
 					array($ltpl['minutes_ago'](floor(($t-strtotime($v['enter']))/60)),'center'),
 					$loc
 				);
@@ -141,7 +141,7 @@ class TplUserAccount
 
 		$Lst=Eleanor::LoadListTemplate('table-list',3)
 			->begin(
-				array('Browser &amp; IP','colspan'=>2,'tableaddon'=>array('id'=>'sessions')),
+				array('Browser &amp; IP','colspan'=>2,'tableextra'=>array('id'=>'sessions')),
 				static::$lang['datee'],
 				array($ltpl['delete'],50)
 			);
@@ -169,7 +169,7 @@ class TplUserAccount
 			$ua=htmlspecialchars($v[2],ELENT,CHARSET);
 			if($v['_candel'])
 			{				$del=$Lst('func',
-					array('#',$ltpl['delete'],$images.'delete.png','addon'=>array('data-key'=>$k))
+					array('#',$ltpl['delete'],$images.'delete.png','extra'=>array('data-key'=>$k))
 				);
 				$del[1]='center';			}
 			else
@@ -177,7 +177,7 @@ class TplUserAccount
 
 			$Lst->item(
 				$icon ? array('<a href="#" data-ua="'.$ua.'"><img title="'.$iconh.'" src="'.$icon.'" /></a>','style'=>'width:16px') : array('<a href="#" data-ua="'.$ua.'">?</a>','center'),
-				array($v[1],'center','href'=>'http://eleanor-cms.ru/whois/'.$v[1],'hrefaddon'=>array('target'=>'_blank')),
+				array($v[1],'center','href'=>'http://eleanor-cms.ru/whois/'.$v[1],'hrefextra'=>array('target'=>'_blank')),
 				array(Eleanor::$Language->Date($v[0],'fdt'),'center'),
 				$del
 			);
@@ -675,7 +675,7 @@ $(function(){	var ef={//Error field
 				->begin();
 
 			if($captcha)
-				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_'],'td1'=>array('addon')));
+				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_']));
 
 			$C.=$Lst->button(Eleanor::Button(static::$lang['ractletter'],'submit',array('tabindex'=>2)))
 				->end()->endform();
@@ -713,7 +713,7 @@ $(function(){	var ef={//Error field
 			->item(static::$lang['new_email'],Eleanor::Edit('email',$values['email'],array('tabindex'=>1)));
 
 		if($captcha)
-			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_'],'td1'=>array('addon')));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_']));
 
 		return$C.$Lst->button(Eleanor::Button(static::$lang['continue'],'submit',array('tabindex'=>3)))->end()->endform();
 	}

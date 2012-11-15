@@ -29,7 +29,7 @@ $Eleanor->sp=array(
 		'load'=>function($a)
 		{
 			if($a['_protected'])
-				$a['options']['addon']['disabled']='disabled';
+				$a['options']['extra']['disabled']='disabled';
 			return$a;
 		},
 		'save'=>function($a)
@@ -82,7 +82,7 @@ $Eleanor->sp=array(
 		'load'=>function($a)
 		{
 			if($a['_name'])
-				$a['options']['addon']['disabled']='disabled';
+				$a['options']['extra']['disabled']='disabled';
 			return$a;
 		},
 		'save'=>function($a)

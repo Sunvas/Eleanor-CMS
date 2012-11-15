@@ -14,13 +14,13 @@ return array(
 		$a=func_get_args();
 		if(isset($a[0]) and is_array($a[0]))
 		{
-			if(!isset($a[0]['tableaddon']) or !is_array($a[0]['tableaddon']))
-				$a[0]['tableaddon']=array();
-			if(!isset($a[0]['traddon']) or !is_array($a[0]['traddon']))
-				$a[0]['traddon']=array();
-			$a[0]['tableaddon']+=array('class'=>'tabstyle');
-			$a[0]['traddon']+=array('class'=>'first tablethhead');
-			$ret='<table'.Eleanor::TagParams($a[0]['tableaddon']).'><tr'.Eleanor::TagParams($a[0]['traddon']).'>';
+			if(!isset($a[0]['tableextra']) or !is_array($a[0]['tableextra']))
+				$a[0]['tableextra']=array();
+			if(!isset($a[0]['trextra']) or !is_array($a[0]['trextra']))
+				$a[0]['trextra']=array();
+			$a[0]['tableextra']+=array('class'=>'tabstyle');
+			$a[0]['trextra']+=array('class'=>'first tablethhead');
+			$ret='<table'.Eleanor::TagParams($a[0]['tableextra']).'><tr'.Eleanor::TagParams($a[0]['trextra']).'>';
 		}
 		else
 			$ret='<table class="tabstyle"><tr class="first tablethhead">';
@@ -43,16 +43,16 @@ return array(
 								$add['style'].='width:'.(substr($param,-1)=='%' ? $param.'%' : (int)$param.'px;');
 							break;
 							case'href':
-								if(!isset($v['hrefaddon']) or !is_array($v['hrefaddon']))
-									$v['hrefaddon']=array();
-								$v['hrefaddon']+=array('href'=>$param);
-								$val='<a'.Eleanor::TagParams($v['hrefaddon']).'>'.$val.'</a>';
+								if(!isset($v['hrefextra']) or !is_array($v['hrefextra']))
+									$v['hrefextra']=array();
+								$v['hrefextra']+=array('href'=>$param);
+								$val='<a'.Eleanor::TagParams($v['hrefextra']).'>'.$val.'</a>';
 							break;
 							case'sort':
 								$add['class']=$param;
-							case'hrefaddon':
-							case'traddon':
-							case'tableaddon':
+							case'hrefextra':
+							case'trextra':
+							case'tableextra':
 							break;
 							default:
 								$add[$name]=$param;
@@ -70,10 +70,10 @@ return array(
 		$a=func_get_args();
 		if(isset($a[0]) and is_array($a[0]))
 		{
-			if(!isset($a[0]['traddon']) or !is_array($a[0]['traddon']))
-				$a[0]['traddon']=array();
-			$a[0]['traddon']+=array('class'=>$n++ % 2 ? 'tabletrline1' : 'tabletrline2');
-			$ret='<tr'.Eleanor::TagParams($a[0]['traddon']).'>';
+			if(!isset($a[0]['trextra']) or !is_array($a[0]['trextra']))
+				$a[0]['trextra']=array();
+			$a[0]['trextra']+=array('class'=>$n++ % 2 ? 'tabletrline1' : 'tabletrline2');
+			$ret='<tr'.Eleanor::TagParams($a[0]['trextra']).'>';
 		}
 		else
 			$ret='<tr class="'.($n++ % 2 ? 'tabletrline1' : 'tabletrline2').'">';
@@ -96,13 +96,13 @@ return array(
 								$add['style'].='text-align:'.$param.';';
 							break;
 							case'href':
-								if(!isset($v['hrefaddon']) or !is_array($v['hrefaddon']))
-									$v['hrefaddon']=array();
-								$v['hrefaddon']+=array('href'=>$param);
-								$val='<a'.Eleanor::TagParams($v['hrefaddon']).'>'.$val.'</a>';
+								if(!isset($v['hrefextra']) or !is_array($v['hrefextra']))
+									$v['hrefextra']=array();
+								$v['hrefextra']+=array('href'=>$param);
+								$val='<a'.Eleanor::TagParams($v['hrefextra']).'>'.$val.'</a>';
 							break;
-							case'hrefaddon':
-							case'traddon':
+							case'hrefextra':
+							case'trextra':
 							break;
 							default:
 								$add[$name]=$param;
@@ -121,10 +121,10 @@ return array(
 		foreach($a as &$v)
 			if(is_array($v))
 			{
-				if(!isset($v['addon']) or !is_array($v['addon']))
-					$v['addon']=array();
-				$v['addon']+=array('href'=>$v[0],'title'=>$v[1]);
-				$ret.='<a'.Eleanor::TagParams($v['addon']).'><img src="'.$v[2].'" alt="" /></a>';
+				if(!isset($v['extra']) or !is_array($v['extra']))
+					$v['extra']=array();
+				$v['extra']+=array('href'=>$v[0],'title'=>$v[1]);
+				$ret.='<a'.Eleanor::TagParams($v['extra']).'><img src="'.$v[2].'" alt="" /></a>';
 			}
 			else
 				$ret.=$v;

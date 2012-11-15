@@ -71,100 +71,100 @@ class Tasks extends BaseClass
 			$do=date_offset_get(date_create());
 
 		#Массив довесков
-		$addon=array('year'=>0,'month'=>0,'day'=>0,'hour'=>0,'minute'=>0);
+		$extra=array('year'=>0,'month'=>0,'day'=>0,'hour'=>0,'minute'=>0);
 
 		list($y,$m,$d,$h,$i,$s)=explode('-',gmdate('Y-n-j-G-i-s',time()+$do));
 		$i=(int)$i;
 		if(!in_array('*',$t['second'],true) and false===$s=self::MinFrom($t['second'],$s))
 		{
 			$s=reset($t['second']);
-			$addon['minute']++;
+			$extra['minute']++;
 		}
 
 		if(!in_array('*',$t['minute'],true))
 		{
-			$i+=$addon['minute'];
+			$i+=$extra['minute'];
 			if(false===$tmp=self::MinFrom($t['minute'],$i))
 			{
 				$i=reset($t['minute']);
-				$addon['hour']++;
-				$addon['minute']=0;
+				$extra['hour']++;
+				$extra['minute']=0;
 			}
 			else
 			{
 				if($tmp>=$i)
-					$addon['minute']=0;
+					$extra['minute']=0;
 				$i=$tmp;
 			}
 		}
 
 		if(!in_array('*',$t['hour'],true))
 		{
-			$h+=$addon['hour'];
+			$h+=$extra['hour'];
 			if(false===$tmp=self::MinFrom($t['hour'],$h))
 			{
 				$h=reset($t['hour']);
-				$addon['day']++;
-				$addon['hour']=$addon['minute']=0;
+				$extra['day']++;
+				$extra['hour']=$extra['minute']=0;
 			}
 			else
 			{
 				if($tmp>=$h)
-					$addon['hour']=0;
+					$extra['hour']=0;
 				$h=$tmp;
 			}
 		}
 
 		if(!in_array('*',$t['day'],true))
 		{
-			$d+=$addon['day'];
+			$d+=$extra['day'];
 			if(false===$tmp=self::MinFrom($t['day'],$d))
 			{
 				$d=reset($t['day']);
-				$addon['month']++;
-				$addon['day']=$addon['hour']=$addon['minute']=0;
+				$extra['month']++;
+				$extra['day']=$extra['hour']=$extra['minute']=0;
 			}
 			else
 			{
 				if($tmp>=$d)
-					$addon['day']=0;
+					$extra['day']=0;
 				$d=$tmp;
 			}
 		}
 
 		if(!in_array('*',$t['month'],true))
 		{
-			$m+=$addon['month'];
+			$m+=$extra['month'];
 			if(false===$tmp=self::MinFrom($t['month'],$m))
 			{
 				$m=reset($t['month']);
-				$addon['year']++;
-				$addon['month']=$addon['day']=$addon['hour']=$addon['minute']=0;
+				$extra['year']++;
+				$extra['month']=$extra['day']=$extra['hour']=$extra['minute']=0;
 			}
 			else
 			{
 				if($tmp>=$m)
-					$addon['month']=0;
+					$extra['month']=0;
 				$m=$tmp;
 			}
 		}
 
 		if(!in_array('*',$t['year'],true))
 		{
-			$y+=$addon['year'];
+			$y+=$extra['year'];
 			if(false===$tmp=self::MinFrom($t['year'],$y))
 				return false;
 			if($tmp>=$y)
-				$addon['year']=0;
+				$extra['year']=0;
 			$y=$tmp;
 		}
 
 		$ret=gmmktime($h,$i,$s,$m,$d,$y);
 
-		if(0!=$s=array_sum($addon))
+		if(0!=$s=array_sum($extra))
 		{
 			$s=$s>0 ? '+' : '-';
-			foreach($addon as $k=>&$v)
+			foreach($extra as $k=>&$v)
 				$s.=$v.$k;
 			$ret=strtotime($s,$ret);
 		}

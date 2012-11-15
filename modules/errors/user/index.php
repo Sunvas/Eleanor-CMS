@@ -10,26 +10,21 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor,$title;
-$Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_user-*.php','merror');
-Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
+$Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
+Eleanor::$Template->queue[]=$mc['usertpl'];
 
-$id=false;
-$canlog=isset($Eleanor->module['code']);
-$uri=$canlog ? $Eleanor->module['code'] : false;
-if(!$uri)
+$id=0;
+if(isset($Eleanor->module['code']))
+	$uri=$Eleanor->module['code'];
+else
 {
 	if($Eleanor->Url->is_static)
-	{		$Eleanor->Url->GetEnding(array($Eleanor->Url->ending,$Eleanor->Url->delimiter),true);
 		$_GET+=$Eleanor->Url->Parse(array('code'));
-	}
 
-	$uri=isset($_GET['code']) ? $_GET['code'] : '';
+	$uri=isset($_GET['code']) ? $_GET['code'] : false;
 	if(isset($_GET['id']))
 		$id=(int)$_GET['id'];
 }
-if(!$uri and !$id)
-	return ErrorExitPage();
 
 $R=Eleanor::$Db->Query('SELECT `id`,`http_code`,`image`,`mail`,`log`,`title`,`text`,`meta_title`,`meta_descr` FROM `'.P.'errors` INNER JOIN `'.P.'errors_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND '.($id ? '`id`='.$id : '`uri`='.Eleanor::$Db->Escape($uri)).' LIMIT 1');
 if(!$a=$R->fetch_assoc())
@@ -41,42 +36,44 @@ else
 	$title[]=$a['title'];
 $Eleanor->module['description']=$a['meta_descr'];
 
-$info=array(
-	'sent'=>false,
-	'error'=>'',
-	'text'=>'',
-	'back'=>getenv('HTTP_REFERER'),
-	'name'=>'',
-);
+$isu=Eleanor::$Login->IsUser();
+$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
+$errors=array();
+$sent=false;
+$values=array('text'=>'');
+if($isu)
+	$values['name']='';
 
 if($a['mail'] and $_SERVER['REQUEST_METHOD']=='POST')
-	do
-	{		$info['back']=isset($_POST['back']) ? $_POST['back'] : '';		$info['text']=$Eleanor->Editor_result->GetHtml('text');
-		if($user=Eleanor::$Login->GetUserValue(array('id','full_name','name'),false))
-			$info['name']=htmlspecialchars($user['name'],ELENT,CHARSET);
+{	$Eleanor->Editor_result->ownbb=false;	$values['text']=$Eleanor->Editor_result->GetHtml('text',false,false);
+	if($values['text']=='')
+		$errors[]='EMPTY_TEXT';
+	if($isu)
+	{		$user=Eleanor::$Login->GetUserValue(array('id','full_name','name'),false);
+		$name=$user['name'];	}
+	else
+	{		$values['name']=isset($_POST['name']) ? (string)$_POST['name'] : '';
+		if($values['name']!=='')
+			$name=$values['name'];
 		else
-			$info['name']=isset($_POST['name']) ? (string)Eleanor::$POST['name'] : $lang['guest'];
-		$cach=$Eleanor->Captcha->Check(isset($_POST['check']) ? (string)$_POST['check'] : '');
-		$Eleanor->Captcha->Destroy();
-		if(!$cach)
-		{			$info['error']=$lang['error_captcha'];
-			break;		}
-		if(!$info['text'])
-		{
-			$info['error']=$lang['empty_text'];
-			break;
-		}
+			$errors[]='EMPTY_NAME';
+	}
 
-		$l=include $Eleanor->module['path'].'letters-'.LANGUAGE.'.php';
+	$cach=$Eleanor->Captcha->Check(isset($_POST['check']) ? (string)$_POST['check'] : '');
+	$Eleanor->Captcha->Destroy();
+	if(!$cach)
+		$errors[]='WRONT_CAPTCHA';
+	if(!$errors)
+	{		$l=include$Eleanor->module['path'].'letters-'.LANGUAGE.'.php';
 		$repl=array(
 			'site'=>Eleanor::$vars['site_name'],
-			'name'=>$info['name'],
-			'fullname'=>$user ? $user['full_name'] : '',
-			'userlink'=>$user ? PROTOCOL.Eleanor::$domain.Eleanor::$site_path.Eleanor::$Login->UserLink($user['name'],$user['id']) : false,
-			'text'=>$info['text'],
+			'name'=>FilterArrays::Filter($name),
+			'fullname'=>$isu ? $user['full_name'] : '',
+			'userlink'=>$isu ? PROTOCOL.Eleanor::$domain.Eleanor::$site_path.Eleanor::$Login->UserLink($user['name'],$user['id']) : ээ,
+			'text'=>$values['text'],
 			'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
-			'linkerror'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.($Eleanor->Url->is_static ? $_SERVER['QUERY_STRING'] : ltrim($_SERVER['REQUEST_URI'],'/')),
-			'from'=>$info['back'],
+			'linkerror'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.Url::$curpage,
+			'from'=>$back,
 		);
 		Eleanor::Mail(
 			$a['mail'],
@@ -84,23 +81,23 @@ if($a['mail'] and $_SERVER['REQUEST_METHOD']=='POST')
 			Eleanor::ExecBBLogic($l['error'],$repl)
 		);
 		unset($info['text']);
-		$info['sent']=true;
-	}while(false);
-if(!$info['error'] and !$info['sent'])
-{
-	$R=Eleanor::$Db->Query('SELECT `title` FROM `'.P.'errors` INNER JOIN `'.P.'errors_l` USING(`id`) WHERE `language` IN (\'\',\''.LANGUAGE.'\') AND `id`='.$a['id'].' LIMIT 1');
-	if(!$my=$R->fetch_assoc())
-		return GoAway(PROTOCOL.Eleanor::$domain.Eleanor::$site_path);
-
-	if($canlog and $a['log'] and $info['back'])
+		$sent=true;
+	}
+}
+if($a['log'] and $back and strpos($back,PROTOCOL.Eleanor::$domain.Eleanor::$site_path)===0 and !$errors and !$sent)
+{	$R=Eleanor::$Db->Query('SELECT `title` FROM `'.P.'errors` INNER JOIN `'.P.'errors_l` USING(`id`) WHERE `language` IN (\'\',\''.LANGUAGE.'\') AND `id`='.$a['id'].' LIMIT 1');
+	if($my=$R->fetch_assoc())
 	{
-		$E=new EE('',EE::INFO,array('file'=>false));
-		$E->LogIt(EE::$vars['log_site_errors'],$my['title']);
+		$E=new EE($my['title'],EE::USER,array('code'=>$a['http_code'],'back'=>$back));
+		$E->Log();
 	}
 }
 
-$s=Eleanor::$Template->ShowError($a,$info,$Eleanor->Captcha->disabled ? $Eleanor->Captcha->GetCode() : false);
 $a['text']=OwnBB::Parse($a['text']);
+if($a['mail'])
+	$Eleanor->Editor->ownbb=false;
+$s=Eleanor::$Template->ShowError($a,$sent,$values,$errors,$back,$Eleanor->Captcha->disabled ? $Eleanor->Captcha->GetCode() : false);
+
 if($a['http_code'])
 {
 	Start('index',$a['http_code']);
@@ -110,10 +107,3 @@ else
 	Start();
 
 echo$s;
-
-function ErrorExitPage()
-{global$Eleanor;	#Тут возможно нужно сделать содержание :)
-	if(!empty($Eleanor->module['general']))
-		return;
-	return GoAway(PROTOCOL.Eleanor::$domain.Eleanor::$site_path);
-}

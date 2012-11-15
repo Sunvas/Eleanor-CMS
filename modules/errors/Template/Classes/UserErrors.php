@@ -20,20 +20,19 @@ class TPLUserErrors
 			http_code - HTTP код ошибки
 			image - логотип ошибки
 			mail - e-mail, куда необходимо присылать сообщение от пользователей
-			log - флаг логирования ошибки
 			title - название страницы ошибки
 			text - текст с пояснением ошибки
 			meta_title - заголовок окна
 			meta_descr - meta description
-		$info - информация об отправке сообщения, массив с ключами:
-			sent - флаг отправленности сообщения
-			error - ошибка отправки, если ошибка пустая - значит ее нету
+		$sent - флаг отправленности сообщения
+		$values - массив значений полей, ключи
 			text - текст сообщения
-			back - URI возврата
-			name - имя гостя
+			name - имя для гостя
+		$errors - массив ошибок
+		$back - URI возврата
 		$captcha - captcha при отправке письма
 	*/
-	public static function ShowError($a,$info,$captcha)
+	public static function ShowError($a,$sent,$values,$errors,$back,$captcha)
 	{
 	}
 }

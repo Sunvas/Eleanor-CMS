@@ -7,7 +7,7 @@
 		menu - массив элементов меню по названи€м.  аждый элемент - массив с ключами:
 			0 - ссылка пункта меню, либо false
 			1 - текст элемента меню
-			addon - массив дополнительных параметров тега a, меню
+			extra - массив дополнительных параметров тега a, меню
 			submenu - рекурсивный массив внутреннего меню элемента
 	)
 */
@@ -22,9 +22,9 @@ if(isset($menu))
 			$c='';
 			foreach($menu as &$v)
 				if(is_array($v) and $v)
-				{					if(!empty($v['act']) and !isset($v['addon']['class']))
-						$v['addon']['class']='active';
-					$a=isset($v['addon']) ? Eleanor::TagParams($v['addon']) : '';
+				{					if(!empty($v['act']) and !isset($v['extra']['class']))
+						$v['extra']['class']='active';
+					$a=isset($v['extra']) ? Eleanor::TagParams($v['extra']) : '';
 					$c.='<li>'.($v[0]===false ? '<span'.$a.'>'.$v[1].'</span>' : '<a href="'.$v[0].'"'.$a.'>'.$v[1].'</a>')
 						.(empty($v['submenu']) ? '' : '<ul>'.TPLFMenu($v['submenu']).'</ul>')
 						.'</li>';

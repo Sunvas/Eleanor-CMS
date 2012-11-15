@@ -170,7 +170,7 @@ else
 						switch($mess)
 						{
 							case'PASS_TOO_SHORT':
-								$error=sprintf($lang['PASS_TOO_SHORT'],$E->addon['min'],$E->addon['you']);
+								$error=sprintf($lang['PASS_TOO_SHORT'],$E->extra['min'],$E->extra['you']);
 							break;
 							default:
 								$error=isset($lang[$mess]) ? $lang[$mess] : $mess;
@@ -254,7 +254,7 @@ else
 					<li class="ffield"><span class="label">'.$lang['sitename'].'</span><div class="ffdd"><h4>'.htmlspecialchars($_POST['sitename'],ELENT,CHARSET).'</h4></div></li>
 					<li class="ffield"><span class="label">'.$lang['email'].'</span><div class="ffdd"><h4>'.htmlspecialchars($_POST['email'],ELENT,CHARSET).'</h4></div></li>
 					<li class="ffield"><span class="label">'.$lang['furl'].'</span><div class="ffdd"><h4>'.($a['furl'] ? $lang['yes'] : $lang['no']).'</h4></div></li>
-					<li class="ffield"><span class="label">'.$lang['addonl'].'</span><div class="ffdd"><h4>'.($langs ? implode(', ',$langs) : $lang['no']).'</h4></div></li>
+					<li class="ffield"><span class="label">'.$lang['addl'].'</span><div class="ffdd"><h4>'.($langs ? implode(', ',$langs) : $lang['no']).'</h4></div></li>
 					<li class="ffield"><span class="label">'.$lang['timezone'].'</span><div class="ffdd"><h4>'.$a['timezone'].'</h4></div></li>
 					</ul>
 					<div class="submitline">'.Eleanor::Control('s','hidden',session_id())
@@ -340,8 +340,8 @@ else
 					<span class="label"><b>'.$lang['timezone'].'</b></span><div class="ffdd">'.Eleanor::Select('timezone',Types::TimeZonesOptions($timezone),array('class'=>'f_text','tabindex'=>9)).'</div>
 				</li>
 				<li class="ffield">
-					<span class="label"><b>'.$lang['addonl'].'</b><br />
-					<span class="small">'.$lang['addonl_'].'</span>
+					<span class="label"><b>'.$lang['addl'].'</b><br />
+					<span class="small">'.$lang['addl_'].'</span>
 					</span><div class="ffdd">'.Eleanor::Items('languages',$languages,5,array('class'=>'f_text','tabindex'=>10)).'</div>
 				</li>
 			</ul>

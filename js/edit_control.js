@@ -22,7 +22,7 @@ var EC={	session:"",//Текущая сессия
 			inputs=$("#edit-control-table").find(":input").filter(function(){
 				return ((this.name.indexOf(th.pref_sett)==0 || this.name.indexOf(th.pref_prev)==0) && !$(this).is(".temp"));
 			}),
-			Merge=function(main,addon){				$.each(addon,function(k,v){					if(typeof main[k]=="object" && typeof v=="object")
+			Merge=function(main,extra){				$.each(extra,function(k,v){					if(typeof main[k]=="object" && typeof v=="object")
 						Merge(main[k],v);
 					else
 						main[k]=v;				});			},

@@ -11,86 +11,157 @@
 class EE extends Exception
 {	public
 		$code,#Код ошибки
-		$addon;#Массив с инструкциями что делать, если исключение не поймали. Ключи: log -признак логирования, lfile - файл куда логировать, mess - ошибка, которая будет показана пользователю
+		$extra;#Массив с инструкциями что делать, если исключение не поймали. Ключи: log -признак логирования, lfile - файл куда логировать, mess - ошибка, которая будет показана пользователю
 
 	const
-		FATAL=1,#Работать дальше невозможно в принципе. Логируем и умираем.
-		CRITICAL=2,#Работать дальше, как и в предыдущем варианте невозможно, но логировать ошибку нет смысла. Поэтому, умираем но не логируем
-		INFO=3,#Информационная ошибка: когда некорректно заполнена форма или некорректна любая другая информация от пользователя. Не логируем, не умираем.
-		ACCESS=4,#Ошибка доступа. Когда пользователь не может получить доступ туда, куда он ломится (403 или 404 ошибка)
-		BAN=5,#Ошибка бана, когда пользователю показываются страница ban.html, извещающего пользователя о том, что он забанен. Не логируем, умираем.
-		DEV=6,#Ошибки разработчика: обращение к неинициализированной переменной, свойству, методу. Логируем, но не умираем.
-		ENV=7,#Ошибки среды: когда нет доступа для чтения/записи в файл, нет самого файла и т.п. Логируем. Если не словили - умираем.
-		ALT=8;#Альтернативные ошибки: если словили - ничего не делаем, если не словили - логируем, отображаем ошибку и умираем. На эти параметры можно влиять через
+		USER=1,#Ошибка пользователя, выполнение некорректных действий: ошибка доступа (403, 404 ...), некорректно заполнена форма и т.п.
+		DEV=2,#Ошибки разработчика: обращение к неинициализированной переменной, свойству, методу
+		ENV=3,#Ошибки среды: когда нет доступа для чтения/записи в файл, нет самого файла и т.п.
+		UNIT=4;#Ошибка внутри подпрограммы: передача внешним сервисом некорректной информации и т.п.
 
-	public static
-		$vars;
+	public function __construct($mess,$code=self::USER,$extra=array(),$PO=null)
+	{		if(isset($PO,$PO->extra))
+			$extra+=$PO->extra;
 
-	public function __construct($mess,$code=self::FATAL,$addon=array(),$PO=null)
-	{		if(!isset(self::$vars))
-		{			self::$vars=array();			self::$vars+=isset(Eleanor::$Db)
-				? Eleanor::LoadOptions('errors',true)
-				: array(
-					'log_errors'=>'addons/logs/errors.log',
-					'log_maxsize'=>1048576,#10 Mb
-				);
-		}
-
-		if(!empty($addon['lang']))
+		if(!empty($extra['lang']))
 		{			$le=Eleanor::$Language['exceptions'];
 			if(isset($le[$mess]))
-			{				$addon['code']=$mess;				$mess=is_callable($le[$mess]) ? $le[$mess]($addon) : $le[$mess];			}		}
+			{				$extra['code']=$mess;				$mess=is_callable($le[$mess]) ? $le[$mess]($extra) : $le[$mess];			}		}
 
+		if(isset($extra['file']))
+			$this->file=$extra['file'];
+		if(isset($extra['line']))
+			$this->line=$extra['line'];
+		$this->extra=$extra;
 		parent::__construct($mess,$code,$PO);
-		if(isset($addon['file']))
-			$this->file=$addon['file'];
-		if(isset($addon['line']))
-			$this->line=$addon['line'];
-		switch($code)
-		{
-			case self::FATAL:
-				self::LogIt(self::$vars['log_errors'],$mess);
-			case self::CRITICAL:
-				Error($mess);
-			break;
-			case self::BAN:
-				$addon['ban']=true;
-			break;
-			case self::DEV:
-			case self::ENV:
-				self::LogIt(self::$vars['log_errors'],$mess);
-			break;
-			case self::ALT:
-				$addon+=array('log'=>true,'logfile'=>self::$vars['log_errors']);
-			case self::ACCESS:
-			case self::INFO:
-				#ToDo! Пока не придумал что сюда написать.
-		}
-		$this->addon=$addon+array('log'=>false,'logfile'=>false);
 	}
 
-	public function LogIt($fn,$message)
-	{		if(!$fn or Eleanor::$nolog)
+	protected function LogWriter($fn,$id,$F)
+	{		if($fn==='' or Eleanor::$nolog)
 			return;
-		$path=Eleanor::FormatPath($fn);
-		if(!is_writeable(dirname($path)))
+		$path=Eleanor::$root.'addons/logs/'.$fn.'.log';
+		$hpath=$path.'.inc';
+
+		$isf=is_file($path);
+		$ish=is_file($hpath);
+
+		if($isf and !is_writeable($path) or !$isf and !is_writeable(Eleanor::$root.'addons/logs/'))
 			die('File '.$fn.' is write-protected!');
-		if(self::$vars['log_maxsize'] and is_file($path) and filesize($path)>(int)self::$vars['log_maxsize'])
+
+		if($isf and filesize($path)>2097152)#2 Mb
 		{
 			if(self::CompressFile($path,substr($path,0,strrpos($path,'.')).'_'.date('Y-m-d_H-i-s')))
+			{
 				unlink($path);
+				if($ish)
+					unlink($hpath);
+			}
 			clearstatcache();
 		}
-		if($fh=fopen($path,'a'))
-		{			$f=$this->getFile();
-			$l=$this->getLine();			$dt=date('Y-m-d H:i:s');
-			$url=Url::Decode($_SERVER['REQUEST_URI']);
-			flock($fh,LOCK_EX);
-			fwrite($fh,$message.PHP_EOL.($f ? 'Line: '.$l.' in file '.$f.PHP_EOL : '').'URL: '.$url.($_POST ? PHP_EOL.'POST: '.str_replace("\n",'',var_export($_POST,true)) : '').PHP_EOL.'Date: '.$dt.PHP_EOL.'IP: '.Eleanor::$ip."\r\n\r\n");
-			flock($fh,LOCK_UN);
-			fclose($fh);
+
+		if($ish)
+		{			$help=file_get_contents($hpath);
+			$help=$help ? (array)unserialize($help) : array();		}
+		else
+			$help=array();
+
+		$change=isset($help[$id]);
+		$data=$F($change ? $help[$id]['d'] : array());
+		if(!is_array($data) or !isset($data[0],$data[1]))
+			return;
+		list($data,$log)=$data;
+
+		if($change)
+		{			$offset=$help[$id]['o'];
+			$length=$help[$id]['l'];
+			$fh=fopen($path,'rb+');
+			if(flock($fh,LOCK_EX))
+				$diff=Files::FReplace($fh,$log,$offset,$length);
+			else
+			{				fclose($fh);
+				return false;			}
+			$length+=$diff;
+			unset($help[$id]);
+			foreach($help as &$v)
+				if($v['o']>$offset)
+					$v['o']+=$diff;
 		}
+		else
+		{			$fh=fopen($path,'a');
+			if(flock($fh,LOCK_EX))
+			{				$size=fstat($fh);
+				$offset=$size['size'];
+				$length=strlen($log);
+				fwrite($fh,$log.PHP_EOL.PHP_EOL);
+			}
+			else
+			{				fclose($fh);
+				return false;
+			}
+		}
+		$help[$id]=array('o'=>$offset,'l'=>$length,'d'=>$data);
+		flock($fh,LOCK_UN);
+		fclose($fh);
+
+		file_put_contents($hpath,serialize($help));
+		return true;
 	}
+
+	public function Log()
+	{		$THIS=$this;#PHP 5.4 убрать рудмиент
+		switch($this->code)
+		{			case self::USER:
+				#Пока логируются только ошибочные запросы
+				if(isset($this->extra['code'],$this->extra['back']))
+					$this->LogWriter(
+						'request_errors',
+						md5($this->extra['code'].Url::$curpage),
+						function($data)use($THIS)
+						{							$uinfo=Eleanor::$Login->GetUserValue(array('id','name'));							$data['n']=isset($data['n']) ? $data['n']+1 : 1;
+							$data['p']=Url::$curpage;
+							$data['ip']=Eleanor::$ip;
+							$data['d']=date('Y-m-d H:i:s');
+							if($uinfo)
+							{
+								$data['u']=$unifo['name'];
+								$data['ui']=$unifo['id'];
+							}
+							$data['b']=getenv('HTTP_USER_AGENT');
+							$data['e']=$this->extra['code'].' - '.$THIS->getMessage();
+							if($THIS->extra['back'] and (!isset($data['r']) or !in_array($THIS->extra['back'],$data['r'])))
+								$data['r'][]=$THIS->extra['back'];
+							$dcnt=count($data['r']);
+							if($dcnt>50)
+								array_splice($data['r'],0,$dcnt-50);
+
+							return array(
+								$data,
+								$data['e'].'('.$data['n'].'): '.Url::$curpage.PHP_EOL.'Date: '.$data['d'].PHP_EOL.'IP: '.$data['ip'].PHP_EOL.($uinfo ? 'User: '.$data['u'].PHP_EOL : '').'Browser: '.$data['b'].PHP_EOL.'Referrers: '.join(', ',$data['r'])
+							);
+						}
+					);
+			break;
+			default:
+				$this->LogWriter(
+					'errors',
+					md5($this->line.$this->file.$this->message),
+					function($data)use($THIS)
+					{
+						$data['n']=isset($data['n']) ? $data['n']+1 : 1;
+						$data['p']=Url::$curpage;
+						$data['d']=date('Y-m-d H:i:s');
+
+						$data['f']=substr($THIS->getFile(),strlen(Eleanor::$root));
+						$data['l']=$THIS->getLine();
+						$data['e']=$THIS->getMessage();
+
+						return array(
+							$data,
+							($data['n']>1 ? substr_replace($data['e'],'('.$data['n'].')',strpos($data['e'],':'),0) : $data['e']).PHP_EOL.'File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'URL: '.Url::$curpage.PHP_EOL.'Date: '.$data['d']
+						);
+					}
+				);
+		}	}
 
 	/*
 		Простенькая функция для создания архива.

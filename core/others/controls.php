@@ -14,10 +14,9 @@ interface ControlsBase
 	/*
 		Получение настроек контрола. Для его настройки
 	*/
-	public static function GetSettings();
+	public static function GetSettings($Obj);
 
 	/*Отображение контрола
-		$name - рекомендуемое имя.
 		$a - массив данных, включая $a['options']
 	*/
 	public static function Control($a,$Obj);
@@ -55,7 +54,7 @@ class Controls extends BaseClass
 	/*
 		Функция должна отобразить результаты контролов
 	*/
-	public function DisplayResults(array$co,array$laddon=array())
+	public function DisplayResults(array$co,array$lco=array())
 	{
 		$ret=$this->errors=array();
 		foreach($co as $k=>$v)
@@ -63,7 +62,7 @@ class Controls extends BaseClass
 			if(!is_array($v))
 				continue;
 			$v['multilang']=isset($v['multilang']) ? $v['multilang'] and $this->langs : false;
-			$a=isset($laddon[$k]) ? $laddon[$k] : array();
+			$a=isset($lco[$k]) ? $lco[$k] : array();
 			if(!isset($v['name']))
 				$v['name']=array($k);
 			$v['name']=(array)$v['name'];
@@ -97,7 +96,7 @@ class Controls extends BaseClass
 				$skip=false;
 				foreach($this->langs as &$l)
 				{
-					$a=isset($laddon[$k]) ? $laddon[$k] : array();
+					$a=isset($lco[$k]) ? $lco[$k] : array();
 					foreach($a as &$lv)
 						$lv=Eleanor::FilterLangValues($lv,$l,'');
 					$v['name']['lang']=$l ? $l : Language::$main;
@@ -135,7 +134,7 @@ class Controls extends BaseClass
 			}
 			else
 			{
-				$a=isset($laddon[$k]) ? $laddon[$k] : array();
+				$a=isset($lco[$k]) ? $lco[$k] : array();
 				if(!empty($co[$k]['multilang']))
 				{
 					foreach($a as &$lv)
@@ -158,7 +157,7 @@ class Controls extends BaseClass
 		return$ret;
 	}
 
-	public function DisplayControls(array$co,array$laddon=array())
+	public function DisplayControls(array$co,array$lco=array())
 	{
 		$ret=$this->errors=array();
 		foreach($co as $k=>$v)
@@ -166,7 +165,7 @@ class Controls extends BaseClass
 			if(!is_array($v))
 				continue;
 			$v['multilang']=isset($v['multilang']) ? $v['multilang'] and $this->langs : false;
-			$a=isset($laddon[$k]) ? $laddon[$k] : array();
+			$a=isset($lco[$k]) ? $lco[$k] : array();
 			if(!isset($v['name']))
 				$v['name']=array($k);
 			$v['name']=(array)$v['name'];
@@ -206,7 +205,7 @@ class Controls extends BaseClass
 					if(isset($v['default']))
 						$al['default']=Eleanor::FilterLangValues($v['default'],$l,'');
 					$v['name']['lang']=$l ? $l : Language::$main;
-					if(null===$tmp=$this->DisplayControl($al+$v,$ret,$laddon))
+					if(null===$tmp=$this->DisplayControl($al+$v,$ret,$lco))
 						continue;
 					$ret[$k][$l]=$tmp;
 				}
@@ -222,7 +221,7 @@ class Controls extends BaseClass
 				}
 				try
 				{
-					if(null===$tmp=$this->DisplayControl($a+$v,$ret,$laddon))
+					if(null===$tmp=$this->DisplayControl($a+$v,$ret,$lco))
 						continue;
 					$ret[$k]=$tmp;
 				}
@@ -234,7 +233,7 @@ class Controls extends BaseClass
 		return$ret;
 	}
 
-	public function SaveControls(array$co,array$laddon=array())
+	public function SaveControls(array$co,array$lco=array())
 	{
 		$ret=array();
 		foreach($co as $k=>$v)
@@ -251,7 +250,7 @@ class Controls extends BaseClass
 				$skip=false;
 				foreach($this->langs as &$l)
 				{
-					$a=isset($laddon[$k]) ? $laddon[$k] : array();
+					$a=isset($lco[$k]) ? $lco[$k] : array();
 					foreach($a as &$lv)
 						$lv=Eleanor::FilterLangValues($lv,$l,'');
 					$v['name']['lang']=$l ? $l : Language::$main;
@@ -290,7 +289,7 @@ class Controls extends BaseClass
 			}
 			else
 			{
-				$a=isset($laddon[$k]) ? $laddon[$k] : array();
+				$a=isset($lco[$k]) ? $lco[$k] : array();
 				if(!empty($co[$k]['multilang']))
 				{
 					foreach($a as &$lv)
@@ -348,7 +347,7 @@ class Controls extends BaseClass
 			options => array(#Дополнительные настройки для контролов из файлов. Кроме этого для типов select, items, item этот массив содержит значения пунктов
 				#Пример некоторых полей
 				'size' => 10,#Размер полей для типов items и item
-				'addon' = > '',#Дополнительные параметры для простых типов типа edit,text,select и пр.
+				'extra' = > '',#Дополнительные параметры для простых типов типа edit,text,select и пр.
 				'htmlsafe' => '',#Признак безопасности полученных ХТМЛ тегов. Это значит, значение, полученные из контрола будут пропущены через htmlspecialchars
 				'explode' => false,#Способ обработки типа items. true - будет сохранятся в серилизированном виде. false - explode(',',array())
 			),
@@ -359,7 +358,7 @@ class Controls extends BaseClass
 			$controls - результат предыдущих контролов из DisplayControls
 			$massarr - массив всех контролово
 	*/
-	public function DisplayControl(array$co,$controls=array(),$laddon=array())
+	public function DisplayControl(array$co,$controls=array(),$lco=array())
 	{
 		#Добавить недостающие ключи
 		$co+=array(
@@ -434,27 +433,27 @@ class Controls extends BaseClass
 						continue;
 					elseif(property_exists($E,$k))
 						$E->$k=$v;
-					elseif($k=='4alt' and isset($laddon[$v]['value']))
+					elseif($k=='4alt' and isset($lco[$v]['value']))
 					{
-						if(is_string($laddon[$v]['value']))
-							$alt=$laddon[$v]['value'];
-						elseif(is_array($laddon[$v]['value']) and is_array($co['name']) and isset($co['name']['lang']))
-							$alt=Eleanor::FilterLangValues($laddon[$v]['value'],$co['name']['lang']);
+						if(is_string($lco[$v]['value']))
+							$alt=$lco[$v]['value'];
+						elseif(is_array($lco[$v]['value']) and is_array($co['name']) and isset($co['name']['lang']))
+							$alt=Eleanor::FilterLangValues($lco[$v]['value'],$co['name']['lang']);
 						else
 							continue;
 						if($alt)
 							$E->imgalt=$alt;
 					}
-				$html=$E->Area($co['controlname'],$co['value'],array('bypost'=>$co['bypost'])+(isset($co['addon']) ? $co['addon'] : array()));
+				$html=$E->Area($co['controlname'],$co['value'],array('bypost'=>$co['bypost'])+(isset($co['extra']) ? $co['extra'] : array()));
 			break;
 			case'edit':
 			case'text':
-				$co['options']+=array('addon'=>array(),'htmlsafe'=>false);
+				$co['options']+=array('extra'=>array(),'htmlsafe'=>false);
 				if($co['bypost'])
 					$co['value']=$this->GetPostVal($co['name'],$co['value']);
 				if(is_array($co['value']))
 					$co['value']=join(',',$co['value']);
-				$html=Eleanor::$co['type']($co['controlname'],$co['value'],$co['options']['addon'],$co['options']['htmlsafe']);
+				$html=Eleanor::$co['type']($co['controlname'],$co['value'],$co['options']['extra'],$co['options']['htmlsafe']);
 			break;
 			case'items':
 				$co['options']+=array('explode'=>false,'delim'=>',');
@@ -470,9 +469,9 @@ class Controls extends BaseClass
 				$co['options']+=array('size'=>10);
 				$items=true;
 			case'select':
-				$co['options']+=array('addon'=>array(),'strict'=>false,'options'=>array(),'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
-				if(!is_array($co['options']['addon']))
-					$co['options']['addon']=array();
+				$co['options']+=array('extra'=>array(),'strict'=>false,'options'=>array(),'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
+				if(!is_array($co['options']['extra']))
+					$co['options']['extra']=array();
 				if(!is_array($co['options']['options']))
 					$co['options']['options']=array();
 				if(!isset($value))
@@ -503,40 +502,40 @@ class Controls extends BaseClass
 							$n=isset($v['title']) ? $v['title'] : '';
 							if(isset($v['name']))
 								$k=$v['name'];
-							$addon=isset($v['addon']) ? $v['addon'] : array();
+							$extra=isset($v['extra']) ? $v['extra'] : array();
 							$safe=isset($v['htmlsafe']) ? $v['htmlsafe'] : 0;
 						}
 						else
 						{
 							$n=$v;
-							$addon=array();
+							$extra=array();
 							$safe=0;
 						}
-						$html.=Eleanor::Option($n,$k,in_array($k,$value,$co['options']['strict']),$addon,$safe);
+						$html.=Eleanor::Option($n,$k,in_array($k,$value,$co['options']['strict']),$extra,$safe);
 					}
 				else
 					$html=$co['options']['options'];
 				if($items)
-					$html=Eleanor::$co['type']($co['controlname'],$html,$co['options']['size'],$co['options']['addon']);
+					$html=Eleanor::$co['type']($co['controlname'],$html,$co['options']['size'],$co['options']['extra']);
 				else
-					$html=Eleanor::Select($co['controlname'],$html,$co['options']['addon']);
+					$html=Eleanor::Select($co['controlname'],$html,$co['options']['extra']);
 				unset($value);
 			break;
 			case'check':
-				$co['options']+=array('addon'=>array());
-				$html=Eleanor::Check($co['controlname'],$co['bypost'] ? $this->GetPostVal($co['name'],false) : $co['value'],$co['options']['addon']);
+				$co['options']+=array('extra'=>array());
+				$html=Eleanor::Check($co['controlname'],$co['bypost'] ? $this->GetPostVal($co['name'],false) : $co['value'],$co['options']['extra']);
 			break;
 			case'input':
-				$co['options']+=array('type'=>'edit','addon'=>array(),'htmlsafe'=>false);
+				$co['options']+=array('type'=>'edit','extra'=>array(),'htmlsafe'=>false);
 				if($co['bypost'])
 					$co['value']=$this->GetPostVal($co['name'],$co['value']);
 				if(is_array($co['value']))
 					$co['value']=join(',',$co['value']);
-				$html=Eleanor::Control($co['controlname'],$co['options']['type'],$co['value'],$co['options']['addon'],$co['options']['htmlsafe']);
+				$html=Eleanor::Control($co['controlname'],$co['options']['type'],$co['value'],$co['options']['extra'],$co['options']['htmlsafe']);
 			break;
 			case'date':
-				$co['options']+=array('time'=>false,'addon'=>array());
-				$html=Dates::Calendar($co['controlname'],$co['bypost'] ? $this->GetPostVal($co['name'],false) : $co['value'],$co['options']['time'],$co['options']['addon']);
+				$co['options']+=array('time'=>false,'extra'=>array());
+				$html=Dates::Calendar($co['controlname'],$co['bypost'] ? $this->GetPostVal($co['name'],false) : $co['value'],$co['options']['time'],$co['options']['extra']);
 			break;
 			default:
 				if(!isset(self::$controls))

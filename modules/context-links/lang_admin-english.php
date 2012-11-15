@@ -12,7 +12,7 @@ return array(
 	'url_'=>'&lt;a href=',
 	'eval_url'=>'PHP code reference',
 	'eval_url_'=>'For the dynamic generation of links. Must contain the keyword return. For example: return$Eleanor->Url->Construct(array())',
-	'params'=>'Addon options links',
+	'params'=>'Extra options links',
 	'params_'=>'For example: onclick="alert()"',
 	'date_from'=>'Starting',
 	'date_till'=>'Ending',

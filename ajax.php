@@ -32,7 +32,7 @@ if(Eleanor::$vars['site_closed'] and !Eleanor::LoadLogin(Eleanor::$services['adm
 	return Error(Eleanor::$Language['main']['site_closed']);
 
 if(Eleanor::$Permissions->IsBanned())
-	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::BAN);
+	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::USER,array('ban'=>'group'));
 
 #$_REQUEST нельзя использовать, потому что у $_REQUEST нельзя исправить кодировку (см. выше)
 $m=isset($_POST['module']) ? (string)$_POST['module'] : (isset($_GET['module']) ? (string)$_GET['module'] : false);

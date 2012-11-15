@@ -87,7 +87,7 @@ class TPLBlocks
 			places - массив мест, формат: id=>array(), ключи:
 				title - название места
 				info - данные о положении места в визуальном редакторе положение блоков
-			addon - данные о внешнем виде визуального редактора положений блоков
+			extra - данные о внешнем виде визуального редактора положений блоков
 		$errors - массив ошибок
 		$hasdraft - флаг наличия черновика
 		$saved - флаг сохраненности результата
@@ -145,7 +145,7 @@ class TPLBlocks
 				<div class="resize"></div>'.$langs
 				.Eleanor::Control('placeinfo['.$k.']','hidden',isset($v['info']) ? $v['info'] : '').'</div>';		}
 
-		$group['addon']+=array('verhor'=>'');
+		$group['extra']+=array('verhor'=>'');
 
 		if($errors)
 			foreach($errors as $k=>&$v)
@@ -169,7 +169,7 @@ class TPLBlocks
 			</div>
 		</div>
 		<div class="hor"></div>
-		<div class="submitline">'.Eleanor::Control('addon[verhor]','hidden',$group['addon']['verhor'],array('id'=>'verhor'))
+		<div class="submitline">'.Eleanor::Control('extra[verhor]','hidden',$group['extra']['verhor'],array('id'=>'verhor'))
 		.Eleanor::Button($lang['save'])
 		.Eleanor::Control('_draft','hidden','g'.$gid)
 		.Eleanor::$Template->DraftButton($links['draft'],1)
@@ -367,7 +367,7 @@ $(window).load(function(){
 			sort_showto - ссылка на сортировку списка $items по дате начала показа (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_showfrom - ссылка на сортировку списка $items по дате окончания показа (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внтури которой происходит отображение перечня $items
-			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			pp - фукнция-генератор ссылок на изменение количества блоков отображаемых на странице
 			first_page - ссылка на первую страницу пагинатора
 			pages - функция-генератор ссылок на остальные страницы
 	*/
@@ -548,20 +548,20 @@ $(function(){
 
 		$LLst=Eleanor::LoadListTemplate('table-list',3)
 			->begin(
-				array($lang['vn'],150,'tableaddon'=>array('id'=>'vars')),
+				array($lang['vn'],150,'tableextra'=>array('id'=>'vars')),
 				array($lang['val']),
 				array($ltpl['functs'],65)
 			);
 		if($values['vars'])
 			foreach($values['vars'] as $k=>&$v)
 				$LLst->item(
-					array(Eleanor::Edit('vn[]',$k,array('style'=>'width:100%')),'traddon'=>array('style'=>'vertical-align:top')),
+					array(Eleanor::Edit('vn[]',$k,array('style'=>'width:100%')),'trextra'=>array('style'=>'vertical-align:top')),
 					Eleanor::Text('vv[]',(string)$v,array('rows'=>2,'style'=>'width:100%')),
 					array(Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus'),2),'center')
 				);
 		else
 			$LLst->item(
-				array(Eleanor::Edit('vn[]','',array('style'=>'width:100%')),'traddon'=>array('style'=>'vertical-align:top')),
+				array(Eleanor::Edit('vn[]','',array('style'=>'width:100%')),'trextra'=>array('style'=>'vertical-align:top')),
 				Eleanor::Text('vv[]','',array('rows'=>2,'style'=>'width:100%')),
 				array(Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus'),2),'center')
 			);
@@ -675,7 +675,7 @@ $(function(){
 			title - название блока
 		$back - URL возврата
 	*/
-	public static function Delete($t,$back)
+	public static function Delete($a,$back)
 	{
 		static::Menu('');
 		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['blocks']['aysdb'],$a['title']),$back));

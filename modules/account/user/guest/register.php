@@ -71,10 +71,10 @@ class AccountRegister
 			switch($mess)
 			{
 				case'NAME_TOO_LONG':
-					$errors['NAME_TOO_LONG']=$lang['NAME_TOO_LONG']($E->addon['max'],$E->addon['you']);
+					$errors['NAME_TOO_LONG']=$lang['NAME_TOO_LONG']($E->extra['max'],$E->extra['you']);
 				break;
 				case'PASS_TOO_SHORT':
-					$errors['PASS_TOO_SHORT']=$lang['PASS_TOO_SHORT']($E->addon['min'],$E->addon['you']);
+					$errors['PASS_TOO_SHORT']=$lang['PASS_TOO_SHORT']($E->extra['min'],$E->extra['you']);
 				break;
 				default:
 					$errors[]=$mess;

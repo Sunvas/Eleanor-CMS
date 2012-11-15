@@ -30,16 +30,18 @@ if(!isset(Eleanor::$vars['drafts_autosave']))
 array_push($GLOBALS['jscripts'],'js/eleanor_drafts.js','js/eleanor_drafts-'.Language::$main.'.js');
 $u=uniqid();
 
-echo Eleanor::Button(' ','button',array('id'=>$u,'style'=>'color:lightgray;display:none')).'<script type="text/javascript">//<![CDATA[
-$(function(){
-	var D'.$u.'=new CORE.DRAFT({		form:$("#'.$u.'").closest("form"),
+echo Eleanor::Button(' ','button',array('id'=>$u,'style'=>'color:lightgray;display:none')),'<script type="text/javascript">//<![CDATA[
+$(function(){	var D',$u,'=new CORE.DRAFT({		form:$("#',$u,'").closest("form"),
 		url:"'.$url.'",
+		enabled:false,
 		interval:'.Eleanor::$vars['drafts_autosave'].',
-		OnSave:function(){			$("#'.$u.'").val(CORE.Lang("draftsaved")).css("color","lightgray");		},
+		OnSave:function(){			$("#',$u,'").val(CORE.Lang("draftsaved")).css("color","lightgray");		},
 		OnChange:function(){
-			$("#'.$u.'").val(CORE.Lang("savedraft")).css("color","");
+			$("#',$u,'").val(CORE.Lang("savedraft")).css("color","");
 		}
 	});
-	CORE.drafts.push(D'.$u.');
-	$("#'.$u.'").click(function(){		D'.$u.'.Save();	}).val(CORE.Lang("draftsaved")).show();
+	CORE.drafts.push(D',$u,');
+	$("#',$u,'").click(function(){		D',$u,'.Save();	}).val(CORE.Lang("draftsaved")).show();
+	//ѕосле того, как пройдут все событи€ формы
+	setTimeout(function(){		D',$u,'.enabled=true;	},2500);
 });//]]></script>';

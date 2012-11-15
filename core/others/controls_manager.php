@@ -34,7 +34,7 @@ class Controls_Manager extends Controls
 		{
 			Eleanor::StartSession($co['session']);
 			if(!isset($_SESSION[__class__]) or !is_array($_SESSION[__class__]))
-				throw new EE('Session lost!',EE::INFO);
+				throw new EE('Session lost!',EE::USER);
 			$co+=array('options'=>array())+$_SESSION[__class__];
 			$co['bypost']=false;
 		}
@@ -181,7 +181,7 @@ class Controls_Manager extends Controls
 			foreach($types as &$v)
 				$options[$v]=isset(Eleanor::$Language['controls'][$v]) ? Eleanor::$Language['controls'][$v] : $v;
 			asort($options,SORT_STRING);
-			$result['type']=$this->DisplayControl(array('type'=>'select','name'=>'type','bypost'=>$co['bypost'],'value'=>$co['type'],'options'=>array('options'=>$options,'addon'=>array('id'=>'type-selector','onchange'=>'EC.ChangeType()','style'=>'width:80%'))));
+			$result['type']=$this->DisplayControl(array('type'=>'select','name'=>'type','bypost'=>$co['bypost'],'value'=>$co['type'],'options'=>array('options'=>$options,'extra'=>array('id'=>'type-selector','onchange'=>'EC.ChangeType()','style'=>'width:80%'))));
 		}
 		$this->arrname=$oldname;
 		return Eleanor::$Template->$co['template']($result,$ajax,$error,$onlyprev,$sgroup,$co['type']);
@@ -207,7 +207,7 @@ class Controls_Manager extends Controls
 		$result['type']=$this->SaveControl(array('type'=>'select','name'=>'type'));
 
 		if(!in_array($result['type'],$types))
-			throw new EE(Eleanor::$Language['controls']['type_not_found'],EE::INFO);
+			throw new EE(Eleanor::$Language['controls']['type_not_found'],EE::USER);
 
 		$setts=$this->GetSettings($result['type']);
 		unset($setts[0]);
@@ -244,7 +244,7 @@ class Controls_Manager extends Controls
 			{
 				if(isset($old))
 					$this->langs=$old;
-				throw new EE($E->getMessage(),$E->getCode(),$E->addon);
+				throw new EE($E->getMessage(),$E->getCode(),$E->extra);
 			}
 			$result['default']=isset($def['preview']) ? $def['preview'] : array($prevlang=>null);
 			if($prevlang)
@@ -266,8 +266,8 @@ class Controls_Manager extends Controls
 		$ml=(bool)$this->langs;
 		$lang=Eleanor::$Language['controls'];
 		$a=array(
-			'title'=>$lang['addon_tag_params'],
-			'descr'=>$lang['addon_tag_params_'],
+			'title'=>$lang['extra_tag_params'],
+			'descr'=>$lang['extra_tag_params_'],
 			'type'=>'edit',
 			'multilang'=>$ml,
 			'default'=>$ml ? array(''=>array()) : array(),
@@ -317,7 +317,7 @@ class Controls_Manager extends Controls
 						'default'=>$ml ? array(''=>'return \'\';') : 'return \'\';',
 						'options'=>array(
 							'htmlsafe'=>false,
-							'addon'=>array(
+							'extra'=>array(
 								'style'=>'height:250px;overflow:auto',
 							),
 						),
@@ -328,14 +328,14 @@ class Controls_Manager extends Controls
 							{
 								$v=str_replace("\\r",'',$v);
 								if(!$v)
-									throw new EE(sprintf($lang['no_load_eval'],Eleanor::$langs[$k]['name']),EE::INFO);
+									throw new EE(sprintf($lang['no_load_eval'],Eleanor::$langs[$k]['name']),EE::DEV);
 								ob_start();
 								if(create_function('',$v)===false)
 								{
 									$err=ob_get_contents();
 									ob_end_clean();
 									Eleanor::getInstance()->e_g_l=error_get_last();
-									throw new EE(sprintf($lang['error_load_eval'],Eleanor::$langs[$k]['name']).'<br />'.$err,EE::INFO);
+									throw new EE(sprintf($lang['error_load_eval'],Eleanor::$langs[$k]['name']).'<br />'.$err,EE::DEV);
 								}
 								ob_end_clean();
 							};
@@ -350,7 +350,7 @@ class Controls_Manager extends Controls
 						'default'=>$ml ? array(''=>'return \'\';') : 'return \'\';',
 						'options'=>array(
 							'htmlsafe'=>false,
-							'addon'=>array(
+							'extra'=>array(
 								'style'=>'height:250px;overflow:auto',
 							),
 						),
@@ -361,14 +361,14 @@ class Controls_Manager extends Controls
 							{
 								$v=str_replace("\\r",'',$v);
 								if(!$v)
-									throw new EE(sprintf($lang['no_save_eval'],Eleanor::$langs[$k]['name']),EE::INFO);
+									throw new EE(sprintf($lang['no_save_eval'],Eleanor::$langs[$k]['name']),EE::DEV);
 								ob_start();
 								if(create_function('',$v)===false)
 								{
 									$err=ob_get_contents();
 									ob_end_clean();
 									Eleanor::getInstance()->e_g_l=error_get_last();
-									throw new EE(sprintf($lang['error_save_eval'],Eleanor::$langs[$k]['name']).'<br />'.$err,EE::INFO);
+									throw new EE(sprintf($lang['error_save_eval'],Eleanor::$langs[$k]['name']).'<br />'.$err,EE::DEV);
 								}
 								ob_end_clean();
 							};
@@ -413,7 +413,7 @@ class Controls_Manager extends Controls
 							'load'=>array($this,'SettingsSelectLoad'),
 						)
 					),
-					'addon'=>$a,
+					'extra'=>$a,
 				);
 				#Вверху - дополнение для функции обработки
 			break;
@@ -430,13 +430,13 @@ class Controls_Manager extends Controls
 				);
 			break;
 			case'check':
-				$res=array('addon'=>$a);
+				$res=array('extra'=>$a);
 			break;
 			case'edit':
 			case'text':
 				$res=array(
 					'text',#Группа контрола
-					'addon'=>$a
+					'extra'=>$a
 				);
 			break;
 			case'input':
@@ -462,7 +462,7 @@ class Controls_Manager extends Controls
 							),
 						),
 					),
-					'addon'=>$a
+					'extra'=>$a
 				);
 			break;
 			case'date':
@@ -473,7 +473,7 @@ class Controls_Manager extends Controls
 						'type'=>'check',
 						'default'=>false,
 					),
-					'addon'=>$a
+					'extra'=>$a
 				);
 			break;
 			default:

@@ -172,11 +172,11 @@ class TPLModules
 			if(!isset($values['files'][$k]))
 				$values['files'][$k]=$v['file'];
 			$services.=Eleanor::Option($k,$k,$act=in_array($k,$values['services']));
-			$files.='<li'.($act ? '' : ' style="display:none"').'><span style="font-weight:bold">'.$k.'</span>:<br />'.Eleanor::Edit('files['.$k.']',isset($values['files'][$k]) ? $values['files'][$k] : '',$act ? array() : array('disabled'=>'disabled')).'</li>';
+			$files.='<li'.($act ? '' : ' style="display:none"').'><span style="font-weight:bold">'.$k.'</span>:<br />'.Eleanor::Edit('files['.$k.']',isset($values['files'][$k]) ? $values['files'][$k] : '',$act ? array() : array('disabled'=>true)).'</li>';
 		}
 
 		$prevm=$values['image'] ? str_replace('*','small',$values['image']) : 'images/spacer.png';
-		$addon=$id && $values['protected'] ? array('disabled'=>'disabled') : array();
+		$extra=$id && $values['protected'] ? array('disabled'=>true) : array();
 		if($back)
 			$back=Eleanor::Control('back','hidden',$back);
 
@@ -186,15 +186,15 @@ class TPLModules
 			->item(array($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null),'imp'=>true))
 			->item($lang['sections'].'<br /><a href="#" id="addsession">'.$lang['add'].'</a>',$sections)
 			->item(array($ltpl['descr'],Eleanor::$Template->LangEdit($ml['descr'],null),'tip'=>$lang['descr_']))
-			->item(array($lang['m_folder'],Eleanor::Edit('path',$values['path'],$addon),'imp'=>true))
-			->item(array($lang['access_in_s'],Eleanor::Items('services[]',$services,10,$addon),'imp'=>true))
-			->item(array($lang['multi'],Eleanor::Check('multiservice',$values['multiservice'],$addon),'tip'=>$lang['multi_']))
-			->item(array($lang['filename'],Eleanor::Edit('file',$values['file'],$addon),'tr'=>array('class'=>'multitrue')))
+			->item(array($lang['m_folder'],Eleanor::Edit('path',$values['path'],$extra),'imp'=>true))
+			->item(array($lang['access_in_s'],Eleanor::Items('services[]',$services,10,$extra),'imp'=>true))
+			->item(array($lang['multi'],Eleanor::Check('multiservice',$values['multiservice'],$extra),'tip'=>$lang['multi_']))
+			->item(array($lang['filename'],Eleanor::Edit('file',$values['file'],$extra),'tr'=>array('class'=>'multitrue')))
 			->item(array($lang['files'],'<ul style="list-style-type:none;padding-left:0px" id="files">'.$files.'</ul>','tip'=>$lang['files_'],'tr'=>array('class'=>'multifalse')))
-			->item($ltpl['active'],Eleanor::Check('active',$values['active'],$addon))
+			->item($ltpl['active'],Eleanor::Check('active',$values['active'],$extra))
 			->item(array($lang['img'],Eleanor::Edit('image',$values['image'],array('id'=>'image')).' <img id="preview" src="'.$prevm.'" '.($values['image'] ? '' : ' style="display:none"').' />','tip'=>$lang['img_']))
 			->item('API',Eleanor::Edit('api',$values['api']))
-			->item(array($lang['prot'],Eleanor::Check('protected',$values['protected'],$id ? array('disabled'=>'disabled') : array()),'imp'=>$lang['prot_']))
+			->item(array($lang['prot'],Eleanor::Check('protected',$values['protected'],$id ? array('disabled'=>true) : array()),'imp'=>$lang['prot_']))
 			->button($back.Eleanor::Button().($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
 			->end()
 			->endform();

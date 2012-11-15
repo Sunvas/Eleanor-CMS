@@ -90,7 +90,7 @@ class TPLAdminMainpage
 						$v['protected'] ? false : '<img src="'.$images.($v['active'] ? 'active.png' : 'inactive.png').'" alt="" title="'.($v['active'] ? $ltpl['active'] : $ltpl['inactive']).'" />',
 						#$v['protected'] ? false : array($modpref.'swap='.$k,$v['active'] ? $ltpl['deactivate'] : $ltpl['activate'],$v['active'] ? $images.'active.png' : $images.'inactive.png'),
 						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),
-						array($v['_adel'],$ltpl['delete'],$images.'delete.png','addon'=>array('onclick'=>'return confirm(\''.$ltpl['are_you_sure'].'\')'))
+						array($v['_adel'],$ltpl['delete'],$images.'delete.png','extra'=>array('onclick'=>'return confirm(\''.$ltpl['are_you_sure'].'\')'))
 					)
 				);
 			}

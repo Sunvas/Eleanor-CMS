@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright © Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.su, http://eleanor-cms.com, http://eleanor-cms.net, http://eleanor.su
 	E-mail: support@eleanor-cms.ru
@@ -434,8 +434,16 @@ $(function(){	if(CORE.mssites || CORE.msisuser)
 	});
 
 	//CTRL + Enter для всех форм
-	$(document).on("keypress","form textarea",function(e){
+	$(this).on("keypress","form textarea",function(e){
 		if(e.keyCode==13 && e.ctrlKey)
 			$(this).closest("form").submit();
+	})
+
+	//Отключение пересылки на сервер полей, значение которых не менялось (класс .sic - Send If Changed)
+	.on("submit","form:has(.sic)",function(){		var sic=$(".sic",this).each(function(){				var th=$(this);				if(th.val()==th.prop("defaultValue"))
+					th.prop("disabled",true);			});
+		setTimeout(function(){
+			sic.prop("disabled",false);
+		},500);
 	});
 });

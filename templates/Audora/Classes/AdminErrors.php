@@ -30,7 +30,6 @@ class TPLAdminErrors
 		Страница отображения всех страниц ошибок
 		$items - массив страниц ошибок. Формат: ID=>array(), ключи внутреннего массива:
 			mail - e-mail, куда будут отправляться сообщения об ошибках
-			log - флаг логирования ошибки
 			uri - URI ошибки
 			title - название страницы ошибки
 			_aedit - ссылка на редактирование страницы ошибки
@@ -42,10 +41,9 @@ class TPLAdminErrors
 		$links - перечень необходимых ссылок, массив с ключами:
 			sort_title - ссылка на сортировку списка $items по названию (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_mail - ссылка на сортировку списка $items по e-mail для отпрвки ошибки (возрастанию/убыванию в зависимости от текущей сортировки)
-			sort_log - ссылка на сортировку списка $items по флагу логирования (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внтури которой происходит отображение перечня $items
-			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			pp - фукнция-генератор ссылок на изменение количества ошибок отображаемых на странице
 			first_page - ссылка на первую страницу пагинатора
 			pages - функция-генератор ссылок на остальные страницы
 	*/
@@ -63,11 +61,10 @@ class TPLAdminErrors
 			'email'=>false,
 		);
 
-		$Lst=Eleanor::LoadListTemplate('table-list',5)
+		$Lst=Eleanor::LoadListTemplate('table-list',4)
 			->begin(
 				array($ltpl['title'],'sort'=>$qs['sort']=='title' ? $qs['so'] : false,'href'=>$links['sort_title']),
 				array('E-mail','sort'=>$qs['sort']=='mail' ? $qs['so'] : false,'href'=>$links['sort_mail']),
-				array($lang['log'],'sort'=>$qs['sort']=='log' ? $qs['so'] : false,'href'=>$links['sort_log']),
 				array($ltpl['functs'],80,'sort'=>$qs['sort']=='id' ? $qs['so'] : false,'href'=>$links['sort_id']),
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
@@ -77,7 +74,6 @@ class TPLAdminErrors
 				$Lst->item(
 					'<a href="'.$v['_aedit'].'">'.$v['title'].'</a>',
 					array($v['mail'] ? $v['mail'] : '&mdash;',$v['mail'] ? false : 'center'),
-					array($v['log'] ? '<span style="color:green">'.$lang['enabled'].'</span>' : $lang['disabled'],'center'),
 					$Lst('func',
 						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),
 						array($v['_adel'],$ltpl['delete'],$images.'delete.png')

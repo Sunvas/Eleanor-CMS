@@ -8,7 +8,7 @@
 	*Pseudonym
 */
 
-function Rating(module,control,marks,addon)
+function Rating(module,control,marks,extra)
 {	var div=$(control).children(":first"),
 		posx,
 		rate=div.children(":first"),
@@ -29,7 +29,7 @@ function Rating(module,control,marks,addon)
 							rating:{
 								mark:marks[rate.data("p")-1]
 							}
-						},addon),
+						},extra),
 					function(res)
 					{
 						$(control).replaceWith(res);

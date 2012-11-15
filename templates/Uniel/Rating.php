@@ -8,6 +8,7 @@
 		sum - сумма всех оценок
 		total - число оценок
 		average - средн€€ оценка
+		extra - массив дополнительных параметров дл€ запроса
 	);
 */
 if(!defined('CMS'))die;
@@ -40,7 +41,7 @@ if($can)
 		<div class="active" style="width:',$average,'%;" data-now="',$average,'%"></div>
 	</div>
 </div><script type="text/javascript">/*<![CDATA[*/$(function(){new Rating("',$GLOBALS['Eleanor']->module['name'],'","#',$u,'",[',join(',',$marks),']',
-	isset($addon) ? ','.Eleanor::JsVars($addon,false,true) : '',
+	isset($extra) ? ','.Eleanor::JsVars($extra,false,true) : '',
 	');});//]]></script>';
 }
 else

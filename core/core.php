@@ -34,6 +34,7 @@ abstract class BaseClass
 		$E=new EE('Called undefined method '.get_called_class().' :: '.$n,EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
 		if(DEBUG)
 			throw$E;
+		$E->Log();
 	}
 
 	public function __call($n,$p)
@@ -43,6 +44,7 @@ abstract class BaseClass
 		$E=new EE('Called undefined method '.get_class().' -› '.$n,EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
 		if(DEBUG)
 			throw$E;
+		$E->Log();
 	}
 
 	public function __toString()
@@ -51,6 +53,7 @@ abstract class BaseClass
 		$E=new EE('Trying to get string form class '.get_class(),EE::DEV,array('file'=>$d[0]['file'],'line'=>$d[0]['line']));
 		if(DEBUG)
 			throw$E;
+		$E->Log();
 	}
 
 	public function __invoke(){}#Для $class()
@@ -76,6 +79,7 @@ abstract class BaseClass
 		$E=new EE('Trying to get value from the unknown variable <code><b>'.get_class($this).' -› '.$n.'</b></code>',EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
 		if(DEBUG)
 			throw$E;
+		$E->Log();
 	}
 }
 
@@ -150,7 +154,7 @@ final class Eleanor extends BaseClass
 		$ip,#Адрес, откуда мы загрузились
 		$ips=array(),#Массив со всеми айпишниками, присланными нам от пользователя.
 		$our_query=true,#Признак того, что пользователь пришел на эту страницу со своим запросом (а не с чужой страницы путем эмуляции). Изменение этого параметра положено на сервисы.
-		$sessaddon='',#Дополнительная строка, которая будет писаться в таблицу сессий. Полезно для создания фичи во встроенных форумах: эту тему читают N пользователей
+		$sessextra='',#Дополнительная строка, которая будет писаться в таблицу сессий. Полезно для создания фичи во встроенных форумах: эту тему читают N пользователей
 		$is_bot,#Посковый бот? Нет? - гость. Имя поискового бота
 
 		#Масивы данных
@@ -167,7 +171,6 @@ final class Eleanor extends BaseClass
 			'bot_group'=>0,
 			'guest_group'=>0,
 			'parked_domains'=>'',
-			'exceptions_log_file'=>false,
 
 			'bots_enable'=>false,
 			'bots_list'=>array(),
@@ -297,7 +300,7 @@ final class Eleanor extends BaseClass
 					$task=$task===false || $task<=$t ? '<img src="'.self::$services['cron']['file'].'?rand='.$t.'" style="width:1px;height1px;" />' : '';
 				}
 				if(defined('ELEANOR_COPYRIGHT'))
-					throw new EE('Copyright defined!',EE::FATAL);
+					die('Copyright defined!');
 				else
 					#Внимание! САМОВОЛЬНОЕ УБИРАНИЕ КОПИРАЙТОВ ЧРЕВАТО БЛОКИРОВКОЙ НА ОФИЦИАЛЬНОМ САЙТЕ СИСТЕМЫ И ПРЕСЛЕДУЕТСЯ ПО ЗАКОНУ!
 					#КОПИРАЙТЫ МЕНЯТЬ/ПРАВИТЬ НЕЛЬЗЯ! СОВСЕМ!! ОНИ ДОЛЖНЫ ОСТАВАТЬСЯ НЕИЗМЕННЫМИ ДО БИТА!
@@ -340,10 +343,10 @@ final class Eleanor extends BaseClass
 					else
 						$m=self::$vars['blocked_message'];
 					if(self::IPMatchMask(self::$ip,$bip))
-						throw new EE($m,EE::BAN);
+						throw new EE($m,EE::USER,array('ban'=>'ip'));
 					foreach(self::$ips as &$ip)
 						if(self::IPMatchMask($ip,$bip))
-							throw new EE($m,EE::BAN);
+							throw new EE($m,EE::USER,array('ban'=>'ip'));
 				}
 				unset(self::$vars['blocked_ips']);
 			}
@@ -361,38 +364,33 @@ final class Eleanor extends BaseClass
 	}
 
 	public static function ErrorHandle($num,$str,$f,$l)
-	{
-		if(self::$nolog or $num&E_STRICT)
+	{		if(self::$nolog or $num&E_STRICT)
 			return;
 		$ae=array(
 			E_ERROR=>'Error',
 			E_WARNING=>'Warning',
-			E_NOTICE=>'Notice'
+			E_NOTICE=>'Notice',
+			E_PARSE=>'Parse error',
 		);
 		if(class_exists('EE'))#Заплатка в случае отключенного автолоадера
 		{
 			$E=new EE((isset($ae[$num]) ? $ae[$num].': ' : '').$str,EE::DEV,array('file'=>$f,'line'=>$l));
-			if(DEBUG)
+			if(DEBUG and !E_PARSE&$num)
 				throw$E;
+			$E->Log();
 		}
 	}
 
 	public static function ExceptionHandle($E)
-	{
+	{		$m=$E->getMessage();
 		if($E instanceof EE)
+			$E->Log();
+		else
 		{
-			if(isset($E->addon['call']) and is_callable($E->addon['call']))
-				call_user_func($E->addon['call'],$E);
-			$mess=$E->getMessage();
-			if($E->addon['log'])
-				$E->LogIt($E->addon['logfile'],$mess);
-			Error($mess,$E->addon);
+			$E2=new EE($m,EE::UNIT,array(),$E);
+			$E2->Log();
 		}
-		elseif(self::$vars['exceptions_log_file'])
-		{
-			$E2=new EE('',EE::INFO);
-			$E2->LogIt(self::$vars['exceptions_log_file'],'Exception: '.$E->getMessage(),$E->getFile(),$E->getLine());
-		}
+		Error($m,isset($E->extra) ? $E->extra : array());
 	}
 
 	public static function Autoload($cl)
@@ -412,7 +410,7 @@ final class Eleanor extends BaseClass
 						$a['line']=$v['line'];
 						break;
 					}
-				throw new EE('Class not found: '.$cl,EE::FATAL,$a);
+				throw new EE('Class not found: '.$cl,EE::DEV,$a);
 			}
 			trigger_error('Class not found: '.$cl,E_USER_ERROR);
 		}
@@ -752,13 +750,13 @@ final class Eleanor extends BaseClass
 				foreach(self::$Template->paths as &$v)
 					if(is_file($path=$v.'Lists/'.$n.'.php'))
 						break 2;
-				throw new EE('Unable to load list template '.$n,EE::ALT);
+				throw new EE('Unable to load list template '.$n,EE::DEV);
 			}while(false);
 		$p=array_slice(func_get_args(),1);
 		extract(count($p)==1 && is_array($p[0]) ? $p[0] : $p,EXTR_PREFIX_INVALID,'v');
 		$l=include$path;
 		if(!is_array($l))
-			throw new EE('Incorrect list template '.$n,EE::ALT);
+			throw new EE('Incorrect list template '.$n,EE::DEV);
 		$L=new ListTemplate($l);
 		$L->default=self::$Template->default;
 		return$L;
@@ -887,7 +885,7 @@ final class Eleanor extends BaseClass
 	public static function Check($n,$c=false,array$a=array())
 	{
 		unset($a['checked']);
-		return'<input type="checkbox"'.($n ? ' name="'.$n.'"' : '').self::TagParams($a+array('value'=>1)).($c ? ' checked="checked"' : '').' />';
+		return'<input type="checkbox"'.($n ? ' name="'.$n.'"' : '').self::TagParams($a+array('value'=>1)).($c ? ' checked' : '').' />';
 	}
 
 	public static function Text($n,$v='',array$a=array(),$m=1)
@@ -898,7 +896,7 @@ final class Eleanor extends BaseClass
 	public static function Radio($n,$v=1,$checked=false,array$a=array(),$m=1)
 	{
 		unset($a['checked']);
-		return'<input type="radio" value="'.self::ControlValue($v,(int)$m).'"'.self::TagParams($a+array('name'=>$n)).' '.($checked ? 'checked="checked"' : '').' />';
+		return'<input type="radio" value="'.self::ControlValue($v,(int)$m).'"'.self::TagParams($a+array('name'=>$n)).' '.($checked ? 'checked' : '').' />';
 	}
 
 	public static function Edit($n,$v='',array$a=array(),$m=1)
@@ -922,7 +920,7 @@ final class Eleanor extends BaseClass
 	{
 		if($v!==false)
 			$v=' value="'.trim(self::ControlValue($v,2)).'"';
-		return'<option'.$v.($s ? ' selected="selected"' : '').self::TagParams($a).'>'.self::ControlValue($t,(int)$m).'</option>';
+		return'<option'.$v.($s ? ' selected' : '').self::TagParams($a).'>'.self::ControlValue($t,(int)$m).'</option>';
 	}
 
 	public static function Optgroup($l,$o,array$a=array(),$m=2)
@@ -1120,7 +1118,7 @@ final class Eleanor extends BaseClass
 				'browser'=>$ua,
 				'location'=>Url::Decode(preg_replace('#^'.preg_quote(self::$site_path,'#').'#','',$_SERVER['REQUEST_URI'])),
 				'name'=>$n,
-				'addon'=>self::$sessaddon,
+				'extra'=>self::$sessextra,
 			)
 		);
 	}
@@ -1345,7 +1343,7 @@ class MixedTemplate extends Template
 				$a['line']=$v['line'];
 				break;
 			}
-		throw new EE('Template '.$n.' was not found!',EE::FATAL,$a);
+		throw new EE('Template '.$n.' was not found!',EE::DEV,$a);
 	}
 }
 
@@ -1462,12 +1460,18 @@ class Cache
 		{
 			if(!$insur)
 				$insur=$ttl*2;
+			$del=array();
 			foreach($n as $k=>&$v)
-			{
-				$r&=$this->Lib->Put($k,array($v,$ttl,time()+$ttl),$insur);
-				if($tdb)
-					$v=serialize($v);
-			}
+				if($v===false)
+					$del[]=$k;
+				else
+				{
+					$r&=$this->Lib->Put($k,array($v,$ttl,time()+$ttl),$insur);
+					if($tdb)
+						$v=serialize($v);
+				}
+			if($del)
+				$this->Delete($del,true);
 		}
 		if($tdb)
 			Eleanor::$Db->Replace(P.'cache',array('key'=>array_keys($n),'value'=>array_values($n)));
@@ -1550,7 +1554,9 @@ class Db extends BaseClass
 	{
 		if(!isset($p['host'],$p['user'],$p['pass'],$p['db']))
 			throw new EE_SQL('connect',$p);
+		Eleanor::$nolog=true;#Подавление warining
 		$M=new MySQLi($p['host'],$p['user'],$p['pass'],$p['db']);
+		Eleanor::$nolog=false;
 		if($M->connect_errno or !$M->server_version)
 			throw new EE_SQL('connect',$p+array('error'=>$M->connect_error,'errno'=>$M->connect_errno));
 		$M->autocommit(true);
@@ -1770,7 +1776,7 @@ interface LoginClass //Интерфейс для создания медов авторизации
 	public static function getInstance();
 
 	/*
-		Функция для авторизации по имени пользователя и паролю. В случае, если вход невозможен - выбрасывает исключение EE::INFO
+		Функция для авторизации по имени пользователя и паролю. В случае, если вход невозможен - выбрасывает исключение EE::UNIT
 	*/
 	public function Login(array $data);
 

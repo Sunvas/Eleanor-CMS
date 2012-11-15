@@ -43,9 +43,6 @@ $controls=array(
 					if(is_array($t) and isset($t['email'],$t['whom']) and is_array($t['email']) and is_array($t['whom']) and count($t['email'])==count($t['whom']) and $t['whom'])
 						$co['value']=array_combine($t['email'],$t['whom']);
 				}
-				elseif($co['multilang'])
-					$co['value']=Eleanor::FilterLangValues($co['value'],$co['name']['lang']);
-
 				return Eleanor::$Template->LoadWhom($co['controlname'],empty($co['value']) || !is_array($co['value']) ? array() : $co['value']);
 			},
 			'save'=>function($co,$O) use ($lang)
@@ -61,7 +58,7 @@ $controls=array(
 					{
 						$t['whom'][$k]=htmlspecialchars((string)$t['whom'][$k],ELENT,CHARSET,false);
 						if(!Strings::CheckEmail($v,false))
-							throw new EE(sprintf($lang['erremail'],$t['whom'][$k],($co['multilang'] && $co['name']['lang'] ? '('.Eleanor::$langs[ $co['name']['lang'] ]['name'].') ' : '')),EE::INFO);
+							$O->errors['EMAIL_ERROR']=sprintf($lang['erremail'],$t['whom'][$k],($co['multilang'] && $co['name']['lang'] ? '('.Eleanor::$langs[ $co['name']['lang'] ]['name'].') ' : ''));
 					}
 					return array_combine($t['email'],$t['whom']);
 				}
@@ -117,8 +114,7 @@ function SaveML($a)
 }
 
 function LoadML($a)
-{
-	if($a['multilang'])
+{	if($a['multilang'])
 		return array('value'=>(array)$a['value']);
 	return array('value'=>is_array($a['value']) ? Eleanor::FilterLangValues($a['value']) : $a['value']);
 }

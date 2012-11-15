@@ -70,7 +70,7 @@ class TPLManagement
 		$l=Eleanor::$Language['tpl'];
 		return ($e ? Eleanor::$Template->Message($e) : '')
 			.Eleanor::$Template->Title($l['main_m']).'<table class="tablecard">'.$g.'</table>'
-			.Eleanor::$Template->Title($l['addon_m']).'<table class="tablecard">'.$a.'</table>';
+			.Eleanor::$Template->Title($l['extra_m']).'<table class="tablecard">'.$a.'</table>';
 	}
 
 	/*

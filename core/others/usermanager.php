@@ -13,26 +13,26 @@ class UserManager extends BaseClass
 {	public static function Add(array$user=array())
 	{		Eleanor::LoadOptions('user-profile');
 		if(!isset($user['name']) or $user['name']=='')
-			throw new EE('EMPTY_NAME',EE::INFO);
+			throw new EE('EMPTY_NAME',EE::DEV);
 		if(!isset($user['_password']) or $user['_password']=='')
-			throw new EE('EMPTY_PASSWORD',EE::INFO);
+			throw new EE('EMPTY_PASSWORD',EE::DEV);
 		self::IsNameBlocked($user['name']);
 		if(empty($user['email']))
-			throw new EE('EMPTY_EMAIL',EE::INFO);
+			throw new EE('EMPTY_EMAIL',EE::DEV);
 		if(!Strings::CheckEmail($user['email']))
-			throw new EE('EMAIL_ERROR',EE::INFO);
+			throw new EE('EMAIL_ERROR',EE::DEV);
 		self::IsEmailBlocked($user['email']);
 		if(Eleanor::$vars['max_name_length'] and ($l=mb_strlen($user['name']))>(int)Eleanor::$vars['max_name_length'])
-			throw new EE('NAME_TOO_LONG',EE::INFO,array('max'=>(int)Eleanor::$vars['max_name_length'],'you'=>$l));
+			throw new EE('NAME_TOO_LONG',EE::DEV,array('max'=>(int)Eleanor::$vars['max_name_length'],'you'=>$l));
 		if(Eleanor::$vars['min_pass_length'] and ($l=mb_strlen($user['_password']))<(int)Eleanor::$vars['min_pass_length'])
-			throw new EE('PASS_TOO_SHORT',EE::INFO,array('min'=>(int)Eleanor::$vars['min_pass_length'],'you'=>$l));
+			throw new EE('PASS_TOO_SHORT',EE::DEV,array('min'=>(int)Eleanor::$vars['min_pass_length'],'you'=>$l));
 		$escpn=Eleanor::$Db->Escape($user['name']);
 		$R=Eleanor::$UsersDb->Query('SELECT `name` FROM `'.USERS_TABLE.'` WHERE `name`='.$escpn.' LIMIT 1');
 		if($R->num_rows>0)
-			throw new EE('NAME_EXISTS',EE::INFO);
+			throw new EE('NAME_EXISTS',EE::DEV);
 		$R2=Eleanor::$Db->Query('SELECT `email` FROM `'.P.'users_site` WHERE `email`='.$escpn.' LIMIT 1');
 		if($R2->num_rows>0)
-			throw new EE('EMAIL_EXISTS',EE::INFO);
+			throw new EE('EMAIL_EXISTS',EE::UNIT);
 
 		$un=addcslashes($user['name'],"\n\r\t");
 		$todb=array(
@@ -43,7 +43,7 @@ class UserManager extends BaseClass
 			'register'=>isset($user['register']) ? $user['register'] : date('Y-m-d H:i:s'),
 		);
 
-		foreach(array('last_visit','ban_date','ban_explain','language','staticip','timezone') as $v)
+		foreach(array('last_visit','banned_until','ban_explain','language','staticip','timezone') as $v)
 			if(array_key_exists($v,$user))
 				$todb[$v]=$user[$v];
 
@@ -100,7 +100,7 @@ class UserManager extends BaseClass
 		$nin=Eleanor::$Db->In($ids,true);
 
 		$toextra=$tosite=$todb=array();
-		foreach(array('last_visit','full_name','ban_date','ban_explain','language','staticip','timezone') as $v)
+		foreach(array('last_visit','full_name','banned_until','ban_explain','language','staticip','timezone') as $v)
 			if(array_key_exists($v,$user))
 				$todb[$v]=$user[$v];
 
@@ -119,17 +119,17 @@ class UserManager extends BaseClass
 				if(Strings::CheckEmail($user['email'],false))
 				{					$R=Eleanor::$Db->Query('SELECT `email` FROM `'.P.'users_site` WHERE `email`='.Eleanor::$Db->Escape($user['email']).' AND `id`'.$nin.' LIMIT 1');
 					if($R->num_rows>0)
-						throw new EE('EMAIL_EXISTS',EE::INFO);
+						throw new EE('EMAIL_EXISTS',EE::UNIT);
 				}
 				else
-					throw new EE('EMAIL_ERROR',EE::INFO);
+					throw new EE('EMAIL_ERROR',EE::UNIT);
 			if(isset($user['name']))
 			{				if($user['name']=='')
-					throw new EE('EMPTY_NAME',EE::INFO);
+					throw new EE('EMPTY_NAME',EE::DEV);
 				self::IsNameBlocked($user['name']);
 				$R=Eleanor::$UsersDb->Query('SELECT `name` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($user['name']).' AND `id`'.$nin.' LIMIT 1');
 				if($R->num_rows>0)
-					throw new EE('NAME_EXISTS',EE::INFO);
+					throw new EE('NAME_EXISTS',EE::DEV);
 				$tosite['name']=$todb['name']=str_replace(array("\n","\r","\t"),'',$user['name']);
 				if(!isset($todb['full_name']))
 				{
@@ -142,10 +142,10 @@ class UserManager extends BaseClass
 
 		if(isset($user['_password']))
 		{			if($user['_password']=='')
-				throw new EE('EMPTY_PASSWORD',EE::INFO);
+				throw new EE('EMPTY_PASSWORD',EE::DEV);
 			Eleanor::LoadOptions('user-profile',false);
 			if(Eleanor::$vars['min_pass_length'] and ($l=mb_strlen($user['_password']))<(int)Eleanor::$vars['min_pass_length'])
-				throw new EE('PASS_TOO_SHORT',EE::INFO,array('min'=>(int)Eleanor::$vars['min_pass_length'],'you'=>$l));
+				throw new EE('PASS_TOO_SHORT',EE::DEV,array('min'=>(int)Eleanor::$vars['min_pass_length'],'you'=>$l));
 			$todb['pass_salt']=substr(uniqid(),-5);
 			$todb['pass_hash']=self::PassHash($todb['pass_salt'],$user['_password']);
 		}
@@ -218,9 +218,9 @@ class UserManager extends BaseClass
 		‘ункци€ выполн€ет синхронизацию базы текущих пользователей с базой глобальных пользователей.
 		$ids - массив ID пользователей, которых нужно синхронизировать. ¬озможно так же, заполнение массива в виде
 			ID => array( field1, ... ), где ID - ID пользовател€, а  field1, ... - пол€, вз€тые из глобальной таблицы дл€ частной
-		$addon - определение дополнительных полей Ѕƒ.
+		$extra - определение дополнительных полей Ѕƒ.
 	*/
-	public static function Sync($ids,array$addon=array())
+	public static function Sync($ids,array$extra=array())
 	{		$ids=(array)$ids;		#ѕол€, которые одинаковые дл€ таблиц users_site и глобальной таблицы пользователей		$fields=array('full_name','name','register','language','timezone');
 		$tosite=$toextra=$sync=$update=array();
 		foreach($ids as $k=>&$v)
@@ -245,16 +245,16 @@ class UserManager extends BaseClass
 		foreach($sync as $k=>$v)
 		{			if(isset($v['groups']))
 				$v['groups']=static::DoGroups($v['groups']);
-			elseif(isset($addon[$k]['groups']))
-				$v['groups']=static::DoGroups($addon[$k]['groups']);
-			elseif(isset($addon['groups']))
-				$v['groups']=static::DoGroups($addon['groups']);
+			elseif(isset($extra[$k]['groups']))
+				$v['groups']=static::DoGroups($extra[$k]['groups']);
+			elseif(isset($extra['groups']))
+				$v['groups']=static::DoGroups($extra['groups']);
 
 			foreach(array('last_visit','forum_id','groups_overload','login_keys','failed_logins','ip','email') as $f)
-				if(isset($addon[$k]) and array_key_exists($f,$addon[$k]))
-					$v[$k]=$addon[$k][$f];
-				elseif(array_key_exists($f,$addon))
-					$v[$k]=$addon[$f];
+				if(isset($extra[$k]) and array_key_exists($f,$extra[$k]))
+					$v[$k]=$extra[$k][$f];
+				elseif(array_key_exists($f,$extra))
+					$v[$k]=$extra[$f];
 
 			if(in_array($k,$update))
 			{
@@ -263,12 +263,12 @@ class UserManager extends BaseClass
 			}			$ts=$te=array('id'=>$k);
 			$ts+=$v+array('groups'=>','.GROUP_USER.',');
 
-			if(isset($addon[$k]))
-				foreach($addon[$k] as $ak=>&$av)
+			if(isset($extra[$k]))
+				foreach($extra[$k] as $ak=>&$av)
 					if(!array_key_exists($ak,$ts))
 						$te[$ak]=$av;
 
-			foreach($addon as $ak=>&$av)
+			foreach($extra as $ak=>&$av)
 				if(!array_key_exists($ak,$sync) and !array_key_exists($ak,$ts) and !array_key_exists($ak,$te))
 					$te[$ak]=$av;
 
@@ -293,7 +293,7 @@ class UserManager extends BaseClass
 			return;
 		foreach(explode(',',Eleanor::$vars['blocked_names']) as $v)
 			if(self::MatchMask($v,$name))
-				throw new EE('NAME_BLOCKED',EE::INFO);
+				throw new EE('NAME_BLOCKED',EE::UNIT);
 	}
 
 	public static function IsEmailBlocked($email)
@@ -302,7 +302,7 @@ class UserManager extends BaseClass
 			return;
 		foreach(explode(',',Eleanor::$vars['blocked_emails']) as $v)
 			if(self::MatchMask($v,$email))
-				throw new EE('EMAIL_BLOCKED',EE::INFO);
+				throw new EE('EMAIL_BLOCKED',EE::UNIT);
 	}
 
 	/*

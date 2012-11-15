@@ -46,11 +46,11 @@ switch($d)
 					{
 						foreach($a['value'] as &$v)
 							if($v=='')
-								throw new EE($lang['emp_t'],EE::INFO);
+								throw new EE($lang['emp_t'],EE::USER);
 						return$a['value'];
 					}
 					if($a['value']=='')
-						throw new EE($lang['emp_t'],EE::INFO);
+						throw new EE($lang['emp_t'],EE::USER);
 					return array(''=>$a['value']);
 				},
 				'load'=>function($a)
@@ -73,14 +73,14 @@ switch($d)
 				'save'=>function($a) use ($lang)
 				{
 					if(!Strings::CheckUrl($a['value']))
-						throw new EE($lang['err_adr'],EE::INFO);
+						throw new EE($lang['err_adr'],EE::USER);
 					if(substr($a['value'],-1)!='/')
 						$a['value'].='/';
 					return$a['value'];
 				},
 				'bypost'=>&$post,
 				'options'=>array(
-					'addon'=>array(
+					'extra'=>array(
 						'data-default'=>PROTOCOL,
 					),
 				),
@@ -93,7 +93,7 @@ switch($d)
 				'bypost'=>&$post,
 				'default'=>false,
 				'options'=>array(
-					'addon'=>array(
+					'extra'=>array(
 						'data-default'=>0,
 					),
 				),
@@ -113,7 +113,7 @@ switch($d)
 				'imp'=>false,
 				'bypost'=>&$post,
 				'options'=>array(
-					'addon'=>array(
+					'extra'=>array(
 						'class'=>'db',
 					)
 				)
@@ -126,7 +126,7 @@ switch($d)
 				'default'=>'localhost',
 				'bypost'=>&$post,
 				'options'=>array(
-					'addon'=>array(
+					'extra'=>array(
 						'class'=>'db',
 						'data-default'=>'localhost',
 					)
@@ -139,7 +139,7 @@ switch($d)
 				'type'=>'edit',
 				'bypost'=>&$post,
 				'options'=>array(
-					'addon'=>array(
+					'extra'=>array(
 						'class'=>'db',
 					)
 				)
@@ -151,7 +151,7 @@ switch($d)
 				'imp'=>false,
 				'bypost'=>&$post,
 				'options'=>array(
-					'addon'=>array(
+					'extra'=>array(
 						'class'=>'db',
 					)
 				)
@@ -163,7 +163,7 @@ switch($d)
 				'type'=>'edit',
 				'bypost'=>&$post,
 				'options'=>array(
-					'addon'=>array(
+					'extra'=>array(
 						'class'=>'db',
 					)
 				)
@@ -194,7 +194,7 @@ switch($d)
 							else
 							{
 								if($p==P)
-									throw new EE(true,EE::INFO);
+									throw new EE(true,EE::USER);
 								$Db=Eleanor::$Db;
 							}
 							if(strpos($p,'`.`')!==false)
@@ -203,7 +203,7 @@ switch($d)
 								$db=false;
 							$Db->Query('SHOW TABLES'.($db ? ' FROM `'.$db.'`' : '').' LIKE \''.$Db->Escape($p,false).'multisite_jump\'');
 							if($Db->num_rows==0)
-								throw new EE($lang['nom'],EE::INFO);
+								throw new EE($lang['nom'],EE::UNIT);
 						}
 					}
 					file_put_contents($f,'<?php return '.var_export($data,true).';');

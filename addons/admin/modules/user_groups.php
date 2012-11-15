@@ -68,7 +68,7 @@ $Eleanor->gp=array(
 		'type'=>'check',
 		'bypost'=>&$Eleanor->gp_post,
 		'options'=>array(
-			'addon'=>array('onclick'=>'if(this.checked) return confirm(\''.$lang['are_you_sure'].'\')'),
+			'extra'=>array('onclick'=>'if(this.checked) return confirm(\''.$lang['are_you_sure'].'\')'),
 		),
 	),
 	'banned'=>array(
@@ -116,7 +116,6 @@ $Eleanor->gp=array(
 		'bypost'=>&$Eleanor->gp_post,
 		'type'=>'edit',
 		'default'=>0,
-		'addon'=>'',
 	),
 );
 

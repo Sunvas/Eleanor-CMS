@@ -10,7 +10,7 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor,$title;
-$lang=Eleanor::$Language->Load('addons/admin/langs/s_general-*.php','sg');
+$lang=Eleanor::$Language->Load('addons/admin/langs/general-*.php','general');
 Eleanor::$Template->queue[]='General';
 
 $Eleanor->module['links']=array(
@@ -39,19 +39,20 @@ switch(isset($_GET['do']) ? $_GET['do'] : '')
 	break;
 	case'logs':
 		$Eleanor->Url->SetPrefix(array('do'=>'logs'),true);
-		$logs=glob(Eleanor::FormatPath('addons/logs/*.log'));
-		if(!is_array($logs))
-			$logs=array();
-		$title[]=$lang['logs'];
 		if(isset($_GET['view']))
 		{
-			$f=str_replace(array('..','/','\\'),'',$_GET['view']);
-			if(is_file($f=Eleanor::FormatPath('addons/logs/'.$f)))
-			{
-				$title[]=sprintf($lang['viewing_log'],basename($f));
-				$bn=basename($f);
+			$f=str_replace(array('..','/','\\'),'',(string)$_GET['view']);
+			$f=Eleanor::FormatPath('addons/logs/'.$f);
+			$help=$f.'.inc';
+
+			if(is_file($f))
+			{				$bn=basename($f);
+				$title[]=isset($lang[$bn]) ? $lang[$bn] : $bn;
+				if(in_array($bn,array('errors.log','db_errors.log','request_errors.log')) and is_file($help))
+					$help=unserialize(file_get_contents($help));
 				$c=Eleanor::$Template->ShowLog(
-					file_get_contents($f),
+					is_array($help) ? $help : file_get_contents($f),
+					substr($bn,0,-4),
 					array(
 						'adown'=>$Eleanor->Url->Construct(array('download'=>$bn)),
 						'adel'=>$Eleanor->Url->Construct(array('delete'=>$bn)),
@@ -77,10 +78,13 @@ switch(isset($_GET['do']) ? $_GET['do'] : '')
 			if(is_file($f=Eleanor::FormatPath('addons/logs/'.$f)))
 			{
 				Files::Delete($f);
+				Files::Delete($f.'.inc');
 				GoAway(true);
 				break;
 			}
 		}
+		$logs=glob(Eleanor::FormatPath('addons/logs/*.log'));
+		$title[]=$lang['logs'];
 		if($logs)
 		{
 			Eleanor::LoadOptions('errors');
@@ -94,18 +98,8 @@ switch(isset($_GET['do']) ? $_GET['do'] : '')
 					'aview'=>$Eleanor->Url->Construct(array('view'=>$t)),
 					'adown'=>$Eleanor->Url->Construct(array('download'=>$t)),
 					'adel'=>$Eleanor->Url->Construct(array('delete'=>$t)),
+					'descr'=>isset($lang[$t]) ? $lang[$t] : $t,
 				);
-
-				if(preg_match('#'.preg_quote($f,'#').'$#',Eleanor::$vars['log_errors'])>0)
-					$t=$lang['log_error'];
-				elseif(preg_match('#'.preg_quote($f,'#').'$#',Eleanor::$vars['log_exceptions'])>0)
-					$t=$lang['log_except'];
-				elseif(preg_match('#'.preg_quote($f,'#').'$#',Eleanor::$vars['log_site_errors'])>0)
-					$t=$lang['log_esite'];
-				elseif(preg_match('#'.preg_quote($f,'#').'$#',Eleanor::$vars['log_db_errors'])>0)
-					$t=$lang['log_db'];
-
-				$v['descr']=$t;
 			}
 		}
 		$size=Files::BytesToSize(Files::GetSize(

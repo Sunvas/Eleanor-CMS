@@ -55,7 +55,7 @@ class Files
 	/*
 		Метод, позволяющий корректно отдать пользователю содержимое в виде файла
 	*/
-	public static function OutputStream(array $a)
+	public static function OutputStream(array$a)
 	{		$a+=array(
 			'data'=>'',#Текст того, что нужно передать
 			'file'=>'',#Файл, который будет прочитан и передан пользователю имеет приоритет над data
@@ -78,7 +78,7 @@ class Files
 			$a['mimetype']=Types::MimeTypeByExt($a['type'] ? $a['type'] : $a['filename'],'auto-detect');
 
 		if(!$a['data'] and !is_file($a['file']))
-			throw new EE('No file '.$a['filename'],EE::INFO);
+			throw new EE('No file '.$a['filename'],EE::DEV);
 
 		$size=$a['data'] ? strlen($a['data']) : filesize($a['file']);
 		#Размер, включая 0 байт
@@ -253,5 +253,80 @@ class Files
 			return$size;
 		}
 		return is_file($path) && (!is_callable($filter) or call_user_func($filter,$path)) ? filesize($path) : 0;
+	}
+
+	/*
+		Метод дописывания в средину файла. Функция идентична функции substr_replace, только для работы с файлом.
+		Для корректно работы функции, нужно открывать файлы в режиме rb+. Режим a (дописывание в конец файла) НЕ ПОДДЕРЖИВАЕТСЯ (особенность PHP)!
+		$fh - файловый указатель
+		2й, 3й и 4й параметры - идентичны функции substr_replace
+		$buf - объем байтов, считываемых за раз
+	*/
+	public static function FReplace($fh,$s,$o,$l=0,$buf=4096)
+	{
+		$len=strlen($s);
+		if(!is_resource($fh) or $len==0 and $l==0)
+			return false;
+
+		#PHP 5.4 fstat($fh)['size'];
+		$size=fstat($fh);
+		$size=$size['size'];
+
+		$diff=$len-$l;
+		if($diff==0 and $o<$size)
+		{
+			fseek($fh,$o,SEEK_SET);
+			fwrite($fh,$s);
+		}
+		elseif($o>=$size)
+		{
+			fseek($fh,0,SEEK_END);
+			fwrite($fh,$s);
+		}
+		else
+		{
+			$diff=strlen($s)-$l;
+
+			if($diff>0)
+			{
+				$step=1;
+				$limiter=$o+$l;
+				do
+				{
+					$i=$size-$buf*$step++;
+					if($i>$limiter)
+					{
+						$seek=$i;
+						fseek($fh,$seek,SEEK_SET);
+						$data=fread($fh,$buf);
+					}
+					else
+					{
+						$seek=$limiter;
+						fseek($fh,$seek,SEEK_SET);
+						$data=fread($fh,$buf-$limiter+$i);
+					}
+					fseek($fh,$seek+$diff,SEEK_SET);
+					fwrite($fh,$data);
+				}while($i>$limiter);
+			}
+			else
+			{
+				for($i=$o+$l;$i<$size;$i+=$buf)
+				{
+					fseek($fh,$i,SEEK_SET);
+					$data=fread($fh,min($buf,$size-$i));
+					fseek($fh,$i+$diff,SEEK_SET);
+					fwrite($fh,$data);
+				}
+				ftruncate($fh,$size+$diff);
+			}
+			if($len>0)
+			{
+				fseek($fh,$o,SEEK_SET);
+				fwrite($fh,$s);
+			}
+		}
+		return$diff;
 	}
 }

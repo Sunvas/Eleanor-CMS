@@ -166,12 +166,12 @@ class Uploader extends BaseClass
 			$oldpath=Eleanor::GetCookie(__class__.'-'.$uniq);
 			$oldpath=preg_replace('#[^a-z0-9]+#i','',$oldpath);
 			if(!$oldpath)
-				throw new EE('Upload error',EE::INFO);
+				throw new EE('Upload error',EE::USER);
 			$oldpath=Eleanor::$root.Eleanor::$uploads.'/temp/'.$oldpath;		}
 		else
 		{			if(!isset($_SESSION))				Eleanor::StartSession($sess);
 			if(!isset($_SESSION[__class__][$uniq]))
-				throw new EE('Upload error',EE::INFO);
+				throw new EE('Upload error',EE::USER);
 			if(!$_SESSION[__class__][$uniq]['tmp'])				return array('from'=>'','to'=>'');
 			$oldpath=$_SESSION[__class__][$uniq]['path'];
 		}
@@ -191,7 +191,7 @@ class Uploader extends BaseClass
 				$newpath=str_replace(DIRECTORY_SEPARATOR,'/',$newpath);
 			}
 			return array('from'=>substr($oldpath,$rl),'to'=>substr($newpath,$rl));		}
-		throw new EE('Upload error',EE::INFO);
+		throw new EE('Upload error',EE::ENV);
 	}
 
 	protected function GetPath($start,$to='')

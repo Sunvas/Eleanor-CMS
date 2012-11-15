@@ -51,7 +51,7 @@ class TplUserNews
 				array($links['base'],static::$lang['all']),
 				$links['categories'] ? array($links['categories'],$lang['categs']) : false,
 				$links['tags'] ? array($links['tags'],$lang['tags']) : false,
-				array($links['search'],$lang['search'],'addon'=>array('rel'=>'search')),
+				array($links['search'],$lang['search'],'extra'=>array('rel'=>'search')),
 				$links['add'] ? array($links['add'],static::$lang['add']) : false,
 				$links['my'] ? array($links['my'],$lang['my']) : false,
 			),

@@ -11,7 +11,7 @@
 if(!defined('CMS'))die;
 global$Eleanor,$title;
 $lang=Eleanor::$Language->Load('addons/admin/langs/smiles-*.php','smiles');
-Eleanor::$Template->queue[]='smiles';
+Eleanor::$Template->queue[]='Smiles';
 
 $Eleanor->module['links']=array(
 	'list'=>$Eleanor->Url->Prefix(),
@@ -43,7 +43,7 @@ $Eleanor->sm=array(
 			$GLOBALS['head'][]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';		},
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'id'=>'path-'.$u,
 			),
 		),

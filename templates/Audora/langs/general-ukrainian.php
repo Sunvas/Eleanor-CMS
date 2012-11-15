@@ -1,16 +1,6 @@
 <?php
 return array(
-	#Для /addons/admin/modules/section_general.php
-	'server_info'=>'Інформація про сервер',
-	'logs'=>'Логи',
-	'viewing_log'=>'Перегляд лог-файлу &quot;%s&quot;',
-	'log_error'=>'Лог помилок коду',
-	'log_except'=>'Лог винятків',
-	'log_esite'=>'Лог помилок на сайті',
-	'log_db'=>'Лог помилок БД',
-	'license_'=>'Ліцензія та санкції',
-
-	#Для шаблону
+	#Для Classes/General.php
 	'thanks'=>'Дякуємо вам за вибір Eleanor CMS!',
 	'thanks_'=>'Сподіваємось, що за допомогою CMS Eleanor ви зможете розробити успішний сайт. Можливості системи необмежені! В цьому ви зможете переконатися, відвідавши наш <a href="http://eleanor-cms.ru/store/">магазин</a>. За допомогою ви можете звернутися на <a href="http://eleanor-cms.ru/forum/">форум</a>. Про виявлені помилки повідомляйте в <a href="http://eleanor-cms.ru/bugtracker/">багтрекері</a> проекту. Останню версію Eleanor CMS ви завжди можете завантажити з <a href="http://eleanor-cms.ru/">офіційного сайту</a> в розділі <a href="http://eleanor-cms.ru/download/">завантажити</a>.Також ви можете <a href="http://eleanor-cms.ru/donate/" target="_blank">підтримати проект Eleanor CMS</a>.<br /><br />З повагою, команда розробників Eleanor CMS.',
 	'install_nd'=>'Папку install до цих пір не видалено! З міркувань безпеки, рекомендується видалити її якомога швидше.',
@@ -46,9 +36,9 @@ return array(
 	'download_log'=>'Завантажити лог',
 	'delete_log'=>'Видалити лог',
 	'nologs'=>'Логів немає - немає помилок! З сайтом все відмінно!',
-	'logs_size'=>'Обсяг папки логів: ',
 	'empty'=>'пусто',
 	'license'=>'Ліцензія',
 	'sanctions'=>'Санкції',
 	'print'=>'Версія для друку',
+	'fixed'=>'Виправлено',
 );

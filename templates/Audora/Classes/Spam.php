@@ -58,7 +58,7 @@ class TPLSpam
 			sort_status - ссылка на сортировку списка $items по статусу для отпрвки ошибки (возрастанию/убыванию в зависимости от текущей сортировки)
 			sort_id - ссылка на сортировку списка $items по ID (возрастанию/убыванию в зависимости от текущей сортировки)
 			form_items - ссылка для параметра action формы, внутри которой происходит отображение перечня $items
-			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
+			pp - фукнция-генератор ссылок на изменение количества рассылок отображаемых на странице
 			first_page - ссылка на первую страницу пагинатора
 			pages - функция-генератор ссылок на остальные страницы
 	*/	public static function ShowList($items,$cnt,$pp,$page,$qs,$links)
@@ -172,19 +172,19 @@ class TPLSpam
 			);
 
 		$Lst=Eleanor::LoadListTemplate('table-form');
-		$addon=$runned ? array('disabled'=>'disabled') : array();
+		$extra=$runned ? array('disabled'=>true) : array();
 
 		$uf=$Lst->begin()
-			->item($lang['groups'],Eleanor::Items('figroup',UserManager::GroupsOpts($values['figroup']),10,$addon+array('tabindex'=>1))
-				.'<br /><label>'.Eleanor::Radio('figroupt','and',$values['figroupt']=='and',$addon+array('tabindex'=>2)).$lang['and'].'</label> <label>'.Eleanor::Radio('figroupt','or',$values['figroupt']=='or',$addon+array('tabindex'=>3)).$lang['or'].'</label>'
+			->item($lang['groups'],Eleanor::Items('figroup',UserManager::GroupsOpts($values['figroup']),10,$extra+array('tabindex'=>1))
+				.'<br /><label>'.Eleanor::Radio('figroupt','and',$values['figroupt']=='and',$extra+array('tabindex'=>2)).$lang['and'].'</label> <label>'.Eleanor::Radio('figroupt','or',$values['figroupt']=='or',$extra+array('tabindex'=>3)).$lang['or'].'</label>'
 			)
-			->item($lang['username'],Eleanor::Select('finamet',Eleanor::Option($lang['b'],'b','b'==$values['finamet']).Eleanor::Option($lang['e'],'e','e'==$values['finamet']).Eleanor::Option($lang['c'],'c','c'==$values['finamet']).Eleanor::Option($lang['m'],'m','m'==$values['finamet']),$addon+array('tabindex'=>3,'style'=>'width:200px')).Eleanor::Edit('finame',$values['finame'],$addon+array('tabindex'=>5,'style'=>'width:50%')))
-			->item($lang['register'],Dates::Calendar('firegisterb',$values['firegisterb'],true,$addon+array('style'=>'width:40%','tabindex'=>4)).' &mdash; '.Dates::Calendar('firegistera',$values['firegistera'],true,$addon+array('style'=>'width:40%','tabindex'=>5)))
-			->item($lang['last_visit'],Dates::Calendar('filastvisitb',$values['filastvisitb'],true,$addon+array('style'=>'width:40%','tabindex'=>6)).' &mdash; '.Dates::Calendar('filastvisita',$values['filastvisita'],true,$addon+array('style'=>'width:40%','tabindex'=>7)))
-			->item('IP',Eleanor::Edit('fiip',$values['fiip'],$addon+array('tabindex'=>8)))
-			->item($lang['gender'],Eleanor::Select('figender',Eleanor::Option($lang['ni'],-2,$values['figender']==-2).Eleanor::Option($lang['ns'],-1,$values['figender']==-1).Eleanor::Option($lang['female'],0,$values['figender']==0).Eleanor::Option($lang['male'],1,$values['figender']==1),$addon+array('tabindex'=>9)))
-			->item('E-mail',Eleanor::Edit('fiemail',$values['fiemail'],$addon+array('tabindex'=>10)))
-			->item('IDs',Eleanor::Edit('fiids',$values['fiids'],$addon+array('tabindex'=>11)))
+			->item($lang['username'],Eleanor::Select('finamet',Eleanor::Option($lang['b'],'b','b'==$values['finamet']).Eleanor::Option($lang['e'],'e','e'==$values['finamet']).Eleanor::Option($lang['c'],'c','c'==$values['finamet']).Eleanor::Option($lang['m'],'m','m'==$values['finamet']),$extra+array('tabindex'=>3,'style'=>'width:200px')).Eleanor::Edit('finame',$values['finame'],$extra+array('tabindex'=>5,'style'=>'width:50%')))
+			->item($lang['register'],Dates::Calendar('firegisterb',$values['firegisterb'],true,$extra+array('style'=>'width:40%','tabindex'=>4)).' &mdash; '.Dates::Calendar('firegistera',$values['firegistera'],true,$extra+array('style'=>'width:40%','tabindex'=>5)))
+			->item($lang['last_visit'],Dates::Calendar('filastvisitb',$values['filastvisitb'],true,$extra+array('style'=>'width:40%','tabindex'=>6)).' &mdash; '.Dates::Calendar('filastvisita',$values['filastvisita'],true,$extra+array('style'=>'width:40%','tabindex'=>7)))
+			->item('IP',Eleanor::Edit('fiip',$values['fiip'],$extra+array('tabindex'=>8)))
+			->item($lang['gender'],Eleanor::Select('figender',Eleanor::Option($lang['ni'],-2,$values['figender']==-2).Eleanor::Option($lang['ns'],-1,$values['figender']==-1).Eleanor::Option($lang['female'],0,$values['figender']==0).Eleanor::Option($lang['male'],1,$values['figender']==1),$extra+array('tabindex'=>9)))
+			->item('E-mail',Eleanor::Edit('fiemail',$values['fiemail'],$extra+array('tabindex'=>10)))
+			->item('IDs',Eleanor::Edit('fiids',$values['fiids'],$extra+array('tabindex'=>11)))
 			->button(Eleanor::Button($lang['ts'],'button',array('onclick'=>'TryUsers()','tabindex'=>12)).' '.Eleanor::Button($lang['hideres'],'button',array('onclick'=>'HideTryUsers()','style'=>'display:none','tabindex'=>13,'id'=>'hideres')))
 			->end()
 			.'<div id="tryusers" style="display:none"></div><script type="text/javascript">//<![CDATA[

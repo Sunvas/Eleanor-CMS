@@ -150,6 +150,14 @@ class Voting_Manager extends BaseClass
 		if(!$this->controls)
 			$this->controls=$this->Controls();
 
+		if($id)
+		{
+			$R=Eleanor::$Db->Query('SELECT `votes` FROM `'.$this->table.'` WHERE `id`='.$id.' LIMIT 1');
+			if($temp=$R->fetch_assoc())
+				foreach($temp as $k=>$v)
+					$this->controls['votes']['default']=$temp['votes'];
+		}
+
 		$C->arrname=(array)$this->name;
 		$C->POST=&$this->POST;
 		$values=$C->SaveControls($this->controls);
@@ -455,7 +463,8 @@ class Voting_Manager extends BaseClass
 				'options'=>array(
 					'type'=>'number',
 					'tabindex'=>$this->ti++,
-					'addon'=>array(
+					'extra'=>array(
+						'class'=>'sic',
 						'min'=>0,
 					),
 				),
@@ -548,7 +557,7 @@ class Voting_Manager extends BaseClass
 						'multilang'=>(bool)$this->langs,
 						'options'=>array(
 							'htmlsafe'=>true,
-							'addon'=>array(
+							'extra'=>array(
 								'tabindex'=>$this->ti++,
 							),
 						),
@@ -601,7 +610,7 @@ class Voting_Manager extends BaseClass
 						'options'=>array(
 							'type'=>'number',
 							'tabindex'=>$this->ti++,
-							'addon'=>array(
+							'extra'=>array(
 								'min'=>2,
 							),
 						),

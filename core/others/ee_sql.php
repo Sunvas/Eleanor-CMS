@@ -11,39 +11,73 @@
 class EE_SQL extends EE
 {
 	private
-		$qerror,
-		$query;
+		$type;
 
-	public function __construct($error,$params=array(),$PO=null)
+	public function __construct($type,$extra=array(),$PO=null)
 	{
 		$lang=Eleanor::$Language->Load('langs/db-*.php',false);
-		$params+=array('query'=>false,'no'=>false,'error'=>false);
+		$extra+=array('query'=>false,'no'=>false,'error'=>false);
 		$d=debug_backtrace();
 
 		if(isset($d[1],$d[2],$d[0]['class'],$d[1]['class']) and $d[0]['class']=='EE_SQL' and $d[1]['class']=='Db')
 			$d=isset($d[1]['function']) && $d[1]['function']=='Query' ? $d[1] : $d[2];
 		else
 			$d=$d[0];
+
 		$this->file=$d['file'];
 		$this->line=$d['line'];
+		$this->type=$type;
 
-		switch($error)
+		switch($type)
 		{
 			case'connect':
-				$error=$lang['connect']($params);
+				$mess=$lang['connect']($extra);
+				$code=EE::UNIT;
 			break;
 			case'query':
-				$error=$lang['query']($params);
+				$mess=$lang['query']($extra);
+				$code=EE::DEV;
+			break;
+			default:
+				$mess=$extra['error'];
+				$code=EE::UNIT;
 		}
-		$this->qerror=$params['error'];
-		$this->query=$params['query'];
-		parent::__construct($error,EE::ALT,$params,$PO);
-		if(!isset(self::$vars['log_db_errors']))
-			self::$vars['log_db_errors']='addons/logs/db_errors.log';
+		parent::__construct($mess,$code,$extra,$PO);
 	}
 
-	public function LogIt()
-	{		if(self::$vars['log_db_errors'])
-			parent::LogIt(self::$vars['log_db_errors'],$this->qerror.PHP_EOL.'Query: '.$this->query);
+	public function Log()
+	{		$THIS=$this;#PHP 5.4 убрать рудмиент
+		$this->LogWriter(
+			'db_errors',
+			md5($this->extra['error'].$this->line.$this->file),
+			function($data)use($THIS)
+			{				$data['n']=isset($data['n']) ? $data['n']+1 : 1;
+				$data['d']=date('Y-m-d H:i:s');
+				$data['e']=$THIS->extra['error'];
+				$data['f']=substr($THIS->getFile(),strlen(Eleanor::$root));
+				$data['l']=$THIS->getLine();
+				$log=$data['e'].PHP_EOL;
+
+				switch($THIS->type)
+				{					case'connect':
+						if(strpos($data['e'],'Access denied for user')===false)
+						{
+							$data['h']=isset($this->extra['host']) ? $this->extra['host'] : '';
+							$data['u']=isset($this->extra['user']) ? $this->extra['user'] : '';
+							$data['p']=isset($this->extra['pass']) ? $this->extra['pass'] : '';
+							$log.='Host: '.$data['h'].PHP_EOL.'User: '.$data['u'].PHP_EOL;
+						}
+
+						$data['db']=isset($this->extra['db']) ? $this->extra['db'] : '';
+						$log.='DB: '.$data['db'].PHP_EOL.'File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'Date: '.$data['d'].PHP_EOL.'Happend: '.$data['n'];
+					break;
+					case'query':
+						$data['q']=$THIS->extra['query'];
+						$log.='Query: '.$data['q'].PHP_EOL.'File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'Date: '.$data['d'].PHP_EOL.'Happend: '.$data['n'];
+					break;
+					default:
+						$log.='File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'Date: '.$data['d'].PHP_EOL.'Happend: '.$data['n'];				}
+				return array($data,$log);			}
+		);
 	}
 }

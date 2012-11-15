@@ -17,7 +17,7 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 	private static
 		$bypost;
 
-	public static function GetSettings()
+	public static function GetSettings($Obj)
 	{
 		$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
@@ -29,7 +29,7 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 				'descr'=>static::$Language['path_to_save_'],
 				'type'=>'edit',
 				'options'=>array(
-					'addon'=>array(
+					'extra'=>array(
 						'class'=>'uploadfile-path',
 					),
 				),
@@ -43,7 +43,7 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 						{
 							$path=Eleanor::FormatPath($v,Eleanor::$uploads);
 							if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
-								throw new EE(static::$Language['no_upload_path'],EE::INFO);
+								throw new EE(static::$Language['no_upload_path'],EE::ENV);
 							$v=strpos($path,$uppath)===0 ? substr($path,strlen($uppath)) : substr($path,strlen(Eleanor::$root));
 							$v=str_replace(DIRECTORY_SEPARATOR,'/',$v);
 						}
@@ -52,7 +52,7 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 					{
 						$path=Eleanor::FormatPath($a['value'],Eleanor::$uploads);
 						if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
-							throw new EE(static::$Language['no_upload_path'],EE::INFO);
+							throw new EE(static::$Language['no_upload_path'],EE::ENV);
 						$a['value']=strpos($path,$uppath)===0 ? substr($path,strlen($uppath)) : substr($path,strlen(Eleanor::$root));
 						$a['value']=str_replace(DIRECTORY_SEPARATOR,'/',$a['value']);
 					}
@@ -179,7 +179,7 @@ $(function(){
 							$err=ob_get_contents();
 							ob_end_clean();
 							Eleanor::getInstance()->e_g_l=error_get_last();
-							throw new EE(static::$Language['error_eval'].$err,EE::INFO);
+							throw new EE(static::$Language['error_eval'].$err,EE::DEV);
 						}
 						ob_end_clean();
 					};
@@ -197,13 +197,13 @@ $(function(){
 					{
 						foreach($a['value'] as &$v)
 							if(preg_match('#^\d+ \d+$#',$v)==0)
-								throw new EE('incorrect_format',EE::INFO,array('lang'=>true));
+								throw new EE('incorrect_format',EE::USER,array('lang'=>true));
 						return$a['value'];
 					}
 					else
 					{
 						if(preg_match('#^\d+ \d+$#',$a['value'])==0)
-							throw new EE('incorrect_format',EE::INFO,array('lang'=>true));
+							throw new EE('incorrect_format',EE::USER,array('lang'=>true));
 						return$a['value'];
 					}
 				},
@@ -234,7 +234,7 @@ $(function(){
 				'descr'=>'',
 				'default'=>array('upload','address'),
 				'type'=>'items',
-				'save_eval'=>'if(count(array_intersect(array(\'upload\',\'address\'),$a[\'value\']))==0)throw new EE(\''.static::$Language['must1t'].'\',EE::INFO);',
+				'save_eval'=>'if(count(array_intersect(array(\'upload\',\'address\'),$a[\'value\']))==0)throw new EE(\''.static::$Language['must1t'].'\',EE::DEV);',
 				'options'=>array(
 					'options'=>array(
 						'address'=>static::$Language['address'],
@@ -499,7 +499,7 @@ $(function(){
 		if(!isset($_SESSION[__class__][$name]))
 		{
 			if($Obj->throw)
-				throw new EE(static::$Language['session_lost'],EE::INFO);
+				throw new EE(static::$Language['session_lost'],EE::USER);
 			else
 				$Obj->errors[]='SESSION_LOST';
 			return;
@@ -544,7 +544,7 @@ $(function(){
 		if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
 		{
 			if($Obj->throw)
-				throw new EE(static::$Language['no_upload_path'],EE::INFO);
+				throw new EE(static::$Language['no_upload_path'],EE::ENV);
 			else
 				$Obj->errors[]='NO_UPLOAD_PATH';
 			return;

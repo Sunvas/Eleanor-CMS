@@ -34,12 +34,12 @@ if(isset($Eleanor->module['navigation']))
 			$submenu='';
 			foreach($v['submenu'] as &$subhref)
 				if($subhref)
-					$submenu.='<li><a href="'.$subhref[0].'"'.($subhref['act'] ? ' class="active"' : '').(isset($subhref['addon']) ? ' '.$subhref['addon'] : '').'><span>'.$subhref[1].'</span></a></li>';
+					$submenu.='<li><a href="'.$subhref[0].'"'.($subhref['act'] ? ' class="active"' : '').(isset($subhref['extra']) ? ' '.$subhref['extra'] : '').'><span>'.$subhref[1].'</span></a></li>';
 			if($submenu)
 				$submenu='<ul class="submenu">'.$submenu.'</ul>';
 		}
 		$image=isset($v[2]) ? '<img src="'.Eleanor::$Template->default['theme'].'images/'.$v[2].'.png" alt="" />' : '';
-		$c.='<li><a href="'.$v[0].'"'.(empty($v['act']) ? '' : ' class="active"').(isset($v['addon']) ? Eleanor::TagParams($v['addon']) : '').' title="'.$v[1].'"><span>'.$image.$v[1].'</span></a>'.$submenu.'</li>';
+		$c.='<li><a href="'.$v[0].'"'.(empty($v['act']) ? '' : ' class="active"').(isset($v['extra']) ? Eleanor::TagParams($v['extra']) : '').' title="'.$v[1].'"><span>'.$image.$v[1].'</span></a>'.$submenu.'</li>';
 	}
 $ref=getenv('HTTP_REFERER');
 if($ref)

@@ -354,7 +354,7 @@ $(function(){
 				'title'=>Eleanor::Edit('title',$values['title'],array('tabindex'=>1)),
 				'descr'=>Eleanor::Text('descr',$values['descr'],array('tabindex'=>2)),
 			);
-		$addon=$id && $values['protected'] ? array('disabled'=>'disabled') : array();
+		$extra=$id && $values['protected'] ? array('disabled'=>true) : array();
 		$lang=Eleanor::$Language['settings'];
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()
@@ -362,9 +362,9 @@ $(function(){
 			->item(array($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null),'imp'=>true))
 			->item($ltpl['descr'],Eleanor::$Template->LangEdit($ml['descr'],null))
 			->item(array($lang['pos'],Eleanor::Edit('pos',$values['pos'],array('tabindex'=>3)),'tip'=>$lang['pos_']))
-			->item(array($lang['keyw_g'],Eleanor::Edit('keyword',$values['keyword'],array('tabindex'=>4)+$addon),'imp'=>true))
-			->item(array($lang['priv_name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>5)+$addon),'imp'=>true))
-			->item($lang['prot_g'],Eleanor::Check('protected',$values['protected'],array('tabindex'=>6)+$addon));
+			->item(array($lang['keyw_g'],Eleanor::Edit('keyword',$values['keyword'],array('tabindex'=>4)+$extra),'imp'=>true))
+			->item(array($lang['priv_name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>5)+$extra),'imp'=>true))
+			->item($lang['prot_g'],Eleanor::Check('protected',$values['protected'],array('tabindex'=>6)+$extra));
 
 		if(Eleanor::$vars['multilang'])
 			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$mchecks,null,4));
@@ -431,7 +431,7 @@ $(function(){
 
 		$ltpl=Eleanor::$Language['tpl'];
 		$lang=Eleanor::$Language['settings'];
-		$addon=$id && $values['protected'] ? array('disabled'=>'disabled') : array();
+		$extra=$id && $values['protected'] ? array('disabled'=>true) : array();
 		if($back)
 			$back=Eleanor::Control('back','hidden',$back);
 		$langs=array();
@@ -446,11 +446,11 @@ $(function(){
 			->begin()
 			->item(array($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null),'imp'=>true))
 			->item($ltpl['descr'],Eleanor::$Template->LangEdit($ml['descr'],null))
-			->item(array($lang['group'],Eleanor::Select('group',$grs,array('tabindex'=>3)+$addon),'imp'=>true))
+			->item(array($lang['group'],Eleanor::Select('group',$grs,array('tabindex'=>3)+$extra),'imp'=>true))
 			->item($lang['beg_subg'],Eleanor::$Template->LangEdit($ml['startgroup'],null))
 			->item(array($lang['pos'],Eleanor::Edit('pos',$values['pos'],array('tabindex'=>5)),'tip'=>$lang['pos_']))
-			->item($lang['priv_name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>6)+$addon))
-			->item($lang['prot_o'],Eleanor::Check('protected',$values['protected'],array('tabindex'=>7)+$addon));
+			->item($lang['priv_name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>6)+$extra))
+			->item($lang['prot_o'],Eleanor::Check('protected',$values['protected'],array('tabindex'=>7)+$extra));
 
 		if(Eleanor::$vars['multilang'])
 			$Lst->item(array($lang['multilang'],Eleanor::Check('multilang',$values['multilang'],array('onclick'=>'ChangeMultilang()','id'=>'multilang','tabindex'=>7)),'descr'=>$lang['multilang_']))
@@ -459,7 +459,7 @@ $(function(){
 		$general=(string)$Lst->end();
 
 		$evals=(string)$Lst->begin()
-			->item(array($lang['eval_load'],'descr'=>sprintf($lang['inc_vars'],'$co,$Obj'),Eleanor::Text('eval_load',$values['eval_load'],$addon+array('style'=>'width:100%')).'<br /><a href="#" onclick="$(this).next(\'div\').toggle();return false">'.$lang['op_example'].'</a><div style="display:none">'.Eleanor::Text('_','if($a[\'multilang\'])
+			->item(array($lang['eval_load'],'descr'=>sprintf($lang['inc_vars'],'$co,$Obj'),Eleanor::Text('eval_load',$values['eval_load'],$extra+array('style'=>'width:100%')).'<br /><a href="#" onclick="$(this).next(\'div\').toggle();return false">'.$lang['op_example'].'</a><div style="display:none">'.Eleanor::Text('_','if($a[\'multilang\'])
 	foreach($a[\'value\'] as &$v)
 	{
 		#Your code...
@@ -471,7 +471,7 @@ else
 		#$a[\'value\']-=10;
 }
 return $a;',array('style'=>'width:100%','readonly'=>'readonly')).'</div>'))
-			->item(array($lang['eval_save'],'descr'=>sprintf($lang['inc_vars'],'$co,$Obj'),Eleanor::Text('eval_save',$values['eval_save'],$addon+array('style'=>'width:100%')).'<a href="#" onclick="$(this).next(\'div\').toggle();return false">'.$lang['op_example'].'</a><div style="display:none">'.Eleanor::Text('_','if($a[\'multilang\'])
+			->item(array($lang['eval_save'],'descr'=>sprintf($lang['inc_vars'],'$co,$Obj'),Eleanor::Text('eval_save',$values['eval_save'],$extra+array('style'=>'width:100%')).'<a href="#" onclick="$(this).next(\'div\').toggle();return false">'.$lang['op_example'].'</a><div style="display:none">'.Eleanor::Text('_','if($a[\'multilang\'])
 	foreach($a[\'value\'] as &$v)
 	{
 		#Your code...

@@ -34,7 +34,7 @@ class AccountLogin
 				switch($error)
 				{
 					case'TEMPORARILY_BLOCKED':
-						$errors['TEMPORARILY_BLOCKED']=sprintf($lang['TEMPORARILY_BLOCKED'],round($E->addon['remain']/60));
+						$errors['TEMPORARILY_BLOCKED']=sprintf($lang['TEMPORARILY_BLOCKED'],round($E->extra['remain']/60));
 					break;
 					case'CAPTCHA':
 						$errors[]='ENTER_CAPTCHA';

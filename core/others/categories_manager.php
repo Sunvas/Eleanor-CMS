@@ -156,7 +156,7 @@ class Categories_Manager extends Categories
 	}
 
 	public function Controls()
-	{
+	{		$THIS=$this;#PHP 5.4 Убрать этот костыль
 		return array(
 			'parent'=>array(
 				'title'=>$this->Language['parent'],
@@ -165,13 +165,13 @@ class Categories_Manager extends Categories
 				'bypost'=>&$this->post,
 				'options'=>array(
 					'exclude'=>0,
-					'callback'=>function($a)
+					'callback'=>function($a)use($THIS)
 					{
-						if(!isset($this->dump))
-							$this->Init($this->table);
-						return Eleanor::Option('&mdash;',0,in_array(0,$a['value']),array(),2).$this->GetOptions($a['value'],$a['options']['exclude']);
+						if(!isset($THIS->dump))
+							$THIS->Init($THIS->table);
+						return Eleanor::Option('&mdash;',0,in_array(0,$a['value']),array(),2).$THIS->GetOptions($a['value'],$a['options']['exclude']);
 					},
-					'addon'=>array(
+					'extra'=>array(
 						'tabindex'=>1
 					),
 				),
@@ -182,9 +182,9 @@ class Categories_Manager extends Categories
 				'bypost'=>&$this->post,
 				'options'=>array(
 					'content'=>false,
-					'save'=>function($a,$Obj,$controls)
+					'save'=>function($a,$Obj,$controls)use($THIS)
 					{
-						$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$this->table.'` WHERE `id`='.(int)$controls['parent'].' LIMIT 1');
+						$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$THIS->table.'` WHERE `id`='.(int)$controls['parent'].' LIMIT 1');
 						if($a=$R->fetch_assoc())
 							return$a['parents'] ? $a['parents'].$a['id'].',' : $a['id'].',';
 						return'';
@@ -195,23 +195,23 @@ class Categories_Manager extends Categories
 				'title'=>$this->Language['name'],
 				'descr'=>'',
 				'type'=>'edit',
-				'check'=>function($value)
+				'check'=>function($value)use($THIS)
 				{					$errors=array();
 					if(Eleanor::$vars['multilang'])
 						foreach($value as $k=>&$v)
 						{
 							if($v=='')
-								$errors[]=$this->Language['EMPTY_TITLE']($k);
+								$errors[]=$THIS->Language['EMPTY_TITLE']($k);
 						}
 					elseif($value=='')
-						$errors[]=$this->Language['EMPTY_TITLE']();
+						$errors[]=$THIS->Language['EMPTY_TITLE']();
 					return$errors;
 				},
 				'bypost'=>&$this->post,
 				'multilang'=>Eleanor::$vars['multilang'],
 				'options'=>array(
 					'htmlsafe'=>true,
-					'addon'=>array(
+					'extra'=>array(
 						'tabindex'=>2
 					),
 				),
@@ -226,7 +226,7 @@ class Categories_Manager extends Categories
 					'htmlsafe'=>true,
 					'4alt'=>'title',
 				),
-				'addon'=>array(
+				'extra'=>array(
 					'no'=>array('tabindex'=>3)
 				),
 			),
@@ -238,7 +238,7 @@ class Categories_Manager extends Categories
 				'multilang'=>Eleanor::$vars['multilang'],
 				'options'=>array(
 					'htmlsafe'=>true,
-					'addon'=>array(
+					'extra'=>array(
 						'tabindex'=>4,
 						'maxlength'=>150,
 					),
@@ -252,7 +252,7 @@ class Categories_Manager extends Categories
 				'multilang'=>Eleanor::$vars['multilang'],
 				'options'=>array(
 					'htmlsafe'=>true,
-					'addon'=>array(
+					'extra'=>array(
 						'tabindex'=>5,
 						'maxlength'=>150,
 					),
@@ -266,7 +266,7 @@ class Categories_Manager extends Categories
 				'multilang'=>Eleanor::$vars['multilang'],
 				'options'=>array(
 					'htmlsafe'=>true,
-					'addon'=>array(
+					'extra'=>array(
 						'tabindex'=>6,
 					),
 				),
@@ -277,9 +277,9 @@ class Categories_Manager extends Categories
 				'type'=>'select',
 				'bypost'=>&$this->post,
 				'options'=>array(
-					'callback'=>function($a)
+					'callback'=>function($a)use($THIS)
 					{
-						$path=Eleanor::$root.$this->imgfolder;
+						$path=Eleanor::$root.$THIS->imgfolder;
 						$sel=Eleanor::Option('&mdash;','',in_array('',$a['value']),array(),2);
 						$files=glob($path.'*.{jpg,jpeg,bmp,ico,gif,png}',GLOB_BRACE | GLOB_MARK);
 						foreach($files as $v)
@@ -291,7 +291,7 @@ class Categories_Manager extends Categories
 						}
 						return$sel;
 					},
-					'addon'=>array(
+					'extra'=>array(
 						'tabindex'=>7,
 						'data-path'=>$this->imgfolder,
 						'id'=>'image',
@@ -324,7 +324,7 @@ class Categories_Manager extends Categories
 				'bypost'=>&$this->post,
 				'options'=>array(
 					'htmlsafe'=>true,
-					'addon'=>array(
+					'extra'=>array(
 						'tabindex'=>8,
 					),
 				),

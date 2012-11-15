@@ -18,7 +18,7 @@ Eleanor::LoadOptions('site');
 ApplyLang();
 
 if(Eleanor::$Permissions->IsBanned())
-	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::BAN);
+	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::USER,array('ban'=>'group'));
 
 #Флеш любит все переводить в UTF-8
 if(isset($_REQUEST['flashdecode']) and CHARSET!='utf-8')

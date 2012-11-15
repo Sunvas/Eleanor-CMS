@@ -8,7 +8,7 @@
 	=====
 	*Pseudonym
 */
-abstract class OwnBbCode extends BaseClass
+class OwnBbCode extends BaseClass
 {	const
 		SINGLE=false;
 
@@ -16,8 +16,9 @@ abstract class OwnBbCode extends BaseClass
 	{
 		return Eleanor::$Template->RestrictedSection(Eleanor::$Language['ownbb']['restrict']);
 	}
-#Если случается ошибка типа Error: Class 'Eleanor' not found Line: 21 in file ownbb.php - закомментируйте следующую строку
-	abstract public static function PreDisplay($t,$p,$c,$cu);
+
+	public static function PreDisplay($t,$p,$c,$cu)
+	{		return __class__;	}
 
 	public static function PreEdit($t,$p,$ct,$cu,$se=self::SINGLE)
 	{

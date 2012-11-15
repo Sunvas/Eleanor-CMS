@@ -26,7 +26,7 @@ CREATE TABLE `{$prefix}blocks_groups` (
 `id` mediumint(8) unsigned NOT NULL,
 `blocks` text NOT NULL,
 `places` text NOT NULL,
-`addon` text NOT NULL,
+`extra` text NOT NULL,
 PRIMARY KEY (`id`),
 FOREIGN KEY (`id`) REFERENCES `{$prefix}blocks_ids` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=".DB_CHARSET;
@@ -482,7 +482,7 @@ CREATE TABLE `{$prefix}sessions` (
 `browser` varchar(200) NOT NULL,
 `location` varchar(150) NOT NULL,
 `name` varchar(25) NOT NULL,
-`addon` varchar(100) NOT NULL,
+`extra` varchar(100) NOT NULL,
 PRIMARY KEY  (`ip_guest`,`user_id`,`service`),
 KEY `expire` (`expire`),
 KEY `st` (`service`,`type`),
@@ -653,7 +653,7 @@ CREATE TABLE `{$prefix}users` (
 `pass_hash` varchar(32) NOT NULL,
 `register` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 `last_visit` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-`ban_date` timestamp default NULL DEFAULT '0000-00-00 00:00:00',
+`banned_until` timestamp default NULL DEFAULT '0000-00-00 00:00:00',
 `ban_explain` text NOT NULL,
 `language` varchar(30) NOT NULL,
 `staticip` tinyint NOT NULL,

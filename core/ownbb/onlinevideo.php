@@ -32,7 +32,7 @@ class OwnBbCode_onlinevideo extends OwnBbCode
 		}
 
 		#RuTube
-		if(preg_match('#v=([a-f0-9]{32})#i',$c,$m)>0)
+		if(preg_match('#v=([a-f0-9]{32})#i',$c,$m)>0 or preg_match('#video/([a-f0-9]{32})#i',$c,$m)>0)
 		{
 			$w=isset($p['width']) ? (int)$p['width'] : 470;
 			$h=isset($p['height']) ? (int)$p['height'] : 353;

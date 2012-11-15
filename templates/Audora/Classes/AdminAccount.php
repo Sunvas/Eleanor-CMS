@@ -94,7 +94,7 @@ class TPLAdminAccount
 				$Lst->item(
 					'<a href="'.$v['_aedit'].'">'.$v['name'].'</a>'.($v['name']==$v['full_name'] ? '' : '<br /><i>'.$v['full_name'].'</i>').(in_array($k,$sletters) ? '<br /><b style="color:green">'.$lang['lettersent'].'</b>' : ''),
 					array($v['email'],'center'),
-					array($v['ip'],'center','href'=>'http://eleanor-cms.ru/whois/'.$v['ip'],'hrefaddon'=>array('target'=>'_blank')),
+					array($v['ip'],'center','href'=>'http://eleanor-cms.ru/whois/'.$v['ip'],'hrefextra'=>array('target'=>'_blank')),
 					$Lst('func',
 						array($v['_aact'],$ltpl['activate'],$images.'active.png'),
 						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),

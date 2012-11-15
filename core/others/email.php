@@ -78,11 +78,11 @@ class Email
 
 		switch($this->method)
 		{			case'mail':				if(!mail(join(', ',$a['to']),$subject,null,$headers))
-					throw new EE('MAIL',EE::ALT);
+					throw new EE('MAIL',EE::UNIT);
 			break;
 			case'smtp':
 				if(!$socket=fsockopen($this->smtp_host,$this->smtp_port,$errno,$errstr,30))
-					throw new EE('SMTP error #'.$errno.': '.$errstr,EE::ALT);
+					throw new EE('SMTP error #'.$errno.': '.$errstr,EE::UNIT);
 				$error=true;
 				do
 				{
@@ -127,11 +127,11 @@ class Email
 				}while(false);
 				if($error)
 				{					fclose($socket);
-					throw new EE('SMTP',EE::ALT);
+					throw new EE('SMTP',EE::UNIT);
 				}
 			break;
 			default:
-				throw new EE('NO_METHOD',EE::ALT);
+				throw new EE('NO_METHOD',EE::DEV);
 		}
 		return true;
 	}

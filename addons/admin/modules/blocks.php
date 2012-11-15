@@ -324,7 +324,7 @@ else
 			$values['id']=$gid;
 			$values['blocks']=$values['blocks'] ? serialize($values['blocks']) : '';
 			$values['places']=$values['places'] ? serialize($values['places']) : '';
-			$values['addon']=$values['addon'] ? serialize($values['addon']) : '';
+			$values['extra']=$values['extra'] ? serialize($values['extra']) : '';
 			Eleanor::$Db->Replace(P.'blocks_groups',$values);
 		}
 		elseif(isset(Eleanor::$services[$gid]))
@@ -367,12 +367,12 @@ function ShowGroup($gid,$errors=array(),$saved=false)
 	{
 		if($isi)
 		{
-			$R=Eleanor::$Db->Query('SELECT `blocks`,`places`,`addon` FROM `'.P.'blocks_groups` WHERE `id`='.$gid.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `blocks`,`places`,`extra` FROM `'.P.'blocks_groups` WHERE `id`='.$gid.' LIMIT 1');
 			if($group=$R->fetch_assoc())
 			{
 				$group['blocks']=$group['blocks'] ? (array)unserialize($group['blocks']) : array();
 				$group['places']=$group['places'] ? (array)unserialize($group['places']) : array();
-				$group['addon']=$group['addon'] ? (array)unserialize($group['addon']) : array();
+				$group['extra']=$group['extra'] ? (array)unserialize($group['extra']) : array();
 			}
 		}
 		else
@@ -389,12 +389,12 @@ function ShowGroup($gid,$errors=array(),$saved=false)
 			if($similar)
 				if(is_int($similar))
 				{
-					$R=Eleanor::$Db->Query('SELECT `places`,`addon` FROM `'.P.'blocks_groups` WHERE `id`='.$similar.' LIMIT 1');
+					$R=Eleanor::$Db->Query('SELECT `places`,`extra` FROM `'.P.'blocks_groups` WHERE `id`='.$similar.' LIMIT 1');
 					if($group=$R->fetch_assoc())
 					{
 						$group['blocks']=$group['blocks'] ? (array)unserialize($group['blocks']) : array();
 						$group['places']=$group['places'] ? (array)unserialize($group['places']) : array();
-						$group['addon']=$group['addon'] ? (array)unserialize($group['addon']) : array();
+						$group['extra']=$group['extra'] ? (array)unserialize($group['extra']) : array();
 						break;
 					}
 				}
@@ -417,7 +417,7 @@ function ShowGroup($gid,$errors=array(),$saved=false)
 		}while(false);
 	}
 
-	$group+=array('blocks'=>array(),'places'=>array(),'addon'=>array(),);
+	$group+=array('blocks'=>array(),'places'=>array(),'extra'=>array(),);
 
 	$blocks=$tosort=$preids=array();
 	$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.P.'blocks` INNER JOIN `'.P.'blocks_l` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') ORDER BY `title` ASC');
@@ -489,7 +489,7 @@ function SaveGroupValues()
 			if(isset($group['blocks'][$k]))
 				$group['blocks'][$k]=(array)$v;
 
-	$group['addon']=isset($_POST['addon']) && is_array($_POST['addon']) ? $_POST['addon'] : array();
+	$group['extra']=isset($_POST['extra']) && is_array($_POST['extra']) ? $_POST['extra'] : array();
 	return$group;
 }
 

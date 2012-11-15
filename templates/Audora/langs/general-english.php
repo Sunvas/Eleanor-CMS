@@ -1,16 +1,6 @@
 <?php
 return array(
-	#For /addons/admin/modules/section_general.php
-	'server_info'=>'Server Information',
-	'logs'=>'Logs',
-	'viewing_log'=>'Viewing log file  &quot;&s&quot;',
-	'log_error'=>'Log error code',
-	'log_except'=>'Log exception',
-	'log_esite'=>'Error log on the site',
-	'log_db'=>'Log errors DB',
-	'license_'=>'License and sanctions',
-
-	#For template
+	#For classes/General.php
 	'install_nd'=>'Install folder is still not deleted! For security reasons, it should be removed as soon as possible.',
 	'thanks'=>'Thank you for choosing Eleanor CMS!',
 	'thanks_'=>'We hope that with the help of CMS Eleanor, you can create a successful website. System capabilities are not limited! In this you can see by visiting our <a href="http://eleanor-cms.ru/store/" target="_blank">shop</a>. For help you can visit the <a href="http://eleanor-cms.ru/forum/" target="_blank">forum</a>. About the identified error is reported in the <a href="http://eleanor-cms.ru/bugtracker/" target="_blank">bugtracker</a> project. The latest version of Eleanor CMS you can always download from <a href="http://eleanor-cms.ru/" target="_blank">official site</a> in section <a href="http://eleanor-cms.ru/download/" target="_blank">download</a>.<br />You can also <a href="http://eleanor-cms.ru/donate/" target="_blank">donate Eleanor CMS project</a>.<br /><br />Sincerely, developers Eleanor CMS.',
@@ -46,9 +36,9 @@ return array(
 	'download_log'=>'Download log',
 	'delete_log'=>'Delete log',
 	'nologs'=>'Logs no. The site is fine',
-	'logs_size'=>'The volume of logs folder: ',
 	'empty'=>'empty',
 	'license'=>'License',
 	'sanctions'=>'Sanctions',
 	'print'=>'Printable version',
+	'fixed'=>'Fixed',
 );

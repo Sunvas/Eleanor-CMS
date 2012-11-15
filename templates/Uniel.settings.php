@@ -30,7 +30,7 @@ LICENSE
 			'default'=>'значение по-умолчанию',
 			'type'=>'edit',
 			'options'=>array(
-				'addon'=>array('tabindex'=>1)
+				'extra'=>array('tabindex'=>1)
 			),
 		),
 		'param2'=>array(
@@ -39,7 +39,7 @@ LICENSE
 			'default'=>'значение по-умолчанию',
 			'type'=>'text',
 			'options'=>array(
-				'addon'=>array('tabindex'=>2),
+				'extra'=>array('tabindex'=>2),
 			),
 		),
 		'param3'=>array(
@@ -47,7 +47,7 @@ LICENSE
 			'descr'=>'описание текстового редактора',
 			'default'=>'значение по-умолчанию',
 			'type'=>'editor',
-			'addon'=>array(
+			'extra'=>array(
 				'no'=>array('tabindex'=>3),
 			)
 		),
@@ -58,7 +58,7 @@ LICENSE
 			'default'=>1,
 			'options'=>array(
 				'options'=>array(1,2,3,4,5),
-				'addon'=>array('tabindex'=>4),
+				'extra'=>array('tabindex'=>4),
 			),
 			'type'=>'select',
 		),
@@ -68,7 +68,7 @@ LICENSE
 			'default'=>2,
 			'options'=>array(
 				'options'=>array(1,2,3,4,5),
-				'addon'=>array('tabindex'=>5),
+				'extra'=>array('tabindex'=>5),
 			),
 			'type'=>'item',
 		),
@@ -78,7 +78,7 @@ LICENSE
 			'default'=>array(0,1,2),
 			'options'=>array(
 				'options'=>array(1,2,3,4,5),
-				'addon'=>array('tabindex'=>6),
+				'extra'=>array('tabindex'=>6),
 			),
 			'type'=>'items',
 		),
@@ -89,7 +89,7 @@ LICENSE
 			'default'=>true,
 			'type'=>'check',
 			'options'=>array(
-				'addon'=>array('tabindex'=>7),
+				'extra'=>array('tabindex'=>7),
 			),
 		),
 		'param9'=>array(

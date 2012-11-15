@@ -646,7 +646,7 @@ class Settings extends BaseClass
 								}
 								catch(EE$E)
 								{
-									$errors[$v['id']][$lng]=isset($E->addon['code']) && $E->addon['code']==1 ? $lang['error_in_code'] : $E->getMessage();
+									$errors[$v['id']][$lng]=isset($E->extra['code']) && $E->extra['code']==1 ? $lang['error_in_code'] : $E->getMessage();
 								}
 								if(!isset($errors[$v['id']][$lng]))
 								{
@@ -672,7 +672,7 @@ class Settings extends BaseClass
 							}
 							catch(EE$E)
 							{
-								$errors[$v['id']]=(isset($E->addon['code']) and $E->addon['code']==1) ? $lang['error_in_code'] : $E->getMessage();
+								$errors[$v['id']]=(isset($E->extra['code']) and $E->extra['code']==1) ? $lang['error_in_code'] : $E->getMessage();
 							}
 							if(!isset($errors[$v['id']]))
 							{
@@ -762,10 +762,10 @@ class Settings extends BaseClass
 			case'options':
 				$this->a_move=false;
 				if(!$this->a_opts)
-					throw new EE($lang['nooptions'],EE::INFO);
+					throw new EE($lang['nooptions'],EE::DEV);
 				$R=Eleanor::$Db->Query('SELECT * FROM `'.P.'config` INNER JOIN `'.P.'config_l` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `id`'.Eleanor::$Db->In($this->a_opts));
 				if($R->num_rows==0)
-					throw new EE($lang['nooptions'],EE::INFO);
+					throw new EE($lang['nooptions'],EE::DEV);
 				$a=array();
 				while($temp=$R->fetch_assoc())
 					$this->PreControls($a,$temp);
@@ -871,7 +871,7 @@ class Settings extends BaseClass
 
 	protected function ShowListOptions(array$a,$gshow=true,$group=0,$error='')
 	{
-		$controls=$langs=$errors=array();
+		$controls=$langs=$errors=$values=array();
 		$word=isset($_POST['search']) ? (string)Eleanor::$POST['search'] : false;
 		$El=Eleanor::getInstance();
 		$cnt=count($a);
@@ -1041,7 +1041,7 @@ class Settings extends BaseClass
 		}
 		catch(Exception $E)
 		{
-			throw new EE(sprintf($lang['incorrect_s_file'],$E->getMessage()),EE::INFO,array('code'=>$E->getCode()));
+			throw new EE(sprintf($lang['incorrect_s_file'],$E->getMessage()),EE::UNIT,array('code'=>$E->getCode()));
 		}
 
 		$version=$S->attributes();
@@ -1075,7 +1075,7 @@ class Settings extends BaseClass
 				foreach($temp as $k=>$v)
 					$attrs[$k]=(string)$v;
 				if(empty($attrs['name']))
-					throw new EE($lang['im_nogrname'],EE::INFO);
+					throw new EE($lang['im_nogrname'],EE::UNIT);
 				$attrs+=array(
 					'protected'=>0,
 					'keyword'=>$attrs['name'],
@@ -1120,7 +1120,7 @@ class Settings extends BaseClass
 				foreach($temp as $k=>$v)
 					$attrs[$k]=(string)$v;
 				if(empty($attrs['name']))
-					throw new EE($lang['im_noopname'],EE::INFO);
+					throw new EE($lang['im_noopname'],EE::UNIT);
 				$attrs+=array(
 					'protected'=>0,
 					'onexists'=>'ignore',

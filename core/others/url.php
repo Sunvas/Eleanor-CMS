@@ -9,7 +9,9 @@
 	*Pseudonym
 */
 class Url extends BaseClass
-{	public
+{	public static
+		$curpage;#Текущая ссылка
+	public
 		$s_prefix,#Префикс всех УРЛов в статике
 		$d_prefix='?',#Префикс всех УРЛов в динамике
 		$delimiter='/',#Символ, или последовательсность символов для разделения параметров в статике
@@ -229,17 +231,14 @@ class Url extends BaseClass
 	public function __construct($qs=false)
 	{
 		if($qs===false)
-			$qs=isset($_SERVER['REDIRECT_QUERY_STRING']) ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
-		if(strpos($qs,'!')===0)
 		{
+			$qs=isset($_SERVER['REDIRECT_QUERY_STRING']) ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
+			$qs.='&';
+		}
+		if(strpos($qs,'!')===0 and false!==$ap=strpos($qs,'!&'))
+		{
+			$qs=substr($qs,0,$ap);
 			$qs=substr($qs,1);
-			$ap=strpos($qs,'!&');
-
-			if($ap!==false)
-				$qs=substr($qs,0,$ap);
-			elseif(preg_match('#.*!$#',$qs)>0)
-				$qs=substr($qs,0,-1);
-
 			$this->string=static::Decode($qs);
 			$this->is_static=true;
 		}
@@ -282,3 +281,13 @@ class Url extends BaseClass
 		return join($o['delim'],$r);
 	}
 }
+
+Url::$curpage=isset($_SERVER['REDIRECT_QUERY_STRING']) ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
+Url::$curpage.='&';
+if(strpos(Url::$curpage,'!')===0 and strpos(Url::$curpage,'!&')!==false)
+{	Url::$curpage=str_replace('!&','?',ltrim(Url::$curpage,'!'));
+	Url::$curpage=rtrim(Url::$curpage,'?&');
+	Url::$curpage=Url::Decode(Url::$curpage);
+}
+else
+	Url::$curpage=substr($_SERVER['REQUEST_URI'],strlen(Eleanor::$site_path));

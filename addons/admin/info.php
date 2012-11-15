@@ -184,5 +184,14 @@ $info=array(
 			'ajax'=>'autocomplete.php',
 		),
 	),
+	'misc'=>array(
+		'title'=>'Misc',
+		'descr'=>'',
+		'image'=>'',
+		'hidden'=>true,
+		'services'=>array(
+			'ajax'=>'misc_ajax.php',
+		),
+	),
 );
 uasort($info,create_function('$a,$b','return strcmp($a[\'title\'],$b[\'title\']);'));

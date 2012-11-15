@@ -32,7 +32,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'options'=>array(-1=>$lang['nogender'],$lang['female'],$lang['male']),
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>15,
 			),
 		),
@@ -44,7 +44,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>16,
 			),
 		),
@@ -56,7 +56,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>17,
 			),
 		),
@@ -68,7 +68,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>18,
 			),
 		),
@@ -88,7 +88,7 @@ $Eleanor->us=array(
 		'options'=>array(
 			'type'=>'url',
 			'htmlsafe'=>false,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>19,
 			),
 		),
@@ -98,7 +98,7 @@ $Eleanor->us=array(
 		'descr'=>'',
 		'type'=>'editor',
 		'bypost'=>&$Eleanor->us_post,
-		'addon'=>array(
+		'extra'=>array(
 			'no'=>array('tabindex'=>20)
 		)
 	),
@@ -110,7 +110,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>21,
 			),
 		),
@@ -122,7 +122,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>22,
 			),
 		),
@@ -142,7 +142,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>23,
 			),
 		),
@@ -155,7 +155,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>24,
 			),
 		),
@@ -168,7 +168,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>25,
 			),
 		),
@@ -180,7 +180,7 @@ $Eleanor->us=array(
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>26,
 			),
 		),
@@ -207,7 +207,7 @@ $Eleanor->us=array(
 					}
 				return$templates;
 			},
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>27,
 			),
 		),
@@ -222,7 +222,7 @@ $Eleanor->us=array(
 			{
 				return array(''=>$lang['by_default'])+$GLOBALS['Eleanor']->Editor->editors;
 			},
-			'addon'=>array(
+			'extra'=>array(
 				'tabindex'=>28,
 			),
 		),
@@ -237,7 +237,7 @@ $Eleanor->gp=array(
 		'type'=>'check',
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
-			'addon'=>array('onclick'=>'if(this.checked) return confirm(\''.$langg['are_you_sure'].'\')'),
+			'extra'=>array('onclick'=>'if(this.checked) return confirm(\''.$langg['are_you_sure'].'\')'),
 		),
 	),
 	'banned'=>array(
@@ -285,7 +285,6 @@ $Eleanor->gp=array(
 		'bypost'=>&$Eleanor->us_post,
 		'type'=>'edit',
 		'default'=>0,
-		'addon'=>'',
 	),
 );
 
@@ -930,7 +929,7 @@ function AddEdit($id,$error='')
 			'_group'=>GROUP_USER,
 			'groups'=>array(),
 			'language'=>'',
-			'ban_date'=>'',
+			'banned_until'=>'',
 			'ban_explain'=>'',
 			'staticip'=>false,
 			'last_visit'=>'',
@@ -962,7 +961,7 @@ function AddEdit($id,$error='')
 		$values['email']=isset($_POST['email']) ? (string)$_POST['email'] : '';
 		$values['_group']=isset($_POST['_group']) ? (int)$_POST['_group'] : '';
 		$values['groups']=isset($_POST['groups']) ? (array)$_POST['groups'] : array();
-		$values['ban_date']=isset($_POST['ban_date']) ? (string)$_POST['ban_date'] : '';
+		$values['banned_until']=isset($_POST['banned_until']) ? (string)$_POST['banned_until'] : '';
 		$values['ban_explain']=isset($_POST['ban_explain']) ? (string)$_POST['ban_explain'] : '';
 		$values['language']=isset($_POST['language']) ? (string)$_POST['language'] : '';
 		$values['timezone']=isset($_POST['timezone']) ? (string)$_POST['timezone'] : '';
@@ -1042,19 +1041,19 @@ function Save($id)
 		'name'=>isset($_POST['name']) ? (string)$_POST['name'] : '',
 		'email'=>empty($_POST['email']) ? null : (string)$_POST['email'],
 		'groups'=>isset($_POST['groups']) ? (array)$_POST['groups'] : array(),
-		'ban_date'=>isset($_POST['ban_date']) ? (string)$_POST['ban_date'] : '',
+		'banned_until'=>isset($_POST['banned_until']) ? (string)$_POST['banned_until'] : '',
 		'ban_explain'=>$Eleanor->Editor_result->GetHtml('ban_explain'),
 		'language'=>isset($_POST['language']) ? (string)$_POST['language'] : '',
 		'staticip'=>isset($_POST['staticip']),
 		'timezone'=>isset($_POST['timezone']) ? (string)$_POST['timezone'] : '',
 	);
 
-	if($values['ban_date'] and false===strtotime($values['ban_date']))
+	if($values['banned_until'] and false===strtotime($values['banned_until']))
 		$errors[]='ERROR_BANDATE';
-	if(!$values['ban_date'])
-		$values['ban_date']=null;
+	if(!$values['banned_until'])
+		$values['banned_until']=null;
 
-	$addon=array(
+	$extra=array(
 		'_group'=>isset($_POST['_group']) ? (int)$_POST['_group'] : 0,
 		'_slnew'=>isset($_POST['_slnew']),
 		'_slname'=>isset($_POST['_slname']),
@@ -1067,14 +1066,14 @@ function Save($id)
 		'avatar'=>isset($_POST['avatar_location']) ? (string)$_POST['avatar_location'] : '',
 	);
 
-	if($addon['pass'] and $addon['pass']!=$addon['pass2'])
+	if($extra['pass'] and $extra['pass']!=$extra['pass2'])
 		$errors[]='PASSWORD_MISMATCH';
 
-	if($k=array_keys($values['groups'],$addon['_group']))
+	if($k=array_keys($values['groups'],$extra['_group']))
 		foreach($k as &$v)
 			unset($values['groups'][$v]);
-	array_unshift($values['groups'],$addon['_group']);
-	if($addon['_cleanfla'])
+	array_unshift($values['groups'],$extra['_group']);
+	if($extra['_cleanfla'])
 		$values['failed_logins']='';
 
 	$C->arrname=array('avatar');
@@ -1085,7 +1084,7 @@ function Save($id)
 		$oldavatar=$R->fetch_assoc();
 	}
 
-	if($addon['_atype']=='upload')
+	if($extra['_atype']=='upload')
 		try
 		{
 			$avatar=$C->SaveControl($Eleanor->avatar+array('value'=>isset($oldavatar) && $oldavatar['avatar_type']=='upload' && $oldavatar['avatar_location'] ? Eleanor::$uploads.'/avatars/'.$oldavatar['avatar_location'] : ''));
@@ -1095,9 +1094,9 @@ function Save($id)
 			return AddEdit($id,array('ERROR'=>$E->getMessage()));
 		}
 	else
-		$avatar=$addon['avatar'];
+		$avatar=$extra['avatar'];
 
-	if($addon['_atype']=='upload' and $avatar)
+	if($extra['_atype']=='upload' and $avatar)
 		$atype=strpos($avatar,'://')===false ? 'upload' : 'url';
 	else
 		$atype=$avatar ? 'local' : '';
@@ -1108,11 +1107,11 @@ function Save($id)
 	if($atype=='local' and $avatar)
 		$avatar=preg_replace('#^images/avatars/#','',$avatar);
 
-	foreach($addon['_overskip'] as $k=>&$v)
+	foreach($extra['_overskip'] as $k=>&$v)
 		if($v=='inherit' and isset($overload[$k]))
-			unset($overload[$k],$addon['_overskip'][$k]);
+			unset($overload[$k],$extra['_overskip'][$k]);
 
-	$values['groups_overload']=$overload ? serialize(array('method'=>$addon['_overskip'],'value'=>$overload)) : '';
+	$values['groups_overload']=$overload ? serialize(array('method'=>$extra['_overskip'],'value'=>$overload)) : '';
 
 	$letterlang=$values['language'] ? $values['language'] : Language::$main;
 
@@ -1126,14 +1125,14 @@ function Save($id)
 			return GoAway();
 
 		$isf=is_file($f=Eleanor::$root.'addons/admin/letters/users-'.$letterlang.'.php');
-		$cansend=$values['email'] && ($addon['_slname'] or $addon['_slpass']) && $isf && ($l=include($f)) && is_array($l);
+		$cansend=$values['email'] && ($extra['_slname'] or $extra['_slpass']) && $isf && ($l=include($f)) && is_array($l);
 
-		if($addon['pass'])
-			$values['_password']=$addon['pass'];
+		if($extra['pass'])
+			$values['_password']=$extra['pass'];
 		try
 		{
 			UserManager::Update($values,$id);
-			if($cansend and $old['name']!=$values['name'] and $addon['_slname'] and isset($l['name_t'],$l['name']))
+			if($cansend and $old['name']!=$values['name'] and $extra['_slname'] and isset($l['name_t'],$l['name']))
 			{
 				$repl=array(
 					'site'=>Eleanor::$vars['site_name'],
@@ -1148,13 +1147,13 @@ function Save($id)
 					Eleanor::ExecBBLogic($l['name'],$repl)
 				);
 			}
-			if($cansend and $addon['pass'] and $addon['_slpass'] and isset($l['pass_t'],$l['pass']))
+			if($cansend and $extra['pass'] and $extra['_slpass'] and isset($l['pass_t'],$l['pass']))
 			{
 				$repl=array(
 					'site'=>Eleanor::$vars['site_name'],
 					'name'=>$values['full_name'],
 					'login'=>htmlspecialchars($values['name'],ELENT,CHARSET),
-					'pass'=>$addon['pass'],
+					'pass'=>$extra['pass'],
 					'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 				);
 				Eleanor::Mail(
@@ -1171,10 +1170,10 @@ function Save($id)
 			switch($mess)
 			{
 				case'NAME_TOO_LONG':
-					$errors['NAME_TOO_LONG']=$lang['NAME_TOO_LONG']($E->addon['max'],$E->addon['you']);
+					$errors['NAME_TOO_LONG']=$lang['NAME_TOO_LONG']($E->extra['max'],$E->extra['you']);
 				break;
 				case'PASS_TOO_SHORT':
-					$errors['PASS_TOO_SHORT']=$lang['PASS_TOO_SHORT']($E->addon['min'],$E->addon['you']);
+					$errors['PASS_TOO_SHORT']=$lang['PASS_TOO_SHORT']($E->extra['min'],$E->extra['you']);
 				break;
 				default:
 					$errors[]=$mess;
@@ -1193,21 +1192,21 @@ function Save($id)
 	}
 	else
 	{		if($values['full_name']=='')
-			$values['full_name']=htmlspecialchars($values['full_name'],ELENT,CHARSET,true);		if(!$addon['pass'])
+			$values['full_name']=htmlspecialchars($values['full_name'],ELENT,CHARSET,true);		if(!$extra['pass'])
 		{			Eleanor::LoadOptions('user-profile',false);
-			$addon['pass']=uniqid();
-			$addon['pass']=strlen($addon['pass'])>=Eleanor::$vars['min_pass_length'] ? substr($addon['pass'],0,Eleanor::$vars['min_pass_length']>7 ? Eleanor::$vars['min_pass_length'] : 7) : str_pad($addon['pass'],Eleanor::$vars['min_pass_length'],uniqid(),STR_PAD_RIGHT);		}
+			$extra['pass']=uniqid();
+			$extra['pass']=strlen($extra['pass'])>=Eleanor::$vars['min_pass_length'] ? substr($extra['pass'],0,Eleanor::$vars['min_pass_length']>7 ? Eleanor::$vars['min_pass_length'] : 7) : str_pad($extra['pass'],Eleanor::$vars['min_pass_length'],uniqid(),STR_PAD_RIGHT);		}
 		try
-		{			$newid=UserManager::Add($values+array('_password'=>$addon['pass']));		}
+		{			$newid=UserManager::Add($values+array('_password'=>$extra['pass']));		}
 		catch(EE $E)
 		{			$mess=$E->getMessage();			$errors=array();
 			switch($mess)
 			{
 				case'NAME_TOO_LONG':
-					$errors['NAME_TOO_LONG']=$lang['NAME_TOO_LONG']($E->addon['max'],$E->addon['you']);
+					$errors['NAME_TOO_LONG']=$lang['NAME_TOO_LONG']($E->extra['max'],$E->extra['you']);
 				break;
 				case'PASS_TOO_SHORT':
-					$errors['PASS_TOO_SHORT']=$lang['PASS_TOO_SHORT']($E->addon['min'],$E->addon['you']);
+					$errors['PASS_TOO_SHORT']=$lang['PASS_TOO_SHORT']($E->extra['min'],$E->extra['you']);
 				break;
 				default:
 					$errors[]=$mess;
@@ -1222,7 +1221,7 @@ function Save($id)
 			UserManager::Update(array('avatar_location'=>$avatar,'avatar_type'=>$atype),$newid);
 		}
 
-		if($values['email'] and $addon['_slnew'])
+		if($values['email'] and $extra['_slnew'])
 			do
 			{
 				if(!is_file($f=Eleanor::$root.'addons/admin/letters/users-'.$letterlang.'.php'))
@@ -1234,7 +1233,7 @@ function Save($id)
 					'site'=>Eleanor::$vars['site_name'],
 					'name'=>$values['full_name'],
 					'login'=>htmlspecialchars($values['name'],ELENT,CHARSET),
-					'pass'=>$addon['pass'],
+					'pass'=>$extra['pass'],
 					'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 				);
 				try

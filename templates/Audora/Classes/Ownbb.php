@@ -56,17 +56,17 @@ class TplOwnBB
 		{
 			if($v['_aact'])
 			{
-				$addon=array('style'=>'color:red');
+				$extra=array('style'=>'color:red');
 				$active='';
 			}
 			else
 			{
-				$addon=array();
+				$extra=array();
 				$active=$v['active'] ? array($v['_aact'],$ltpl['deactivate'],$images.'active.png') : array($v['_aact'],$ltpl['activate'],$images.'inactive.png');
 			}
 
 			$Lst->item(
-				array($v['tags'],'href'=>$v['_aedit'])+$addon,
+				array($v['tags'],'href'=>$v['_aedit'])+$extra,
 				$v['handler'],
 				array(Eleanor::$Template->YesNo($v['special']),'center'),
 				$v['sp_tags'],

@@ -22,7 +22,7 @@ return array(
 	'add'=>'Add news',
 	'add_tag'=>'Add tag',
 	'cats_manage'=>'Categories',
-	'addonf'=>'Additional fields',
+	'addf'=>'Additional fields',
 	'news'=>'Awaiting moderation (%s)',
 	'begins'=>'Begins with',
 	'contains'=>'Contains',

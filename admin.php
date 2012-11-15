@@ -134,7 +134,7 @@ else
 			switch($error=$E->getMessage())
 			{
 				case'TEMPORARILY_BLOCKED':
-					$error=sprintf($l['TEMPORARILY_BLOCKED'],$login,round($E->addon['remain']/60));
+					$error=sprintf($l['TEMPORARILY_BLOCKED'],$login,round($E->extra['remain']/60));
 				break;
 				case'CAPTCHA':
 					$captcha=true;

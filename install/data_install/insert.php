@@ -101,7 +101,7 @@ $ser=array(
 		'blocks'=>array(
 			'right'=>array(1),
 		),
-		'addon'=>array('verhor'=>''),
+		'extra'=>array('verhor'=>''),
 	)),
 	'user'=>serialize(array(
 		'places'=>array(
@@ -126,7 +126,7 @@ $ser=array(
 			'left'=>array(5,7,1),
 			'right'=>array(6,3,2,4),
 		),
-		'addon'=>array('verhor'=>''),
+		'extra'=>array('verhor'=>''),
 	)),
 );
 
@@ -161,16 +161,15 @@ INSERT INTO `{$prefix}config_groups` (`id`,`name`,`protected`,`keyword`,`pos`) V
 (3, 'users-on-site', 1, 'users-on-site', 3),
 (4, 'user-profile', 1, 'user-profile', 4),
 (5, 'captcha', 1, 'captcha', 5),
-(6, 'errors', 1, 'errors', 6),
-(7, 'mailer', 1, 'mailer', 7),
-(8, 'editor', 1, 'editor', 8),
-(9, 'rss', 1, 'rss', 9),
-(10, 'comments', 1, 'comments', 10),
-(11, 'files', 1, 'files', 11),
-(12, 'multisite', 1, 'multisite', 13),
-(13, 'drafts', 1, 'drafts', 14),
-(14, 'module_static', 1, 'module_static', 15),
-(15, 'module_news', 0, 'module_news', 16);
+(6, 'mailer', 1, 'mailer', 6),
+(7, 'editor', 1, 'editor', 7),
+(8, 'rss', 1, 'rss', 8),
+(9, 'comments', 1, 'comments', 9),
+(10, 'files', 1, 'files', 10),
+(11, 'multisite', 1, 'multisite', 11),
+(12, 'drafts', 1, 'drafts', 12),
+(13, 'module_static', 1, 'module_static', 13),
+(14, 'module_news', 0, 'module_news', 14);
 QUERY;
 
 #Russian
@@ -182,16 +181,15 @@ INSERT INTO `{$prefix}config_groups_l` (`id`,`language`,`title`,`descr`) VALUES
 (3, 'russian', 'Пользователи на сайте', 'Глобальные настройки пользователей на сайте'),
 (4, 'russian', 'Профиль пользователя', 'Персональные настройки пользователей на сайте'),
 (5, 'russian', 'Капча', 'Настройки капчи'),
-(6, 'russian', 'Логирование', 'Настройка логов сайта'),
-(7, 'russian', 'Настройки электронной почты', ''),
-(8, 'russian', 'Редактор', 'Настройки редактора'),
-(9, 'russian', 'RSS ленты', 'Общие настройки RSS лент'),
-(10, 'russian', 'Комментарии', ''),
-(11, 'russian', 'Обработка файлов', 'Настройка загрузки и скачивания файлов'),
-(12, 'russian', 'Мультисайт', 'Настройка системы для удобной работы на нескольких сайтах.'),
-(13, 'russian', 'Черновики', ''),
-(14, 'russian', 'Модуль "Статические страницы"', ''),
-(15, 'russian', 'Настройки модуля "Новости"', '');
+(6, 'russian', 'Настройки электронной почты', ''),
+(7, 'russian', 'Редактор', 'Настройки редактора'),
+(8, 'russian', 'RSS ленты', 'Общие настройки RSS лент'),
+(9, 'russian', 'Комментарии', ''),
+(10, 'russian', 'Обработка файлов', 'Настройка загрузки и скачивания файлов'),
+(11, 'russian', 'Мультисайт', 'Настройка системы для удобной работы на нескольких сайтах.'),
+(12, 'russian', 'Черновики', ''),
+(13, 'russian', 'Модуль "Статические страницы"', ''),
+(14, 'russian', 'Настройки модуля "Новости"', '');
 QUERY;
 #[E] Russian
 
@@ -204,16 +202,15 @@ INSERT INTO `{$prefix}config_groups_l` (`id`,`language`,`title`,`descr`) VALUES
 (3, 'ukrainian', 'Користувачі на сайті', 'Глобальні налаштування користувачів на сайті'),
 (4, 'ukrainian', 'Профіль користувача', 'Персональні налаштування користувачів на сайті'),
 (5, 'ukrainian', 'Капча', 'Налаштування капчі'),
-(6, 'ukrainian', 'Логування', 'Налаштування логів сайту'),
-(7, 'ukrainian', 'Налаштування електронної пошти', ''),
-(8, 'ukrainian', 'Редактор', 'Настройки редактора'),
-(9, 'ukrainian', 'RSS стрічки', 'Загальні настройки RSS стрічок'),
-(10, 'ukrainian', 'Комментарі', ''),
-(11, 'ukrainian', 'Обробка файлів', 'Налаштування завантаження и скачування файлів'),
-(12, 'ukrainian', 'Мультисайт', 'Налаштування системи для зручної роботи на кількох сайтах.'),
-(13, 'ukrainian', 'Чернетки', ''),
-(14, 'ukrainian', 'Модуль "Статичні сторінки"', ''),
-(15, 'ukrainian', 'Установки модуля "Новини"', '');
+(6, 'ukrainian', 'Налаштування електронної пошти', ''),
+(7, 'ukrainian', 'Редактор', 'Настройки редактора'),
+(8, 'ukrainian', 'RSS стрічки', 'Загальні настройки RSS стрічок'),
+(9, 'ukrainian', 'Комментарі', ''),
+(10, 'ukrainian', 'Обробка файлів', 'Налаштування завантаження и скачування файлів'),
+(11, 'ukrainian', 'Мультисайт', 'Налаштування системи для зручної роботи на кількох сайтах.'),
+(12, 'ukrainian', 'Чернетки', ''),
+(13, 'ukrainian', 'Модуль "Статичні сторінки"', ''),
+(14, 'ukrainian', 'Установки модуля "Новини"', '');
 QUERY;
 #[E] Ukrainian
 
@@ -226,16 +223,15 @@ INSERT INTO `{$prefix}config_groups_l` (`id`,`language`,`title`,`descr`) VALUES
 (3, 'english', 'Users on site', 'Global settings users on site'),
 (4, 'english', 'Users profile', 'Personal settings users on site'),
 (5, 'english', 'Captcha', 'Captcha options'),
-(6, 'english', 'Logging', 'Log options'),
-(7, 'english', 'E-mail settings', ''),
-(8, 'english', 'Editor', 'Editor settings'),
-(9, 'english', 'RSS feeds', 'General settings of RSS feeds'),
-(10, 'english', 'Comments', ''),
-(11, 'english', 'Proccessing files', 'Settings of uploading and downloading files'),
-(12, 'english', 'Multisite', 'Configuring the system for easy operation at several sites.'),
-(13, 'english', 'Drafts', ''),
-(14, 'english', 'Static "Pages module"', ''),
-(15, 'english', 'Module configuration "News"', '');
+(6, 'english', 'E-mail settings', ''),
+(7, 'english', 'Editor', 'Editor settings'),
+(8, 'english', 'RSS feeds', 'General settings of RSS feeds'),
+(9, 'english', 'Comments', ''),
+(10, 'english', 'Proccessing files', 'Settings of uploading and downloading files'),
+(11, 'english', 'Multisite', 'Configuring the system for easy operation at several sites.'),
+(12, 'english', 'Drafts', ''),
+(13, 'english', 'Static "Pages module"', ''),
+(14, 'english', 'Module configuration "News"', '');
 QUERY;
 #English
 
@@ -252,7 +248,7 @@ INSERT INTO `{$prefix}config` (`id`,`group`,`type`,`name`,`protected`,`pos`,`mul
 (9, 1, 'check', 'bots_enable', 1, 9, 0, '', ''),
 (10, 1, 'items', 'bot_group', 1, 10, 0, '', ''),
 (11, 1, 'text', 'bots_list', 0, 11, 0, 'if(\$co[''multilang''])\r\n	foreach(\$co[''value''] as &\$v)\r\n	{\r\n		foreach(\$v as \$k=>&\$bot)\r\n			\$bot=\$k.''=''.\$bot;\r\n		\$v=join("\\n",\$v);\r\n	}\r\nelse\r\n{\r\n	foreach(\$co[''value''] as \$k=>&\$bot)\r\n		\$bot=\$k.''=''.\$bot;\r\n	\$co[''value'']=join("\\n",\$co[''value'']);\r\n}\r\nreturn\$co;', 'if(\$co[''multilang''])\r\n{\r\n	foreach(\$co[''value''] as &\$v)\r\n	{\r\n		\$res=array();\r\n		\$v=str_replace("\\r",'''',\$v);\r\n		foreach(explode("\\n",\$v) as \$bot)\r\n			if(strpos(\$bot,''='')!==false)\r\n			{\r\n				list(\$uagent,\$name)=explode(''='',\$bot,2);\r\n				\$res[\$uagent]=\$name;\r\n			}\r\n		\$v=\$res;\r\n	}\r\n	return\$co[''value''];\r\n}\r\nelse\r\n{\r\n	\$v=str_replace("\\r",'''',\$co[''value'']);\r\n	\$res=array();\r\n	foreach(explode("\\n",\$v) as \$bot)\r\n		if(strpos(\$bot,''='')!==false)\r\n		{\r\n			list(\$uagent,\$name)=explode(''='',\$bot,2);\r\n			\$res[\$uagent]=\$name;\r\n		}\r\n	return \$res;\r\n}'),
-(12, 1, 'check', 'multilang', 1, 12, 0, 'if(count(Eleanor::\$langs)==1)\\r\\n	if(\$co[''multilang''])\\r\\n	{\\r\\n		\$co[''options''][''addon''][''disabled'']=''disabled'';\\r\\n		foreach(\$co[''value''] as &\$v)\\r\\n			\$v=0;\\r\\n	}\\r\\n	else\\r\\n	{\\r\\n		\$co[''value'']=0;\\r\\n		\$co[''options''][''addon''][''disabled'']=''disabled'';\\r\\n	}\\r\\nreturn\$co;', ''),
+(12, 1, 'check', 'multilang', 1, 12, 0, 'if(count(Eleanor::\$langs)==1)\\r\\n	if(\$co[''multilang''])\\r\\n	{\\r\\n		\$co[''options''][''extra''][''disabled'']=''disabled'';\\r\\n		foreach(\$co[''value''] as &\$v)\\r\\n			\$v=0;\\r\\n	}\\r\\n	else\\r\\n	{\\r\\n		\$co[''value'']=0;\\r\\n		\$co[''options''][''extra''][''disabled'']=''disabled'';\\r\\n	}\\r\\nreturn\$co;', ''),
 (13, 1, 'select', 'time_zone', 1, 13, 0, '', ''),
 (14, 1, 'text', 'blocked_ips', 1, 14, 0, '', ''),
 (15, 1, 'edit', 'blocked_message', 1, 15, 1, '', ''),
@@ -289,7 +285,7 @@ INSERT INTO `{$prefix}config` (`id`,`group`,`type`,`name`,`protected`,`pos`,`mul
 (43, 4, 'edit', 'max_name_length', 1, 7, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v<5)\\r\\n			\$v=5;\\r\\n	}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']<5)\\r\\n		\$co[''value'']=5;\\r\\n}\\r\\nreturn\$co[''value''];'),
 (44, 4, 'edit', 'min_pass_length', 1, 8, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
 (45, 4, 'edit', 'avatar_bytes', 1, 9, 0, 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs(round((int)\$v/1024));\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs(round((int)\$co[''value'']/1024));\\r\\nreturn\$co;', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v)*1024;\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']*1024);'),
-(46, 4, 'edit', 'avatar_size', 1, 10, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		if(preg_match(''#^\\\\d+ \\\\d+\$#'',\$v)==0)\\r\\n			throw new EE(''incorrect_format'',EE::INFO,array(''lang''=>true));\\r\\n}\\r\\nelseif(preg_match(''#^\\\\d+ \\\\d+\$#'',\$co[''value''])==0)\\r\\n	throw new EE(''incorrect_format'',EE::INFO,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
+(46, 4, 'edit', 'avatar_size', 1, 10, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		if(preg_match(''#^\\\\d+ \\\\d+\$#'',\$v)==0)\\r\\n			throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\r\\n}\\r\\nelseif(preg_match(''#^\\\\d+ \\\\d+\$#'',\$co[''value''])==0)\\r\\n	throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
 (47, 4, 'select', 'account_pass_rec_t', 1, 11, 0, '', ''),
 
 (48, 5, 'edit', 'captcha_length', 1, 1, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
@@ -298,72 +294,66 @@ INSERT INTO `{$prefix}config` (`id`,`group`,`type`,`name`,`protected`,`pos`,`mul
 (51, 5, 'edit', 'captcha_height', 1, 4, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
 (52, 5, 'edit', 'captcha_fluctuation', 1, 5, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
 
-(53, 6, 'edit', 'log_errors', 1, 1, 0, '', ''),
-(54, 6, 'edit', 'log_exceptions', 1, 2, 0, '', ''),
-(55, 6, 'edit', 'log_site_errors', 1, 3, 0, '', ''),
-(56, 6, 'edit', 'log_db_errors', 1, 4, 0, '', ''),
-(57, 6, 'edit', 'log_maxsize', 1, 5, 0, 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs(round((int)\$v/1024));\\r\\nelse\\r\\n	\$co[''value'']=abs(round((int)\$co[''value'']/1024));\\r\\nreturn\$co;', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v)*1024;\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']*1024);'),
+(53, 6, 'select', 'mail_method', 1, 1, 0, '', ''),
+(54, 6, 'edit', 'mail_from', 1, 2, 0, '', 'if(!Strings::CheckEmail(\$co[''value'']))\\r\\n	throw new EE(''incorrect_email'',EE::USER,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
+(55, 6, 'select', 'mail_priority', 1, 3, 0, '', ''),
+(56, 6, 'edit', 'mail_reply', 1, 4, 0, '', 'if(!Strings::CheckEmail(\$co[''value''],false))\\r\\n	throw new EE(''incorrect_email'',EE::USER,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
+(57, 6, 'edit', 'mail_notice', 1, 5, 0, '', 'if(!Strings::CheckEmail(\$co[''value''],false))\\r\\n	throw new EE(''incorrect_email'',EE::USER,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
+(58, 6, 'edit', 'mail_smtp_user', 1, 6, 0, '', ''),
+(59, 6, 'edit', 'mail_smtp_pass', 1, 7, 0, '', ''),
+(60, 6, 'edit', 'mail_smtp_host', 1, 8, 0, '', ''),
+(61, 6, 'edit', 'mail_smtp_port', 1, 9, 0, '', ''),
 
-(58, 7, 'select', 'mail_method', 1, 1, 0, '', ''),
-(59, 7, 'edit', 'mail_from', 1, 2, 0, '', 'if(!Strings::CheckEmail(\$co[''value'']))\\r\\n	throw new EE(''incorrect_email'',EE::INFO,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
-(60, 7, 'select', 'mail_priority', 1, 3, 0, '', ''),
-(61, 7, 'edit', 'mail_reply', 1, 4, 0, '', 'if(!Strings::CheckEmail(\$co[''value''],false))\\r\\n	throw new EE(''incorrect_email'',EE::INFO,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
-(62, 7, 'edit', 'mail_notice', 1, 5, 0, '', 'if(!Strings::CheckEmail(\$co[''value''],false))\\r\\n	throw new EE(''incorrect_email'',EE::INFO,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
-(63, 7, 'edit', 'mail_smtp_user', 1, 6, 0, '', ''),
-(64, 7, 'edit', 'mail_smtp_pass', 1, 7, 0, '', ''),
-(65, 7, 'edit', 'mail_smtp_host', 1, 8, 0, '', ''),
-(66, 7, 'edit', 'mail_smtp_port', 1, 9, 0, '', ''),
+(62, 7, 'select', 'editor_type', 1, 1, 0, '', ''),
+(63, 7, 'text', 'bad_words', 1, 2, 0, '', ''),
+(64, 7, 'edit', 'bad_words_replace', 1, 3, 1, '', ''),
+(65, 7, 'select', 'antidirectlink', 1, 4, 0, '', ''),
+(66, 7, 'check', 'autoparse_urls', 1, 5, 0, '', ''),
 
-(67, 8, 'select', 'editor_type', 1, 1, 0, '', ''),
-(68, 8, 'text', 'bad_words', 1, 2, 0, '', ''),
-(69, 8, 'edit', 'bad_words_replace', 1, 3, 1, '', ''),
-(70, 8, 'select', 'antidirectlink', 1, 4, 0, '', ''),
-(71, 8, 'check', 'autoparse_urls', 1, 5, 0, '', ''),
+(67, 8, 'uploadimage', 'rss_image', 1, 1, 0, '', ''),
 
-(72, 9, 'uploadimage', 'rss_image', 1, 1, 0, '', ''),
+(68, 9, 'select', 'comments_sort', 1, 1, 0, '', ''),
+(69, 9, 'edit', 'comments_pp', 1, 2, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v==0)\\r\\n			\$v=10;\\r\\n	}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']==0)\\r\\n		\$co[''value'']=10;\\r\\n}\\r\\nreturn\$co[''value''];'),
+(70, 9, 'edit', 'comments_timelimit', 1, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
+(71, 9, 'items', 'comments_display_for', 1, 5, 0, '', ''),
+(72, 9, 'items', 'comments_post_for', 1, 6, 0, '', ''),
 
-(73, 10, 'select', 'comments_sort', 1, 1, 0, '', ''),
-(74, 10, 'edit', 'comments_pp', 1, 2, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v==0)\\r\\n			\$v=10;\\r\\n	}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']==0)\\r\\n		\$co[''value'']=10;\\r\\n}\\r\\nreturn\$co[''value''];'),
-(75, 10, 'edit', 'comments_timelimit', 1, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
-(76, 10, 'items', 'comments_display_for', 1, 5, 0, '', ''),
-(77, 10, 'items', 'comments_post_for', 1, 6, 0, '', ''),
+(73, 10, 'check', 'thumbs', 1, 1, 0, '', ''),
+(74, 10, 'edit', 'thumb_types', 1, 2, 0, '', ''),
+(75, 10, 'edit', 'thumb_width', 1, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\nreturn\$co[''value''];'),
+(76, 10, 'edit', 'thumb_height', 1, 4, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\nreturn\$co[''value''];'),
+(77, 10, 'select', 'thumb_reducing', 1, 5, 0, '', ''),
+(78, 10, 'select', 'thumb_first', 1, 6, 0, '', ''),
+(79, 10, 'check', 'watermark', 1, 7, 0, '', ''),
+(80, 10, 'edit', 'watermark_types', 1, 8, 0, '', ''),
+(81, 10, 'edit', 'watermark_alpha', 1, 9, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v>100)\\r\\n			\$v=100;\\r\\n	}\\r\\n}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']>100)\\r\\n		\$co[''value'']=100;\\r\\n}\\r\\nreturn\$co[''value''];'),
+(82, 10, 'edit', 'watermark_top', 1, 10, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v>100)\\r\\n			\$v=100;\\r\\n	}\\r\\n}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']>100)\\r\\n		\$co[''value'']=100;\\r\\n}\\r\\nreturn\$co[''value''];'),
+(83, 10, 'edit', 'watermark_left', 1, 11, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v>100)\\r\\n			\$v=100;\\r\\n	}\\r\\n}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']>100)\\r\\n		\$co[''value'']=100;\\r\\n}\\r\\nreturn\$co[''value''];'),
+(84, 10, 'edit', 'watermark_image', 1, 12, 0, '', ''),
+(85, 10, 'edit', 'watermark_string', 1, 13, 1, '', ''),
+(86, 10, 'edit', 'watermark_csa', 1, 14, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		if(preg_match(''#^\\\\d+,\\\\d+,\\\\d+,\\\\d+,\\\\d+\$#'',\$v)==0)\\r\\n			throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\r\\n}\\r\\nelse\\r\\n{\\r\\n	if(preg_match(''#^\\\\d+,\\\\d+,\\\\d+,\\\\d+,\\\\d+\$#'',\$co[''value''])==0)\\r\\n		throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\r\\n}\\r\\nreturn\$co[''value''];'),
+(87, 10, 'check', 'download_antileech', 1, 15, 0, '', ''),
+(88, 10, 'check', 'download_no_session', 1, 16, 0, '', ''),
 
-(78, 11, 'check', 'thumbs', 1, 1, 0, '', ''),
-(79, 11, 'edit', 'thumb_types', 1, 2, 0, '', ''),
-(80, 11, 'edit', 'thumb_width', 1, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\nreturn\$co[''value''];'),
-(81, 11, 'edit', 'thumb_height', 1, 4, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\nreturn\$co[''value''];'),
-(82, 11, 'select', 'thumb_reducing', 1, 5, 0, '', ''),
-(83, 11, 'select', 'thumb_first', 1, 6, 0, '', ''),
-(84, 11, 'check', 'watermark', 1, 7, 0, '', ''),
-(85, 11, 'edit', 'watermark_types', 1, 8, 0, '', ''),
-(86, 11, 'edit', 'watermark_alpha', 1, 9, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v>100)\\r\\n			\$v=100;\\r\\n	}\\r\\n}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']>100)\\r\\n		\$co[''value'']=100;\\r\\n}\\r\\nreturn\$co[''value''];'),
-(87, 11, 'edit', 'watermark_top', 1, 10, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v>100)\\r\\n			\$v=100;\\r\\n	}\\r\\n}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']>100)\\r\\n		\$co[''value'']=100;\\r\\n}\\r\\nreturn\$co[''value''];'),
-(88, 11, 'edit', 'watermark_left', 1, 11, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v>100)\\r\\n			\$v=100;\\r\\n	}\\r\\n}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']>100)\\r\\n		\$co[''value'']=100;\\r\\n}\\r\\nreturn\$co[''value''];'),
-(89, 11, 'edit', 'watermark_image', 1, 12, 0, '', ''),
-(90, 11, 'edit', 'watermark_string', 1, 13, 1, '', ''),
-(91, 11, 'edit', 'watermark_csa', 1, 14, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		if(preg_match(''#^\\\\d+,\\\\d+,\\\\d+,\\\\d+,\\\\d+\$#'',\$v)==0)\\r\\n			throw new EE(''incorrect_format'',EE::INFO,array(''lang''=>true));\\r\\n}\\r\\nelse\\r\\n{\\r\\n	if(preg_match(''#^\\\\d+,\\\\d+,\\\\d+,\\\\d+,\\\\d+\$#'',\$co[''value''])==0)\\r\\n		throw new EE(''incorrect_format'',EE::INFO,array(''lang''=>true));\\r\\n}\\r\\nreturn\$co[''value''];'),
-(92, 11, 'check', 'download_antileech', 1, 15, 0, '', ''),
-(93, 11, 'check', 'download_no_session', 1, 16, 0, '', ''),
+(89, 11, 'edit', 'multisite_secret', 0, 1, 0, '', ''),
+(90, 11, 'edit', 'multisite_ttl', 0, 2, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
 
-(94, 12, 'edit', 'multisite_secret', 0, 1, 0, '', ''),
-(95, 12, 'edit', 'multisite_ttl', 0, 2, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
+(91, 12, 'edit', 'drafts_days', 0, 1, 0, '', 'if(\$co[''multilang''])\r\n{\r\n	foreach(\$co[''value''] as &\$v)\r\n		\$v=(int)\$v;\r\n	return\$co[''value''];\r\n}\r\nreturn(int)\$co[''value''];'),
+(92, 12, 'edit', 'drafts_autosave', 0, 2, 0, '', 'if(\$co[''multilang''])\r\n{\r\n	foreach(\$co[''value''] as &\$v)\r\n		\$v=(int)\$v;\r\n	return\$co[''value''];\r\n}\r\nreturn(int)\$co[''value''];'),
 
-(96, 13, 'edit', 'drafts_days', 0, 1, 0, '', 'if(\$co[''multilang''])\r\n{\r\n	foreach(\$co[''value''] as &\$v)\r\n		\$v=(int)\$v;\r\n	return\$co[''value''];\r\n}\r\nreturn(int)\$co[''value''];'),
-(97, 13, 'edit', 'drafts_autosave', 0, 2, 0, '', 'if(\$co[''multilang''])\r\n{\r\n	foreach(\$co[''value''] as &\$v)\r\n		\$v=(int)\$v;\r\n	return\$co[''value''];\r\n}\r\nreturn(int)\$co[''value''];'),
+(93, 13, 'user', 'm_static_general', 1, 1, 0, '', ''),
 
-(98, 14, 'user', 'm_static_general', 1, 1, 0, '', ''),
-
-(99, 15, 'edit', 'publ_per_page', 0, 1, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
-(100, 15, 'edit', 'publ_rss_per_page', 0, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
-(101, 15, 'check', 'publ_add', 0, 4, 0, '', ''),
-(102, 15, 'check', 'publ_catsubcat', 0, 5, 0, '', ''),
-(103, 15, 'check', 'publ_ping', 0, 6, 0, '', ''),
-(104, 15, 'check', 'publ_rating', 0, 7, 0, '', ''),
-(105, 15, 'check', 'publ_mark_details', 0, 8, 0, '', ''),
-(106, 15, 'check', 'publ_mark_users', 0, 9, 0, '', ''),
-(107, 15, 'edit', 'publ_remark', 0, 10, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=max((int)\$v,1);\\r\\nelse\\r\\n	\$co[''value'']=max((int)\$co[''value''],1);\\r\\nreturn\$co[''value''];'),
-(108, 15, 'edit', 'publ_lowmark', 0, 11, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=min((int)\$v,0);\\r\\nelse\\r\\n	\$co[''value'']=min((int)\$co[''value''],0);\\r\\nreturn\$co[''value''];'),
-(109, 15, 'edit', 'publ_highmark', 0, 12, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=max((int)\$v,0);\\r\\nelse\\r\\n	\$co[''value'']=max((int)\$co[''value''],0);\\r\\nreturn\$co[''value''];')
+(94, 14, 'edit', 'publ_per_page', 0, 1, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
+(95, 14, 'edit', 'publ_rss_per_page', 0, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
+(96, 14, 'check', 'publ_add', 0, 4, 0, '', ''),
+(97, 14, 'check', 'publ_catsubcat', 0, 5, 0, '', ''),
+(98, 14, 'check', 'publ_ping', 0, 6, 0, '', ''),
+(99, 14, 'check', 'publ_rating', 0, 7, 0, '', ''),
+(100, 14, 'check', 'publ_mark_details', 0, 8, 0, '', ''),
+(101, 14, 'check', 'publ_mark_users', 0, 9, 0, '', ''),
+(102, 14, 'edit', 'publ_remark', 0, 10, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=max((int)\$v,1);\\r\\nelse\\r\\n	\$co[''value'']=max((int)\$co[''value''],1);\\r\\nreturn\$co[''value''];'),
+(103, 14, 'edit', 'publ_lowmark', 0, 11, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=min((int)\$v,0);\\r\\nelse\\r\\n	\$co[''value'']=min((int)\$co[''value''],0);\\r\\nreturn\$co[''value''];'),
+(104, 14, 'edit', 'publ_highmark', 0, 12, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=max((int)\$v,0);\\r\\nelse\\r\\n	\$co[''value'']=max((int)\$co[''value''],0);\\r\\nreturn\$co[''value''];')
 QUERY;
 
 $multilang=count($languages)>1;
@@ -390,17 +380,18 @@ else
 	$ac_r='index.php?module=account&amp;do=register';
 	$ac_p='index.php?module=account&amp;do=lostpass';
 
+	$ac=urlencode('аккаунт');
 	$p=Language::$main=='russian' ? '' : 'lang=%F0%F3%F1&amp;';
-	$ac_a_r='index.php?'.$p.'module=%E0%EA%EA%E0%F3%ED%F2';
-	$ac_r_r='index.php?'.$p.'module=%E0%EA%EA%E0%F3%ED%F2&amp;do=register';
-	$ac_p_r='index.php?'.$p.'module=%E0%EA%EA%E0%F3%ED%F2&amp;do=lostpass';
+	$ac_a_r='index.php?'.$p.'module='.$ac;
+	$ac_r_r='index.php?'.$p.'module='.$ac.'&amp;do=register';
+	$ac_p_r='index.php?'.$p.'module='.$ac.'&amp;do=lostpass';
 
-	$p=Language::$main=='russian' ? '' : 'lang=%F3%EA%F0&amp;';
-	$ac_a_u='index.php?'.$p.'module=account';
-	$ac_r_u='index.php?'.$p.'module=account&amp;do=register';
-	$ac_p_u='index.php?'.$p.'module=account&amp;do=lostpass';
+	$p=Language::$main=='ukrainian' ? '' : 'lang=%F3%EA%F0&amp;';
+	$ac_a_u='index.php?'.$p.'module='.$ac;
+	$ac_r_u='index.php?'.$p.'module='.$ac.'&amp;do=register';
+	$ac_p_u='index.php?'.$p.'module='.$ac.'&amp;do=lostpass';
 
-	$p=Language::$main=='russian' ? '' : 'lang=eng&amp;';
+	$p=Language::$main=='english' ? '' : 'lang=eng&amp;';
 	$ac_a_e='index.php?'.$p.'module=account';
 	$ac_r_e='index.php?'.$p.'module=account&amp;do=register';
 	$ac_p_e='index.php?'.$p.'module=account&amp;do=lostpass';
@@ -510,7 +501,7 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serial
 (11, 'russian', 'Список поисковых ботов', 'Здесь хранятся данные о поисковых ботах. Формат ввода: по одному с каждой строки в виде <b>user agent=имя бота</b>.', '{$ser['bots']}', 1, '{$ser['bots']}', '', ''),
 (12, 'russian', 'Включить многоязыковую поддержку?', '', '{$multilang}', 0, '{$multilang}', '', 'Локализация'),
 (13, 'russian', 'Часовой пояс по-умолчанию', '', '{$timezone}', 0, '{$timezone}', '{$ser['tz']}', ''),
-(14, 'russian', 'Заблокированные IP адреса', 'Каждый адрес — с новой строки. Допускаются маски вида 87.183.*.*, а так же диапазоны вида 79.224.60.1-79.224.60.255 с поддержкой масок. Чтобы указать уникальную причину бана после введённого IP адреса, поставьте = и напишите причину. Например: 87.183.*.*=Отбросам здесь не место!', '', 0, '', 'array(''addon''=>array(''style''=>''word-wrap:normal''));', 'Бан по IP'),
+(14, 'russian', 'Заблокированные IP адреса', 'Каждый адрес — с новой строки. Допускаются маски вида 87.183.*.*, а так же диапазоны вида 79.224.60.1-79.224.60.255 с поддержкой масок. Чтобы указать уникальную причину бана после введённого IP адреса, поставьте = и напишите причину. Например: 87.183.*.*=Отбросам здесь не место!', '', 0, '', 'array(''extra''=>array(''style''=>''word-wrap:normal''));', 'Бан по IP'),
 (15, 'russian', 'Сообщение для заблокированных', 'Это сообщение увидят пользователи, для которых не введена причина.', ':-p', 0, ':-p', '', ''),
 
 (16, 'russian', 'Название сайта', '', '{$sitename}', 0, '{$sitename}', '', 'Заголовки сайта'),
@@ -539,7 +530,7 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serial
 (37, 'russian', 'Заблокированные ники', 'Через запятую. Допустимые спецсимволы: * - любая последовательность символов, ? - любой один символ.', '', 0, '', '', 'Блокировки'),
 (38, 'russian', 'Заблокированные e-mail', 'Через запятую. Допустимые спецсимволы: * - любая последовательность символов, ? - любой один символ.', '', 0, '', '', ''),
 (39, 'russian', 'Активация новосозданного пользователя', '', '1', 0, '1', '{$ser['aa']}', 'Регистрация'),
-(40, 'russian', 'Срок активации', 'Количество часов отведенных для активации учетной записи', '86400', 0, '86400', 'array(''type''=>''number'',''addon''=>array(''min''=>1));', ''),
+(40, 'russian', 'Срок активации', 'Количество часов отведенных для активации учетной записи', '86400', 0, '86400', 'array(''type''=>''number'',''extra''=>array(''min''=>1));', ''),
 (41, 'russian', 'Как поступать с неактивированными учетными записями', '', '1', 0, '1', '{$ser['ua']}', ''),
 (42, 'russian', 'Отключить регистрацию?', '', '0', 0, '0', '', ''),
 (43, 'russian', 'Максимальная длина ника', '', '15', 0, '15', '', ''),
@@ -554,72 +545,66 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serial
 (51, 'russian', 'Высота captcha', '', '60', 0, '60', '', ''),
 (52, 'russian', 'Разброс символов по вертикали', 'Максимальное отклонение символов по вертикали от центра.', '5', 0, '5', '', ''),
 
-(53, 'russian', 'Лог-файл ошибок кода', '', 'addons/logs/errors.log', 0, 'addons/logs/errors.log', '', 'Логирование ошибок'),
-(54, 'russian', 'Лог-файл неперехваченных исключений', '', 'addons/logs/exceptions.log', 0, 'addons/logs/exceptions.log', '', ''),
-(55, 'russian', 'Лог-файл ошибок сайта', '', 'addons/logs/site_errors.log', 0, 'addons/logs/site_errors.log', '', ''),
-(56, 'russian', 'Лог-файл базы данных (включая запросы)', '', 'addons/logs/db_errors.log', 0, 'addons/logs/db_errors.log', '', ''),
-(57, 'russian', 'Предельный размер файла', 'Указывается в килобайтах. После достижения этого размера, файл автоматически упаковывается Gzip или BZip2 архив. Укажите 0 для отключения автоматического сжатия.', '2097152', 0, '2097152', '', ''),
+(53, 'russian', 'Способ отправки e-mail', '', 'mail', 0, 'mail', 'array(''options''=>array(''php''=>''PHP mail'',''smtp''=>''SMTP'',))', 'Общие настройки'),
+(54, 'russian', 'E-mail отправителя', '', '{$email}', 0, '{$email}', '', ''),
+(55, 'russian', 'Важность', '', '3', 0, '3', '{$ser['pr']}', ''),
+(56, 'russian', 'E-mail для ответа', 'В случае, если ответы от пользователей необходимо принимать на другой e-mail, заполните это поле.', '', 0, '', '', ''),
+(57, 'russian', 'E-mail для подтверждения о прочтении', '', '', 0, '', '', ''),
+(58, 'russian', 'Логин', 'Пользователь', '', 0, '', '', 'Настройки SMTP'),
+(59, 'russian', 'Пароль', '', '', 0, '', '', ''),
+(60, 'russian', 'Хост', 'Сервер', '', 0, '', '', ''),
+(61, 'russian', 'Порт', '', '25', 0, '25', '', ''),
 
-(58, 'russian', 'Способ отправки e-mail', '', 'mail', 0, 'mail', 'array(''options''=>array(''php''=>''PHP mail'',''smtp''=>''SMTP'',))', 'Общие настройки'),
-(59, 'russian', 'E-mail отправителя', '', '{$email}', 0, '{$email}', '', ''),
-(60, 'russian', 'Важность', '', '3', 0, '3', '{$ser['pr']}', ''),
-(61, 'russian', 'E-mail для ответа', 'В случае, если ответы от пользователей необходимо принимать на другой e-mail, заполните это поле.', '', 0, '', '', ''),
-(62, 'russian', 'E-mail для подтверждения о прочтении', '', '', 0, '', '', ''),
-(63, 'russian', 'Логин', 'Пользователь', '', 0, '', '', 'Настройки SMTP'),
-(64, 'russian', 'Пароль', '', '', 0, '', '', ''),
-(65, 'russian', 'Хост', 'Сервер', '', 0, '', '', ''),
-(66, 'russian', 'Порт', '', '25', 0, '25', '', ''),
+(62, 'russian', 'Редактор по умолчанию', '', 'bb', 0, 'bb', 'array(''eval''=>''return Eleanor::getInstance()->Editor->editors;'')', ''),
+(63, 'russian', 'Запрещенные слова', 'Маты и ругательства. Через запятую.', 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', 0, 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', '', ''),
+(64, 'russian', 'Автозамена запрещенных слов', '', '*Цензура*', 0, '*Цензура*', '', ''),
+(65, 'russian', 'Включить защиту от прямых ссылок?', '', 'go', 0, 'go', 'array(''options''=>array(''нет'',''go''=>''Редирект через go.php'',''nofollow''=>''rel="nofollow"'',))', ''),
+(66, 'russian', 'Включить автоопределение ссылок в тексте?', 'При включении этой опции, все ссылки опубликованные как текст - будут обработаны как ссылки.', '1', 0, '1', '', ''),
 
-(67, 'russian', 'Редактор по умолчанию', '', 'bb', 0, 'bb', 'array(''eval''=>''return Eleanor::getInstance()->Editor->editors;'')', ''),
-(68, 'russian', 'Запрещенные слова', 'Маты и ругательства. Через запятую.', 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', 0, 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', '', ''),
-(69, 'russian', 'Автозамена запрещенных слов', '', '*Цензура*', 0, '*Цензура*', '', ''),
-(70, 'russian', 'Включить защиту от прямых ссылок?', '', 'go', 0, 'go', 'array(''options''=>array(''нет'',''go''=>''Редирект через go.php'',''nofollow''=>''rel="nofollow"'',))', ''),
-(71, 'russian', 'Включить автоопределение ссылок в тексте?', 'При включении этой опции, все ссылки опубликованные как текст - будут обработаны как ссылки.', '1', 0, '1', '', ''),
+(67, 'russian', 'Логотип RSS', '', 'images/rss.png', 0, 'images/rss.png', 'array(''path''=>''uploads/'',''types''=>array(0=>''jpeg'',1=>''jpg'',2=>''png'',3=>''bmp'',4=>''gif'',),''max_size''=>''307200'',''filename_eval''=>'''',)', ''),
 
-(72, 'russian', 'Логотип RSS', '', 'images/rss.png', 0, 'images/rss.png', 'array(''path''=>''uploads/'',''types''=>array(0=>''jpeg'',1=>''jpg'',2=>''png'',3=>''bmp'',4=>''gif'',),''max_size''=>''307200'',''filename_eval''=>'''',)', ''),
+(68, 'russian', 'Порядок сортировки комментариев', '', '1', 0, '1', '{$ser['or']}', ''),
+(69, 'russian', 'Комментариев на страницу', '', '10', 0, '10', '', ''),
+(70, 'russian', 'Ограничение изменения по времени', 'Введите количество секунд, по истечению которых пользователи не смогут удалять / править свои комментарии. Отсчет времени осуществляется с момента публикации комментария.', '86400', 0, '86400', '', ''),
+(71, 'russian', 'Отображать комментарии для', '', 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', 1, 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', '{$ser['groups']}', 'Права'),
+(72, 'russian', 'Публикация комментариев доступна для', '', 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', 1, 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', '{$ser['groups']}', ''),
 
-(73, 'russian', 'Порядок сортировки комментариев', '', '1', 0, '1', '{$ser['or']}', ''),
-(74, 'russian', 'Комментариев на страницу', '', '10', 0, '10', '', ''),
-(75, 'russian', 'Ограничение изменения по времени', 'Введите количество секунд, по истечению которых пользователи не смогут удалять / править свои комментарии. Отсчет времени осуществляется с момента публикации комментария.', '86400', 0, '86400', '', ''),
-(76, 'russian', 'Отображать комментарии для', '', 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', 1, 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', '{$ser['groups']}', 'Права'),
-(77, 'russian', 'Публикация комментариев доступна для', '', 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', 1, 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', '{$ser['groups']}', ''),
+(73, 'russian', 'Включить создание превью для загружаемых изображений?', '', '1', 0, '1', '', 'Превью изображений'),
+(74, 'russian', 'Типы файлов для которых создавать превью', '', 'png,jpg,bmp', 0, 'png,jpg,bmp', '', ''),
+(75, 'russian', 'Ширина превью', 'Введите 0 для сохранения исходной ширины изображения', '200', 0, '200', '', ''),
+(76, 'russian', 'Высота превью', 'Введите 0 для сохранения исходной высоты изображения', '0', 0, '0', '', ''),
+(77, 'russian', 'Способ уменьшения изображения', '', 'small', 0, 'small', '{$ser['cu']}', ''),
+(78, 'russian', 'Создание превью начать с', '', 'b', 0, 'b', '{$ser['cf']}', ''),
+(79, 'russian', 'Включить водяной знак?', 'Наложить водяной знак на загружаемые картинки?', '1', 0, '1', '', 'Настройки водяного знака'),
+(80, 'russian', 'Типы файлов для водяного знака', 'На эти типы файлов будет ставиться водяной знак. Указывайте, разделяя запятыми.', 'jpg,jpeg,png,bmp', 0, 'jpg,jpeg,png,bmp', '', ''),
+(81, 'russian', 'Прозрачность водяного знака (в процентах от 0 до 100)', '100 - не видно водяного знака', '50', 0, '50', '', ''),
+(82, 'russian', 'Положение по вертикали (в процентах от 0 до 100)', '', '50', 0, '50', '', ''),
+(83, 'russian', 'Положение по горизонтали (в процентах от 0 до 100)', '', '50', 0, '50', '', ''),
+(84, 'russian', 'Файл водяного знака', 'Введите путь к рисунку на сервере, который будет использован в качества водяного знака (например: images/watermrak.jpg). Обратите внимание, что водяной знак не будет применён на изображение если по размерам оно меньше, чем водяной знак. Имеет приоритет над текстом водяного знака.', 'images/watermark.png', 0, 'images/watermark.png', '', ''),
+(85, 'russian', 'Текст водяного знака', 'Этот текст будет наложен на изображение в качестве водяного знака, если изображение водяного знака недоступно.', '© {$sitename}', 0, '© {$sitename}', '', ''),
+(86, 'russian', 'Цвет, размер и угол текста водяного знака', 'Задается в формате red,green,blue,size,angle', '1,1,1,15,0', 0, '1,1,1,15,0', '', ''),
+(87, 'russian', 'Запретить скачивание с других сайтов?', 'При включении этой опции, при попытке скачать файл будет проверяться адрес страницы, с которой пришел пользователь. Если это будет чужая страница, пользователь не сможет скачать файл.', '1', 0, '1', '', 'Скачивание файлов'),
+(88, 'russian', 'Запретить скачивание без сессии?', 'При включении этой опции, пользователь, IP адрес которого не присутствует в списке сессий, не сможет скачать файл.', '1', 0, '1', '', ''),
 
-(78, 'russian', 'Включить создание превью для загружаемых изображений?', '', '1', 0, '1', '', 'Превью изображений'),
-(79, 'russian', 'Типы файлов для которых создавать превью', '', 'png,jpg,bmp', 0, 'png,jpg,bmp', '', ''),
-(80, 'russian', 'Ширина превью', 'Введите 0 для сохранения исходной ширины изображения', '200', 0, '200', '', ''),
-(81, 'russian', 'Высота превью', 'Введите 0 для сохранения исходной высоты изображения', '0', 0, '0', '', ''),
-(82, 'russian', 'Способ уменьшения изображения', '', 'small', 0, 'small', '{$ser['cu']}', ''),
-(83, 'russian', 'Создание превью начать с', '', 'b', 0, 'b', '{$ser['cf']}', ''),
-(84, 'russian', 'Включить водяной знак?', 'Наложить водяной знак на загружаемые картинки?', '1', 0, '1', '', 'Настройки водяного знака'),
-(85, 'russian', 'Типы файлов для водяного знака', 'На эти типы файлов будет ставиться водяной знак. Указывайте, разделяя запятыми.', 'jpg,jpeg,png,bmp', 0, 'jpg,jpeg,png,bmp', '', ''),
-(86, 'russian', 'Прозрачность водяного знака (в процентах от 0 до 100)', '100 - не видно водяного знака', '50', 0, '50', '', ''),
-(87, 'russian', 'Положение по вертикали (в процентах от 0 до 100)', '', '50', 0, '50', '', ''),
-(88, 'russian', 'Положение по горизонтали (в процентах от 0 до 100)', '', '50', 0, '50', '', ''),
-(89, 'russian', 'Файл водяного знака', 'Введите путь к рисунку на сервере, который будет использован в качества водяного знака (например: images/watermrak.jpg). Обратите внимание, что водяной знак не будет применён на изображение если по размерам оно меньше, чем водяной знак. Имеет приоритет над текстом водяного знака.', 'images/watermark.png', 0, 'images/watermark.png', '', ''),
-(90, 'russian', 'Текст водяного знака', 'Этот текст будет наложен на изображение в качестве водяного знака, если изображение водяного знака недоступно.', '© {$sitename}', 0, '© {$sitename}', '', ''),
-(91, 'russian', 'Цвет, размер и угол текста водяного знака', 'Задается в формате red,green,blue,size,angle', '1,1,1,15,0', 0, '1,1,1,15,0', '', ''),
-(92, 'russian', 'Запретить скачивание с других сайтов?', 'При включении этой опции, при попытке скачать файл будет проверяться адрес страницы, с которой пришел пользователь. Если это будет чужая страница, пользователь не сможет скачать файл.', '1', 0, '1', '', 'Скачивание файлов'),
-(93, 'russian', 'Запретить скачивание без сессии?', 'При включении этой опции, пользователь, IP адрес которого не присутствует в списке сессий, не сможет скачать файл.', '1', 0, '1', '', ''),
+(89, 'russian', 'Секрет сайта', 'Случайная секретная строка при помощи которой будут подписываться данные для кросс-доменной коммутации.', '{$secret}', 0, '{$secret}', '', ''),
+(90, 'russian', 'Срок жизни данных кросс-доменной коммутации', 'В секундах.', '100', 0, '100', '', ''),
 
-(94, 'russian', 'Секрет сайта', 'Случайная секретная строка при помощи которой будут подписываться данные для кросс-доменной коммутации.', '{$secret}', 0, '{$secret}', '', ''),
-(95, 'russian', 'Срок жизни данных кросс-доменной коммутации', 'В секундах.', '100', 0, '100', '', ''),
+(91, 'russian', 'Сколько дней хранить черновики?', '', '10', 0, '10', '', ''),
+(92, 'russian', 'Интервал автосохранения в секундах', '', '20', 0, '20', '', ''),
 
-(96, 'russian', 'Сколько дней хранить черновики?', '', '10', 0, '10', '', ''),
-(97, 'russian', 'Интервал автосохранения в секундах', '', '20', 0, '20', '', ''),
+(93, 'russian', 'Страницы, выводимые на главной', 'Оставьте пустым для вывода содержания', '', 0, '', '{$ser['sg']}', ''),
 
-(98, 'russian', 'Страницы, выводимые на главной', 'Оставьте пустым для вывода содержания', '', 0, '', '{$ser['sg']}', ''),
-
-(99, 'russian', 'Публикаций на страницу', '', '10', 0, '10', '', 'Основные'),
-(100, 'russian', 'Публикаций на страницу в RSS', '', '30', 0, '30', '', ''),
-(101, 'russian', 'Добавление новостей пользователями', '', '1', 0, '1', '', ''),
-(102, 'russian', 'Выводить содержимое подкатегорий при просмотре категории', '', '1', 0, '1', '', ''),
-(103, 'russian', 'Включить ping', 'Уведомление поисковых систем об обновлении на сайте', '1', 0, '1', '', ''),
-(104, 'russian', 'Включить рейтинг', '', '1', 0, '1', '', 'Настройки рейтинга'),
-(105, 'russian', 'Оценка только при подробном просмотре?', 'Разрешить оценивать публикации только при их подробном просмотре?', '0', 0, '0', '', ''),
-(106, 'russian', 'Рейтинг только для пользователей', 'При включении этой опции, выставлять новости оценку смогут только авторизованные пользователи и только 1 раз.', '0', 0, '0', '', ''),
-(107, 'russian', 'Период между оцениваниями в днях', 'Если выставлять оценку могут не только пользователи, но и гости, эта опция определяет время, по истечению которого гость сможет вновь выставить оценку.', '3', 0, '3', '', ''),
-(108, 'russian', 'Минимальная негативная оценка', 'Значение не может быть выше нуля. Для отключения негативных оценок, введите 0.', '-3', 0, '-3', '', ''),
-(109, 'russian', 'Максимальная позитивная оценка', 'Значение не может быть ниже нуля. Для отключения позитивных оценок, введите 0.', '3', 0, '3', '', '')
+(94, 'russian', 'Публикаций на страницу', '', '10', 0, '10', '', 'Основные'),
+(95,  'russian', 'Публикаций на страницу в RSS', '', '30', 0, '30', '', ''),
+(96,  'russian', 'Добавление новостей пользователями', '', '1', 0, '1', '', ''),
+(97,  'russian', 'Выводить содержимое подкатегорий при просмотре категории', '', '1', 0, '1', '', ''),
+(98,  'russian', 'Включить ping', 'Уведомление поисковых систем об обновлении на сайте', '1', 0, '1', '', ''),
+(99,  'russian', 'Включить рейтинг', '', '1', 0, '1', '', 'Настройки рейтинга'),
+(100, 'russian', 'Оценка только при подробном просмотре?', 'Разрешить оценивать публикации только при их подробном просмотре?', '0', 0, '0', '', ''),
+(101, 'russian', 'Рейтинг только для пользователей', 'При включении этой опции, выставлять новости оценку смогут только авторизованные пользователи и только 1 раз.', '0', 0, '0', '', ''),
+(102, 'russian', 'Период между оцениваниями в днях', 'Если выставлять оценку могут не только пользователи, но и гости, эта опция определяет время, по истечению которого гость сможет вновь выставить оценку.', '3', 0, '3', '', ''),
+(103, 'russian', 'Минимальная негативная оценка', 'Значение не может быть выше нуля. Для отключения негативных оценок, введите 0.', '-3', 0, '-3', '', ''),
+(104, 'russian', 'Максимальная позитивная оценка', 'Значение не может быть ниже нуля. Для отключения позитивных оценок, введите 0.', '3', 0, '3', '', '')
 QUERY;
 #[E] Russian
 
@@ -686,7 +671,7 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`, `title`, `descr`, `value`, `se
 (11, 'ukrainian', 'Список пошукових ботів', 'Тут зберігаються дані про пошукових ботах. Формат вводу: по одному з кожного рядка у вигляді <b>user agent=ім''я бота</ b>', '{$ser['bots']}', 1, '{$ser['bots']}', '', ''),
 (12, 'ukrainian', 'Увімкнути багатомовну підтримку?', '', '{$multilang}', 0, '{$multilang}', '', 'Локалізація'),
 (13, 'ukrainian', 'Часовий пояс за замовчуванням', '', '{$timezone}', 0, '{$timezone}', '{$ser['tz']}', ''),
-(14, 'ukrainian', 'Заблоковані IP адреси', 'Кожна адреса - з нового рядка. Допускаються маски виду 87.183 .*.*, а так само діапазони виду 79.224.60.1-79.224.60.255 з підтримкою масок. Щоб вказати унікальну причину бана після введеного IP адреси, поставте = і напишіть причину. Наприклад: 87.183 .*.*=Покидькам тут не місце!', '', 0, '', 'array(''addon''=>array(''style''=>''word-wrap:normal''));', 'Бан по IP'),
+(14, 'ukrainian', 'Заблоковані IP адреси', 'Кожна адреса - з нового рядка. Допускаються маски виду 87.183 .*.*, а так само діапазони виду 79.224.60.1-79.224.60.255 з підтримкою масок. Щоб вказати унікальну причину бана після введеного IP адреси, поставте = і напишіть причину. Наприклад: 87.183 .*.*=Покидькам тут не місце!', '', 0, '', 'array(''extra''=>array(''style''=>''word-wrap:normal''));', 'Бан по IP'),
 (15, 'ukrainian', 'Повідомлення для заблокованих', 'Це повідомлення побачать користувачі, для яких не введена причина.', ':-p', 0, ':-p', '', ''),
 
 (16, 'ukrainian', 'Назва сайту', '', '{$sitename}', 0, '{$sitename}', '', 'Заголовки сайту'),
@@ -715,7 +700,7 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`, `title`, `descr`, `value`, `se
 (37, 'ukrainian', 'Заблоковані прізвиська', 'Через кому. Допустимі спецсимволи: * - будь-яка послідовність символів,? - будь-який один символ.', '', 0, '', '', 'Блокування'),
 (38, 'ukrainian', 'Заблоковані e-mail', 'Через кому. Допустимі спецсимволи: * - будь-яка послідовність символів,? - будь-який один символ.', '', 0, '', '', ''),
 (39, 'ukrainian', 'Активація новоствореного користувача', '', '1', 0, '1', '{$ser['aa']}', 'Реєстрація'),
-(40, 'ukrainian', 'Термін активації', 'Кількість годин відведених для активації облікового запису.', '86400', 0, '86400', 'array(''type''=>''number'',''addon''=>array(''min''=>1));', ''),
+(40, 'ukrainian', 'Термін активації', 'Кількість годин відведених для активації облікового запису.', '86400', 0, '86400', 'array(''type''=>''number'',''extra''=>array(''min''=>1));', ''),
 (41, 'ukrainian', 'Як поступати з неактивованими обліковими записами', '', '1', 0, '1', '{$ser['ua']}', ''),
 (42, 'ukrainian', 'Вимкнути реєстрацію?', '', '0', 0, '0', '', ''),
 (43, 'ukrainian', 'Максимальна довжина імені', '', '15', 0, '15', '', ''),
@@ -730,72 +715,66 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`, `title`, `descr`, `value`, `se
 (51, 'ukrainian', 'Висота captcha', '', '60', 0, '60', '', ''),
 (52, 'ukrainian', 'Розкид символів по вертикалі', 'Максимальне відхилення символів по вертикалі від центру.', '5', 0, '5', '', ''),
 
-(53, 'ukrainian', 'Лог-файл помилок коду', '', 'addons/logs/errors.log', 0, '', '', 'Логування помилок'),
-(54, 'ukrainian', 'Лог-файл не перехоплених винятків', '', 'addons/logs/exceptions.log', 0, '', '', ''),
-(55, 'ukrainian', 'Лог-файл помилок сайту', '', 'addons/logs/site_errors.log', 0, '', '', ''),
-(56, 'ukrainian', 'Лог-файл бази даних (включаючи запити)', '', 'addons/logs/db_errors.log', 0, '', '', ''),
-(57, 'ukrainian', 'Граничний розмір файлу', 'Зазначається у кілобайтах. Після досягнення цього розміру, файл автоматично запаковується Gzip або BZip2 архів. Вкажіть 0 для відключення автоматичного стиснення.', '2097152', 0, '2097152', '', ''),
+(53, 'ukrainian', 'Спосіб відправки e-mail', '', 'mail', 0, 'mail', 'array(''options''=>array(''php''=>''PHP mail'',''smtp''=>''SMTP'',))', 'Загальні налаштування'),
+(54, 'ukrainian', 'E-mail відправника', 'С какого ящика будут приходить письма?', '{$email}', 0, '{$email}', '', ''),
+(55, 'ukrainian', 'Важливість', '', '3', 0, '3', '{$ser['pr']}', ''),
+(56, 'ukrainian', 'E-mail для відповіді', 'У разі, якщо відповіді від користувачів необхідно приймати на інший e-mail, заповніть це поле.', '', 0, '', '', ''),
+(57, 'ukrainian', 'E-mail для підтвердження про прочитання', '', '', 0, '', '', ''),
+(58, 'ukrainian', 'Логін', 'Користувач', '', 0, '', '', 'Установки SMTP'),
+(59, 'ukrainian', 'Пароль', '', '', 0, '', '', ''),
+(60, 'ukrainian', 'Хост', 'Сервер', '', 0, '', '', ''),
+(61, 'ukrainian', 'Порт', '', '25', 0, '25', '', ''),
 
-(58, 'ukrainian', 'Спосіб відправки e-mail', '', 'mail', 0, 'mail', 'array(''options''=>array(''php''=>''PHP mail'',''smtp''=>''SMTP'',))', 'Загальні налаштування'),
-(59, 'ukrainian', 'E-mail відправника', 'С какого ящика будут приходить письма?', '{$email}', 0, '{$email}', '', ''),
-(60, 'ukrainian', 'Важливість', '', '3', 0, '3', '{$ser['pr']}', ''),
-(61, 'ukrainian', 'E-mail для відповіді', 'У разі, якщо відповіді від користувачів необхідно приймати на інший e-mail, заповніть це поле.', '', 0, '', '', ''),
-(62, 'ukrainian', 'E-mail для підтвердження про прочитання', '', '', 0, '', '', ''),
-(63, 'ukrainian', 'Логін', 'Користувач', '', 0, '', '', 'Установки SMTP'),
-(64, 'ukrainian', 'Пароль', '', '', 0, '', '', ''),
-(65, 'ukrainian', 'Хост', 'Сервер', '', 0, '', '', ''),
-(66, 'ukrainian', 'Порт', '', '25', 0, '25', '', ''),
+(62, 'ukrainian', 'Редактор по замовчуванню', '', 'bb', 0, 'bb', 'array(''eval''=>''return Eleanor::getInstance()->Editor->editors;'')', ''),
+(63, 'ukrainian', 'Заборонені слова', 'Мати й лайки. Через кому.', 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', 0, 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', '', ''),
+(64, 'ukrainian', 'Автозаміна заборонених слів', '', '*Цензура*', 0, '*Цензура*', '', ''),
+(65, 'ukrainian', 'Активувати захист від прямих посилань?', '', 'go', 0, 'go', 'array(''options''=>array(''ні'',''go''=>''Редірект через go.php'',''nofollow''=>''rel="nofollow"'',))', ''),
+(66, 'ukrainian', 'Включити автовизначення посилань у тексті?', 'При включенні цієї опції, всі посилання опубліковані як текст - будуть оброблені як посилання.', '1', 0, '1', '', ''),
 
-(67, 'ukrainian', 'Редактор по замовчуванню', '', 'bb', 0, 'bb', 'array(''eval''=>''return Eleanor::getInstance()->Editor->editors;'')', ''),
-(68, 'ukrainian', 'Заборонені слова', 'Мати й лайки. Через кому.', 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', 0, 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', '', ''),
-(69, 'ukrainian', 'Автозаміна заборонених слів', '', '*Цензура*', 0, '*Цензура*', '', ''),
-(70, 'ukrainian', 'Активувати захист від прямих посилань?', '', 'go', 0, 'go', 'array(''options''=>array(''ні'',''go''=>''Редірект через go.php'',''nofollow''=>''rel="nofollow"'',))', ''),
-(71, 'ukrainian', 'Включити автовизначення посилань у тексті?', 'При включенні цієї опції, всі посилання опубліковані як текст - будуть оброблені як посилання.', '1', 0, '1', '', ''),
+(67, 'ukrainian', 'Логотип RSS', '', 'images/rss.png', 0, 'images/rss.png', 'array(''path''=>''uploads/'',''types''=>array(0=>''jpeg'',1=>''jpg'',2=>''png'',3=>''bmp'',4=>''gif'',),''max_size''=>''307200'',''filename_eval''=>'''',)', ''),
 
-(72, 'ukrainian', 'Логотип RSS', '', 'images/rss.png', 0, 'images/rss.png', 'array(''path''=>''uploads/'',''types''=>array(0=>''jpeg'',1=>''jpg'',2=>''png'',3=>''bmp'',4=>''gif'',),''max_size''=>''307200'',''filename_eval''=>'''',)', ''),
+(68, 'ukrainian', 'Порядок сортування коментарів', '', '1', 0, '1', '{$ser['or']}', ''),
+(69, 'ukrainian', 'Коментарів на сторінку', '', '10', 0, '10', '', ''),
+(70, 'ukrainian', 'Обмеження зміни за часом', 'Введіть кількість секунд, після завершення яких користувачі не зможуть видаляти / редагувати свої коментарі. Відлік часу здійснюється з моменту публікації коментаря.', '86400', 0, '86400', '', ''),
+(71, 'ukrainian', 'Відображати коментарі для', '', 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', 1, 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', '{$ser['groups']}', 'Права'),
+(72, 'ukrainian', 'Публікація коментарів доступна для', '', 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', 1, 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', '{$ser['groups']}', ''),
 
-(73, 'ukrainian', 'Порядок сортування коментарів', '', '1', 0, '1', '{$ser['or']}', ''),
-(74, 'ukrainian', 'Коментарів на сторінку', '', '10', 0, '10', '', ''),
-(75, 'ukrainian', 'Обмеження зміни за часом', 'Введіть кількість секунд, після завершення яких користувачі не зможуть видаляти / редагувати свої коментарі. Відлік часу здійснюється з моменту публікації коментаря.', '86400', 0, '86400', '', ''),
-(76, 'ukrainian', 'Відображати коментарі для', '', 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', 1, 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', '{$ser['groups']}', 'Права'),
-(77, 'ukrainian', 'Публікація коментарів доступна для', '', 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', 1, 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', '{$ser['groups']}', ''),
+(73, 'ukrainian', 'Включити створення прев''ю для завантажуваних зображень?', '', '1', 0, '1', '', 'Превью зображень'),
+(74, 'ukrainian', 'Типи файлів для яких створювати превью', 'Укажите типы файлов для которых будут создаваться превью (через запятую).', 'png,jpg,bmp', 0, 'png,jpg,bmp', '', ''),
+(75, 'ukrainian', 'Ширина превью', 'Введіть 0 для збереження вихідної ширини зображення', '200', 0, '200', '', ''),
+(76, 'ukrainian', 'Висота прев''ю', 'Введіть 0 для збереження вихідної висоти зображення', '0', 0, '0', '', ''),
+(77, 'ukrainian', 'Спосіб зменшення зображення', '', 'small', 0, 'small', '{$ser['cu']}', ''),
+(78, 'ukrainian', 'Створення превью почати з', '', 'b', 0, 'b', '{$ser['cf']}', ''),
+(79, 'ukrainian', 'Включити водяний знак?', 'Накласти водяний знак на завантажувані картинки?', '1', 0, '1', '', 'Настройки ватермарка'),
+(80, 'ukrainian', 'Типи файлів для водяного знака', 'На ці типи файлів буде ставитися водяний знак. Вказуйте, розділяючи комами.', 'jpg,jpeg,png,bmp', 0, 'jpg,jpeg,png,bmp', '', ''),
+(81, 'ukrainian', 'Прозорість водяного знаку (у відсотках від 0 до 100)', '100 - не видно водяного знаку', '50', 0, '50', '', ''),
+(82, 'ukrainian', 'Положення по вертикалі (у відсотках від 0 до 100)', '', '50', 0, '50', '', ''),
+(83, 'ukrainian', 'Положення по горизонталі (у відсотках від 0 до 100)', '', '50', 0, '50', '', ''),
+(84, 'ukrainian', 'Файл водяного знаку', 'Введіть шлях до малюнка на сервері, який буде використаний в якості водяного знака (наприклад: images / watermrak.jpg). Зверніть увагу, що водяний знак не буде застосований на зображення якщо за розмірами вона менша, ніж водяний знак. Має пріоритет над текстом водяного знака.', 'images/watermark.png', 0, 'images/watermark.png', '', ''),
+(85, 'ukrainian', 'Текст водяного знака', 'Цей текст буде накладено на зображення в якості водяного знака, якщо зображення водяного знака недоступне.', '© {$sitename}', 0, '© {$sitename}', '', ''),
+(86, 'ukrainian', 'Колір, розмір і кут тексту водяного знака', 'Задається в форматі red, green, blue, size, angle', '1,1,1,15,0', 0, '1,1,1,15,0', '', ''),
+(87, 'ukrainian', 'Заборонити скачування з інших сайтів?', 'При включенні цієї опції, при спробі завантажити файл буде перевірятися адресу сторінки, з якою прийшов користувач. Якщо це буде чужа сторінка, користувач не зможе завантажити файл.', '1', 0, '1', '', 'Завантаження файлів'),
+(88, 'ukrainian', 'Заборонити скачування без сесії?', 'При включенні цієї опції, користувач, IP-адреса якого не присутній у списку сесій, не зможе завантажити файл.', '1', 0, '1', '', ''),
 
-(78, 'ukrainian', 'Включити створення прев''ю для завантажуваних зображень?', '', '1', 0, '1', '', 'Превью зображень'),
-(79, 'ukrainian', 'Типи файлів для яких створювати превью', 'Укажите типы файлов для которых будут создаваться превью (через запятую).', 'png,jpg,bmp', 0, 'png,jpg,bmp', '', ''),
-(80, 'ukrainian', 'Ширина превью', 'Введіть 0 для збереження вихідної ширини зображення', '200', 0, '200', '', ''),
-(81, 'ukrainian', 'Висота прев''ю', 'Введіть 0 для збереження вихідної висоти зображення', '0', 0, '0', '', ''),
-(82, 'ukrainian', 'Спосіб зменшення зображення', '', 'small', 0, 'small', '{$ser['cu']}', ''),
-(83, 'ukrainian', 'Створення превью почати з', '', 'b', 0, 'b', '{$ser['cf']}', ''),
-(84, 'ukrainian', 'Включити водяний знак?', 'Накласти водяний знак на завантажувані картинки?', '1', 0, '1', '', 'Настройки ватермарка'),
-(85, 'ukrainian', 'Типи файлів для водяного знака', 'На ці типи файлів буде ставитися водяний знак. Вказуйте, розділяючи комами.', 'jpg,jpeg,png,bmp', 0, 'jpg,jpeg,png,bmp', '', ''),
-(86, 'ukrainian', 'Прозорість водяного знаку (у відсотках від 0 до 100)', '100 - не видно водяного знаку', '50', 0, '50', '', ''),
-(87, 'ukrainian', 'Положення по вертикалі (у відсотках від 0 до 100)', '', '50', 0, '50', '', ''),
-(88, 'ukrainian', 'Положення по горизонталі (у відсотках від 0 до 100)', '', '50', 0, '50', '', ''),
-(89, 'ukrainian', 'Файл водяного знаку', 'Введіть шлях до малюнка на сервері, який буде використаний в якості водяного знака (наприклад: images / watermrak.jpg). Зверніть увагу, що водяний знак не буде застосований на зображення якщо за розмірами вона менша, ніж водяний знак. Має пріоритет над текстом водяного знака.', 'images/watermark.png', 0, 'images/watermark.png', '', ''),
-(90, 'ukrainian', 'Текст водяного знака', 'Цей текст буде накладено на зображення в якості водяного знака, якщо зображення водяного знака недоступне.', '© {$sitename}', 0, '© {$sitename}', '', ''),
-(91, 'ukrainian', 'Колір, розмір і кут тексту водяного знака', 'Задається в форматі red, green, blue, size, angle', '1,1,1,15,0', 0, '1,1,1,15,0', '', ''),
-(92, 'ukrainian', 'Заборонити скачування з інших сайтів?', 'При включенні цієї опції, при спробі завантажити файл буде перевірятися адресу сторінки, з якою прийшов користувач. Якщо це буде чужа сторінка, користувач не зможе завантажити файл.', '1', 0, '1', '', 'Завантаження файлів'),
-(93, 'ukrainian', 'Заборонити скачування без сесії?', 'При включенні цієї опції, користувач, IP-адреса якого не присутній у списку сесій, не зможе завантажити файл.', '1', 0, '1', '', ''),
+(89, 'ukrainian', 'Секрет сайту', 'Випадковий секретний рядок за допомогою якого будуть підписуватися дані для міждоменної комутації.', '{$secret}', 0, '{$secret}', '', ''),
+(90, 'ukrainian', 'Термін життя даних крос-доменної комутації', 'У секундах.', '100', 0, '100', '', ''),
 
-(94, 'ukrainian', 'Секрет сайту', 'Випадковий секретний рядок за допомогою якого будуть підписуватися дані для міждоменної комутації.', '{$secret}', 0, '{$secret}', '', ''),
-(95, 'ukrainian', 'Термін життя даних крос-доменної комутації', 'У секундах.', '100', 0, '100', '', ''),
+(91, 'ukrainian', 'Скільки днів зберігати чернетки?', '', '10', 0, '10', '', ''),
+(92, 'ukrainian', 'Інтервал автозбереження в секундах', '', '20', 0, '20', '', ''),
 
-(96, 'ukrainian', 'Скільки днів зберігати чернетки?', '', '10', 0, '10', '', ''),
-(97, 'ukrainian', 'Інтервал автозбереження в секундах', '', '20', 0, '20', '', ''),
+(93, 'ukrainian', 'Сторінки, що виводиться на головній', 'Залиште пустим для виведення змісту', '', 0, '', '{$ser['sg']}', ''),
 
-(98, 'ukrainian', 'Сторінки, що виводиться на головній', 'Залиште пустим для виведення змісту', '', 0, '', '{$ser['sg']}', ''),
-
-(99, 'ukrainian', 'Публікацій на сторінку', '', '10', 0, '10', '', 'Загальні'),
-(100, 'ukrainian', 'Публікацій на сторінку в RSS', '', '30', 0, '30', '', ''),
-(101, 'ukrainian', 'Додавання новин користувачами', '', '1', 0, '1', '', ''),
-(102, 'ukrainian', 'Виводити вміст підкатегорій при перегляді категорії', '', '1', 0, '1', '', ''),
-(103, 'ukrainian', 'Включити ping', 'Повідомлення пошукових систем про оновлення на сайті', '1', 0, '1', '', ''),
-(104, 'ukrainian', 'Включити рейтинг', '', '1', 0, '1', '', 'Настройки рейтингу'),
-(105, 'ukrainian', 'Оцінка тільки при детальному перегляді?', 'Дозволити оцінювати публікації тільки при їх детальному перегляді?', '0', 0, '0', '', ''),
-(106, 'ukrainian', 'Рейтинг тільки для користувачів', 'При включенні цієї опції, виставляти новини оцінку зможуть лише авторизовані користувачі і лише 1 раз.', '0', 0, '0', '', ''),
-(107, 'ukrainian', 'Період між оцінювання у днях', 'Якщо виставляти оцінку можуть не лише користувачі, але й гості, ця опція визначає час, по закінченню якого гість зможе знову виставити оцінку.', '3', 0, '3', '', ''),
-(108, 'ukrainian', 'Мінімальна негативна оцінка', 'Значення не може бути більше нуля. Для відключення негативних оцінок, введіть 0.', '-3', 0, '-3', '', ''),
-(109, 'ukrainian', 'Максимальна позитивна оцінка', 'Значення не може бути нижче нуля. Для відключення позитивних оцінок, введіть 0', '3', 0, '3', '', '')
+(94, 'ukrainian', 'Публікацій на сторінку', '', '10', 0, '10', '', 'Загальні'),
+(95,  'ukrainian', 'Публікацій на сторінку в RSS', '', '30', 0, '30', '', ''),
+(96,  'ukrainian', 'Додавання новин користувачами', '', '1', 0, '1', '', ''),
+(97,  'ukrainian', 'Виводити вміст підкатегорій при перегляді категорії', '', '1', 0, '1', '', ''),
+(98,  'ukrainian', 'Включити ping', 'Повідомлення пошукових систем про оновлення на сайті', '1', 0, '1', '', ''),
+(99,  'ukrainian', 'Включити рейтинг', '', '1', 0, '1', '', 'Настройки рейтингу'),
+(100, 'ukrainian', 'Оцінка тільки при детальному перегляді?', 'Дозволити оцінювати публікації тільки при їх детальному перегляді?', '0', 0, '0', '', ''),
+(101, 'ukrainian', 'Рейтинг тільки для користувачів', 'При включенні цієї опції, виставляти новини оцінку зможуть лише авторизовані користувачі і лише 1 раз.', '0', 0, '0', '', ''),
+(102, 'ukrainian', 'Період між оцінювання у днях', 'Якщо виставляти оцінку можуть не лише користувачі, але й гості, ця опція визначає час, по закінченню якого гість зможе знову виставити оцінку.', '3', 0, '3', '', ''),
+(103, 'ukrainian', 'Мінімальна негативна оцінка', 'Значення не може бути більше нуля. Для відключення негативних оцінок, введіть 0.', '-3', 0, '-3', '', ''),
+(104, 'ukrainian', 'Максимальна позитивна оцінка', 'Значення не може бути нижче нуля. Для відключення позитивних оцінок, введіть 0', '3', 0, '3', '', '')
 QUERY;
 #[E] Ukrainian
 $ser=array(
@@ -861,7 +840,7 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serial
 (11, 'english', 'List of search engine bots', 'Here, the data is stored on the search bots. Input format: one on each line in the form <b>user agent=bot</ b>.', '{$ser['bots']}', 1, '{$ser['bots']}', '', ''),
 (12, 'english', 'Enable multilingual support?', '', '{$multilang}', 0, '{$multilang}', '', 'Localization'),
 (13, 'english', 'Timezone by default', '', '{$timezone}', 0, '{$timezone}', '{$ser['tz']}', ''),
-(14, 'english', 'Blocked IP addresses', 'Each address - with a new line. Wildcards like 87.183.*.* are enabled, where * is any value. That would indicate a unique reason for the ban imposed after the IP address, put "=" and write the reason. For example:<br />87.183.*.*=Fuck you!', '', 0, '', 'array(''addon''=>array(''style''=>''word-wrap:normal''));', 'Blocking by IP'),
+(14, 'english', 'Blocked IP addresses', 'Each address - with a new line. Wildcards like 87.183.*.* are enabled, where * is any value. That would indicate a unique reason for the ban imposed after the IP address, put "=" and write the reason. For example:<br />87.183.*.*=Fuck you!', '', 0, '', 'array(''extra''=>array(''style''=>''word-wrap:normal''));', 'Blocking by IP'),
 (15, 'english', 'Message to the blocked', 'This message will appear to users that do not enter a reason.', ':-p', 0, ':-p', '', ''),
 
 (16, 'english', 'Site name', '', '{$sitename}', 0, '{$sitename}', '', 'Site headers'),
@@ -890,7 +869,7 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serial
 (37, 'english', 'Blocked nicknames', 'Separated by commas. Allowable special characters: * - any sequence of characters,? - any one character.', '', 0, '', '', 'Bans'),
 (38, 'english', 'Blocked e-mail', 'Separated by commas. Allowable special characters: * - any sequence of characters,? - any one character.', '', 0, '', '', ''),
 (39, 'english', 'Activation of newly created user', '', '1', 0, '1', '{$ser['aa']}', 'Register'),
-(40, 'english', 'Activation term', 'The number of hours allotted to activate account.', '86400', 0, '86400', 'array(''type''=>''number'',''addon''=>array(''min''=>1));', ''),
+(40, 'english', 'Activation term', 'The number of hours allotted to activate account.', '86400', 0, '86400', 'array(''type''=>''number'',''extra''=>array(''min''=>1));', ''),
 (41, 'english', 'How to deal with nonactivated accounts', '', '1', 0, '1', '{$ser['ua']}', ''),
 (42, 'english', 'Disable registration?', '', '0', 0, '0', '', ''),
 (43, 'english', 'The maximum length of nickname', '', '15', 0, '15', '', ''),
@@ -905,72 +884,66 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serial
 (51, 'english', 'Captcha height', '', '60', 0, '60', '', ''),
 (52, 'english', 'The scatter symbols on the vertical', 'The maximum deviation of the symbols on the vertical line from the center.', '5', 0, '5', '', ''),
 
-(53, 'english', 'Log file code errors', '', 'addons/logs/errors.log', 0, '', '', 'Errors log'),
-(54, 'english', 'Log file uncaught exceptions', '', 'addons/logs/exceptions.log', 0, '', '', ''),
-(55, 'english', 'Log-file site errors', '', 'addons/logs/site_errors.log', 0, '', '', ''),
-(56, 'english', 'Log-file database (including queries)', '', 'addons/logs/db_errors.log', 0, '', '', ''),
-(57, 'english', 'Limit file size', 'Specified in kilobytes. After reaching this size, the file is automatically packaged Gzip or BZip2 archive. Specify 0 to disable automatic compression.', '2097152', 0, '2097152', '', ''),
+(53, 'english', 'Way to send e-mail', '', 'mail', 0, 'mail', 'array(''options''=>array(''php''=>''PHP mail'',''smtp''=>''SMTP'',))', 'General settiongs'),
+(54, 'english', 'Sender e-mail', 'From what email letters will send?', '{$email}', 0, '{$email}', '', 'Общие настройки'),
+(55, 'english', 'Importance', '', '3', 0, '3', '{$ser['pr']}', ''),
+(56, 'english', 'E-mail for response', 'If the response from the user should be taken to another e-mail, fill out this field.', '', 0, '', '', ''),
+(57, 'english', 'E-mail to confirm a read', '', '', 0, '', '', ''),
+(58, 'english', 'Login', 'User', '', 0, '', '', 'SMTP settings'),
+(59, 'english', 'Password', '', '', 0, '', '', ''),
+(60, 'english', 'Host', 'Server', '', 0, '', '', ''),
+(61, 'english', 'Port', '', '25', 0, '25', '', ''),
 
-(58, 'english', 'Way to send e-mail', '', 'mail', 0, 'mail', 'array(''options''=>array(''php''=>''PHP mail'',''smtp''=>''SMTP'',))', 'General settiongs'),
-(59, 'english', 'Sender e-mail', 'From what email letters will send?', '{$email}', 0, '{$email}', '', 'Общие настройки'),
-(60, 'english', 'Importance', '', '3', 0, '3', '{$ser['pr']}', ''),
-(61, 'english', 'E-mail for response', 'If the response from the user should be taken to another e-mail, fill out this field.', '', 0, '', '', ''),
-(62, 'english', 'E-mail to confirm a read', '', '', 0, '', '', ''),
-(63, 'english', 'Login', 'User', '', 0, '', '', 'SMTP settings'),
-(64, 'english', 'Password', '', '', 0, '', '', ''),
-(65, 'english', 'Host', 'Server', '', 0, '', '', ''),
-(66, 'english', 'Port', '', '25', 0, '25', '', ''),
+(62, 'english', 'Editor by default', '', 'bb', 0, 'bb', 'array(''eval''=>''return Eleanor::getInstance()->Editor->editors;'')', ''),
+(63, 'english', 'Swear words', 'Mats and abuse. Separated by commas.', 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', 0, 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', '', ''),
+(64, 'english', 'Autocorrect banned words', '', '*Censorship*', 0, '*Censorship*', '', ''),
+(65, 'english', 'Enable protection from direct links?', '', 'bb', 0, 'bb', 'array(''options''=>array(''no'',''go''=>''Redirect via go.php'',''nofollow''=>''rel="nofollow"'',))', ''),
+(66, 'english', 'Enable autoparse links in the text?', 'If you enable this option, all links published as text - will be treated as links.', '1', 0, '1', '', ''),
 
-(67, 'english', 'Editor by default', '', 'bb', 0, 'bb', 'array(''eval''=>''return Eleanor::getInstance()->Editor->editors;'')', ''),
-(68, 'english', 'Swear words', 'Mats and abuse. Separated by commas.', 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', 0, 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', '', ''),
-(69, 'english', 'Autocorrect banned words', '', '*Censorship*', 0, '*Censorship*', '', ''),
-(70, 'english', 'Enable protection from direct links?', '', 'bb', 0, 'bb', 'array(''options''=>array(''no'',''go''=>''Redirect via go.php'',''nofollow''=>''rel="nofollow"'',))', ''),
-(71, 'english', 'Enable autoparse links in the text?', 'If you enable this option, all links published as text - will be treated as links.', '1', 0, '1', '', ''),
+(67, 'english', 'RSS logo', '', 'images/rss.png', 0, 'images/rss.png', 'array(''path''=>''uploads/'',''types''=>array(0=>''jpeg'',1=>''jpg'',2=>''png'',3=>''bmp'',4=>''gif'',),''max_size''=>''307200'',''filename_eval''=>'''',)', ''),
 
-(72, 'english', 'RSS logo', '', 'images/rss.png', 0, 'images/rss.png', 'array(''path''=>''uploads/'',''types''=>array(0=>''jpeg'',1=>''jpg'',2=>''png'',3=>''bmp'',4=>''gif'',),''max_size''=>''307200'',''filename_eval''=>'''',)', ''),
+(68, 'english', 'Order displaying comments', '', '1', 0, '1', '{$ser['or']}', ''),
+(69, 'english', 'Comments per page', '', '10', 0, '10', '', ''),
+(70, 'english', 'Limitation of time changes', 'Enter the number of seconds after which users can not delete / edit your comments. The countdown is carried out since the publication of comments.', '86400', 0, '86400', '', ''),
+(71, 'english', 'Display comments for', '', 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', 1, 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', '{$ser['groups']}', 'Rights'),
+(72, 'english', 'Post comments available for', '', 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', 1, 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', '{$ser['groups']}', ''),
 
-(73, 'english', 'Order displaying comments', '', '1', 0, '1', '{$ser['or']}', ''),
-(74, 'english', 'Comments per page', '', '10', 0, '10', '', ''),
-(75, 'english', 'Limitation of time changes', 'Enter the number of seconds after which users can not delete / edit your comments. The countdown is carried out since the publication of comments.', '86400', 0, '86400', '', ''),
-(76, 'english', 'Display comments for', '', 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', 1, 'a:6:{i:0;s:1:"4";i:1;s:1:"1";i:2;s:1:"3";i:3;s:1:"6";i:4;s:1:"5";i:5;s:1:"2";}', '{$ser['groups']}', 'Rights'),
-(77, 'english', 'Post comments available for', '', 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', 1, 'a:2:{i:0;s:1:"1";i:1;s:1:"2";}', '{$ser['groups']}', ''),
+(73, 'english', 'Enable the creation of thumbs for uploaded images?', '', '1', 0, '1', '', 'Preview images'),
+(74, 'english', 'File types for which to create thumbs', 'Specify the file types for which to create a preview (separated by comma).', 'png,jpg,bmp', 0, 'png,jpg,bmp', '', ''),
+(75, 'english', 'Thumb width', 'Enter 0 to keep the original width of the image', '200', 0, '200', '', ''),
+(76, 'english', 'Height preview', 'Enter 0 to keep the original height of the image', '0', 0, '0', '', ''),
+(77, 'english', 'Method of reducing the image', '', 'small', 0, 'small', '{$ser['cu']}', ''),
+(78, 'english', 'Creating a thumb begin with', '', 'b', 0, 'b', '{$ser['cf']}', ''),
+(79, 'english', 'Enable a watermark?', 'Apply a watermark to your uploaded images?', '1', 0, '1', '', 'Настройки ватермарка'),
+(80, 'english', 'Filetypes for watermark', 'These types of files will be put watermark. Specify, separated by commas.', 'jpg,jpeg,png,bmp', 0, 'jpg,jpeg,png,bmp', '', ''),
+(81, 'english', 'Transparency of the watermark (as a percentage from 0 to 100)', '100 - not visible watermark', '50', 0, '50', '', ''),
+(82, 'english', 'Vertical position (as a percentage from 0 to 100)', '', '50', 0, '50', '', ''),
+(83, 'english', 'Horizontal position (as a percentage from 0 to 100)', '', '50', 0, '50', '', ''),
+(84, 'english', 'File of the watermark', 'Enter the path to the picture on the server, which will be used as a watermark (eg: images / watermrak.jpg). Please note that the watermark will not be applied to the image if the size is less than the watermark. Takes precedence over the text watermark.', 'images/watermark.png', 0, 'images/watermark.png', '', ''),
+(85, 'english', 'Text watermark', 'This text will be superimposed on the image as a watermark, if the watermark image is not available.', '© {$sitename}', 0, '© {$sitename}', '', ''),
+(86, 'english', 'Color, size and angle of text watermark', 'Given in the format of red, green, blue, size, angle', '1,1,1,15,0', 0, '1,1,1,15,0', '', ''),
+(87, 'english', 'Prohibit downloads from other sites?', 'When this option when you try to download the file will be checked to indicate the address to which the user came from. If it is someone else''s page, the user can not download the file.', '1', 0, '1', '', 'Downloading files'),
+(88, 'english', 'Prohibit downloading without session?', 'When this option is enabled, the user, IP address is not on the list of sessions will not be able to download the file.', '1', 0, '1', '', ''),
 
-(78, 'english', 'Enable the creation of thumbs for uploaded images?', '', '1', 0, '1', '', 'Preview images'),
-(79, 'english', 'File types for which to create thumbs', 'Specify the file types for which to create a preview (separated by comma).', 'png,jpg,bmp', 0, 'png,jpg,bmp', '', ''),
-(80, 'english', 'Thumb width', 'Enter 0 to keep the original width of the image', '200', 0, '200', '', ''),
-(81, 'english', 'Height preview', 'Enter 0 to keep the original height of the image', '0', 0, '0', '', ''),
-(82, 'english', 'Method of reducing the image', '', 'small', 0, 'small', '{$ser['cu']}', ''),
-(83, 'english', 'Creating a thumb begin with', '', 'b', 0, 'b', '{$ser['cf']}', ''),
-(84, 'english', 'Enable a watermark?', 'Apply a watermark to your uploaded images?', '1', 0, '1', '', 'Настройки ватермарка'),
-(85, 'english', 'Filetypes for watermark', 'These types of files will be put watermark. Specify, separated by commas.', 'jpg,jpeg,png,bmp', 0, 'jpg,jpeg,png,bmp', '', ''),
-(86, 'english', 'Transparency of the watermark (as a percentage from 0 to 100)', '100 - not visible watermark', '50', 0, '50', '', ''),
-(87, 'english', 'Vertical position (as a percentage from 0 to 100)', '', '50', 0, '50', '', ''),
-(88, 'english', 'Horizontal position (as a percentage from 0 to 100)', '', '50', 0, '50', '', ''),
-(89, 'english', 'File of the watermark', 'Enter the path to the picture on the server, which will be used as a watermark (eg: images / watermrak.jpg). Please note that the watermark will not be applied to the image if the size is less than the watermark. Takes precedence over the text watermark.', 'images/watermark.png', 0, 'images/watermark.png', '', ''),
-(90, 'english', 'Text watermark', 'This text will be superimposed on the image as a watermark, if the watermark image is not available.', '© {$sitename}', 0, '© {$sitename}', '', ''),
-(91, 'english', 'Color, size and angle of text watermark', 'Given in the format of red, green, blue, size, angle', '1,1,1,15,0', 0, '1,1,1,15,0', '', ''),
-(92, 'english', 'Prohibit downloads from other sites?', 'When this option when you try to download the file will be checked to indicate the address to which the user came from. If it is someone else''s page, the user can not download the file.', '1', 0, '1', '', 'Downloading files'),
-(93, 'english', 'Prohibit downloading without session?', 'When this option is enabled, the user, IP address is not on the list of sessions will not be able to download the file.', '1', 0, '1', '', ''),
+(89, 'english', 'Site secret', 'A random secret string with which to sign the data for cross-domain switching.', '{$secret}', 0, '{$secret}', '', ''),
+(90, 'english', 'The life of these cross-domain switching', 'In seconds.', '100', 0, '100', '', ''),
 
-(94, 'english', 'Site secret', 'A random secret string with which to sign the data for cross-domain switching.', '{$secret}', 0, '{$secret}', '', ''),
-(95, 'english', 'The life of these cross-domain switching', 'In seconds.', '100', 0, '100', '', ''),
+(91, 'english', 'Days to keep drafts?', '', '10', 0, '10', '', ''),
+(92, 'english', 'Autosave interval in seconds', '', '20', 0, '20', '', ''),
 
-(96, 'english', 'Days to keep drafts?', '', '10', 0, '10', '', ''),
-(97, 'english', 'Autosave interval in seconds', '', '20', 0, '20', '', ''),
+(93, 'english', 'The pages displayed on the main', 'Leave empty to display contents', '', 0, '', '{$ser['sg']}', ''),
 
-(98, 'english', 'The pages displayed on the main', 'Leave empty to display contents', '', 0, '', '{$ser['sg']}', ''),
-
-(99, 'english', 'Publications per page', '', '10', 0, '10', '', 'General'),
-(100, 'english', 'Publications per page in RSS', '', '30', 0, '30', '', ''),
-(101, 'english', 'Adding news by users', '', '1', 0, '1', '', ''),
-(102, 'english', 'Display the contents of subcategories when viewing category', '', '1', 0, '1', '', ''),
-(103, 'english', 'Enable ping', 'Notification search engines about updating on the site', '1', 0, '1', '', ''),
-(104, 'english', 'Enable rating', '', '1', 0, '1', '', 'Rating options'),
-(105, 'english', 'Score only in the detailed view?', 'Allow to assess publication only when they are detailed viewing?', '0', 0, '0', '', ''),
-(106, 'english', 'Rating users only', 'When this option is on, rate news can only authorized users and only 1 time.', '0', 0, '0', '', ''),
-(107, 'english', 'Period between marks in days', 'If rate can not only users but also the guests, this option specifies the time after which guests will be able to remark.', '3', 0, '3', '', ''),
-(108, 'english', 'Low negative mark', 'Value can not be greater than zero. To turn off the negative marks, enter 0.', '-3', 0, '-3', '', ''),
-(109, 'english', 'The maximum positive mark', 'Value can not be below zero. To disable the positive ratings, please enter 0.', '3', 0, '3', '', '')
+(94, 'english', 'Publications per page', '', '10', 0, '10', '', 'General'),
+(95,  'english', 'Publications per page in RSS', '', '30', 0, '30', '', ''),
+(96,  'english', 'Adding news by users', '', '1', 0, '1', '', ''),
+(97,  'english', 'Display the contents of subcategories when viewing category', '', '1', 0, '1', '', ''),
+(98,  'english', 'Enable ping', 'Notification search engines about updating on the site', '1', 0, '1', '', ''),
+(99,  'english', 'Enable rating', '', '1', 0, '1', '', 'Rating options'),
+(100, 'english', 'Score only in the detailed view?', 'Allow to assess publication only when they are detailed viewing?', '0', 0, '0', '', ''),
+(101, 'english', 'Rating users only', 'When this option is on, rate news can only authorized users and only 1 time.', '0', 0, '0', '', ''),
+(102, 'english', 'Period between marks in days', 'If rate can not only users but also the guests, this option specifies the time after which guests will be able to remark.', '3', 0, '3', '', ''),
+(103, 'english', 'Low negative mark', 'Value can not be greater than zero. To turn off the negative marks, enter 0.', '-3', 0, '-3', '', ''),
+(104, 'english', 'The maximum positive mark', 'Value can not be below zero. To disable the positive ratings, please enter 0.', '3', 0, '3', '', '')
 QUERY;
 #[E] English
 
@@ -984,8 +957,8 @@ QUERY;
 if($rus)
 	$insert['errors_l(rus)']=<<<QUERY
 INSERT INTO `{$prefix}errors_l` VALUES
-(1, 'russian', '404', 'Страница не найдена!', 'Страница, которую Вы запросили, не существует либо она временно не доступна.<br /><br />Возможно, вы перешли по устаревшей ссылке с другой страницы или случайно ошиблись, набирая адрес вручную.','','',NOW()),
-(2, 'russian', '403', 'Доступ запрещен!', 'Вам запрещен доступ к этой странице!','','',NOW())
+(1, 'russian', '404', 'Страница не найдена', 'Страница, которую Вы запросили, не существует либо она временно не доступна.<br /><br />Возможно, вы перешли по устаревшей ссылке с другой страницы или случайно ошиблись, набирая адрес вручную.','','',NOW()),
+(2, 'russian', '403', 'Доступ запрещен', 'Вам запрещен доступ к этой странице!','','',NOW())
 QUERY;
 #[E] Russian
 
@@ -993,8 +966,8 @@ QUERY;
 if($eng)
 	$insert['errors_l(eng)']=<<<QUERY
 INSERT INTO `{$prefix}errors_l` VALUES
-(1, 'english', '404', 'Page not found!', 'The page you have requested does not exist or is temporarily unavailable.','','',NOW()),
-(2, 'english', '403', 'Access denied!', 'You haven''t permisson to visit this page!','','',NOW())
+(1, 'english', '404', 'Page not found', 'The page you have requested does not exist or is temporarily unavailable.','','',NOW()),
+(2, 'english', '403', 'Access denied', 'You haven''t permisson to visit this page!','','',NOW())
 QUERY;
 #[E] English
 
@@ -1002,8 +975,8 @@ QUERY;
 if($ukr)
 	$insert['errors_l(ukr)']=<<<QUERY
 INSERT INTO `{$prefix}errors_l` VALUES
-(1, 'ukrainian', '404', 'Сторінка не знайдена!', 'Сторінка, яку Ви викликали, не існує або вона тимчасово не доступна.<br /><br />Можливо, ви перейшли по застарілому посиланню з іншої сторінки або випадково помилилися, набираючи адресу вручну.','','',NOW()),
-(2, 'ukrainian', '403', 'Доступ заборонено!', 'Вам заборонений доступ до цієї сторінки!','','',NOW())
+(1, 'ukrainian', '404', 'Сторінку не знайдено', 'Сторінка, яку Ви викликали, не існує або вона тимчасово не доступна.<br /><br />Можливо, ви перейшли по застарілому посиланню з іншої сторінки або випадково помилилися, набираючи адресу вручну.','','',NOW()),
+(2, 'ukrainian', '403', 'Доступ заборонено', 'Вам заборонений доступ до цієї сторінки!','','',NOW())
 QUERY;
 #[E] Ukrainian
 

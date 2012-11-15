@@ -71,11 +71,11 @@ class Editor extends BaseClass
 
 	/*
 		Ôóíêöèÿ, êîòîğàÿ ïîêàæåò íàøå òåêñòîâîå ïîëå â çàâèñèìîñòè îò íàñòğîåê
-		$addon['bypost']=true îçíà÷àåò, ÷òî òåêñò â ğåäàêòîğ âîçâğàùàåòñÿ èç-çà âîçíèêøåé îøèáêè â ïğèøåäøåé îò ïîëüçîâàòåëÿ èíôå
+		$extra['bypost']=true îçíà÷àåò, ÷òî òåêñò â ğåäàêòîğ âîçâğàùàåòñÿ èç-çà âîçíèêøåé îøèáêè â ïğèøåäøåé îò ïîëüçîâàòåëÿ èíôå
 	*/
-	public function Area($name,$text='',$addon=array(),$tpl='Editor')
+	public function Area($name,$text='',$extra=array(),$tpl='Editor')
 	{
-		if(empty($addon['bypost']))
+		if(empty($extra['bypost']))
 			$text=$this->GetEdit($text);
 		$id=preg_replace('#\W+#','',$name);
 		$GLOBALS['jscripts'][]='js/dropdown.js';
@@ -90,18 +90,18 @@ class Editor extends BaseClass
 		{
 			case'bb':#Ğîäíîé ÁÁ
 				$GLOBALS['jscripts'][]='js/eleanor_bb.js';
-				$html=Eleanor::$Template->{isset($addon['bbtpl']) ? $addon['bbtpl'] : 'BBeditor'}(array(
+				$html=Eleanor::$Template->{isset($extra['bbtpl']) ? $extra['bbtpl'] : 'BBeditor'}(array(
 					'id'=>$id,
 					'name'=>$name,
 					'value'=>$text,
-					'addon'=>isset($addon['bb']) ? $addon['bb'] : (isset($addon['no']) ? $addon['no'] : array()),
+					'extra'=>isset($extra['bb']) ? $extra['bb'] : (isset($extra['no']) ? $extra['no'] : array()),
 					'smiles'=>$this->smiles,
 					'ownbb'=>$this->ownbb,
 				));
 			break;
 			case'ckeditor':
 				array_push($GLOBALS['jscripts'],'addons/ckeditor/ckeditor.js');
-				$html=Eleanor::Text($name,$text,(isset($addon['ckeditor']) ? $addon['ckeditor'] : array())+array('id'=>$id)).'<script type="text/javascript">//<![CDATA[
+				$html=Eleanor::Text($name,$text,(isset($extra['ckeditor']) ? $extra['ckeditor'] : array())+array('id'=>$id)).'<script type="text/javascript">//<![CDATA[
 $(function(){
 	if(typeof CKEDITOR.instances.'.$id.'!="undefined")
 		CKEDITOR.instances.'.$id.'.destroy();
@@ -136,7 +136,7 @@ else
 			case'codemirror':
 				$GLOBALS['jscripts'][]='addons/codemirror/lib/codemirror.js';
 				$GLOBALS['head'][__class__.'-codemirror']='<link rel="stylesheet" href="addons/codemirror/lib/codemirror.css" type="text/css" media="screen" />';
-				$mode=isset($addon['codemirror']['type']) ? preg_replace('#[^a-z0-9]+#','',(string)$addon['codemirror']['type']) : '';
+				$mode=isset($extra['codemirror']['type']) ? preg_replace('#[^a-z0-9]+#','',(string)$extra['codemirror']['type']) : '';
 				if($mode=='purephp')#Çàïëàòêà äëÿ "÷èñòîãî" PHP
 				{
 					array_push($GLOBALS['jscripts'],'addons/codemirror/mode/php/eleanor.js','addons/codemirror/mode/php/php.js');
@@ -190,7 +190,7 @@ $(function(){
 			break;
 			default:#Áåç ğåäàêòîğà
 				$GLOBALS['jscripts'][]='js/eleanor_bb.js';
-				$html=Eleanor::Text($name,$text,(isset($addon['no']) ? $addon['no'] : array())+array('id'=>$id,'rows'=>10,'cols'=>50)).'<script type="text/javascript">/*<![CDATA[*/EDITOR.New("'.$id.'",
+				$html=Eleanor::Text($name,$text,(isset($extra['no']) ? $extra['no'] : array())+array('id'=>$id,'rows'=>10,'cols'=>50)).'<script type="text/javascript">/*<![CDATA[*/EDITOR.New("'.$id.'",
 				{
 					Embed:function(type,data)
 					{

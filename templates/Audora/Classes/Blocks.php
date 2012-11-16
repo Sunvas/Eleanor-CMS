@@ -503,10 +503,9 @@ $(function(){
 		$ltpl=Eleanor::$Language['tpl'];
 		if(Eleanor::$vars['multilang'])
 		{
-			$mchecks=$ml=array();
+			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
-				$mchecks[$k]=!$id || !empty($values['title'][$k]) || !empty($values['text'][$k]);
 				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
 				$ml['text'][$k]=$GLOBALS['Eleanor']->Editor->Area('text['.$k.']',Eleanor::FilterLangValues($values['text'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>4)));
 			}
@@ -533,7 +532,7 @@ $(function(){
 					$Lst->head(array($v,'tr'=>array('class'=>'trfile trconf infolabel first')));
 
 		if(Eleanor::$vars['multilang'])
-			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$mchecks,null,5));
+			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,5));
 
 		$cont=(string)$Lst->end();
 

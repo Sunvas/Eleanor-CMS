@@ -471,23 +471,23 @@ class Categories_Manager extends Categories
 						foreach($a as $k=>&$v)
 							if(isset($this->controls[$k]))
 								$values[$k]['value'][$a['language']]=$v;
-				$fv=false;
 				if(Eleanor::$vars['multilang'])
-					foreach(Eleanor::$langs as $k=>&$v)
-						foreach($this->controls as $kc=>&$vc)
-							if(!empty($v['multilang']))
-								if(!isset($values[$kc]['value'][$k]))
-									$values[$kc]['value'][$k]=null;
-								elseif($fv)
-								{
-									$values['_onelang']=!is_array($values[$fv]) || count($values[$fv]['value'])==1 && isset($values[$fv]['value'][LANGUAGE]);
-									$fv=true;
-								}
+				{					if(!isset($values['_onelang']))
+						$values['_onelang']=false;
+					$values['_langs']=isset($values['title']['value']) ? array_keys($values['title']['value']) : array();
+				}
 			}
 			$GLOBALS['title'][]=$this->Language['editing'];
 		}
 		else
+		{
 			$GLOBALS['title'][]=$this->Language['adding'];
+			if(Eleanor::$vars['multilang'])
+			{
+				$values['_onelang']=true;
+				$values['_langs']=array_keys(Eleanor::$langs);
+			}
+		}
 
 		$hasdraft=false;
 		if(!$errors and !isset($_GET[$this->pp.'nodraft']))
@@ -505,8 +505,12 @@ class Categories_Manager extends Categories
 		{
 			if($errors===true)
 				$errors=array();
-			$values['_onelang']=isset($_POST['_onelang']);
 			$this->post=true;
+			if(Eleanor::$vars['multilang'])
+			{
+				$values['_onelang']=isset($_POST['_onelang']);
+				$values['_langs']=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array(Language::$main);
+			}
 		}
 
 		if(isset($_GET[$this->pp.'noback']))
@@ -532,7 +536,7 @@ class Categories_Manager extends Categories
 
 		if(Eleanor::$vars['multilang'] and !isset($_POST['_onelang']))
 		{
-			$langs=(empty($_POST['lang']) or !is_array($_POST['lang'])) ? array() : $_POST['lang'];
+			$langs=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array();
 			$langs=array_intersect(array_keys(Eleanor::$langs),$langs);
 			if(!$langs)
 				$langs=array(Language::$main);

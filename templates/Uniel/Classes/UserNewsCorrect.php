@@ -83,10 +83,9 @@ class TplUserNewsCorrect
 	{		$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
 		$GLOBALS['head']['autocomplete']='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 		if(Eleanor::$vars['multilang'])
-		{			$mchecks=$ml=array();
+		{			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
-			{				$mchecks[$k]=(!$id or !empty($values['title'][$k]) or !empty($values['announcement'][$k]) or !empty($values['text'][$k]) or !empty($values['uri'][$k]) or !empty($values['meta_title'][$k]) or !empty($values['meta_descr'][$k]));
-				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
+			{				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
 				$ml['announcement'][$k]=$GLOBALS['Eleanor']->Editor->Area('announcement['.$k.']',Eleanor::FilterLangValues($values['announcement'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>6,'rows'=>10)));
 				$ml['text'][$k]=$GLOBALS['Eleanor']->Editor->Area('text['.$k.']',Eleanor::FilterLangValues($values['text'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>7,'rows'=>15)));
 				$ml['uri'][$k]=Eleanor::Edit('uri['.$k.']',Eleanor::FilterLangValues($values['uri'],$k),array('onfocus'=>'if(!$(this).val())$(this).val($(\'#title-'.$k.'\').val())','tabindex'=>2));
@@ -122,7 +121,7 @@ class TplUserNewsCorrect
 			->item(array(static::$lang['show_detail'],Eleanor::Check('show_detail',$values['show_detail'],array('tabindex'=>9)),'descr'=>static::$lang['show_detail_']))
 			->item(array(static::$lang['enddate'],Dates::Calendar('enddate',$values['enddate'],true,array('tabindex'=>10)),'descr'=>static::$lang['enddate_']));
 		if(Eleanor::$vars['multilang'])
-			$Lst->item(static::$lang['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$mchecks,null,11));
+			$Lst->item(static::$lang['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,11));
 		if(isset($values['status']))
 			$Lst->item(static::$lang['status'],Eleanor::Select('status',Eleanor::Option(static::$lang['blocked'],0,$values['status']==0).Eleanor::Option(static::$lang['active'],1,$values['status']==1),array('tabindex'=>12)));
 		if($captcha)

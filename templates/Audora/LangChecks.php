@@ -10,13 +10,13 @@
 if(!defined('CMS'))die;
 $GLOBALS['jscripts'][]='js/multilang.js';
 $one=isset($v_0) ? $v_0 : false;
-$langs=isset($v_1) ? $v_1 : array();
+$langs=isset($v_1) ? (array)$v_1 : array();
 $name=isset($v_2) ? $v_2 : false;
 $ti=isset($v_3) ? array('tabindex'=>$v_3) : array();
 
 $mchecks=array();
 foreach(Eleanor::$langs as $k=>&$v)
-	$mchecks[]='<label>'.Eleanor::Check('lang[]',isset($langs[$k]) ? $langs[$k] : true,$ti+array('value'=>$k)).' '.$v['name'].'</label>';
+	$mchecks[]='<label>'.Eleanor::Check('_langs[]',in_array($k,$langs),$ti+array('value'=>$k)).' '.$v['name'].'</label>';
 echo'<label>',
 	Eleanor::Check('_onelang',$one,$ti),
 	' <b>'.Eleanor::$Language['tpl']['for_all_langs'],

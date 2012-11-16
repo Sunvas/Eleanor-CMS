@@ -177,12 +177,6 @@ $(function(){
 			else
 				$Lst->head($v);
 
-		if(Eleanor::$vars['multilang'])
-		{
-			$mchecks=array();
-			foreach(Eleanor::$langs as $k=>&$_)
-				$mchecks[$k]=!$id || !empty($values['title']['value'][$k]) || !empty($values['text']['value'][$k]) || !empty($values['uri']['value'][$k]);
-		}
 		if($back)
 			$back=Eleanor::Control('back','hidden',$back);
 
@@ -364,10 +358,9 @@ $(function(){
 		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 		if(Eleanor::$vars['multilang'])
-		{			$mchecks=$ml=array();
+		{			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
-			{				$mchecks[$k]=!$id || !empty($values['title'][$k]) || !empty($values['announcement'][$k]) || !empty($values['text'][$k]) || !empty($values['uri'][$k]) || !empty($values['meta_title'][$k]) || !empty($values['meta_descr'][$k]);
-				$ml['meta_title'][$k]=Eleanor::Edit('meta_title['.$k.']',Eleanor::FilterLangValues($values['meta_title'],$k),array('tabindex'=>17));
+			{				$ml['meta_title'][$k]=Eleanor::Edit('meta_title['.$k.']',Eleanor::FilterLangValues($values['meta_title'],$k),array('tabindex'=>17));
 				$ml['meta_descr'][$k]=Eleanor::Edit('meta_descr['.$k.']',Eleanor::FilterLangValues($values['meta_descr'],$k),array('tabindex'=>18));
 				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
 				$ml['announcement'][$k]=$GLOBALS['Eleanor']->Editor->Area('announcement['.$k.']',Eleanor::FilterLangValues($values['announcement'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>6,'rows'=>10)));
@@ -396,7 +389,7 @@ $(function(){
 			$Lst->item($lang['categs'],Eleanor::Items('cats',$GLOBALS['Eleanor']->Categories->GetOptions($values['cats']),10,array('id'=>'cs','tabindex'=>2)))
 				->item($lang['maincat'],Eleanor::Select('_maincat',$GLOBALS['Eleanor']->Categories->GetOptions($values['_maincat']),array('id'=>'mc','tabindex'=>3)));
 		if(Eleanor::$vars['multilang'])
-			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$mchecks,null,4));
+			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,4));
 		$c=(string)$Lst->end();
 
 		$text=(string)$Lst->begin()

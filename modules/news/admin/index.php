@@ -387,7 +387,6 @@ function AddEditTag($id,$errors=array())
 	{
 		if($errors===true)
 			$errors=array();
-		$values['_onelang']=isset($_POST['_onelang']);
 		$Eleanor->sc_post=true;
 	}
 
@@ -619,6 +618,7 @@ function AddEdit($id,$errors=array())
 			if($values['_pin'] and (int)$values['pinned'])
 				list($values['pinned'],$values['date'])=array($values['date'],$values['pinned']);
 
+			$values['uri']=$values['title']=$values['announcement']=$values['text']=$values['meta_title']=$values['meta_descr']=array();
 			$R=Eleanor::$Db->Query('SELECT `language`,`uri`,`title`,`announcement`,`text`,`meta_title`,`meta_descr` FROM `'.$Eleanor->module['config']['tl'].'` WHERE `id`='.$id);
 			while($temp=$R->fetch_assoc())
 				if(!Eleanor::$vars['multilang'] and (!$temp['language'] or $temp['language']==Language::$main))
@@ -632,6 +632,7 @@ function AddEdit($id,$errors=array())
 				{
 					foreach(array_slice($temp,1) as $tk=>$tv)
 						$values[$tk][Language::$main]=$tv;
+					$values['_onelang']=true;
 					break;
 				}
 				elseif(Eleanor::$vars['multilang'] and isset(Eleanor::$langs[$temp['language']]))
@@ -640,10 +641,9 @@ function AddEdit($id,$errors=array())
 
 			if(Eleanor::$vars['multilang'])
 			{
-				$values['_onelang']=!is_array($values['title']) || count($values['title'])==1 && isset($values['title'][LANGUAGE]);
-				foreach(Eleanor::$langs as $k=>&$v)
-					if(!isset($values['title'][$k]))
-						$values['title'][$k]=$values['announcement'][$k]=$values['text'][$k]=$values['uri'][$k]=$values['meta_title'][$k]=$values['meta_descr'][$k]='';
+				if(!isset($values['_onelang']))
+					$values['_onelang']=false;
+				$values['_langs']=array_keys($values['title']);
 			}
 
 			if($values['tags'])
@@ -694,9 +694,13 @@ function AddEdit($id,$errors=array())
 			'meta_title'=>$dv,
 			'meta_descr'=>$dv,
 			#Специальные
-			'_onelang'=>true,
 			'_maincat'=>0,
 		);
+		if(Eleanor::$vars['multilang'])
+		{
+			$values['_onelang']=true;
+			$values['_langs']=array_keys(Eleanor::$langs);
+		}
 		$title[]=$lang['adding'];
 	}
 
@@ -727,6 +731,7 @@ function AddEdit($id,$errors=array())
 			$values['text']=isset($_POST['text']) ? (array)$_POST['text'] : array();
 			$values['uri']=isset($_POST['uri']) ? (array)$_POST['uri'] : array();
 			$values['_onelang']=isset($_POST['_onelang']);
+			$values['_langs']=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array(Language::$main);
 		}
 		else
 		{

@@ -257,11 +257,13 @@ function AddEdit($id,$errors=array())
 			$R=Eleanor::$Db->Query('SELECT `id`,`per_run`,`finame`,`finamet`,`figroup`,`figroupt`,`fiip`,`firegisterb`,`firegistera`,`filastvisitb`,`filastvisita`,`figender`,`fiemail`,`fiids`,`deleteondone`,`status` FROM `'.P.'spam` WHERE id='.$id.' LIMIT 1');
 			if(!$values=$R->fetch_assoc())
 				return GoAway(true);
-			$values['_onelang']=false;
 			$values['figroup']=$values['figroup'] ? explode(',',trim($values['figroup'],',')) : array();
 			$values['innertitle']=$values['title']=$values['text']=array();
-			$R2=Eleanor::$Db->Query('SELECT `language`,`innertitle`,`title`,`text` FROM `'.P.'spam_l` WHERE `id`='.$id);
-			while($temp=$R2->fetch_assoc())
+			if($values['status']=='runned')
+				$runned=true;
+
+			$R=Eleanor::$Db->Query('SELECT `language`,`innertitle`,`title`,`text` FROM `'.P.'spam_l` WHERE `id`='.$id);
+			while($temp=$R->fetch_assoc())
 				if(!Eleanor::$vars['multilang'] and (!$temp['language'] or $temp['language']==Language::$main))
 				{
 					foreach(array_slice($temp,1) as $tk=>$tv)
@@ -279,14 +281,13 @@ function AddEdit($id,$errors=array())
 				elseif(Eleanor::$vars['multilang'] and isset(Eleanor::$langs[$temp['language']]))
 					foreach(array_slice($temp,1) as $tk=>$tv)
 						$values[$tk][$temp['language']]=$tv;
-			if(!is_array($values['title']) or count($values['title'])==1 and isset($values['title'][LANGUAGE]))
-				$values['_onelang']=true;
+
 			if(Eleanor::$vars['multilang'])
-				foreach(Eleanor::$langs as $k=>&$v)
-					if(!isset($values['title'][$k]))
-						$values['title'][$k]=$values['text'][$k]=$values['innertitle'][$k]='';
-			if($values['status']=='runned')
-				$runned=true;
+			{
+				if(!isset($values['_onelang']))
+					$values['_onelang']=false;
+				$values['_langs']=isset($values['title']['value']) ? array_keys($values['title']['value']) : array();
+			}
 		}
 		$title[]=$lang['editing'];
 	}
@@ -309,9 +310,13 @@ function AddEdit($id,$errors=array())
 			'fiids'=>'',
 			'deleteondone'=>false,
 			'status'=>'stopped',
-			'_onelang'=>Eleanor::$vars['multilang'],
 		);
 		$values['innertitle']=$values['title']=$values['text']=Eleanor::$vars['multilang'] ? array_combine(array_keys(Eleanor::$langs),array_fill(0,count(Eleanor::$langs),'')) : '';
+		if(Eleanor::$vars['multilang'])
+		{
+			$values['_onelang']=true;
+			$values['_langs']=array_keys(Eleanor::$langs);
+		}
 	}
 
 	if($errors and !$runned)
@@ -333,19 +338,22 @@ function AddEdit($id,$errors=array())
 		$values['status']=isset($_POST['status']) ? (string)$_POST['status'] : '';
 
 		if(Eleanor::$vars['multilang'])
+		{
+			$values['_onelang']=isset($_POST['_onelang']);
+			$values['_langs']=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array(Language::$main);
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
 				$values['innertitle'][$k]=isset($_POST['innertitle'][$k]) ? (string)$_POST['innertitle'][$k] : '';
 				$values['title'][$k]=isset($_POST['title'][$k]) ? (string)$_POST['title'][$k] : '';
 				$values['text'][$k]=isset($_POST['text'][$k]) ? $Eleanor->Editor_result->GetHtml((string)$_POST['text'][$k],true) : '';
 			}
+		}
 		else
 		{
 			$values['innertitle']=isset($_POST['innertitle']) ? (string)$_POST['innertitle'] : '';
 			$values['title']=isset($_POST['title']) ? (string)$_POST['title'] : '';
 			$values['text']=isset($_POST['text']) ? (string)$_POST['text'] : '';
 		}
-		$values['_onelang']=isset($_POST['_onelang']);
 	}
 	else
 		$bypost=false;
@@ -402,7 +410,7 @@ function Save($id)
 
 	if(Eleanor::$vars['multilang'] and !isset($_POST['_onelang']))
 	{
-		$langs=(empty($_POST['lang']) or !is_array($_POST['lang'])) ? array() : $_POST['lang'];
+		$langs=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array();
 		$langs=array_intersect(array_keys(Eleanor::$langs),$langs);
 		if(!$langs)
 			$langs=array(Language::$main);

@@ -13,7 +13,7 @@ function MultilangChecks(opts)
 		{
 			mainlang:"russian",
 			general:"input[name=\"_onelang\"]:first",
-			langs:"input[name=\"lang[]\"]",
+			langs:"input[name=\"_langs[]\"]",
 			where:document,
 			Switch:function(show,hide,where){				for(var i in show)
 					show[i]="."+show[i];				for(var i in hide)

@@ -104,8 +104,8 @@ class TaskSpecial_Spam extends BaseClass implements Task
 
 			if($users)
 			{
-				$R2=Eleanor::$UsersDb->Query('SELECT `id`,`language` FROM `'.USERS_TABLE.'` WHERE `id`'.Eleanor::$UsersDb->In(array_keys($users)));
-				while($temp=$R2->fetch_assoc())
+				$R=Eleanor::$UsersDb->Query('SELECT `id`,`language` FROM `'.USERS_TABLE.'` WHERE `id`'.Eleanor::$UsersDb->In(array_keys($users)));
+				while($temp=$R->fetch_assoc())
 				{
 					$users[$temp['id']]['language']=$temp['language'];
 					$langs[]=$temp['language'] ? $temp['language'] : LANGUAGE;
@@ -163,10 +163,13 @@ class TaskSpecial_Spam extends BaseClass implements Task
 			{
 				if($v['email'])
 				{
-					$lang=Eleanor::FilterLangValues($langs,$v['language']);
-					$Email->subject=Eleanor::ExecBBLogic($lang['title'],$v);
-					$c=Eleanor::ExecBBLogic($lang['text'],$v);
-					$Email->Send(array('to'=>$v['email']));
+					$lang=Eleanor::FilterLangValues($langs,$v['language'],false);
+					if($lang)
+					{
+						$Email->subject=Eleanor::ExecBBLogic($lang['title'],$v);
+						$c=Eleanor::ExecBBLogic($lang['text'],$v);
+						$Email->Send(array('to'=>$v['email']));
+					}
 				}
 				++$a['sent'];
 				$this->data['lastid']=$k;

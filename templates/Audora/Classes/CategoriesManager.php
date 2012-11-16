@@ -125,17 +125,11 @@ class TplCategoriesManager
 				else
 					$Lst->head($v);
 
-		if(Eleanor::$vars['multilang'])
-		{
-			$mchecks=array();
-			foreach(Eleanor::$langs as $k=>&$_)
-				$mchecks[$k]=!$id || !empty($values['title']['value'][$k]) || !empty($values['text']['value'][$k]) || !empty($values['uri']['value'][$k]);
-		}
 		if($back)
 			$back=Eleanor::Control('back','hidden',$back);
 
 		if(Eleanor::$vars['multilang'])
-			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$mchecks,null,9));
+			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,9));
 
 		$Lst->button(
 			$back.Eleanor::Button('OK','submit',array('tabindex'=>10))

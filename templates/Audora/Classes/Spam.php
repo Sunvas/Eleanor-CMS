@@ -155,10 +155,9 @@ class TPLSpam
 
 		if(Eleanor::$vars['multilang'])
 		{
-			$mchecks=$ml=array();
+			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
-				$mchecks[$k]=!$id || !empty($values['title'][$k]) || !empty($values['descr'][$k]) || !empty($values['startgroup'][$k]);
 				$ml['innertitle'][$k]=Eleanor::Edit('innertitle['.$k.']',Eleanor::FilterLangValues($values['innertitle'],$k),array('tabindex'=>17));
 				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>18));
 				$ml['text'][$k]=$GLOBALS['Eleanor']->Editor->Area('text['.$k.']',Eleanor::FilterLangValues($values['text'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>19)));
@@ -218,7 +217,7 @@ class TPLSpam
 			->item($lang['text'],Eleanor::$Template->LangEdit($ml['text'],null));
 
 		if(Eleanor::$vars['multilang'])
-			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$mchecks,null,20));
+			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,20));
 
 		$ss=(string)$Lst->button((string)$uploader)->end();
 

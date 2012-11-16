@@ -325,7 +325,7 @@ function ShowList()
 function AddEdit($id,$errors=array())
 {global$Eleanor,$title;
 	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
-	$values=array('_onelang'=>true);
+	$values=array();
 	if($id)
 	{
 		if(!$errors)
@@ -357,16 +357,22 @@ function AddEdit($id,$errors=array())
 						$values[$tk]['value'][$temp['language']]=$tv;
 			if(Eleanor::$vars['multilang'])
 			{
-				$values['_onelang']=(!is_array($values['from']) or count($values['from']['value'])==1 and isset($values['from']['value'][LANGUAGE]));
-				foreach(Eleanor::$langs as $k=>&$v)
-					if(!isset($values['from']['value'][$k]))
-						$values['to']['value'][$k]=$values['from']['value'][$k]=$values['url']['value'][$k]=$values['eval_url']['value'][$k]=$values['params']['value'][$k]='';
+				if(!isset($values['_onelang']))
+					$values['_onelang']=false;
+				$values['_langs']=isset($values['title']['value']) ? array_keys($values['title']['value']) : array();
 			}
 		}
 		$title[]=$lang['editing'];
 	}
 	else
+	{
 		$title[]=$lang['adding'];
+		if(Eleanor::$vars['multilang'])
+		{
+			$values['_onelang']=true;
+			$values['_langs']=array_keys(Eleanor::$langs);
+		}
+	}
 
 	$hasdraft=false;
 	if(!$errors and !isset($_GET['nodraft']))
@@ -384,8 +390,12 @@ function AddEdit($id,$errors=array())
 	{
 		if($errors===true)
 			$errors=array();
-		$values['_onelang']=isset($_POST['_onelang']);
 		$Eleanor->sc_post=true;
+		if(Eleanor::$vars['multilang'])
+		{
+			$values['_onelang']=isset($_POST['_onelang']);
+			$values['_langs']=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array(Language::$main);
+		}
 	}
 
 	if(isset($_GET['noback']))
@@ -407,7 +417,7 @@ function Save($id)
 {global$Eleanor;
 	if(Eleanor::$vars['multilang'] and !isset($_POST['_onelang']))
 	{
-		$langs=(empty($_POST['lang']) or !is_array($_POST['lang'])) ? array() : $_POST['lang'];
+		$langs=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array();
 		$langs=array_intersect(array_keys(Eleanor::$langs),$langs);
 		if(!$langs)
 			$langs=array(Language::$main);

@@ -32,8 +32,9 @@ function AddEdit($id,$errors=array(),$gn=array())
 
 			$values['_maincat']=reset($values['cats']);
 
-			$R3=Eleanor::$Db->Query('SELECT `language`,`uri`,`title`,`announcement`,`text` FROM `'.$Eleanor->module['config']['tl'].'` WHERE `id`='.$id);
-			while($temp=$R3->fetch_assoc())
+			$values['uri']=$values['title']=$values['announcement']=$values['text']=array();
+			$R=Eleanor::$Db->Query('SELECT `language`,`uri`,`title`,`announcement`,`text` FROM `'.$Eleanor->module['config']['tl'].'` WHERE `id`='.$id);
+			while($temp=$R->fetch_assoc())
 				if(!Eleanor::$vars['multilang'] and (!$temp['language'] or $temp['language']==Language::$main))
 				{
 					foreach(array_slice($temp,1) as $tk=>$tv)
@@ -53,11 +54,9 @@ function AddEdit($id,$errors=array(),$gn=array())
 						$values[$tk][$temp['language']]=$tv;
 
 			if(Eleanor::$vars['multilang'])
-			{
-				$values['_onelang']=(!is_array($values['title']) or count($values['title'])==1 and isset($values['title'][LANGUAGE]));
-				foreach(Eleanor::$langs as $k=>&$v)
-					if(!isset($values['title'][$k]))
-						$values['title'][$k]=$values['announcement'][$k]=$values['text'][$k]=$values['uri'][$k]='';
+			{				if(!isset($values['_onelang']))
+					$values['_onelang']=false;
+				$values['_langs']=array_keys($values['title']);
 			}
 
 			if($values['tags'])
@@ -101,9 +100,13 @@ function AddEdit($id,$errors=array(),$gn=array())
 			'announcement'=>$dv,
 			'text'=>$dv,
 			#Специальные
-			'_onelang'=>true,
 			'_maincat'=>0,
 		);
+		if(Eleanor::$vars['multilang'])
+		{
+			$values['_onelang']=true;
+			$values['_langs']=array_keys(Eleanor::$langs);
+		}
 		if($isu)
 			$values['status']=1;
 		else
@@ -145,6 +148,7 @@ function AddEdit($id,$errors=array(),$gn=array())
 			$values['text']=isset($_POST['text']) ? (array)$_POST['text'] : array();
 			$values['uri']=isset($_POST['uri']) ? (array)$_POST['uri'] : array();
 			$values['_onelang']=isset($_POST['_onelang']);
+			$values['_langs']=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array(Language::$main);
 		}
 		else
 		{
@@ -251,7 +255,7 @@ function Save($id,$gn=array())
 
 	if(Eleanor::$vars['multilang'] and !isset($_POST['_onelang']))
 	{
-		$langs=(empty($_POST['lang']) or !is_array($_POST['lang'])) ? array() : $_POST['lang'];
+		$langs=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array();
 		$langs=array_intersect(array_keys(Eleanor::$langs),$langs);
 		if(!$langs)
 			$langs=array(Language::$main);

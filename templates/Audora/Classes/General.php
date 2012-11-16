@@ -252,16 +252,15 @@ $(function(){
 			switch($file)
 			{				case'errors':
 					foreach($data as $k=>&$v)
-					{						$page=$v['d']['p']=htmlspecialchars($v['d']['p'],ELENT,CHARSET,false);
-						if($v['d']['p']=='')
-							$page=Eleanor::$site_path;						$p=strpos($v['d']['e'],':');
+					{						$page=htmlspecialchars($v['d']['p'],ELENT,CHARSET,false);
+						$p=strpos($v['d']['e'],':');
 
 						$v['d']['e']=substr_replace($v['d']['e'],'<span style="color:red">',$p+2,0);
 						$v['d']['e']=substr_replace($v['d']['e'],'</b>('.$v['d']['n'].')',$p,0);
 						$log.='<div class="warning" data-id="'.$k.'"><pre><code><b>'
 							.$v['d']['e'].'</span><br />'.$v['d']['f'].'['.$v['d']['l'].']<br />'
 							.Eleanor::$Language->Date($v['d']['d'],'fdt')
-							.'<br /><a href="'.$page.'" target="_blank">'.($v['d']['p'] ? $v['d']['p'] : '/').'</a></code></pre><div class="repair"><a href="#">'.static::$lang['fixed'].'</a></div></div>';
+							.'<br /><a href="'.$page.'" target="_blank">'.($page ? $page : '/').'</a></code></pre><div class="repair"><a href="#">'.static::$lang['fixed'].'</a></div></div>';
 					}
 				break;
 				case'db_errors':
@@ -283,28 +282,23 @@ $(function(){
 						if(isset($v['d']['r']))
 							foreach($v['d']['r'] as &$rv)
 							{
-								$page=$rv=htmlspecialchars($rv,ELENT,CHARSET,false);
-								if($rv=='')
-									$page=Eleanor::$site_path;
-								$refs.='<a href="'.$page.'" target="_blank">'.$rv.'</a>, ';
+								$rv=htmlspecialchars($rv,ELENT,CHARSET,false);
+								$refs.='<a href="'.$rv.'" target="_blank">'.($rv ? $rv : '/').'</a>, ';
 							}
 
-						$page=$v['d']['p']=htmlspecialchars($v['d']['p'],ELENT,CHARSET,false);
-						if($v['d']['p']=='')
-							$page=Eleanor::$site_path;
-
+						$page=htmlspecialchars($v['d']['p'],ELENT,CHARSET,false);
 						$log.='<div class="warning" data-id="'.$k.'"><code><pre><b>'.$v['d']['e'].'</b>('.$v['d']['n'].')<br />'
 							.(isset($v['d']['u']) ? '<a href="'.Eleanor::$Login->UserLink($v['d']['u'],$v['d']['id']).'">'.htmlspecialchars($v['d']['u'],ELENT,CHARSET).'</a>' : 'Guest')
 							.' &mdash; <a href="http://eleanor-cms.ru/whois/'.$v['d']['ip'].'">'.$v['d']['ip'].'</a> &mdash; '
 							.$v['d']['b'].'<br />'
 							.Eleanor::$Language->Date($v['d']['d'],'fdt')
-							.'<br /><a href="'.$page.'" target="_blank">'.($v['d']['p'] ? $v['d']['p'] : '/').'</a>'
+							.'<br /><a href="'.$page.'" target="_blank">'.($page ? $page : '/').'</a>'
 							.($refs ? ' &lt;&lt;&lt; '.rtrim($refs,', ') : '')
 							.'</pre></code><div class="repair"><a href="#">'.static::$lang['fixed'].'</a></div></div>';
 					}
 			}
 			$log.='</div><script type="text/javascript">//<![CDATA[
-$(function(){	$(".logs a").click(function(){		var div=$(this).closest(".warning");		CORE.Ajax(
+$(function(){	$(".logs a[href=#]").click(function(){		var div=$(this).closest(".warning");		CORE.Ajax(
 			{				direct:"admin",
 				file:"misc",
 				event:"fixed",
@@ -330,7 +324,7 @@ $(function(){	$(".logs a").click(function(){		var div=$(this).closest(".warnin
 		$edit признак того, редактируется блокнот или отображается
 	*/
 	public static function Notes($edt,$edit=false)
-	{		return'<div class="wbpad"><div class="brdbox">'.($edt ? $edt : '<div style="text-align:center;color:lightgray;font-size:1.5em">'.Eleanor::$Language['general']['empty'].'</div>').'</div></div><div class="submitline">'.Eleanor::Button($edit ? 'OK' : Eleanor::$Language['tpl']['edit'],'button',$edit ? array('data-save'=>1) : array()).'</div>';
+	{		return'<div class="wbpad"><div class="brdbox">'.($edt ? $edt : '<div style="text-align:center;color:lightgray;font-size:1.5em">'.static::$lang['empty'].'</div>').'</div></div><div class="submitline">'.Eleanor::Button($edit ? 'OK' : Eleanor::$Language['tpl']['edit'],'button',$edit ? array('data-save'=>1) : array()).'</div>';
 	}
 
 	/*

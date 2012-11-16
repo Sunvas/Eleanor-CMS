@@ -684,17 +684,15 @@ final class Eleanor extends BaseClass
 		session_start();
 	}
 
-	public static function FilterLangValues(array$a,$l=false,$d='')
+	public static function FilterLangValues(array$a,$l=false,$d=null)
 	{
 		if(!$l)
 			$l=Language::$main;
-		if(!$a)
-			return$d;
 		if(isset($a[$l]))
 			return$a[$l];
-		if(isset($a[LANGUAGE]))
-			return$a[LANGUAGE];
-		return isset($a['']) ? $a[''] : reset($a);
+		if(isset($a['']))
+			return$a[''];
+		return$d;
 	}
 
 	public static function WinFiles($f,$inv=false)

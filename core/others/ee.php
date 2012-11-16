@@ -71,17 +71,32 @@ class EE extends Exception
 			return;
 		list($data,$log)=$data;
 
+		if($change and !isset($help[$id]['o'],$help[$id]['l']))
+		{			$change=false;
+			unset($help[$id]);		}
+
 		if($change)
 		{			$offset=$help[$id]['o'];
 			$length=$help[$id]['l'];
-			$fh=fopen($path,'rb+');
+			unset($help[$id]);
+
+			$size=$isf ? filesize($path) : 0;
+			if($size<$offset+$length)
+			{				$change=false;
+				foreach($help as &$v)
+					if($size<$v['o']+$v['l'])
+						unset($v['o'],$v['l']);
+			}
+		}
+
+		if($change)
+		{			$fh=fopen($path,'rb+');
 			if(flock($fh,LOCK_EX))
 				$diff=Files::FReplace($fh,$log,$offset,$length);
 			else
 			{				fclose($fh);
 				return false;			}
 			$length+=$diff;
-			unset($help[$id]);
 			foreach($help as &$v)
 				if($v['o']>$offset)
 					$v['o']+=$diff;
@@ -136,7 +151,7 @@ class EE extends Exception
 
 							return array(
 								$data,
-								$data['e'].'('.$data['n'].'): '.Url::$curpage.PHP_EOL.'Date: '.$data['d'].PHP_EOL.'IP: '.$data['ip'].PHP_EOL.($uinfo ? 'User: '.$data['u'].PHP_EOL : '').'Browser: '.$data['b'].PHP_EOL.'Referrers: '.join(', ',$data['r'])
+								$data['e'].'('.$data['n'].'): '.(Url::$curpage ? Url::$curpage : '/').PHP_EOL.'Date: '.$data['d'].PHP_EOL.'IP: '.$data['ip'].PHP_EOL.($uinfo ? 'User: '.$data['u'].PHP_EOL : '').'Browser: '.$data['b'].PHP_EOL.'Referrers: '.join(', ',$data['r'])
 							);
 						}
 					);
@@ -157,7 +172,7 @@ class EE extends Exception
 
 						return array(
 							$data,
-							($data['n']>1 ? substr_replace($data['e'],'('.$data['n'].')',strpos($data['e'],':'),0) : $data['e']).PHP_EOL.'File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'URL: '.Url::$curpage.PHP_EOL.'Date: '.$data['d']
+							($data['n']>1 ? substr_replace($data['e'],'('.$data['n'].')',strpos($data['e'],':'),0) : $data['e']).PHP_EOL.'File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'URL: '.(Url::$curpage ? Url::$curpage : '/').PHP_EOL.'Date: '.$data['d']
 						);
 					}
 				);

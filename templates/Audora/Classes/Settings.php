@@ -341,10 +341,9 @@ $(function(){
 	public static function SettAddEditGroup($id,$values,$links,$errors,$bypost,$back)
 	{		static::Menu($id ? '' : 'addg');
 		if(Eleanor::$vars['multilang'])
-		{			$mchecks=$ml=array();
+		{			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
-				$mchecks[$k]=!$id || !empty($values['title'][$k]) || !empty($values['descr'][$k]);
 				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
 				$ml['descr'][$k]=Eleanor::Text('descr['.$k.']',Eleanor::FilterLangValues($values['descr'],$k),array('tabindex'=>2));
 			}
@@ -367,7 +366,7 @@ $(function(){
 			->item($lang['prot_g'],Eleanor::Check('protected',$values['protected'],array('tabindex'=>6)+$extra));
 
 		if(Eleanor::$vars['multilang'])
-			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$mchecks,null,4));
+			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,4));
 
 		if($back)
 			$back=Eleanor::Control('back','hidden',$back);
@@ -413,10 +412,9 @@ $(function(){
 	{		static::Menu($id ? '' : 'addo');
 		if(Eleanor::$vars['multilang'])
 		{
-			$mchecks=$ml=array();
+			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
-				$mchecks[$k]=!$id || !empty($values['title'][$k]) || !empty($values['descr'][$k]) || !empty($values['startgroup'][$k]);
 				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
 				$ml['descr'][$k]=Eleanor::Text('descr['.$k.']',Eleanor::FilterLangValues($values['descr'],$k),array('tabindex'=>2));
 				$ml['startgroup'][$k]=Eleanor::Edit('startgroup['.$k.']',Eleanor::FilterLangValues($values['startgroup'],$k),array('tabindex'=>4));
@@ -454,7 +452,7 @@ $(function(){
 
 		if(Eleanor::$vars['multilang'])
 			$Lst->item(array($lang['multilang'],Eleanor::Check('multilang',$values['multilang'],array('onclick'=>'ChangeMultilang()','id'=>'multilang','tabindex'=>7)),'descr'=>$lang['multilang_']))
-				->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$mchecks,'Multilangs',9));
+				->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],'Multilangs',9));
 
 		$general=(string)$Lst->end();
 

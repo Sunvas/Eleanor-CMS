@@ -525,6 +525,7 @@ function AddEdit($id,$errors=array())
 				{
 					foreach(array_slice($temp,1) as $tk=>$tv)
 						$values[$tk][Language::$main]=$tv;
+					$values['_onelang']=true;
 					break;
 				}
 				elseif(Eleanor::$vars['multilang'] and isset(Eleanor::$langs[$temp['language']]))
@@ -534,13 +535,9 @@ function AddEdit($id,$errors=array())
 
 			if(Eleanor::$vars['multilang'])
 			{
-				$values['_onelang']=!is_array($values['title']) || count($values['title'])==1 && isset($values['title'][LANGUAGE]);
-				foreach(Eleanor::$langs as $k=>&$v)
-					if(!isset($values['title'][$k]))
-					{
-						$values['title'][$k]=$values['text'][$k]='';
-						$values['config'][$k]=array();
-					}
+				if(!isset($values['_onelang']))
+					$values['_onelang']=false;
+				$values['_langs']=isset($values['title']['value']) ? array_keys($values['title']['value']) : array();
 			}
 		}
 		$title[]=$lang['editing'];
@@ -563,8 +560,13 @@ function AddEdit($id,$errors=array())
 			'config'=>array(),
 			'vars'=>array(),
 			'status'=>1,
-			'_onelang'=>true,
 		);
+
+		if(Eleanor::$vars['multilang'])
+		{
+			$values['_onelang']=true;
+			$values['_langs']=array_keys(Eleanor::$langs);
+		}
 	}
 
 	$hasdraft=false;
@@ -588,6 +590,8 @@ function AddEdit($id,$errors=array())
 		{
 			$values['title']=isset($_POST['title']) ? (array)$_POST['title'] : array();
 			$values['text']=isset($_POST['text']) ? (array)$_POST['text'] : array();
+			$values['_onelang']=isset($_POST['_onelang']);
+			$values['_langs']=isset($_POST['_langs']) ? (array)$_POST['_langs'] : array(Language::$main);
 		}
 		else
 		{
@@ -603,7 +607,6 @@ function AddEdit($id,$errors=array())
 		$values['notemplate']=isset($_POST['notemplate']);
 		$values['textfile']=isset($_POST['textfile']);
 		$values['status']=isset($_POST['status']);
-		$values['_onelang']=isset($_POST['_onelang']);
 
 		$values['vars']=array();
 		if(isset($_POST['vn'],$_POST['vv']) and is_array($_POST['vn']) and is_array($_POST['vv']))

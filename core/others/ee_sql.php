@@ -62,13 +62,13 @@ class EE_SQL extends EE
 				{					case'connect':
 						if(strpos($data['e'],'Access denied for user')===false)
 						{
-							$data['h']=isset($this->extra['host']) ? $this->extra['host'] : '';
-							$data['u']=isset($this->extra['user']) ? $this->extra['user'] : '';
-							$data['p']=isset($this->extra['pass']) ? $this->extra['pass'] : '';
+							$data['h']=isset($THIS->extra['host']) ? $THIS->extra['host'] : '';
+							$data['u']=isset($THIS->extra['user']) ? $THIS->extra['user'] : '';
+							$data['p']=isset($THIS->extra['pass']) ? $THIS->extra['pass'] : '';
 							$log.='Host: '.$data['h'].PHP_EOL.'User: '.$data['u'].PHP_EOL;
 						}
 
-						$data['db']=isset($this->extra['db']) ? $this->extra['db'] : '';
+						$data['db']=isset($THIS->extra['db']) ? $THIS->extra['db'] : '';
 						$log.='DB: '.$data['db'].PHP_EOL.'File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'Date: '.$data['d'].PHP_EOL.'Happend: '.$data['n'];
 					break;
 					case'query':

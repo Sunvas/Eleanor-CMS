@@ -138,11 +138,11 @@ class EE extends Exception
 							$data['d']=date('Y-m-d H:i:s');
 							if($uinfo)
 							{
-								$data['u']=$unifo['name'];
-								$data['ui']=$unifo['id'];
+								$data['u']=$uinfo['name'];
+								$data['ui']=$uinfo['id'];
 							}
 							$data['b']=getenv('HTTP_USER_AGENT');
-							$data['e']=$this->extra['code'].' - '.$THIS->getMessage();
+							$data['e']=$THIS->extra['code'].' - '.$THIS->getMessage();
 							if($THIS->extra['back'] and (!isset($data['r']) or !in_array($THIS->extra['back'],$data['r'])))
 								$data['r'][]=$THIS->extra['back'];
 							$dcnt=count($data['r']);

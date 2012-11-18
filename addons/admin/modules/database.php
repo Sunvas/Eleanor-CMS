@@ -57,6 +57,8 @@ if(isset($_GET['do']))
 				}
 			}
 			$links=array(
+				'first_page'=>$Eleanor->Url->Construct(array('do'=>'recovernames')),
+				'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct(array('do'=>'recovernames','page'=>$n)); },
 				'pp'=>function($n){ return$GLOBALS['Eleanor']->Url->Construct(array('do'=>'recovernames','new-pp'=>$n)); },
 			);
 			$c=Eleanor::$Template->ShowList($items,$cnt,$page,$pp,$links);

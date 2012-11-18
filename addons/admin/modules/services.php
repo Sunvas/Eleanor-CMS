@@ -113,7 +113,7 @@ elseif(isset($_GET['edit']))
 		AddEdit((string)$_GET['edit']);
 elseif(isset($_GET['delete']))
 {
-	$id=(string)$_GET['delete'];
+	$name=(string)$_GET['delete'];
 	$R=Eleanor::$Db->Query('SELECT `name`,`file` FROM `'.P.'services` WHERE `name`='.Eleanor::$Db->Escape($name,true).' AND `protected`=0 LIMIT 1');
 	if(!$a=$R->fetch_assoc() or !Eleanor::$our_query)
 		return GoAway(true);

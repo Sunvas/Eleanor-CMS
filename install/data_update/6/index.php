@@ -51,11 +51,12 @@ FULLTEXT KEY `title` (`title`,`descr`)
 		Eleanor::$Db->Query('INSERT INTO `tmp_config_l` SELECT * FROM `'.P.'config_l`');
 		Eleanor::$Db->Query('INSERT INTO `tmp_config` SELECT * FROM `'.P.'config`');
 
-		Eleanor::$Db->Query('TRUNCATE TABLE `'.P.'config_groups`');
 		Eleanor::$Db->Query('TRUNCATE TABLE `'.P.'config_groups_l`');
+		Eleanor::$Db->Query('DELETE FROM `'.P.'config_groups` WHERE `id`>0');
 		Eleanor::$Db->Query('TRUNCATE TABLE `'.P.'config`');
+		Eleanor::$Db->Query('TRUNCATE TABLE `'.P.'config_l`');
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'config` CHANGE `position` `pos` SMALLINT UNSIGNED NOT NULL');
-		Eleanor::$Db->Query('DELETE FROM `'.P.'config_groups` WHERE `id`=6');
+		Eleanor::$Db->Query('ALTER TABLE `'.P.'config_groups` CHANGE `position` `pos` SMALLINT UNSIGNED NOT NULL');
 
 		Eleanor::$Db->Query('INSERT INTO `'.P.<<<'SQL'
 config_groups` (`id`, `name`, `protected`, `keyword`, `pos`) VALUES
@@ -591,7 +592,6 @@ SQL
 
 		Eleanor::$Db->Query('UPDATE `'.P.'config_l` `cl`, `tmp_config_l` `tl`, `'.P.'config` `c`, `tmp_config` `t` SET `cl`.`value`=`tl`.`value`, `cl`.`serialized`=`tl`.`serialized`, `cl`.`default`=`tl`.`default` WHERE `c`.`id`=`cl`.`id` AND `t`.`id`=`tl`.`id` AND `cl`.`language`=`tl`.`language` AND `c`.`name`=`t`.`name` AND `c`.`id`!=35');
 
-		Eleanor::$Db->Query('ALTER TABLE `'.P.'config_groups` CHANGE `position` `pos` SMALLINT UNSIGNED NOT NULL');
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'errors_l` CHANGE `url` `uri` VARCHAR(100) NOT NULL, DROP INDEX `url`, ADD INDEX `uri` ( `uri` )');
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'modules` DROP `user_groups`');
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'news_categories_l` CHANGE `url` `uri` VARCHAR(100) NOT NULL');

@@ -13,44 +13,44 @@ return array(
 	'lostpass'=>'Забыли пароль?',
 	'msjump'=>'-Перейти-',
 
-	#Для Confirm
+	#Для Confirm.php
 	'no'=>'Нет',
 	'yes'=>'Да',
 
-	#Для Denied
+	#Для Denied.php
 	'site_close_text'=>'Сайт временно недоступен! Ведутся интересные работы',
 
-	#Для EditDelete
+	#Для EditDelete.php
 	'delete'=>'Удалить',
 	'edit'=>'Править',
 
-	#Для LangChecks
+	#Для LangChecks.php
 	'for_all_langs'=>'Для всех языков',
 
-	#Для Rating
+	#Для Rating.php
 	'average_mark'=>'Средняя оценка: %s; Проголосовало: %s',
 
-	#Для Pages
+	#Для Pages.php
 	'pages'=>'Страницы:',
 	'goto_page'=>'Перейти на страницу',
 
-	#Для Message
+	#Для Message.php
 	'warning'=>'Предупреждение',
 	'error'=>'Ошибка',
 	'errors'=>'Ошибки',
 	'info'=>'Информация',
 
-	#Для Captcha
+	#Для Captcha.php
 	'captcha'=>'Кликните, чтобы показать другие цифры',
 
-	#Для BlockWhoOnline
+	#Для BlockWhoOnline.php
 	'users'=>function($n){ return$n.Russian::Plural($n,array(' пользователь:',' пользователя:',' пользователей:')); },
 	'minutes_ago'=>function($n){ return$n.Russian::Plural($n,array(' минуту назад',' минуты назад',' минут назад')); },
 	'bots'=>function($n){ return$n.Russian::Plural($n,array(' поисковый бот:',' поисковых бота:',' поисковых ботов:')); },
 	'guests'=>function($n){ return$n.Russian::Plural($n,array(' гость',' гостя',' гостей')); },
 	'alls'=>'Полный список',
 
-	#Для BlockArchive
+	#Для BlockArchive.php
 	'year-'=>'Год назад',
 	'year+'=>'Год вперед',
 	'mon'=>'Пн',
@@ -63,4 +63,7 @@ return array(
 	'_cnt'=>function($n){return$n.Russian::Plural($n,array(' новость',' новости',' новостей'));},
 	'total'=>function($n){return'Всего - '.$n.Russian::Plural($n,array(' новость',' новости',' новостей'));},
 	'no_per'=>'Новостей за этот период нет',
+
+	#Для Editor.php
+	'smiles'=>'Смайлы',
 );

@@ -13,44 +13,44 @@ return array(
 	'lostpass'=>'Forgot your password?',
 	'msjump'=>'-Jump to-',
 
-	#For Confirm
+	#For Confirm.php
 	'no'=>'No',
 	'yes'=>'Yes',
 
-	#For Denied
+	#For Denied.php
 	'site_close_text'=>'The site is temporarily unavailable! There are interesting works',
 
-	#For EditDelete
+	#For EditDelete.php
 	'delete'=>'Remove',
 	'edit'=>'Edit',
 
-	#For LangChecks
+	#For LangChecks.php
 	'for_all_langs'=>'For all languages',
 
-	#For Rating
+	#For Rating.php
 	'average_mark'=>'Average rating: %s; Votes: %s',
 
-	#For Pages
+	#For Pages.php
 	'pages'=>'Pages:',
 	'goto_page'=>'Go to page',
 
-	#For Message
+	#For Message.php
 	'warning'=>'Warning',
 	'error'=>'Mistake',
 	'errors'=>'Mistaks',
 	'info'=>'Information',
 
-	#For Captcha
+	#For Captcha.php
 	'captcha'=>'Click to show more digits',
 
-	#For BlockWhoOnline
+	#For BlockWhoOnline.php
 	'users'=>function($n){ return$n.($n>1 ? ' users:' : ' user:'); },
 	'minutes_ago'=>function($n){ return$n.($n>1 ? ' minutes ago' : ' minute ago'); },
 	'bots'=>function($n){ return$n.' search '.($n>1 ? 'bots:' : 'bot:'); },
 	'guests'=>function($n){ return$n.($n>1 ? ' guests' : ' guest'); },
 	'alls'=>'Full list',
 
-	#For BlockArchive
+	#For BlockArchive.php
 	'year-'=>'Year forward',
 	'year+'=>'Year backward',
 	'mon'=>'Mon',
@@ -63,4 +63,7 @@ return array(
 	'_cnt'=>function($n){return$n.' news';},
 	'total'=>function($n){return'Totaly '.$n.' news';},
 	'no_per'=>'No news in this period',
+
+	#For Editor.php
+	'smiles'=>'Smilies',
 );

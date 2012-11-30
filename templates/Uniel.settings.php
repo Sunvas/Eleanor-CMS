@@ -22,6 +22,43 @@ INFO
 Ñòàíäàğòíàÿ òåìà îôîğìëåíèÿ ïîëüçîâàòåëüñêîé ÷àñòè. Ïîëüçîâàòüñÿ åş â ñîñòàâå Eleanor CMS ìîæíî áåñïëàòíî. Èñïîëüçîâàòü ıòîò øàáëîí èëè åãî ÷àñòè â ñòîğîííèõ ğàçğàáîòêàõ - ñòğîãî çàïğåùåíî!
 LICENSE
 ,#Ëèöåíçèÿ
+
+	#Ìåñòà áëîêîâ
+	'places'=>array(
+		'left'=>array(
+			'title'=>array(
+				'russian'=>'Ëåâûå áëîêè',
+				'english'=>'Left blocks',
+				'ukrainian'=>'Ë³â³ áëîêè',
+			),
+			'info'=>'50,108,184,270,1',
+		),
+		'right'=>array(
+			'title'=>array(
+				'russian'=>'Ïğàâûå áëîêè',
+				'english'=>'Right blocks',
+				'ukrainian'=>'Ïğàâ³ áëîêè',
+			),
+			'info'=>'416,107,182,270,2',
+		),
+		'center_up'=>array(
+			'title'=>array(
+				'russian'=>'Âåğõíèå öåíòğåëüíûå',
+				'english'=>'Up central',
+				'ukrainian'=>'Âåğõí³ öåíòğàëüí³',
+			),
+			'info'=>'50,0,548,101,3',
+		),
+		'center_down'=>array(
+			'title'=>array(
+				'russian'=>'Íèæíèå öåíòğåëüíûå',
+				'english'=>'Down central',
+				'ukrainian'=>'Íèæí³ öåíòğàëüí³',
+			),
+			'info'=>'50,393,548,101,4',
+		),
+	),
+
 	'options'=>array(#Îïöèè â îáùåñèñòåìíîì âèäå
 		'Ãğóïïà 1: òåêñòîâûå ïîëÿ',
 		'param1'=>array(

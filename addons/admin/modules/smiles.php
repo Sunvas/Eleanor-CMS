@@ -53,7 +53,7 @@ $Eleanor->sm=array(
 					$("#prev-'.$u.'").attr("src",c ? this.value : "images/spacer.png");
 				}).blur(function(){					var c=(this.value!="images/spacer.png" && this.value.match(/\.(png|jpe?g|gif|bmp)$/gi));
 					$("#prev-'.$u.'").attr("src",c ? this.value : "images/spacer.png");				}).autocomplete({
-					serviceUrl:"'.Eleanor::$services['ajax']['file'].'",
+					serviceUrl:CORE.ajax_file,
 					minChars:2,
 					delimiter:null,
 					onSelect:function(img){$("#prev-'.$u.'").attr("src",img)},

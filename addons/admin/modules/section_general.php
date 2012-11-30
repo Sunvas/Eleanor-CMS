@@ -141,9 +141,9 @@ switch(isset($_GET['do']) ? $_GET['do'] : '')
 		list($nums['sl'])=$R->fetch_row();
 
 		$op=$Eleanor->Url->Prefix();
-		$Eleanor->Url->SetPrefix($Eleanor->Url->file.'?section=management&amp;module=lcomments&amp;');
+		$Eleanor->Url->SetPrefix($Eleanor->Url->file.'?section=management&amp;module=comments&amp;');
 		$ong=true;
-		$comments=require Eleanor::$root.'addons/admin/modules/lcomments.php';
+		$comments=require Eleanor::$root.'addons/admin/modules/comments.php';
 		$Eleanor->Url->SetPrefix($op);
 
 		$pref=$Eleanor->Url->file.'?section=management&amp;module=users&amp;';

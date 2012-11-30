@@ -151,7 +151,7 @@ function ServicesList()
 	Start();
 	echo$c;}
 
-function AddEdit($name,$error='')
+function AddEdit($name,$errors=array())
 {global$Eleanor,$title;
 	$lang=Eleanor::$Language['ser'];
 	$values=array_combine(array_keys($Eleanor->sp),array_fill(0,count($Eleanor->sp),array('_name'=>$name,'_protected'=>false)));
@@ -161,7 +161,7 @@ function AddEdit($name,$error='')
 			return GoAway();
 		foreach($a as $k=>&$v)
 			if(isset($Eleanor->sp[$k]))
-			{				if(!$error)
+			{				if(!$errors)
 					$values[$k]['value']=$v;
 				if(isset($values[$k]['_protected']))
 					$values[$k]['_protected']=$a['protected'];
@@ -171,10 +171,10 @@ function AddEdit($name,$error='')
 	else
 		$title[]=$lang['adding'];
 
-	if($error)
+	if($errors)
 	{
 		if($error===true)
-			$error='';
+			$error=array();
 		$Eleanor->sp_post=true;
 	}
 
@@ -187,7 +187,7 @@ function AddEdit($name,$error='')
 		'delete'=>!$name || $values['protected']['value'] ? false : $Eleanor->Url->Construct(array('delete'=>$name,'noback'=>1)),
 	);
 	$values=$Eleanor->Controls->DisplayControls($Eleanor->sp,$values)+$values;
-	$c=Eleanor::$Template->AddEdit($name,$Eleanor->sp,$values,$error,$back,$links);
+	$c=Eleanor::$Template->AddEdit($name,$Eleanor->sp,$values,$errors,$back,$links);
 	Start();
 	echo$c;}
 
@@ -217,14 +217,14 @@ function Save($name)
 	}
 	catch(EE$E)
 	{
-		return AddEdit($name,$E->getMessage());
+		return AddEdit($name,array('ERROR'=>$E->getMessage()));
 	}
 	$values['login']=preg_replace('#[^a-z0-9\-_]+#i','',$values['login']);
 
 	if(!$values['login'])
 		$values['login']='no';
 	if(!is_file(Eleanor::$root.'core/login/'.$values['login'].'.php'))
-		return AddEdit($id,$lang['no_login']);
+		return AddEdit($id,array('NO_LOGIN'));
 
 	if(isset($values['name']))
 		$values['name']=trim($values['name']);
@@ -236,19 +236,19 @@ function Save($name)
 				unset($values['login']);
 		}
 		elseif(!$values['name'])
-			return AddEdit($name,$lang['empty_title']);
+			return AddEdit($name,array('EMPTY_TITLE'));
 		elseif($values['name']!=$name)
 		{			$R=Eleanor::$Db->Query('SELECT `name` FROM `'.P.'services` WHERE `name`='.Eleanor::$Db->Escape($values['name'],true).' LIMIT 1');
 			if($R->num_rows!=0)
-				return AddEdit($id,$lang['exists']);		}
+				return AddEdit($id,array('EXISTS'));		}
 		Eleanor::$Db->Update(P.'services',$values,'`name`='.Eleanor::$Db->Escape($name,true).' LIMIT 1');	}
 	else
 	{
 		if(!$values['name'])
-			return AddEdit($name,$lang['empty_title']);
+			return AddEdit($name,array('EMPTY_TITLE'));
 		$R=Eleanor::$Db->Query('SELECT `name` FROM `'.P.'services` WHERE `name`='.Eleanor::$Db->Escape($values['name'],true).' LIMIT 1');
 		if($R->num_rows!=0)
-			return AddEdit($id,$lang['exists']);
+			return AddEdit($id,array('EXISTS'));
 		Eleanor::$Db->Insert(P.'services',$values);
 	}
 	Eleanor::$Cache->Obsolete('system-services');

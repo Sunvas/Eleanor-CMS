@@ -11,7 +11,7 @@
 if(!defined('CMS'))die;
 global$Eleanor,$title;
 $Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_admin-*.php',$Eleanor->module['config']['n']);
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php',$Eleanor->module['config']['n']);
 Eleanor::$Template->queue[]=$Eleanor->module['config']['admintpl'];
 
 $Eleanor->module['links']=array(

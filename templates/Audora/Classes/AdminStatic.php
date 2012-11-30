@@ -11,7 +11,8 @@
 	Админка системного модуля статических страниц
 */
 class TPLAdminStatic
-{	/*
+{	public static
+		$lang;	/*
 		Меню модуля
 	*/	protected static function Menu($act='')
 	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
@@ -20,7 +21,7 @@ class TPLAdminStatic
 		$options=isset($GLOBALS['Eleanor']->module['navigation']['options']) ? $GLOBALS['Eleanor']->module['navigation']['options'] : false;		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					array($links['parent_add'] ? $links['parent_add'] : $links['add'],$lang['add'],'act'=>$act=='add'),
+					array($links['parent_add'] ? $links['parent_add'] : $links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),
 			array($links['files'],$lang['fp'],'act'=>$act=='files'),
@@ -61,7 +62,6 @@ class TPLAdminStatic
 	*/
 	public static function ShowList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links)
 	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$nav=array();
@@ -79,7 +79,7 @@ class TPLAdminStatic
 			->begin(
 				array('ID',15,'sort'=>$qs['sort']=='id' ? $qs['so'] : false,'href'=>$links['sort_id']),
 				array($ltpl['title'],'sort'=>$qs['sort']=='title' ? $qs['so'] : false,'href'=>$links['sort_title']),
-				array($lang['pos'],80,'sort'=>$qs['sort']=='pos' ? $qs['so'] : false,'href'=>$links['sort_pos']),
+				array(Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['pos'],80,'sort'=>$qs['sort']=='pos' ? $qs['so'] : false,'href'=>$links['sort_pos']),
 				array($ltpl['functs'],80,'sort'=>$qs['sort']=='status' ? $qs['so'] : false,'href'=>$links['sort_status']),
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
@@ -95,7 +95,7 @@ class TPLAdminStatic
 
 				$Lst->item(
 					array($k,'right'),
-					'<a id="it'.$k.'" href="'.$v['_aedit'].'">'.$v['title'].'</a><br /><span class="small"><a href="'.$v['_aparent'].'" style="font-weight:bold">'.$lang['subpages'].'</a> '.rtrim($subs,', ').' <a href="'.$v['_aaddp'].'" title="'.$lang['addsubpage'].'"><img src="'.$images.'plus.gif" alt="" /></a></span>',
+					'<a id="it'.$k.'" href="'.$v['_aedit'].'">'.$v['title'].'</a><br /><span class="small"><a href="'.$v['_aparent'].'" style="font-weight:bold">'.static::$lang['subpages'].'</a> '.rtrim($subs,', ').' <a href="'.$v['_aaddp'].'" title="'.static::$lang['addsubpage'].'"><img src="'.$images.'plus.gif" alt="" /></a></span>',
 					$posasc
 						? $Lst('func',
 							$v['_aup'] ? array($v['_aup'],$ltpl['moveup'],$images.'up.png') : false,
@@ -103,7 +103,7 @@ class TPLAdminStatic
 							)
 						: array('&empty;','center'),
 					$Lst('func',
-						array($v['_aswap'],$v['status'] ? $ltpl['deactivate'] : $ltpl['activate'],$v['status'] ? $images.'active.png' : $images.'inactive.png'),
+						array($v['_aswap'],$v['status'] ? $ltpl['deactivate'] : static::$lang['activate'],$v['status'] ? $images.'active.png' : $images.'inactive.png'),
 						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),
 						array($v['_adel'],$ltpl['delete'],$images.'delete.png')
 					),
@@ -112,7 +112,7 @@ class TPLAdminStatic
 			}
 		}
 		else
-			$Lst->empty($lang['not_found']);
+			$Lst->empty(static::$lang['not_found']);
 
 		return Eleanor::$Template->Cover(
 			'<form method="post">
@@ -136,7 +136,7 @@ $(function(){
 			.($nav ? '<table class="filtertable"><tr><td style="font-weight:bold">'.join(' &raquo; ',$nav).'</td></tr></table>' : '')
 			.'<form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
 			.$Lst->end()
-			.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+			.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);	}
 
@@ -178,10 +178,9 @@ $(function(){
 			.($hasdraft ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
 		)->end()->endform();
 
-		if($errors)
-			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
 		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 
@@ -211,7 +210,7 @@ $(function(){
 	*/
 	public static function Delete($a,$back)
 	{		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['deleting'],$a['title']),$back));	}
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back));	}
 
 	/*
 		Обертка для настроек
@@ -221,3 +220,4 @@ $(function(){
 	{		static::Menu('options');
 		return$c;	}
 }
+TplAdminStatic::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/static-*.php',false);

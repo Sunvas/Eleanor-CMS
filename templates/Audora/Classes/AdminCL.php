@@ -11,7 +11,9 @@
 	Шаблон для админки модуля контекстных ссылок
 */
 class TPLAdminCL
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/	protected static function Menu($act='')
 	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
@@ -20,7 +22,7 @@ class TPLAdminCL
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					array($links['add'],$lang['add'],'act'=>$act=='add'),
+					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),
 		);
@@ -62,15 +64,15 @@ class TPLAdminCL
 			'from'=>false,
 		);
 
-		$l=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-list',7)
 			->begin(
 				array('ID',15,'sort'=>$qs['sort']=='id' ? $qs['so'] : false,'href'=>$links['sort_id']),
-				array($l['from'],'sort'=>$qs['sort']=='from' ? $qs['so'] : false,'href'=>$links['sort_from']),
-				array($l['to'],'sort'=>$qs['sort']=='to' ? $qs['so'] : false,'href'=>$links['sort_to']),
-				array($l['date_from'],'sort'=>$qs['sort']=='date_from' ? $qs['so'] : false,'href'=>$links['sort_date_from']),
-				array($l['date_till'],'sort'=>$qs['sort']=='date_till' ? $qs['so'] : false,'href'=>$links['sort_date_till']),
+				array($lang['from'],'sort'=>$qs['sort']=='from' ? $qs['so'] : false,'href'=>$links['sort_from']),
+				array($lang['to'],'sort'=>$qs['sort']=='to' ? $qs['so'] : false,'href'=>$links['sort_to']),
+				array($lang['date_from'],'sort'=>$qs['sort']=='date_from' ? $qs['so'] : false,'href'=>$links['sort_date_from']),
+				array($lang['date_till'],'sort'=>$qs['sort']=='date_till' ? $qs['so'] : false,'href'=>$links['sort_date_till']),
 				array($ltpl['functs'],80,'sort'=>$qs['sort']=='status' ? $qs['so'] : false,'href'=>$links['sort_status']),
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
@@ -92,7 +94,7 @@ class TPLAdminCL
 				);
 		}
 		else
-			$Lst->empty($l['not_found']);
+			$Lst->empty(static::$lang['not_found']);
 		return Eleanor::$Template->Cover(
 			'<form method="post">
 <table class="tabstyle tabform" id="ftable">
@@ -113,7 +115,7 @@ $(function(){
 });//]]></script>
 		</form>'
 		.'<form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($l['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);	}
 
@@ -153,12 +155,11 @@ $(function(){
 			.($hasdraft ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
 		)->end()->endform();
 
-		if($errors)
-		{			$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
-		}
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
+
 		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 }
+TplAdminCL::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/cl-*.php',false);

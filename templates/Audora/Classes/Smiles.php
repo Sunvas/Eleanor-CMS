@@ -11,7 +11,9 @@
 	Админка управления смайлами
 */
 class TPLSmiles
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
@@ -21,7 +23,7 @@ class TPLSmiles
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					array($links['add'],$lang['add'],'act'=>$act=='add'),
+					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 					array($links['addgroup'],$lang['gadd'],'act'=>$act=='addg'),
 				),
 			),
@@ -60,7 +62,7 @@ class TPLSmiles
 		$Lst=Eleanor::LoadListTemplate('table-list',6)
 			->form(array('action'=>$links['form_items'],'id'=>'checks-form','onsubmit'=>'return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))'))
 			->begin(
-				array($lang['smile'],'colspan'=>2,'href'=>$links['sort_emotion']),
+				array(static::$lang['smile'],'colspan'=>2,'href'=>$links['sort_emotion']),
 				array($lang['path'],'href'=>$links['sort_path']),
 				array($lang['show'],'href'=>$links['sort_show']),
 				array($lang['pos'],'href'=>$links['sort_pos']),
@@ -105,7 +107,7 @@ class TPLSmiles
 			}
 		}
 		else
-			$Lst->empty($lang['no_smiles']);
+			$Lst->empty(static::$lang['no_smiles']);
 
 		return Eleanor::$Template->Cover(
 		'<script type="text/javascript">/*<![CDATA[*/$(function(){
@@ -155,7 +157,7 @@ class TPLSmiles
 			clearTimeout(to);
 	})
 })//]]></script>'.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'
-			.sprintf($lang['smpp'],$Lst->perpage($pp,$links['pp']))
+			.sprintf(static::$lang['smpp'],$Lst->perpage($pp,$links['pp']))
 			.'</div>'.$ltpl['with_selected']
 			.Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($ltpl['deactivate'],'d').Eleanor::Option($ltpl['delete'],'k'))
 			.Eleanor::Button('Ok').'</div></form>'.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
@@ -190,12 +192,10 @@ class TPLSmiles
 			.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 		)->end()->endform();
 
-		if($errors)
-		{			$lang=Eleanor::$Language['smiles'];
-			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
-		}
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
+
 		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 
@@ -217,7 +217,7 @@ class TPLSmiles
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin()
-			->item($lang['selcat'],Eleanor::Edit('folder',$values['folder']).' '.Eleanor::Button('Ok'))
+			->item(static::$lang['selcat'],Eleanor::Edit('folder',$values['folder']).' '.Eleanor::Button('Ok'))
 			->end()->endform();
 
 		$c=$Lst.'<script type="text/javascript">//<![CDATA[
@@ -233,13 +233,13 @@ $(function(){
 		}
 	});
 })//]]></script>'
-		.($values['added'] ? Eleanor::$Template->Message($lang['smadded'],'info') : '');
+		.($values['added'] ? Eleanor::$Template->Message(static::$lang['smadded'],'info') : '');
 
 		if($values['smiles'])
 		{			$Lst=Eleanor::LoadListTemplate('table-list',5)
 				->form(array('id'=>'checks-form'))
 				->begin(
-					array($lang['smile'],'colspan'=>2),
+					array(static::$lang['smile'],'colspan'=>2),
 					$lang['emotion'],
 					$lang['show'],
 					array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
@@ -252,7 +252,7 @@ $(function(){
 					array(Eleanor::Check('smiles['.$k.'][s]',$v['s']),'center'),
 					array(Eleanor::Check('smiles['.$k.'][f]',$v['ch'],array('value'=>$v['v'])),'center')
 				);
-			$c.=$Lst->end().'<div class="submitline">'.Eleanor::Control('folder','hidden',$values['folder']).Eleanor::Button($lang['addsels']).'</div></form>
+			$c.=$Lst->end().'<div class="submitline">'.Eleanor::Control('folder','hidden',$values['folder']).Eleanor::Button(static::$lang['addsels']).'</div></form>
 			<script type="text/javascript">/*<![CDATA[*/$(function(){One2AllCheckboxes("#checks-form","#mass-check","[name$=\"[f]\"]",true)});//]]></script>';		}
 		return Eleanor::$Template->Cover($c,$values['error'],'error');	}
 
@@ -266,6 +266,7 @@ $(function(){
 	public static function Delete($smile,$back)
 	{
 		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['smiles']['deleting'],'<img class="smile" src="'.$smile['path'].'" alt="'.$smile['emotion'].'" title="'.$smile['emotion'].'" />'),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],'<img class="smile" src="'.$smile['path'].'" alt="'.$smile['emotion'].'" title="'.$smile['emotion'].'" />'),$back));
 	}
 }
+TplSmiles::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/smiles-*.php',false);

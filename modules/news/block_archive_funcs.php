@@ -102,6 +102,6 @@ function ArchiveDays($y,$m,$conf,$mname,$dates=false)
 		'nm'=>$nm,
 		'py'=>$py,
 		'ny'=>$ny,
-		'a'=>$Eleanor->Url->Construct(array('module'=>$mname,'do'=>$Eleanor->Url->Filter($y.'-'.$m)),false,''),
+		'a'=>$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>$mname,'do'=>$Eleanor->Url->Filter($y.'-'.$m)),false,''),
 	);
 }

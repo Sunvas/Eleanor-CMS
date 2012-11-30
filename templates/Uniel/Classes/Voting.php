@@ -11,7 +11,9 @@
 	Шаблоны отображения опроса, готового опрашивать людей
 */
 class TplVoting
-{	/*
+{	public static
+		$lang;
+	/*
 		Вывод опроса
 		$voting - массив параметров опроса, ключи:
 			id - идентификатор опроса в БД
@@ -35,7 +37,7 @@ class TplVoting
 			wait - ожидает открытия
 			finished - голосование завершено
 	*/	public static function Voting($voting,$qs,$status)
-	{		$l=Eleanor::$Language['voting'];		$r=sprintf($l['nums'],$voting['votes']).(!$status && (int)$voting['end']>0 ? '<br />'.sprintf($l['tlimit'],Eleanor::$Language->Date($voting['end'],'fdt')) : '');		foreach($qs as $k=>&$v)
+	{		$r=sprintf(static::$lang['nums'],$voting['votes']).(!$status && (int)$voting['end']>0 ? '<br />'.sprintf(static::$lang['tlimit'],Eleanor::$Language->Date($voting['end'],'fdt')) : '');		foreach($qs as $k=>&$v)
 		{
 			$qid=$v['multiple'] && !$status ? uniqid() : false;
 
@@ -55,22 +57,22 @@ class TplVoting
 		{
 			case'guest':
 			case'voted':
-				$r.='<span style="font-weight:bold;">'.$l[$status].'</span>';
+				$r.='<span style="font-weight:bold;">'.static::$lang[$status].'</span>';
 			break;
 			case'finished':
-				$r.='<span style="font-weight:bold;">'.sprintf($l['finished'],Eleanor::$Language->Date($voting['end'],'fdt')).'</span>';
+				$r.='<span style="font-weight:bold;">'.sprintf(static::$lang['finished'],Eleanor::$Language->Date($voting['end'],'fdt')).'</span>';
 			break;
 			case'wait':
-				$r.='<span style="font-weight:bold;">'.sprintf($l['wait'],Eleanor::$Language->Date($voting['begin'],'fdt')).'</span>';
+				$r.='<span style="font-weight:bold;">'.sprintf(static::$lang['wait'],Eleanor::$Language->Date($voting['begin'],'fdt')).'</span>';
 			break;
 			case'confirmed':
-				$r.='<span style="color:green;font-weight:bold;">'.$l['vc'].'</span>';
+				$r.='<span style="color:green;font-weight:bold;">'.static::$lang['vc'].'</span>';
 			break;
 			case'rejected':
-				$r.='<span style="color:red;font-weight:bold;">'.$l['vr'].'</span>';
+				$r.='<span style="color:red;font-weight:bold;">'.static::$lang['vr'].'</span>';
 			break;
 			default:
-				$r.=Eleanor::Button($l['vote']);
+				$r.=Eleanor::Button(static::$lang['vote']);
 		}
 		return$r;
 	}
@@ -93,3 +95,4 @@ $(function(){	new Voting({		form:"#'.$u.'",
 })//]]></script>';
 	}
 }
+TplVoting::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/voting-*.php',false);

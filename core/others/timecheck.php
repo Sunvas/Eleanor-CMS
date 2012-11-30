@@ -49,7 +49,7 @@ class TimeCheck extends BaseClass
 					$r[$a['contid']]=array_slice($a,1);
 				}
 		}
-		return $isa ? $r : reset($r);
+		return$isa ? $r : reset($r);
 	}
 
 	public function Add($contid,$value='',$timegone=false,$t=3)

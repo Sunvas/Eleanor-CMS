@@ -99,9 +99,9 @@ if(Eleanor::$Login->IsUser())
 }
 else
 {	$l=Eleanor::$Language->Load('langs/admin_enter-*.php','enter');
-	$login=isset($_POST['login']['name']) ? $_POST['login']['name'] : '';
-	$password=isset($_POST['login']['password']) ? $_POST['login']['password'] : '';
-	$error='';
+	$login=isset($_POST['login']['name']) ? (string)$_POST['login']['name'] : '';
+	$password=isset($_POST['login']['password']) ? (string)$_POST['login']['password'] : '';
+	$errors=array();
 	$captcha=Eleanor::$vars['antibrute']==2 && (isset($_POST['check']) || $ct=Eleanor::GetCookie('Captcha_'.get_class(Eleanor::$Login)) && $ct>time());
 
 	if($captcha)
@@ -113,43 +113,41 @@ else
 				$cach=$Eleanor->Captcha->Check((string)$_POST['check']);
 				$Eleanor->Captcha->Destroy();
 				if(!$cach)
-					$error=$l['error_captcha'];
+					$errors[]='WRONG_CAPTCHA';
 			}
 			else
-				$error=$l['CAPTCHA'];
+				$errors[]='CAPTCHA';
 		}
 		$Eleanor->Captcha->disabled=false;
 		$Eleanor->Captcha->Destroy();
 		$captcha=$Eleanor->Captcha->GetCode();
 	}
 
-	if(!$error and isset($_POST['login']))
+	if(!$errors and isset($_POST['login']))
 		try
 		{
 			Eleanor::$Login->Login((array)$_POST['login'],array('captcha'=>$captcha));
 			return GoAway(Eleanor::$filename.($_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''));
 		}
 		catch(EE$E)
-		{
-			switch($error=$E->getMessage())
+		{			$error=$E->getMessage();
+			switch($error)
 			{
 				case'TEMPORARILY_BLOCKED':
-					$error=sprintf($l['TEMPORARILY_BLOCKED'],$login,round($E->extra['remain']/60));
+					$errors['TEMPORARILY_BLOCKED']=$l['TEMPORARILY_BLOCKED'](htmlspecialchars($login,ELENT,CHARSET),round($E->extra['remain']/60));
 				break;
 				case'CAPTCHA':
 					$captcha=true;
-					$error=$l['CAPTCHA'];
+					$errors[]='CAPTCHA';
 				break;
 				case'WRONG_PASSWORD':
 					$password='';
 				default:
-					if(isset($l[$error]))
-						$error=$l[$error];
+					$errors[]=$error;
 			}
 		}
-	$title=$l['enter_to'];
-	Eleanor::$Template->default+=array('error'=>$error,'login'=>$login,'password'=>$password,'captcha'=>$captcha);
-	Start('Enter');
+	$title[]=$l['enter_to'];
+	Start(array('Enter',array('errors'=>$errors,'login'=>$login,'password'=>$password,'captcha'=>$captcha)));
 }
 
 #Предопределенные функции.
@@ -184,7 +182,7 @@ function Start($tpl='index',$code=200)
 		$hms=array();
 		$Eleanor->multisite=false;
 	}
-	$tcover=(string)Eleanor::$Template->$tpl();
+	$tcover=(string)(is_array($tpl) ? call_user_func_array(array(Eleanor::$Template,$tpl[0]),array_slice($tpl,1)) : Eleanor::$Template->$tpl());
 
 	$Lst=Eleanor::LoadListTemplate('headfoot')
 		->metahttp('text/html; charset='.DISPLAY_CHARSET)

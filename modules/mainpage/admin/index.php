@@ -10,7 +10,7 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor;
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_admin-*.php','mp');
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php','mp');
 Eleanor::$Template->queue[]='AdminMainpage';
 
 $R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.P.'modules` WHERE `id` NOT IN (SELECT `id` FROM `'.P.'mainpage`) AND `id`!='.$Eleanor->module['id']);

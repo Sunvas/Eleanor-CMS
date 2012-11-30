@@ -61,5 +61,5 @@ if($c===false)
 echo$c,'<div class="dbtm">&nbsp;</div></div><div class="block"><a class="editmenu" title="'
 	.Eleanor::$Language['tpl']['edit_menu']
 	.'" href="#" onclick="var h=500,w=600;window.open(\''
-	.$GLOBALS['Eleanor']->Url->file.'?'.$Eleanor->Url->Construct(array('section'=>'management','module'=>'edit_qmenu'),false)
+	.$GLOBALS['Eleanor']->Url->file.'?'.$Eleanor->Url->Construct(array('section'=>'management','module'=>'qmenu'),false)
 	.'\',\'qmenu\',\'height=\'+h+\',width=\'+w+\',toolbar=no,menubar=no,location=no,scrollbars=no,focus=yes,top=\'+Math.round((screen.height-h)/2)+\',left=\'+Math.round((screen.width-w)/2)); return false;">'.Eleanor::$Language['tpl']['edit_menu'].'</a></div>';

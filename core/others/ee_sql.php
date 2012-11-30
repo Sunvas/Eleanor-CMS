@@ -56,6 +56,7 @@ class EE_SQL extends EE
 				$data['e']=$THIS->extra['error'];
 				$data['f']=substr($THIS->getFile(),strlen(Eleanor::$root));
 				$data['l']=$THIS->getLine();
+				$data['t']=$THIS->type;
 				$log=$data['e'].PHP_EOL;
 
 				switch($THIS->type)

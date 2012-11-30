@@ -11,7 +11,7 @@
 if(!defined('CMS'))die;
 global$Eleanor,$title;
 $config=include($Eleanor->module['path'].'config.php');
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_user-*.php','contacts');
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php','contacts');
 Eleanor::$Template->queue[]='UserContacts';
 
 if($_SERVER['REQUEST_METHOD']=='POST')

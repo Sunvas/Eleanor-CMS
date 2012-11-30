@@ -80,7 +80,7 @@ class Categories_Manager extends Categories
 				$back='';
 			else
 				$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
-			return Eleanor::$Template->CMDelete($a,$back,$this->Language,$error);
+			return Eleanor::$Template->CMDelete($a,$back,$error);
 		}
 		elseif(isset($_GET[$this->pp.'up']))
 		{
@@ -430,7 +430,7 @@ class Categories_Manager extends Categories
 			'first_page'=>$El->Url->Construct($qs),
 			'pages'=>function($n)use($El,$qs){ return$El->Url->Construct($qs+array('page'=>$n)); },
 		);
-		return Eleanor::$Template->CMList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links,$this->Language);
+		return Eleanor::$Template->CMList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links);
 	}
 
 	protected function AddEdit($id,$errors=array())
@@ -526,7 +526,7 @@ class Categories_Manager extends Categories
 			'nodraft'=>$hasdraft ? $U->Construct(array($this->pp.'do'=>$id ? false : 'add',$this->pp.'edit'=>$id ? $id : false,$this->pp.'nodraft'=>1)) : false,
 			'draft'=>$U->Construct(array($this->pp.'do'=>'draft')),
 		);
-		return Eleanor::$Template->CMAddEdit($id,$this->controls,$values,$errors,$back,$links,$this->Language);
+		return Eleanor::$Template->CMAddEdit($id,$this->controls,$values,$errors,$back,$links);
 	}
 
 	protected function Save($id,$redir=true)

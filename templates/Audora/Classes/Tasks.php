@@ -11,18 +11,19 @@
 	Шаблоны менеджера задач
 */
 class TPLTasks
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['tasks'];
-		$links=&$GLOBALS['Eleanor']->module['links'];
+	{		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
-			array($links['list'],$lang['list'],'act'=>$act=='list',
+			array($links['list'],Eleanor::$Language['tasks']['list'],'act'=>$act=='list',
 				'submenu'=>$links['add']
 					? array(
-						array($links['add'],$lang['add'],'act'=>$act=='add'),
+						array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 					)
 					: false,
 			),
@@ -68,7 +69,7 @@ class TPLTasks
 		$Lst=Eleanor::LoadListTemplate('table-list',9)
 			->begin(
 				array($ltpl['name'],'sort'=>$qs['sort']=='task' ? $qs['so'] : false,'href'=>$links['sort_task']),
-				array($lang['nextrun'],'sort'=>$qs['sort']=='nextrun' ? $qs['so'] : false,'href'=>$links['sort_nextrun']),
+				array(static::$lang['nextrun'],'sort'=>$qs['sort']=='nextrun' ? $qs['so'] : false,'href'=>$links['sort_nextrun']),
 				$lang['runyear'],
 				$lang['runmonth'],
 				$lang['runday'],
@@ -97,11 +98,11 @@ class TPLTasks
 					)
 				);
 		else
-			$Lst->empty($lang['notasks']);
+			$Lst->empty(static::$lang['notasks']);
 
 		return Eleanor::$Template->Cover(
 			$Lst->end()
-			.'<div class="submitline" style="text-align:left">'.sprintf($lang['tpp'],$Lst->perpage($pp,$links['pp'])).'</div>'
+			.'<div class="submitline" style="text-align:left">'.sprintf(static::$lang['tpp'],$Lst->perpage($pp,$links['pp'])).'</div>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);
 	}
@@ -134,12 +135,10 @@ class TPLTasks
 			.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 		)->end()->endform();
 
-		if($errors)
-		{			$lang=Eleanor::$Language['tasks'];
-			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
-		}
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
+
 		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 
@@ -151,6 +150,7 @@ class TPLTasks
 	*/
 	public static function Delete($a,$back)
 	{		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['tasks']['deleting'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back));
 	}
 }
+TplTasks::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/tasks-*.php',false);

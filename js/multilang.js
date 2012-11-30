@@ -51,7 +51,7 @@ function MultilangChecks(opts)
 		if(arr.length==0)
 		{
 			if(!mainch)
-				delete deac[$.inArray(th.opts.mainlang,deac)];
+				deac.splice( $.inArray(th.opts.mainlang,deac) ,1);
 			th.opts.Switch([th.opts.mainlang],deac,th.opts.where);
 		}
 		else

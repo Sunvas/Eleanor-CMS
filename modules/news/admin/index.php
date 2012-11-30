@@ -13,7 +13,7 @@ global$Eleanor,$title;
 $Eleanor->module['config']=$mc=include($Eleanor->module['path'].'config.php');
 Eleanor::$Template->queue[]=$mc['admintpl'];
 
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_admin-*.php',$mc['n']);
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php',$mc['n']);
 Eleanor::LoadOptions($mc['opts'],false);
 
 $R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$mc['t'].'` WHERE `status`=-1');
@@ -423,7 +423,7 @@ function SaveTag($id)
 	$l=isset($values['language']) ? $values['language'] : '';
 	$R=Eleanor::$Db->Query('SELECT `id` FROM `'.$Eleanor->module['config']['tt'].'` WHERE `name`=\''.Eleanor::$Db->Escape($values['name'],false).'\''.($l && isset(Eleanor::$langs[$l]) ? ' AND `language` IN (\'\',\''.$l.'\')' : '').($id ? ' AND `id`!='.$id : '').' LIMIT 1');
 	if($R->num_rows>0)
-		return AddEditTag($id,$lang['tag_exists']);
+		return AddEditTag($id,array('TAG_EXISTS'));
 
 	Eleanor::$Db->Delete(P.'drafts','`key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-t'.$id.'\' LIMIT 1');
 	if($id)
@@ -825,9 +825,9 @@ function Save($id)
 	{
 		$values['enddate']=strtotime($values['enddate']);
 		if(!$values['enddate'])
-			$errors['ERROR_END_DATE']=$lang['ERROR_END_DATE'];
+			$errors[]='ERROR_END_DATE';
 		elseif($values['status'] and $values['enddate']<=time())
-			$errors['ERROR_END_DATE_IN_PAST']=$lang['ERROR_END_DATE_IN_PAST'];
+			$errors[]='ERROR_END_DATE_IN_PAST';
 		$values['enddate']=date('Y-m-d H:i:s',$values['enddate']);
 	}
 
@@ -845,7 +845,7 @@ function Save($id)
 	if($da and $values['pinned'] and $pin=strtotime($values['pinned']))
 	{
 		if($pin<$da)
-			$errors['ERROR_PINNED']=$lang['ERROR_PINNED'];
+			$errors[]='ERROR_PINNED';
 		elseif($values['status']>=1)
 			list($values['date'],$values['pinned'])=array($values['pinned'],$values['date']);
 	}

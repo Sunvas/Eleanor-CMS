@@ -11,7 +11,7 @@
 if(!defined('CMS'))die;
 global$Eleanor;
 $Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-$l=Eleanor::$Language->Load($Eleanor->module['path'].'lang_user-*.php',$Eleanor->module['config']['n']);
+$l=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$Eleanor->module['config']['n']);
 Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
 Eleanor::LoadOptions($Eleanor->module['config']['opts'],false);
 

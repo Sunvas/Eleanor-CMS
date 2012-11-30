@@ -27,6 +27,9 @@ class TplUserNews
 				title - заголовок новости
 				announcement - анонс новости
 				voting`- флаг наличи€ опроса в новости
+				r_sum - сумма всех оценок
+				r_total - число оценок
+				r_average - средн€€ оценка
 
 				_aedit - ссылка на редактирование новости, либо false
 				_adel - ссылка на удаление новости, либо false
@@ -34,6 +37,7 @@ class TplUserNews
 				_readmore - флаг наличи€ подробной новости
 				_hastext - флаг наличи€ подробного текста новости
 				_url - ссылка на новость
+				_canrate - флаг возможности оценивать новость
 			cats - массив категорий. ‘ормат: id=>array()
 				_a - ссылка на категорию
 				t - название категории
@@ -41,13 +45,12 @@ class TplUserNews
 				_url - ссылка на новости с тегом
 				name - им€ тега
 				cnt - количество новостей с данным тегом
-			rating - массив результирующего кода рейтинга новостей. ‘ормат: id=>код рейтинга
 		$cnt - количество новостей всего
 		$page - номер страницы, на которой мы сейчас находимс€
-		$pages - количество страницы всего, полезно при обратной нумерации
 		$pp - число новостей на страницу
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
+			pages - функци€-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($data,$cnt,$page,$pages,$pp,$links)
 	{
@@ -160,11 +163,22 @@ class TplUserNews
 			title - название категории
 			description - описание категории
 			_a - ссылка на новости из данной категории
-		$rating - HTML рейтинга новости
 		$voting - HTML опроса новости, либо false
 		$comments - HTML комментариев
 		$hl - массив слов, которые необходимо подсветить в новости
 	*/
-	public static function Show($a,$category,$rating,$voting,$comments,$hl)
+	public static function Show($a,$category,$voting,$comments,$hl)
+	{	}
+
+	/*
+		¬ывод рейтинга новости
+		$id - ID новости
+		$can - возможность выставить оценку
+		$total - число оценок
+		$average - средн€€ оценка
+		$sum - сумма всех оценок
+		$marks - массив возможных оценок
+	*/
+	public static function Rating($id,$can,$total,$average,$sum,$marks)
 	{	}
 }

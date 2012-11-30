@@ -1,7 +1,6 @@
 <?php
 return array(
-	#For template to cover editors (Eleanor BB, tiny mce, ckeditor...), located in file /templates/*/Editor.php
-	'smiles'=>'Smilies',
+	#For core/others/editor.php
 	'code.php'=>'Paste the code fragment',
 	'hide.php'=>'Insert hidden text — not showing guests',
 	'quote.php'=>'Insert quote',

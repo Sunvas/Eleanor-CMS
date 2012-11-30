@@ -8,8 +8,8 @@
 	*Pseudonym
 */
 
-function Rating(module,control,marks,extra)
-{	var div=$(control).children(":first"),
+function Rating(module,control,id,marks)
+{	var div=control.children(":first"),
 		posx,
 		rate=div.children(":first"),
 		pstep=100/marks.length,
@@ -23,16 +23,16 @@ function Rating(module,control,marks,extra)
 			rate.data("p",p).width(p*pstep+"%");		}).click(function(){			div.off("mousemove mouseleave click");
 			rate.toggleClass("active hover");
 			CORE.Ajax(
-					$.extend({
-							module:module,
-							language:CORE.language,
-							rating:{
-								mark:marks[rate.data("p")-1]
-							}
-						},extra),
+					{
+						module:module,
+						language:CORE.language,
+						event:"rating",
+						mark:marks[rate.data("p")-1],
+						id:id
+					},
 					function(res)
 					{
-						$(control).replaceWith(res);
+						control.replaceWith(res);
 					}
 			);		}).width();
 }

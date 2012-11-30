@@ -69,7 +69,7 @@ class ControlUploadFile extends BaseClass implements ControlsBase
 				'append'=>'<script type="text/javascript">//<![CDATA[
 $(function(){
 	$(".uploadfile-path:first").removeClass("uploadfile-path").autocomplete({
-		serviceUrl:"'.Eleanor::$services['ajax']['file'].'",
+		serviceUrl:CORE.ajax_file,
 		minChars:2,
 		delimiter: null,
 		params:{
@@ -203,56 +203,12 @@ $(function(){
 			$a['value']=isset(static::$bypost[$a['controlname']]) ? static::$bypost[$a['controlname']] : $a['default'];
 		}
 		else
-			$writed=strpos($a['value'],'://')!==false;
-		$f=!$writed && is_file(Eleanor::FormatPath($a['value'])) && dirname($a['value'])==($a['options']['path'] ? trim($a['options']['path'],'/\\') : Eleanor::$uploads);
-		$img=(($f or $writed) and preg_match('#\.(png|jpe?g|bmp|gif)$#i',$a['value'])>0);
-		$scripts='';
-		$r='<ul style="list-style-type:none">';
-		$id=uniqid();
-		if($f or $writed)
-		{
-			$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
-			$GLOBALS['head']['autocomplete|style']='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
-			$scripts.='<script type="text/javascript">//<![CDATA[
-			';
-			if($img)
-			{
-				$GLOBALS['head']['colorbox']='<link rel="stylesheet" media="screen" href="addons/colorbox/colorbox.css" />';
-				$GLOBALS['jscripts'][]='addons/colorbox/jquery.colorbox-min.js';
-				$scripts.='$(function(){
-					$("#a-'.$id.'").colorbox({
-						title: function(){
-							var url=$(this).attr("href"),
-								title=$(this).find("img").attr("title");
-							return "<a href=\""+url+"\" target=\"_blank\">"+(title ? title : url)+"</a>";
-						},
-						maxWidth:Math.round(screen.width/1.5),
-						maxHeight:Math.round(screen.height/1.5),
-					});
-				});';
-			}
-			$scripts.='$(function(){
-				$("#text-'.$id.'").autocomplete({
-					serviceUrl:"'.Eleanor::$services['ajax']['file'].'",
-					minChars:2,
-					delimiter: null,
-					params:{
-						direct:"'.Eleanor::$service.'",
-						file:"autocomplete"
-					}
-				});
-			});
-			//]]></script>';
-			$r.='<li><span style="vertical-align:15%">'.sprintf($f ? static::$Language['uploaded_file'] : static::$Language['writed_file'],'<a href="'.$a['value'].'" target="_blank"'.($img ? ' id="a-'.$id.'"' : '').'>'.basename($a['value']).'</span></a>');
-			if($f)
-				$r.='<label style="margin:0px 15px">'.Eleanor::Check($a['controlname'].'[delete]').'<span style="vertical-align:15%"> '.static::$Language['delete'].'</span></label>';
-			$r.='</li>';
-		}
-		return$scripts.$r.'<li class="upload"'.($writed ? ' style="display:none"' : '').'>'.Eleanor::Control($a['controlname'].'[file]','file',false,array('onchange'=>'$(this).closest(\'form\').attr(\'enctype\',\'multipart/form-data\')')).'<br /><a class="small" href="#" onclick="$(\'li.upload\').hide();$(\'li.write\').show();$(\'#type-'.$id.'\').val(\'w\');return false">'.static::$Language['write'].'</a></li>'
-				.'<li class="write"'.($writed ? '' : ' style="display:none"').'>'.Eleanor::Edit($a['controlname'].'[text]','',array('id'=>'text-'.$id)).'<br /><a class="small" href="#" onclick="var f=$(this).closest(\'form\');f.find(\'li.upload\').show();f.find(\'li.write\').hide();$(\'#type-'.$id.'\').val(\'u\');return false">'.static::$Language['upload'].'</a></li>'
-				.($a['options']['max_size'] ? '<li class="upload"'.($writed ? ' style="display:none"' : '').'><span class="small" style="font-weight:bold">'.sprintf(static::$Language['max_size'],Files::BytesToSize($a['options']['max_size'])).'</span></li>' : '')
-				.($a['options']['types'] ? '<li><span class="small" style="font-weight:bold">'.sprintf(static::$Language['allowed_types'],join(', ',$a['options']['types'])).'</span></li>' : '')
-				.'</ul>'.Eleanor::Control($a['controlname'].'[type]','hidden',$writed ? 'w' : 'u',array('id'=>'type-'.$id));
+			$writed=$a['value'] && strpos($a['value'],'://')!==false;
+		if($a['value'] and !$writed and basename($a['value'])==$a['value'])
+			$a['value']=rtrim($a['options']['path'],'/\\').$a['value'];
+		$uploaded=$a['value'] && !$writed && is_file(Eleanor::FormatPath($a['value'])) && dirname($a['value'])==($a['options']['path'] ? trim($a['options']['path'],'/\\') : Eleanor::$uploads);
+
+		return Eleanor::$Template->ControlUploadFile('control',$uploaded,$writed,$a['value'],$a['controlname'],$a['options']);
 	}
 
 	public static function Save($a,$Obj)
@@ -263,43 +219,56 @@ $(function(){
 			'filename_eval'=>null,
 			'filename'=>null,
 		);
-		$newv='';
 
 		$a+=array(
 			'value'=>'',
 		);
 
-		$writed=strpos($a['value'],'://')!==false;
-		$vpath=$a['value'] ? Eleanor::FormatPath($a['value']) : false;
-		$f=$vpath && !$writed && is_file($vpath) && dirname($a['value'])==($a['options']['path'] ? trim($a['options']['path'],'/\\') : Eleanor::$uploads) && strpos('://',$vpath)===false;
-		if($f and $Obj->GetPostVal(array_merge($a['name'],array('delete')),false))
-		{
-			Files::Delete($vpath);
-			$newv='';
-		}
+		$writed=$a['value'] && strpos($a['value'],'://')!==false;
+		$full=$a['value'] && !$writed ? Eleanor::FormatPath($a['value']) : false;
+		$uploaded=$full && is_file($full) && dirname($a['value'])==($a['options']['path'] ? trim($a['options']['path'],'/\\') : Eleanor::$uploads);
+
+		if($uploaded and $Obj->GetPostVal(array_merge($a['name'],array('delete')),false))
+			Files::Delete($full);
 
 		$a['name']=(array)$a['name'];
-		$a['options']['types']=(array)$a['options']['types'];
 		if($Obj->GetPostVal(array_merge($a['name'],array('type')),'w')=='w' and $text=$Obj->GetPostVal(array_merge($a['name'],array('text')),false))
 		{
 			if($a['options']['types'] and preg_match('#\.('.join('|',$a['options']['types']).')$#i',$text)==0)
-				throw new EE(static::$Language['error_ext'],EE::USER);
+			{				if($Obj->throw)
+					throw new EE(static::$Language['error_ext'],EE::USER);
+				$Obj->errors[__class__]=static::$Language['error_ext'];
+				return;
+ 			}
  			return$text;
 		}
 
-		$Obj->POST=&$_FILES;
+		$Obj->POST=$_FILES;
 		$tmp=$Obj->GetPostVal(array_merge(array('tmp_name'),$a['name'],array('file')),false);
 		$name=$Obj->GetPostVal(array_merge(array('name'),$a['name'],array('file')),false);
+		$Obj->POST=null;
 		if(!$tmp or !$name or !is_uploaded_file($tmp))
-			return$newv;
+			return'';
 
 		$path=$a['options']['path'] ? Eleanor::FormatPath($a['options']['path']) : Eleanor::$root.Eleanor::$uploads.'/';
 		if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
-			throw new EE(static::$Language['no_upload_path'],EE::ENV);
+		{
+			if($Obj->throw)
+				throw new EE(static::$Language['no_upload_path'],EE::ENV);
+			$Obj->errors[__class__]=static::$Language['no_upload_path'];
+			return;
+		}
+
 		if($a['options']['types'] and preg_match('#\.('.join('|',$a['options']['types']).')$#i',$name)==0)
-			throw new EE(static::$Language['error_ext'],EE::ENV);
+		{
+			if($Obj->throw)
+				throw new EE(static::$Language['error_ext'],EE::USER);
+			$Obj->errors[__class__]=static::$Language['error_ext'];
+			return;
+		}
+
 		if(is_callable($a['options']['filename']))
-			$filename=call_user_func($a['options']['filename'],array('filename'=>$name)+$a,$this);
+			$filename=call_user_func($a['options']['filename'],array('filename'=>$name)+$a,$Obj);
 		elseif($a['options']['filename_eval'])
 		{
 			ob_start();
@@ -311,11 +280,12 @@ $(function(){
 				Eleanor::getInstance()->e_g_l=error_get_last();
 				throw new EE('Error in filename eval: <br />'.$err,EE::DEV,array('code'=>1));
 			}
-			$filename=$f($a,$this);
+			$filename=$f($a,$Obj);
 			ob_end_clean();
 		}
 		else
 			$filename=$name;
+
 		if(!$a['options']['path'])
 			$a['options']['path']=Eleanor::$uploads;
 		if(move_uploaded_file($tmp,$path.$filename))
@@ -326,17 +296,11 @@ $(function(){
 			static::$bypost[$Obj->GenName($a['name'])]=$a['options']['path'];
 			return$a['options']['path'];
 		}
-		return$newv;
+		return'';
 	}
 
 	public static function Result($a,$Obj,$co)
-	{
-		Eleanor::LoadOptions('editor');
-		$h=$a['value'];
-		if(Eleanor::$vars['anti_directlink'] and 0!==strpos($h,PROTOCOL.Eleanor::$domain) and false!==$pos=strpos($h,'://') and $pos<7)
-			$h='go.php?'.$h;
-		return'<a href="'.$h.'">'.$a['value'].'</a>';
-	}
+	{		return Eleanor::$Template->ControlUploadFile('result',$a['value']);	}
 }
 ControlUploadFile::$Language=new Language;
 ControlUploadFile::$Language->queue[]='uploadfile-*.php';

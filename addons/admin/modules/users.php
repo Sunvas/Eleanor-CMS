@@ -11,7 +11,7 @@
 if(!defined('CMS'))die;
 global$Eleanor,$title;
 $lang=Eleanor::$Language->Load('addons/admin/langs/users-*.php','users');
-$langg=Eleanor::$Language->Load('addons/admin/langs/user_groups-*.php',false);
+$langg=Eleanor::$Language->Load('addons/admin/langs/groups-*.php',false);
 Eleanor::$Template->queue[]='Users';
 
 $Eleanor->module['links']=array(

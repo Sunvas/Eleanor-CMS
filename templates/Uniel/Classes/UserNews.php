@@ -63,6 +63,9 @@ class TplUserNews
 	{		$GLOBALS['head'][__class__]=Eleanor::JsVars(array('module'=>$GLOBALS['Eleanor']->module['name']),true,false,'');
 		$T=clone Eleanor::$Template;
 		$lc=static::$lang['comments_'];
+		$marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
+		if(false!==$z=array_search(0,$marks))
+			unset($marks[$z]);
 		foreach($data['items'] as $k=>&$v)
 		{
 			$ntags='';
@@ -93,7 +96,7 @@ class TplUserNews
 					'readmore'=>$v['_readmore'] ? '<a href="'.$v['_url'].'#more">'.static::$lang['readmore'].'</a>' : false,
 					'voting'=>$v['voting'] ? ' <a href="'.$v['_url'].'#voting">'.static::$lang['voting'].'</a>' : false,
 					'status'=>$status,
-					'rating'=>Eleanor::$vars['publ_rating'] && isset($data['rating'][$k]) ? $data['rating'][$k] : false,
+					'rating'=>Eleanor::$vars['publ_rating'] ? static::Rating($k,$v['_canrate'],$v['r_total'],$v['r_average'],0,$marks,false) : false,
 					'edit'=>$v['_aedit'] ? Eleanor::$Template->EditDelete($v['_aedit'],$v['_adel']) : false,
 				),
 				'title'=>$v['_readmore'] ? '<a href="'.$v['_url'].'">'.$v['title'].'</a>'.($v['_hastext'] ? ' <a href="#" data-id="'.$k.'" data-more="#more-'.$k.'" class="getmore"></a>' : '') : $v['title'],
@@ -116,6 +119,9 @@ class TplUserNews
 				title - заголовок новости
 				announcement - анонс новости
 				voting`- флаг наличия опроса в новости
+				r_sum - сумма всех оценок
+				r_total - число оценок
+				r_average - средняя оценка
 
 				_aedit - ссылка на редактирование новости, либо false
 				_adel - ссылка на удаление новости, либо false
@@ -123,6 +129,7 @@ class TplUserNews
 				_readmore - флаг наличия подробной новости
 				_hastext - флаг наличия подробного текста новости
 				_url - ссылка на новость
+				_canrate - флаг возможности оценивать новость
 			cats - массив категорий. Формат: id=>array()
 				_a - ссылка на категорию
 				t - название категории
@@ -130,10 +137,8 @@ class TplUserNews
 				_url - ссылка на новости с тегом
 				name - имя тега
 				cnt - количество новостей с данным тегом
-			rating - массив результирующего кода рейтинга новостей. Формат: id=>код рейтинга
 		$cnt - количество новостей всего
 		$page - номер страницы, на которой мы сейчас находимся
-		$pages - количество страницы всего, полезно при обратной нумерации
 		$pp - число новостей на страницу
 		$links - массив ссылок, ключи:
 			first_page - ссылка на первую страницу пагинатора
@@ -364,12 +369,11 @@ class TplUserNews
 			title - название категории
 			description - описание категории
 			_a - ссылка на новости из данной категории
-		$rating - HTML рейтинга новости
 		$voting - HTML опроса новости, либо false
 		$comments - HTML комментариев
 		$hl - массив слов, которые необходимо подсветить в новости
 	*/
-	public static function Show($a,$category,$rating,$voting,$comments,$hl)
+	public static function Show($a,$category,$voting,$comments,$hl)
 	{		if($hl)
 		{			$a['title']=Strings::MarkWords($hl,$a['title']);
 			$a['text']=Strings::MarkWords($hl,$a['text']);
@@ -392,6 +396,9 @@ class TplUserNews
 				$status=false;
 		}
 
+		$marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
+		if(false!==$z=array_search(0,$marks))
+			unset($marks[$z]);
 		return static::TopMenu()
 			.Eleanor::$Template->Base(array(
 				'top'=>array(
@@ -402,12 +409,64 @@ class TplUserNews
 				),
 				'bottom'=>array(
 					'status'=>$status,
-					'rating'=>$rating ? $rating : false,
+					'rating'=>Eleanor::$vars['publ_rating'] ? static::Rating($a['id'],$a['_canrate'],$a['r_total'],$a['r_average'],0,$marks,true) : false,
 					'edit'=>$a['_aedit'] ? Eleanor::$Template->EditDelete($a['_aedit'],$a['_adel']) : false,
 				),
 				'title'=>$a['title'],
 				'text'=>($a['announcement'] ? $a['announcement'].'<a id="more"></a>' : '').$a['text'].($tags ? '<div class="tags">'.sprintf(static::$lang['tags_'],rtrim($tags,', ')).'</div>' : '').($voting ? '<a id="voting"></a>'.$voting : ''),
 			))
 			.$comments;	}
+
+	/*
+		Вывод рейтинга новости
+		$id - ID новости
+		$can - возможность выставить оценку
+		$total - число оценок
+		$average - средняя оценка
+		$sum - сумма всех оценок
+		$marks - массив возможных оценок
+	*/
+	public static function Rating($id,$can,$total,$average,$sum,$marks,$full=true)
+	{
+		$title=sprintf(Eleanor::$Language['tpl']['average_mark'],round($average,2),$total);
+		if($total>0)
+		{
+			$prev=min($marks);
+			$newa=0;
+			foreach($marks as &$v)
+			{
+				if($v>$average)
+				{
+					$newa+=($average-$prev)/($v-$prev);
+					break;
+				}
+				$newa++;
+				if($v==$average)
+					break;
+				$prev=$v;
+			}
+			$width=round($newa/count($marks)*100,1);
+		}
+		else
+			$newa=$width=0;
+
+		if($can)
+		{
+			$u=uniqid('r');
+			$GLOBALS['jscripts'][]=Eleanor::$Template->default['theme'].'js/rating.js';
+			$r='<div class="rate" title="'.$title.'" id="'.$u.'">
+				<div class="noactive">
+					<div class="active" style="width:'.$width.'%;" data-now="'.$width.'%"></div>
+				</div>
+			</div><script type="text/javascript">/*<![CDATA[*/$(function(){new Rating("'.$GLOBALS['Eleanor']->module['name'].'",$("#'.$u.'"),'.$id.',['.join(',',$marks).']);});//]]></script>';
+		}
+		else
+			$r='<div class="rate" title="'.$title.'">
+			<div class="noactive">
+				<div class="active" style="width:'.$width.'%;"></div>
+			</div>
+		</div>';
+		return$r.($full ? '<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" class="hidden"><span itemprop="ratingValue">'.$newa.'</span><span itemprop="ratingCount">'.$total.'</span><span itemprop="bestRating">'.count($marks).'</span><span itemprop="worstRating">1</span></div>' : '');
+	}
 }
 TplUserNews::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/news-*.php',false);

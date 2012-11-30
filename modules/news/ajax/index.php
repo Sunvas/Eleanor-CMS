@@ -10,8 +10,8 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor;
-$Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-Eleanor::LoadOptions($Eleanor->module['config']['opts']);
+$mc=include($Eleanor->module['path'].'config.php');
+Eleanor::LoadOptions($mc['opts']);
 if(isset($_GET['do']))
 {	$d=(string)$_GET['do'];
 	switch($d)
@@ -19,7 +19,7 @@ if(isset($_GET['do']))
 			$q=isset($_GET['query']) ? htmlspecialchars((string)$_GET['query'],ELENT,CHARSET,false) : false;
 			$items=array();
 			if($q)
-			{				$R=Eleanor::$Db->Query('SELECT `title` FROM `'.$Eleanor->module['config']['tl'].'` WHERE MATCH(`title`,`text`) AGAINST ('.Eleanor::$Db->Escape($q).' IN BOOLEAN MODE) AND `lstatus`=1 LIMIT 5');
+			{				$R=Eleanor::$Db->Query('SELECT `title` FROM `'.$mc['tl'].'` WHERE MATCH(`title`,`text`) AGAINST ('.Eleanor::$Db->Escape($q).' IN BOOLEAN MODE) AND `lstatus`=1 LIMIT 5');
 				while($a=$R->fetch_assoc())
 					$items[]=addcslashes($a['title'],"\n\r\t\"\\");
 			}
@@ -34,7 +34,7 @@ else
 			$q=isset($_POST['query']) ? Url::Decode($_POST['query']) : '';
 			$l=isset($_POST['lang']) ? Url::Decode($_POST['lang']) : '';
 			$s=array();
-			$R=Eleanor::$Db->Query('SELECT `name` FROM `'.$Eleanor->module['config']['tt'].'` WHERE'.($l && isset(Eleanor::$langs[$l]) ? '`language` IN (\'\',\''.$l.'\') AND' : '').' `name` LIKE \''.Eleanor::$Db->Escape($q,false).'%\' ORDER BY `name` ASC LIMIT 50');
+			$R=Eleanor::$Db->Query('SELECT `name` FROM `'.$mc['tt'].'` WHERE'.($l && isset(Eleanor::$langs[$l]) ? '`language` IN (\'\',\''.$l.'\') AND' : '').' `name` LIKE \''.Eleanor::$Db->Escape($q,false).'%\' ORDER BY `name` ASC LIMIT 50');
 			while($t=$R->fetch_row())
 				$s[]=addcslashes($t[0],"\n\r\t\"\\");
 			Eleanor::$content_type='application/json';
@@ -56,31 +56,47 @@ else
 				$y++;
 				$m=1;
 			}
-			Eleanor::SetCookie($Eleanor->module['config']['n'].'-archive',$y.'-'.$m);
+			Eleanor::SetCookie($mc['n'].'-archive',$y.'-'.$m);
 			include$Eleanor->module['path'].'block_archive_funcs.php';
-			$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_blocks-*.php',false);
-			$days=ArchiveDays($y,$m,$Eleanor->module['config'],$Eleanor->module['name']);
+			$lang=Eleanor::$Language->Load($Eleanor->module['path'].'blocks-*.php',false);
+			$days=ArchiveDays($y,$m,$mc,$Eleanor->module['name']);
 			Result(array('month'=>$m,'year'=>$y,'archive'=>Eleanor::$Template->BlockArchive($days,$lang,$Eleanor->module['name'],true)));
 		break;
 		case'rating':
 			if(!Eleanor::$vars['publ_rating'])
 				return Error();
 			BeAs('user');
-			Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
+			Eleanor::$Template->queue[]=$mc['usertpl'];
 			$id=isset($_POST['id']) ? (int)$_POST['id'] : 0;
-			$R=Eleanor::$Db->Query('SELECT `id`,`r_total`,`r_average`,`r_sum` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.(Eleanor::$Permissions->IsAdmin() ? '' : ' AND `status`=1').' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `r_total`,`r_average`,`r_sum` FROM `'.$mc['t'].'` WHERE `id`='.$id.(Eleanor::$Permissions->IsAdmin() ? '' : ' AND `status`=1').' LIMIT 1');
 			if(!$a=$R->fetch_assoc())
 				return Error();
-			$R=new Rating_Ajax;
-			$R->table=$Eleanor->module['config']['t'];
-			$R->mid=$Eleanor->module['id'];
-			$R->tremark=Eleanor::$vars['publ_remark'].'d';
-			$R->once=Eleanor::$vars['publ_mark_users'];
-			$R->marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
-			if(false!==$z=array_search(0,$R->marks))
-				unset($R->marks[$z]);
-			if($R->Process($id,$a))
-				Eleanor::$Db->Update($Eleanor->module['config']['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
+
+			$uid=(int)Eleanor::$Login->GetUserValue('id');
+			$can=!Eleanor::$vars['publ_mark_users'] && Eleanor::$vars['publ_remark'] || $uid;
+
+			if($can)
+			{				$TCH=new TimeCheck($Eleanor->module['id'],false,$uid);
+				$can=!$TCH->Check($id);			}
+
+			$mark=isset($_POST['mark']) ? (int)$_POST['mark'] : 0;
+			$marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
+			if(false!==$z=array_search(0,$marks))
+				unset($marks[$z]);
+
+			if($can and in_array($mark,$marks))
+			{
+				$a['r_average']=Rating::AddMark($a['r_total'],$a['r_average'],$mark);
+				$a['r_total']++;
+				$a['r_sum']+=$mark;
+
+				Eleanor::$Db->Update($mc['t'],array('r_total'=>$a['r_total'],'r_average'=>$a['r_average'],'r_sum'=>$a['r_sum']),'`id`='.$id.' LIMIT 1');
+				Eleanor::$Db->Update($mc['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
+				$TCH->Add($id,$mark,Eleanor::$vars['publ_mark_users'],Eleanor::$vars['publ_remark'].'d');
+				Result(Eleanor::$Template->Rating($id,false,$a['r_total'],$a['r_average'],$a['r_sum'],$marks));
+			}
+			else
+				Error();
 		break;
 		case'getmore':
 			$id=isset($_POST['id']) ? (int)$_POST['id'] : 0;
@@ -93,7 +109,7 @@ else
 			else
 				$where=' AND `lstatus`=1';
 
-			$R=Eleanor::$Db->Query('SELECT `id`,`uri`,`text`,`lcats` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id`='.$id.$where.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `id`,`uri`,`text`,`lcats` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id`='.$id.$where.' LIMIT 1');
 			if(!$a=$R->fetch_assoc() or $a['text']=='')
 				return Error();
 			Result(OwnBB::Parse($a['text']));
@@ -102,22 +118,22 @@ else
 			BeAs('user');
 			$id=isset($_POST['id']) ? (int)$_POST['id'] : 0;
 			$uid=(int)Eleanor::$Login->GetUserValue('id');
-			$R=Eleanor::$Db->Query('SELECT `voting` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.(Eleanor::$Permissions->IsAdmin() ? '' : ' AND (`status`=1'.($uid==0 ? '' : ' OR `author_id`='.$uid).')').' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `voting` FROM `'.$mc['t'].'` WHERE `id`='.$id.(Eleanor::$Permissions->IsAdmin() ? '' : ' AND (`status`=1'.($uid==0 ? '' : ' OR `author_id`='.$uid).')').' LIMIT 1');
 			if(!$a=$R->fetch_assoc())
 				return Error();
 			$V=new Voting_Ajax($a['voting']);
 			$V->mid=$Eleanor->module['id'];
 			if($V->Process())
-				Eleanor::$Db->Update($Eleanor->module['config']['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
+				Eleanor::$Db->Update($mc['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
 		break;
 		case'comments':
 			$id=isset($_POST['id']) ? (int)$_POST['id'] : 0;
-			$R=Eleanor::$Db->Query('SELECT `id`,`cats`,`uri` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `id`='.$id.' AND `language`IN(\'\',\''.Language::$main.'\') AND `status`=1 LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `id`,`cats`,`uri` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `id`='.$id.' AND `language`IN(\'\',\''.Language::$main.'\') AND `status`=1 LIMIT 1');
 			if(!$a=$R->fetch_assoc())
 				return Error();
 			BeAs('user');
 
-			$Eleanor->Categories->Init($Eleanor->module['config']['c']);
+			$Eleanor->Categories->Init($mc['c']);
 			$cat=$a['cats'] && $Eleanor->Url->furl ? $Eleanor->Categories->GetUri((int)ltrim($a['cats'],',')) : false;
 			$u=array('u'=>array($a['uri'],'nid'=>$a['id']));
 			$data=isset($_POST['comments']) ? (array)$_POST['comments'] : array();
@@ -127,22 +143,22 @@ else
 				{
 					case'post':
 						if($Eleanor->Comments->rights['post']==1 and !$r['merged'])
-							Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!comments'=>'`comments`+1'),'`id`='.$id.' LIMIT 1');
+							Eleanor::$Db->Update($mc['t'],array('!comments'=>'`comments`+1'),'`id`='.$id.' LIMIT 1');
 					case'save':
-						Eleanor::$Db->Update($Eleanor->module['config']['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
+						Eleanor::$Db->Update($mc['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
 					break;
 					case'delete':
 						if($r['deleted'])
 						{
-							Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!comments'=>'IF(`comments`>'.$r['deleted'].',`comments`-'.$r['deleted'].',0)'),'`id`='.$id.' LIMIT 1');
-							Eleanor::$Db->Update($Eleanor->module['config']['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
+							Eleanor::$Db->Update($mc['t'],array('!comments'=>'IF(`comments`>'.$r['deleted'].',`comments`-'.$r['deleted'].',0)'),'`id`='.$id.' LIMIT 1');
+							Eleanor::$Db->Update($mc['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
 						}
 					break;
 					case'moderate':
 						if($r['activated'])
 						{
-							Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!comments'=>'GREATEST(0,`comments`'.($r['activated']>0 ? '+'.$r['activated'] : $r['activated']).')'),'`id`='.$id.' LIMIT 1');
-							Eleanor::$Db->Update($Eleanor->module['config']['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
+							Eleanor::$Db->Update($mc['t'],array('!comments'=>'GREATEST(0,`comments`'.($r['activated']>0 ? '+'.$r['activated'] : $r['activated']).')'),'`id`='.$id.' LIMIT 1');
+							Eleanor::$Db->Update($mc['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
 						}
 				}
 		break;

@@ -138,7 +138,7 @@ class Voting_Manager extends BaseClass
 		$C->POST=&$this->POST;
 
 		Eleanor::$Template->queue[]=$this->tpl;
-		$c=Eleanor::$Template->VmAddEdit($id,$this->controls,$C->DisplayControls($this->controls,$values)+$values,$this->Language);
+		$c=Eleanor::$Template->VmAddEdit($id,$this->controls,$C->DisplayControls($this->controls,$values)+$values);
 		return$c;
 	}
 
@@ -394,15 +394,13 @@ class Voting_Manager extends BaseClass
 		$vaload=function($a,$Obj) use (&$ans,$THIS)
 		{
 			if($a['bypost'])
-			{
 				$a['value']=$Obj->GetPostVal($a['name']);
-				if(!is_array($a['value']))
-					$a['value']=array();
-			}
+			if(!is_array($a['value']))
+				$a['value']=array();
 			if(isset($a['nodisplay']))
 				$ans=array($a['controlname'],$a['value']);
 			else
-				return Eleanor::$Template->VmVariants($a['value'],$a['controlname'],$ans[1],$ans[0],$a['tabindex'],$a['real'],$THIS->noans,$THIS->Language);
+				return Eleanor::$Template->VmVariants($a['value'],$a['controlname'],$ans[1],$ans[0],$a['tabindex'],$a['real'],$THIS->noans);
 		};
 
 		return array(
@@ -513,7 +511,7 @@ class Voting_Manager extends BaseClass
 								array_pop($C->arrname);
 							}
 						}
-						return Eleanor::$Template->VmQuestions($r,$a['controls'],$THIS->Language);
+						return Eleanor::$Template->VmQuestions($r,$a['controls']);
 					},
 					'save'=>function($a,$Obj) use ($THIS)
 					{

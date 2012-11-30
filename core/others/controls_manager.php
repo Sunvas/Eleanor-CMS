@@ -127,7 +127,7 @@ class Controls_Manager extends Controls
 				$settslv[$k]['value']=$co['options'][$k];
 
 			$v['bypost']=$co['bypost'];
-			$result['td'][$k]=array($v['title'],isset($v['descr']) ? $v['descr'] : '');#Title Descriptions
+			$result['td'][$k]=array(isset($v['title']) ? $v['title'] : '',isset($v['descr']) ? $v['descr'] : '');#Title Descriptions
 		}
 		if($corrlo)
 			$co['options']=$repopts;
@@ -481,7 +481,7 @@ class Controls_Manager extends Controls
 					self::ScanControls();
 				if(!class_exists('Control'.$type,false) and (!in_array($type,self::$controls) or !include(Eleanor::$root.'core/controls/'.$type.'.php')))
 					throw new EE('Unknown control '.$type,EE::DEV);
-				$cl='Control'.$co['type'];
+				$cl='Control'.$type;
 				$res=$cl::GetSettings($this);
 		}
 		return$res;
@@ -497,7 +497,7 @@ class Controls_Manager extends Controls
 				unset($data[$co['name']['lang']]);
 			else
 				$data=array();
-			return Eleanor::$Template->SettingsSelectLoad(array('values'=>$values));
+			return Eleanor::$Template->SettingsSelectLoad(array('values'=>$values,'name'=>$n,'value'=>$co['value']));
 		}
 		elseif($co['multilang'])
 			$data[$co['name']['lang']][$co['param']]=array($n,$co['value']);

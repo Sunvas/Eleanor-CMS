@@ -18,41 +18,41 @@ class ControlChecks extends BaseClass implements ControlsBase
 
 	public static function Control($a,$Obj)
 	{
-		$a['options']+=array('explode'=>false,'delim'=>',','break'=>'<br />','extra'=>array(),'options'=>array(),'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
-		if($a['bypost'])
-			$value=(array)$Obj->GetPostVal($a['name'],$a['value']);
-		else
-		{
-			$value=array();
-			if($a['value'])
-				$value=$a['options']['explode'] ? explode($a['options']['delim'],Strings::CleanForExplode($a['value'],$a['options']['explode'])) : (array)$a['value'];
-		}
+		$a['options']+=array('extra'=>array(),'options'=>array(),'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
+		$value=$a['bypost'] ? (array)$Obj->GetPostVal($a['name'],$a['value']) : (array)$a['value'];
 		if(!is_array($a['options']['extra']))
 			$a['options']['extra']=array();
 		if(!is_array($a['options']['options']))
 			$a['options']['options']=array();
 		if(is_callable($a['options']['callback']) and (!isset($a['options']['type']) or $a['options']['type']=='callback'))
-			$a['options']['options']=call_user_func($a['options']['callback'],array('value'=>$value)+$a,$this);
+			$a['options']['options']=call_user_func($a['options']['callback'],array('value'=>$value)+$a,$Obj);
 		elseif($a['options']['eval'] and (!isset($a['options']['type']) or $a['options']['type']=='eval'))
 		{
 			ob_start();
 			$f=create_function('$a,$Obj',$a['options']['eval']);
 			if($f===false)
 			{
-				$err=ob_get_contents();
+				$e=ob_get_contents();
 				ob_end_clean();
 				Eleanor::getInstance()->e_g_l=error_get_last();
-				throw new EE('Error in options eval <br />'.$err,EE::DEV,array('code'=>1));
+				if($Obj->throw)
+					throw new EE('Error in options eval: <br />'.$e,EE::DEV);
+				$Obj->errors[__class__]='Error in options eval: <br />'.$e;
+				return;
 			}
-			$a['options']['options']=$f(array('value'=>$value)+$a,$this);
+			$a['options']['options']=$f(array('value'=>$value)+$a,$Obj);
 			ob_end_clean();
 		}
-		$html=array();
 		if(!is_array($a['options']['options']))
-			throw new EE('Incorrect options!',EE::DEV,array('code'=>1));
+		{			if($Obj->throw)
+				throw new EE('Incorrect options',EE::DEV);
+			$Obj->errors[__class__]='Incorrect options';
+			return;
+		}
+		$html=array();
 		foreach($a['options']['options'] as $k=>&$v)
-			$html[]='<label>'.Eleanor::Check($a['controlname'].'[]',in_array($k,$value),array('value'=>$k)+$a['options']['extra']).' '.$v.'</label>';
-		return join($a['options']['break'],$html);
+			$html[$k]=array(Eleanor::Check($a['controlname'].'[]',in_array($k,$value),array('value'=>$k)+$a['options']['extra']),$v);
+		return Eleanor::$Template->ControlChecks($html,null);
 	}
 
 	public static function Save($a,$Obj)
@@ -61,21 +61,18 @@ class ControlChecks extends BaseClass implements ControlsBase
 		$res=$Obj->GetPostVal($a['name'],$a['default']);
 		if(!is_array($res))
 			$res=array();
-		$a['options']+=array('explode'=>false,'delim'=>',');
-		if($a['options']['explode'])
-			$res=$a['options']['delim'].join($a['options']['delim'],$res).$a['options']['delim'];
 		return$res;
 	}
 
 	public static function Result($a,$Obj,$controls)
 	{
-		$a['options']+=array('explode'=>false,'delim'=>',','retvalue'=>false,'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
-		if(!is_array($a['value']))
-			$a['value']=$a['options']['explode'] ? explode($a['options']['delim'],$a['value']) : array($a['value']);
+		$a['options']+=array('retvalue'=>false,'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
+
 		if($a['options']['retvalue'])
-			return $a['options']['explode'] ? join($a['options']['delim'],$a['value']) : $a['value'];
+			return$a['value'];
+
 		if(is_callable($a['options']['callback']) and (!isset($a['options']['type']) or $a['options']['type']=='callback'))
-			$a['options']['options']=call_user_func($a['options']['callback'],array('value'=>$a['value'])+$a,$this);
+			$a['options']['options']=call_user_func($a['options']['callback'],array('value'=>$a['value'])+$a,$Obj);
 		elseif($a['options']['eval'] and (!isset($a['options']['type']) or $a['options']['type']=='eval'))
 		{
 			ob_start();
@@ -85,17 +82,21 @@ class ControlChecks extends BaseClass implements ControlsBase
 				$err=ob_get_contents();
 				ob_end_clean();
 				Eleanor::getInstance()->e_g_l=error_get_last();
-				throw new EE('Error in options eval <br />'.$err,EE::DEV,array('code'=>1));
+				if($Obj->throw)
+					throw new EE('Error in options eval: <br />'.$err,EE::DEV);
+				$Obj->errors[__class__]='Error in options eval: <br />'.$err;
+				return;
 			}
-			$a['options']['options']=$f(array('value'=>$a['value'])+$a,$this,$controls);
+			$a['options']['options']=$f(array('value'=>$a['value'])+$a,$Obj,$controls);
 			ob_end_clean();
 		}
 		if(!is_array($a['options']['options']))
-			return $a['options']['explode'] ? join($a['options']['delim'],$a['value']) : $a['value'];
+			return$a['value'];
+
 		$r=array();
 		foreach($a['value'] as &$v)
 			if(isset($a['options']['options'][$v]))
 				$r[]=$a['options']['options'][$v];
-		return$a['options']['explode'] ? join($a['options']['delim'],$r) : $r;
+		return$r;
 	}
 }

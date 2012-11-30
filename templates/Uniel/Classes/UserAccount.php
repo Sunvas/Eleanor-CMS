@@ -212,7 +212,7 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 		$C=static::Menu('guest','index','main');
 		if($errors)
 		{			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset(static::$lang[$v]))
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
 			$C->Message(join('<br />',$errors),'error');
 		}
@@ -457,7 +457,7 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 		if($errors)
 		{
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset(static::$lang[$v]))
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
 			$C->Message(join('<br />',$errors),'error');
 		}
@@ -1088,7 +1088,7 @@ $(function(){
 		if($errors)
 		{
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset(static::$lang[$v]))
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
 			$C->Message(join('<br />',$errors),'error');
 		}
@@ -1147,7 +1147,7 @@ $(function(){
 			$avatar='<img src="'.$a.$user['avatar_location'].'" style="'.($w ? 'max-width:'.$w.'px;' : '').($h ? 'max-height:'.$h.'px;' : '').'" alt="'.$sname.'" title="'.$sname.'" />';
 		}
 		else
-			$avatar='<img src="'.Eleanor::$vars['noavatar'].'" alt="'.$user['name'].'" title="'.$user['name'].'" />';
+			$avatar='<img src="images/avatars/user.png" alt="'.$user['name'].'" title="'.$user['name'].'" />';
 
 		$Lst=Eleanor::LoadListTemplate('table-form');
 
@@ -1194,7 +1194,7 @@ $(function(){
 		if($ogr)
 			$Lst->item(static::$lang['othgroups'],rtrim($ogr,' ,'));
 		if(Eleanor::$vars['multilang'])
-			$Lst->item(static::$lang['lang'],$user['language'] && isset(Eleanor::$langs[$user['language']]) ? '<span title="'.$user['language'].'">'.Eleanor::$langs[$user['language']]['name'].'</span>' : '<i>'.static::$lang['by_default'].'</i>');
+			$Lst->item($lang['lang'],$user['language'] && isset(Eleanor::$langs[$user['language']]) ? '<span title="'.$user['language'].'">'.Eleanor::$langs[$user['language']]['name'].'</span>' : '<i>'.$lang['by_default'].'</i>');
 		$Lst->end()
 			->tabs(
 				array($lang['personal'],$personal),

@@ -133,7 +133,7 @@ class TplUserNewsCorrect
 
 		if($errors)
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset(static::$lang[$v]))
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
 
 		return static::TopMenu(reset($GLOBALS['title']))
@@ -162,7 +162,7 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 				lang:(m && !$("input[name=\"_onelang\"]").prop("checked")) ? m[1] : ""
 			},
 			a=$(this).autocomplete({
-				serviceUrl:"'.Eleanor::$services['ajax']['file'].'",
+				serviceUrl:CORE.ajax_file,
 				minChars:2,
 				delimiter:/,\s*/,
 				params:p

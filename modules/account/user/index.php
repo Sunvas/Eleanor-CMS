@@ -19,7 +19,7 @@ switch($Eleanor->module['section'])
 	case'online':
 		return include dirname(__file__).'/online.php';
 }
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_user-*.php',$Eleanor->module['config']['n']);
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$Eleanor->module['config']['n']);
 Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
 
 if($Eleanor->Url->is_static)

@@ -44,8 +44,11 @@ return array(
 	'moveup'=>'Move up',
 	'movedown'=>'Move down',
 
-	#Enter
+	#Äëÿ Enter.php
 	'login'=>'Login:',
 	'pass'=>'Password:',
 	'enter'=>'Enter',
+
+	#For Editor.php
+	'smiles'=>'Smilies',
 );

@@ -12,7 +12,6 @@ $html=&$v_1;
 $smiles=&$v_2;
 $ownbb=&$v_3;
 
-$l=Eleanor::$Language['editor'];
 foreach($smiles as $k=>&$v)
 	if($v['show'])
 		$v='<a href="#" style="background: transparent url('.$v['path'].') no-repeat 50% 50%;" data-em="'.reset($v['emotion']).'"></a>';
@@ -27,7 +26,7 @@ if($obb or $smiles)
 	echo'<div>',
 		$html,
 		$smiles
-			? '<div class="bb_footpanel"><b><a href="#" id="a-'.$sm.'" class="bbf_smiles">'.$l['smiles'].'</a></b></div>
+			? '<div class="bb_footpanel"><b><a href="#" id="a-'.$sm.'" class="bbf_smiles">'.Eleanor::$Language['tpl']['smiles'].'</a></b></div>
 <script type="text/javascript">//<![CDATA[
 $(function(){
 	var D=new DropDown({		selector:"#a-'.$sm.'",

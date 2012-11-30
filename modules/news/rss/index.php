@@ -9,15 +9,15 @@
 	*Pseudonym
 */
 global$Eleanor;
-$Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-Eleanor::LoadOptions($Eleanor->module['config']['opts']);
-$Eleanor->Categories->Init($Eleanor->module['config']['c']);
+$mc=include($Eleanor->module['path'].'config.php');
+Eleanor::LoadOptions($mc['opts']);
+$Eleanor->Categories->Init($mc['c']);
 
 $items=array();
 $lastmod=0;
 
 if(isset($_GET['nid']))
-{	$R=Eleanor::$Db->Query('SELECT `id`,`announcement`,`cats`,UNIX_TIMESTAMP(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `date`,`show_sokr`,`show_detail`,`uri`,`title`,`text`,`last_mod` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`='.(int)$_GET['nid'].' LIMIT 1');
+{	$R=Eleanor::$Db->Query('SELECT `id`,`announcement`,`cats`,UNIX_TIMESTAMP(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `date`,`show_sokr`,`show_detail`,`uri`,`title`,`text`,`last_mod` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`='.(int)$_GET['nid'].' LIMIT 1');
 	if($a=$R->fetch_assoc() and ($a['text'] or $a['show_detail']))
 	{		$a['text']=($a['show_sokr'] ? OwnBB::Parse($a['announcement']) : '').OwnBB::Parse($a['text']);
 		$lastmod=strtotime($a['last_mod']);
@@ -57,14 +57,14 @@ else
 		$lwhere.=' AND `lcats` '.$c;
 	}
 
-	$R=Eleanor::$Db->Query('SELECT COUNT(`status`) `cnt` FROM `'.$Eleanor->module['config']['t'].'` WHERE `status`=1'.$where);
+	$R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` WHERE `status`=1 AND `language` IN (\'\',\''.Language::$main.'\')'.$where);
 	list($cnt)=$R->fetch_row();
 
 	$offset=abs(($page-1)*$pp);
 	if($cnt and $offset>=$cnt)
 		$offset=max(0,$cnt-$pp);
 
-	$R=Eleanor::$Db->Query('SELECT `id`,`announcement`,`cats`,UNIX_TIMESTAMP(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `date`,`show_detail`,`uri`,`title`,`text`,`last_mod` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `lstatus`=1 AND `ldate`<=\''.date('Y-m-d H:i:s').'\''.$lwhere.' ORDER BY `ldate` DESC LIMIT '.$offset.', '.$pp);
+	$R=Eleanor::$Db->Query('SELECT `id`,`announcement`,`cats`,UNIX_TIMESTAMP(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `date`,`show_detail`,`uri`,`title`,`text`,`last_mod` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `lstatus`=1 AND `ldate`<=\''.date('Y-m-d H:i:s').'\''.$lwhere.' ORDER BY `ldate` DESC LIMIT '.$offset.', '.$pp);
 	while($a=$R->fetch_assoc())
 	{		$lastmod=max($lastmod,strtotime($a['last_mod']));
 		if($a['text'] or $a['show_detail'])
@@ -79,7 +79,7 @@ if(Eleanor::$caching)
 {
 	Eleanor::$last_mod=$lastmod;
 	$etag=Eleanor::$etag;
-	Eleanor::$etag=md5($Eleanor->module['config']['n'].join(',',array_keys($items)));
+	Eleanor::$etag=md5($mc['n'].join(',',array_keys($items)));
 	if(Eleanor::$modified and Eleanor::$last_mod and Eleanor::$last_mod<=Eleanor::$modified and $etag and $etag==Eleanor::$etag)
 		return Start();
 	else

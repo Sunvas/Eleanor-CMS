@@ -220,7 +220,7 @@ function Start($tpl='index',$code=200)
 		$hms=array();
 		$Eleanor->multisite=false;
 	}
-	$tcover=(string)Eleanor::$Template->$tpl();
+	$tcover=(string)(is_array($tpl) ? call_user_func_array(array(Eleanor::$Template,$tpl[0]),array_slice($tpl,1)) : Eleanor::$Template->$tpl());
 
 	if(!$title)
 		$t=Eleanor::$vars['site_name'];

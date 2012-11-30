@@ -1158,3 +1158,6 @@ a.imagebtn:hover { color: #6d6a65; background: #fafafa url(../../../images/uploa
 /* inputs */
 input.error { background:#FF8377; border-color:#DB8180; }
 input.ok { background:#E0F5BD; border-color:#B3D577; }
+
+/* AgregateRating */
+.hidden { visibility:hidden }

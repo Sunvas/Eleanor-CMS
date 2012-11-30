@@ -43,15 +43,4 @@ return array(
 	'error_load_eval'=>'You made a mistake in the code responsible for displaying the control.'.$m,
 	'no_save_eval'=>'You have not entered the code responsible for maintaining control.'.$m,
 	'error_save_eval'=>'You made a mistake in the code responsible for maintaining control.'.$m,
-
-	#For template EditControlTable
-	'control_type'=>'Type of control',
-	'preview'=>'Preview',
-	'preview_'=>'State control will be retained as its default state',
-
-	#For template SettingsSelectLoad
-	'select_source_code'=>'Code',
-	'select_source_input'=>'Specified list',
-	'select_value1'=>'Displaing',
-	'select_value'=>'Value',
 );

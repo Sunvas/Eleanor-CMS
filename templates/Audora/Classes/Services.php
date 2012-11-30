@@ -11,17 +11,18 @@
 	Шаблоны сервисов
 */
 class TPLServices
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['ser'];
-		$links=&$GLOBALS['Eleanor']->module['links'];
+	{		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
-			array($links['list'],$lang['list'],'act'=>$act=='list',
+			array($links['list'],Eleanor::$Language['ser']['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					array($links['add'],$lang['add'],'act'=>$act=='add'),
+					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),
 		);
@@ -44,14 +45,14 @@ class TPLServices
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$Lst=Eleanor::LoadListTemplate('table-list',5)
-			->begin($lang['name'],$lang['file'],$lang['design'],$lang['login'],array($ltpl['functs'],80));
+			->begin($lang['name'],$lang['file'],static::$lang['design'],$lang['login'],array($ltpl['functs'],80));
 
 		$images=Eleanor::$Template->default['theme'].'images/';
 		foreach($items as &$v)
 			$Lst->item(
 				array($v['name'],'href'=>$v['_aedit']),
 				array($v['file'],'style'=>$v['protected'] ? 'font-weight:bold' : ''),
-				$v['theme'] ? array($v['theme'],'center','href'=>$GLOBALS['Eleanor']->Url->file.'?'.$GLOBALS['Eleanor']->Url->Construct(array('section'=>'management','module'=>'themes_editor','files'=>$v['theme']),false),'hrefextra'=>array('title'=>$lang['etpl'])) : array('&mdash;','center'),
+				$v['theme'] ? array($v['theme'],'center','href'=>$GLOBALS['Eleanor']->Url->file.'?'.$GLOBALS['Eleanor']->Url->Construct(array('section'=>'management','module'=>'themes_editor','files'=>$v['theme']),false),'hrefextra'=>array('title'=>static::$lang['etpl'])) : array('&mdash;','center'),
 				array($v['login'],'center'),
 				$Lst('func',
 					$v['protected'] ? false : array($v['_adel'],$ltpl['delete'],$images.'delete.png'),
@@ -72,7 +73,7 @@ class TPLServices
 		$links - перечень необходимых ссылок, массив с ключами:
 			delete - ссылка на удаление категории или false
 	*/
-	public static function AddEdit($name,$controls,$values,$error,$back,$links)
+	public static function AddEdit($name,$controls,$values,$errors,$back,$links)
 	{
 		static::Menu($name ? '' : 'add');
 		$ltpl=Eleanor::$Language['tpl'];
@@ -92,7 +93,11 @@ class TPLServices
 			.($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 		)->end()->endform();
 
-		return Eleanor::$Template->Cover($Lst,$error,'error');
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
+
+		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 
 
@@ -106,6 +111,7 @@ class TPLServices
 	public static function Delete($a,$back)
 	{
 		static::Menu('');
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['ser']['deleting'],$a['name']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['name']),$back));
 	}
 }
+TplServices::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/services-*.php',false);

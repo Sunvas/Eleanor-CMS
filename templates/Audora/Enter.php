@@ -4,7 +4,7 @@
 */
 if(!defined('CMS'))die;
 $ltpl=Eleanor::$Language['tpl'];
-$lang=Eleanor::$Language['enter'];?><!DOCTYPE html>
+$lang=Eleanor::$Language->Load($theme.'langs/enter-*.php',false);?><!DOCTYPE html>
 <html>
 <head>
 {head}
@@ -28,7 +28,7 @@ $lang=Eleanor::$Language['enter'];?><!DOCTYPE html>
 				<h1><a href="http://eleanor-cms.ru" title="Eleanor CMS">Eleanor CMS</a></h1>
 			</div>
 			<div class="elhmenu">
-				<h4><?php echo$lang['enter_to']?></h4>
+				<h4><?php echo end($GLOBALS['title'])?></h4>
 <?php
 global$Eleanor;
 if(Eleanor::$vars['multilang'])
@@ -49,7 +49,13 @@ if(Eleanor::$vars['multilang'])
 							<div class="wpbox">
 								<div class="wptop"><b><span>&nbsp;</span></b></div>
 								<div class="wpmid">
-									<?php if($error)echo Eleanor::$Template->Message($error,'error')?>
+<?php
+if($errors)
+{	foreach($errors as $k=>&$v)
+		if(is_int($k) and is_string($v) and isset($lang[$v]))
+			$v=$lang[$v];
+	echo Eleanor::$Template->Message($errors,'error');
+}?>
 									<div class="wbpad">
 										<form method="post">
 										<div class="wpbox wpbwhite">

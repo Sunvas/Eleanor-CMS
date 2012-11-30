@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class TPLBlocks
-{	/*
+{	public static
+		$lang;	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
@@ -20,12 +21,12 @@ class TPLBlocks
 			array($links['main'],$lang['bpos'],'act'=>$act=='main'),
 			array($links['ids'],$lang['ipages'],'act'=>$act=='ids',
 				'submenu'=>array(
-					array($links['addi'],$lang['addi'],'act'=>$act=='addi'),
+					array($links['addi'],static::$lang['addi'],'act'=>$act=='addi'),
 				),
 			),
 			array($links['list'],$lang['lab'],'act'=>$act=='list',
 				'submenu'=>array(
-					array($links['add'],$lang['addb'],'act'=>$act=='add'),
+					array($links['add'],static::$lang['addb'],'act'=>$act=='add'),
 				),
 			),
 		);
@@ -41,7 +42,6 @@ class TPLBlocks
 	*/
 	public static function BlocksIdsList($items)
 	{		static::Menu('ids');
-		$lang=Eleanor::$Language['blocks'];
 		$c='';
 		if($items)
 		{			$ltpl=Eleanor::$Language['tpl'];
@@ -50,9 +50,9 @@ class TPLBlocks
 			foreach($items as $service=>&$v)
 			{
 				$c.=($c ? '<br /><br />' : '')
-					.'<h3 style="margin:5px">'.sprintf($lang['idser'],'<a href="'.Eleanor::$services['admin']['file'].'?section=management&amp;module=services&amp;edit='.$service.'">'.ucfirst($service).'</a>').'</h3>';
+					.'<h3 style="margin:5px">'.sprintf(static::$lang['idser'],'<a href="'.Eleanor::$services['admin']['file'].'?section=management&amp;module=services&amp;edit='.$service.'">'.ucfirst($service).'</a>').'</h3>';
 
-				$Lst->begin($ltpl['name'],$lang['bitcode'],array($ltpl['functs'],60));
+				$Lst->begin($ltpl['name'],static::$lang['bitcode'],array($ltpl['functs'],60));
 				foreach($v as $id=>&$vv)
 				{
 					$n=$p=0;
@@ -69,7 +69,7 @@ class TPLBlocks
 				$c.=$Lst->end();
 			}
 		}
-		return Eleanor::$Template->Cover($c ? $c : Eleanor::$Template->Message($lang['pisnf'],'info'));
+		return Eleanor::$Template->Cover($c ? $c : Eleanor::$Template->Message(static::$lang['pisnf'],'info'));
 	}
 
 	/*
@@ -99,7 +99,6 @@ class TPLBlocks
 	public static function BlocksGroup($gid,$blocks,$ids,$group,$errors,$hasdraft,$saved,$links)
 	{		static::Menu('main');
 		$GLOBALS['jscripts'][]='js/admin_blocks.js';
-		$lang=Eleanor::$Language['blocks'];
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$images=Eleanor::$Template->default['theme'].'images/';
@@ -130,8 +129,8 @@ class TPLBlocks
 				foreach($group['blocks'][$k] as &$bv)
 					if(isset($blocks[$bv]))
 						$plblocks.='<div class="block"><span class="caption">'.$blocks[$bv]['title'].'</span><div class="buttons">
-								<a href="#" title="'.$lang['delb'].'" class="deleteblock"><img src="'.$images.'delete.png" /></a>
-								<a href="#" title="'.$lang['edb'].'" class="editblock"><img src="'.$images.'edit.png" /></a>
+								<a href="#" title="'.static::$lang['delb'].'" class="deleteblock"><img src="'.$images.'delete.png" /></a>
+								<a href="#" title="'.static::$lang['edb'].'" class="editblock"><img src="'.$images.'edit.png" /></a>
 							</div>'.Eleanor::Control('block['.$k.'][]','hidden',$bv).'</div>';
 
 			if(Eleanor::$vars['multilang'])
@@ -140,7 +139,7 @@ class TPLBlocks
 			else
 				$langs.=Eleanor::Control('place['.$k.']','hidden',isset($v['title']) ? Eleanor::FilterLangValues($v['title']) : '');
 			$places.='<div class="place">
-				<div class="title"><span class="caption"></span><span class="buttons"><a href="#" title="'.$lang['delp'].'" class="deleteplace"><img src="'.$images.'delete.png" /></a> <a href="#" title="'.$lang['edp'].'" class="editplace"><img src="'.$images.'edit.png" /></a></span></div>
+				<div class="title"><span class="caption"></span><span class="buttons"><a href="#" title="'.static::$lang['delp'].'" class="deleteplace"><img src="'.$images.'delete.png" /></a> <a href="#" title="'.static::$lang['edp'].'" class="editplace"><img src="'.$images.'edit.png" /></a></span></div>
 				<div class="bcontainer">'.$plblocks.'</div>
 				<div class="resize"></div>'.$langs
 				.Eleanor::Control('placeinfo['.$k.']','hidden',isset($v['info']) ? $v['info'] : '').'</div>';		}
@@ -149,20 +148,20 @@ class TPLBlocks
 
 		if($errors)
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 		return Eleanor::$Template->Cover(
 	$Lst->begin(array('id'=>'aep'))
 		->head('')
-		->item($lang['name'],Eleanor::Edit('name'))
+		->item(static::$lang['name'],Eleanor::Edit('name'))
 		->item($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null))
-		->button(Eleanor::Button('Ok','button').' '.Eleanor::Button($lang['cancel'],'button'))
+		->button(Eleanor::Button('Ok','button').' '.Eleanor::Button(static::$lang['cancel'],'button'))
 		->end()
-	.($saved ? '<div id="saved">'.Eleanor::$Template->Message($lang['gsaved'],'info').'</div><script type="text/javascript">/*<![CDATA[*/$(function(){ setTimeout(function(){ $("#saved").fadeOut("slow").remove() },10000) });//]]></script>' : '')
+	.($saved ? '<div id="saved">'.Eleanor::$Template->Message(static::$lang['gsaved'],'info').'</div><script type="text/javascript">/*<![CDATA[*/$(function(){ setTimeout(function(){ $("#saved").fadeOut("slow").remove() },10000) });//]]></script>' : '')
 	.'<div class="blocks"><form method="post">
-		<div style="padding:5px">'.$lang['curg'].Eleanor::Control('similar','hidden','').Eleanor::Select('group',$gopts).'<div style="float:right;text-align:right;"><a href="#" id="addp" style="font-weight:bold">'.$lang['addp'].'</a>'.($links['del_group'] ? ' | <a href="'.$links['del_group'].'" onclicl="return confirm(\''.$lang['aysdg'].'\')">'.$lang['delg'].'</a>' : '' ).'</div></div>
+		<div style="padding:5px">'.static::$lang['curg'].Eleanor::Control('similar','hidden','').Eleanor::Select('group',$gopts).'<div style="float:right;text-align:right;"><a href="#" id="addp" style="font-weight:bold">'.static::$lang['addp'].'</a>'.($links['del_group'] ? ' | <a href="'.$links['del_group'].'" onclicl="return confirm(\''.static::$lang['aysdg'].'\')">'.static::$lang['delg'].'</a>' : '' ).'</div></div>
 		<div class="all"><div class="available">
-				<b>'.$lang['avg'].'</b>'
+				<b>'.static::$lang['avg'].'</b>'
 				.($avblocks ? '<ul>'.$avblocks.'</ul>' : '')
 				.'</div><div class="ver"></div><div class="site-c"><!-- Внимание! Между этими дивами нельзя ставить пробелы! -->
 				<div class="site">'.$places.'</div>
@@ -170,7 +169,7 @@ class TPLBlocks
 		</div>
 		<div class="hor"></div>
 		<div class="submitline">'.Eleanor::Control('extra[verhor]','hidden',$group['extra']['verhor'],array('id'=>'verhor'))
-		.Eleanor::Button($lang['save'])
+		.Eleanor::Button(static::$lang['save'])
 		.Eleanor::Control('_draft','hidden','g'.$gid)
 		.Eleanor::$Template->DraftButton($links['draft'],1)
 		.($hasdraft ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
@@ -188,8 +187,8 @@ $(window).load(function(){
 	BlocksMain(Change);
 
 	$(".blocks .site").EleanorVisualBlocks({		dragimg:"'.Eleanor::$Template->default['theme'].'images/catmanag.png",
-		distribblock:$("<div>").addClass("block").html("<span class=\"caption\"></span><div class=\"buttons\"><a href=\"#\" title=\"'.$lang['delb'].'\" class=\"deleteblock\"><img src=\"'.$images.'delete.png\" /></a><a href=\"#\" title=\"'.$lang['edb'].'\" class=\"editblock\"><img src=\"'.$images.'edit.png\" /></a></div><input type=\"hidden\"/>"),
-		distribplace:$("<div>").addClass("place").html("<div class=\"title\"><span class=\"caption\"></span><span class=\"buttons\"><a href=\"#\" title=\"'.$lang['delp'].'\" class=\"deleteplace\"><img src=\"'.$images.'delete.png\" /></a> <a href=\"#\" title=\"'.$lang['edp'].'\" class=\"editplace\"><img src=\"'.$images.'edit.png\" /></a></span></div><div class=\"bcontainer\"></div><div class=\"resize\"></div><input type=\"hidden\" name=\"place[][english]\" /><input type=\"hidden\" name=\"place[][russian]\" /><input type=\"hidden\" name=\"place[][ukrainian]\" /><input type=\"hidden\" />"),
+		distribblock:$("<div>").addClass("block").html("<span class=\"caption\"></span><div class=\"buttons\"><a href=\"#\" title=\"'.static::$lang['delb'].'\" class=\"deleteblock\"><img src=\"'.$images.'delete.png\" /></a><a href=\"#\" title=\"'.static::$lang['edb'].'\" class=\"editblock\"><img src=\"'.$images.'edit.png\" /></a></div><input type=\"hidden\"/>"),
+		distribplace:$("<div>").addClass("place").html("<div class=\"title\"><span class=\"caption\"></span><span class=\"buttons\"><a href=\"#\" title=\"'.static::$lang['delp'].'\" class=\"deleteplace\"><img src=\"'.$images.'delete.png\" /></a> <a href=\"#\" title=\"'.static::$lang['edp'].'\" class=\"editplace\"><img src=\"'.$images.'edit.png\" /></a></span></div><div class=\"bcontainer\"></div><div class=\"resize\"></div><input type=\"hidden\" name=\"place[][english]\" /><input type=\"hidden\" name=\"place[][russian]\" /><input type=\"hidden\" name=\"place[][ukrainian]\" /><input type=\"hidden\" />"),
 		Recount:function(a){
 			$(".blocks .available li b").text("");
 			$.each(a,function(k,v){
@@ -202,7 +201,7 @@ $(window).load(function(){
 			var aep=$("#aep").show()
 				.on("keypress",function(e){					if(e.keyCode==13)
 						$("input[type=button]:first",this).click();				})
-				.find("tr:first td").text("'.$lang['editingp'].'").end()
+				.find("tr:first td").text("'.static::$lang['editingp'].'").end()
 				.find("input[name=name]").val(name).end()
 				.find("input[type=button]:first").click(function(){
 					var form=$(this).closest("table"),
@@ -231,12 +230,12 @@ $(window).load(function(){
 		Change:Change
 	}).on("click",".deleteplace",function(){
 		var pl=$(this).closest(".place");
-		if(confirm("'.$lang['jsdelp'].'".replace("{0}",pl.find(".caption:first").text())))
+		if(confirm("'.static::$lang['jsdelp'].'".replace("{0}",pl.find(".caption:first").text())))
 			pl.trigger("delete");
 		return false;
 	}).on("click",".deleteblock",function(){
 		var bl=$(this).closest(".block");
-		if(confirm("'.$lang['jsdelb'].'".replace("{0}",bl.find(".caption:first").text())))
+		if(confirm("'.static::$lang['jsdelb'].'".replace("{0}",bl.find(".caption:first").text())))
 			bl.trigger("delete");
 		return false;
 	}).on("click",".editplace",function(){
@@ -260,7 +259,7 @@ $(window).load(function(){
 		$("#aep :button").off("click");
 		$(".blocks").hide();
 		$("#aep").show()
-		.find("tr:first td").text("'.$lang['addingp'].'").end()
+		.find("tr:first td").text("'.static::$lang['addingp'].'").end()
 		.find("input[type=text]").val("").end()
 		.find("input[type=button]:first").click(function(){
 			var form=$(this).closest("table"),
@@ -320,8 +319,8 @@ $(window).load(function(){
 	$("select[name=group]").change(function(){
 		if($(this).val()!="'.$gid.'")
 		{
-			var sim=!$(this).find(":selected").hasClass("exists") && confirm("'.$lang['crgonb'].'"),
-				save=changed && confirm("'.$lang['jssavech'].'");
+			var sim=!$(this).find(":selected").hasClass("exists") && confirm("'.static::$lang['crgonb'].'"),
+				save=changed && confirm("'.static::$lang['jssavech'].'");
 
 			if(save)
 			{
@@ -374,7 +373,6 @@ $(window).load(function(){
 	public static function ShowList($items,$groups,$cnt,$pp,$qs,$page,$links)
 	{		static::Menu('list');
 		array_push($GLOBALS['jscripts'],'js/checkboxes.js','js/jquery.poshytip.js','js/admin_blocks.js');
-		$lang=Eleanor::$Language['blocks'];
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$qs+=array(''=>array());
@@ -388,10 +386,10 @@ $(window).load(function(){
 		$Lst=Eleanor::LoadListTemplate('table-list',7)
 			->begin(
 				array($ltpl['title'],'sort'=>$qs['sort']=='title' ? $qs['so'] : false,'href'=>$links['sort_title']),
-				$lang['tpl'],
-				array($lang['groups'],150),
-				array($lang['ab'],100,'sort'=>$qs['sort']=='showfrom' ? $qs['so'] : false,'href'=>$links['sort_showfrom']),
-				array($lang['af'],100,'sort'=>$qs['sort']=='showto' ? $qs['so'] : false,'href'=>$links['sort_showto']),
+				static::$lang['tpl'],
+				array(static::$lang['groups'],150),
+				array(static::$lang['ab'],100,'sort'=>$qs['sort']=='showfrom' ? $qs['so'] : false,'href'=>$links['sort_showfrom']),
+				array(static::$lang['af'],100,'sort'=>$qs['sort']=='showto' ? $qs['so'] : false,'href'=>$links['sort_showto']),
 				array($ltpl['functs'],80,'sort'=>$qs['sort']=='id' ? $qs['so'] : false,'href'=>$links['sort_id']),
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
@@ -404,8 +402,8 @@ $(window).load(function(){
 					if(isset($groups[$gv]))
 						$grs.='<a href="'.$groups[$gv]['_href'].'">'.$groups[$gv]['html_pref'].$groups[$gv]['title_l'].$groups[$gv]['html_end'].'</a>, ';
 				$Lst->item(
-					'<div class="fieldedit" id="it'.$k.'" data-id="'.$k.'"><a href="'.$v['_aedit'].'">'.$v['title'].'</a></div><i class="small" title="'.($v['ctype']=='file' ? $v['file'].'">'.basename($v['file']) : str_replace('"','&quot;',strip_tags($v['text'],'<b><i><span><br><code><pre>')).'">'.$lang['text']).'</i>',
-					$v['template'] ? $v['template'] : '<i>'.$lang['bypos'].'</i>',
+					'<div class="fieldedit" id="it'.$k.'" data-id="'.$k.'"><a href="'.$v['_aedit'].'">'.$v['title'].'</a></div><i class="small" title="'.($v['ctype']=='file' ? $v['file'].'">'.basename($v['file']) : str_replace('"','&quot;',strip_tags($v['text'],'<b><i><span><br><code><pre>')).'">'.static::$lang['text']).'</i>',
+					$v['template'] ? $v['template'] : '<i>'.static::$lang['bypos'].'</i>',
 					$grs ? rtrim($grs,', ') : '<i>'.$ltpl['all'].'</i>',
 					array((int)$v['showfrom']>0 ? Eleanor::$Language->Date($v['showfrom'],'fdt') : '&infin;','center'),
 					array((int)$v['showto']>0 ? Eleanor::$Language->Date($v['showto'],'fdt') : '&infin;','center'),
@@ -419,14 +417,14 @@ $(window).load(function(){
 			}
 		}
 		else
-			$Lst->empty($lang['bnf']);
+			$Lst->empty(static::$lang['bnf']);
 
 		$statuses=Eleanor::Option($ltpl['no'],'-');
 		$temp=array(
-			1=>$lang['stac'],
-			0=>$lang['stbl'],
-			-3=>$lang['stbe'],
-			-2=>$lang['stfi'],
+			1=>static::$lang['stac'],
+			0=>static::$lang['stbl'],
+			-3=>static::$lang['stbe'],
+			-2=>static::$lang['stfi'],
 		);
 		foreach($temp as $k=>&$v)
 			$statuses.=Eleanor::Option($v,$k,$qs['']['fi']['status']!==false and $qs['']['fi']['status']==$k);
@@ -436,7 +434,7 @@ $(window).load(function(){
 				<tr class="infolabel"><td colspan="2"><a href="#">'.$ltpl['filters'].'</a></td></tr>
 				<tr>
 					<td><b>'.$ltpl['title'].'</b><br />'.Eleanor::Edit('fi[title]',$qs['']['fi']['title']).'</td>
-					<td><b>'.$lang['status'].'</b><br />'.Eleanor::Select('fi[status]',$statuses).'</td>
+					<td><b>'.static::$lang['status'].'</b><br />'.Eleanor::Select('fi[status]',$statuses).'</td>
 				</tr>
 				<tr>
 					<td style="text-align:center;" colspan="2">'.Eleanor::Button($ltpl['apply']).'</td>
@@ -454,7 +452,7 @@ $(function(){
 	BlocksList();
 });//]]></script>
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-		.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['bpp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($ltpl['deactivate'],'d').Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+		.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['bpp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($ltpl['deactivate'],'d').Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
 	}
 
@@ -499,7 +497,6 @@ $(function(){
 		array_push($GLOBALS['jscripts'],'addons/autocomplete/jquery.autocomplete.js','js/admin_blocks.js');
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 
-		$lang=Eleanor::$Language['blocks'];
 		$ltpl=Eleanor::$Language['tpl'];
 		if(Eleanor::$vars['multilang'])
 		{
@@ -519,10 +516,10 @@ $(function(){
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->begin(array('id'=>'block'))
 			->item($ltpl['title'],Eleanor::$Template->LangEdit($ml['title'],null))
-			->item($lang['source'],Eleanor::Select('ctype',Eleanor::Option($lang['text'],'text',$values['ctype']=='text').Eleanor::Option($lang['file'],'file',$values['ctype']=='file'),array('tabindex'=>2)))
-			->item(array($lang['fileb'],Eleanor::Edit('file',$values['file'],array('tabindex'=>3)),'tr'=>array('class'=>'trfile')))
-			->item(array($lang['tfile'],Eleanor::Check('textfile',$values['textfile'],array('tabindex'=>4)),'tr'=>array('class'=>'trfile preconf')))
-			->item(array($lang['text'],Eleanor::$Template->LangEdit($ml['text'],null),'tr'=>array('class'=>'trtext')));
+			->item(static::$lang['source'],Eleanor::Select('ctype',Eleanor::Option(static::$lang['text'],'text',$values['ctype']=='text').Eleanor::Option(static::$lang['file'],'file',$values['ctype']=='file'),array('tabindex'=>2)))
+			->item(array(static::$lang['fileb'],Eleanor::Edit('file',$values['file'],array('tabindex'=>3)),'tr'=>array('class'=>'trfile')))
+			->item(array(static::$lang['tfile'],Eleanor::Check('textfile',$values['textfile'],array('tabindex'=>4)),'tr'=>array('class'=>'trfile preconf')))
+			->item(array(static::$lang['text'],Eleanor::$Template->LangEdit($ml['text'],null),'tr'=>array('class'=>'trtext')));
 
 		if($values['_config'])
 			foreach($values['_config'] as $k=>&$v)
@@ -537,18 +534,18 @@ $(function(){
 		$cont=(string)$Lst->end();
 
 		$view=(string)$Lst->begin()
-			->item(array($lang['afg'],Eleanor::Items('user_groups',UserManager::GroupsOpts($values['user_groups']),10,array('tabindex'=>6)),'tip'=>$lang['afg_']))
-			->item($lang['ab'],Dates::Calendar('showfrom',$values['showfrom'],true,array('tabindex'=>7)))
-			->item($lang['af'],Dates::Calendar('showto',$values['showto'],true,array('tabindex'=>8)))
-			->item($lang['nt'],Eleanor::Check('notemplate',$values['notemplate'],array('tabindex'=>9)))
-			->item(array($lang['tfb'],Eleanor::Edit('template',$values['template'],array('tabindex'=>10)),'tip'=>$lang['tfb_']))
+			->item(array(static::$lang['afg'],Eleanor::Items('user_groups',UserManager::GroupsOpts($values['user_groups']),10,array('tabindex'=>6)),'tip'=>static::$lang['afg_']))
+			->item(static::$lang['ab'],Dates::Calendar('showfrom',$values['showfrom'],true,array('tabindex'=>7)))
+			->item(static::$lang['af'],Dates::Calendar('showto',$values['showto'],true,array('tabindex'=>8)))
+			->item(static::$lang['nt'],Eleanor::Check('notemplate',$values['notemplate'],array('tabindex'=>9)))
+			->item(array(static::$lang['tfb'],Eleanor::Edit('template',$values['template'],array('tabindex'=>10)),'tip'=>static::$lang['tfb_']))
 			->item($ltpl['activate'],Eleanor::Check('status',$values['status']==1,array('value'=>1,'tabindex'=>11)))
 			->end();
 
 		$LLst=Eleanor::LoadListTemplate('table-list',3)
 			->begin(
-				array($lang['vn'],150,'tableextra'=>array('id'=>'vars')),
-				array($lang['val']),
+				array(static::$lang['vn'],150,'tableextra'=>array('id'=>'vars')),
+				array(static::$lang['val']),
 				array($ltpl['functs'],65)
 			);
 		if($values['vars'])
@@ -570,9 +567,9 @@ $(function(){
 
 		$c=$Lst->form()
 			->tabs(
-				array($lang['content'],$cont),
-				array($lang['view'],$view),
-				array($lang['av'],$LLst->end())
+				array(static::$lang['content'],$cont),
+				array(static::$lang['view'],$view),
+				array(static::$lang['av'],$LLst->end())
 			)
 			->submitline((string)$uploader)
 			->submitline(
@@ -587,8 +584,8 @@ $(function(){
 
 		if($errors)
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 		return Eleanor::$Template->Cover($c,$errors,'error').'<script type="text/javascript">/*<![CDATA[*/AddEditBlock()//]]></script>';
 	}
 
@@ -614,7 +611,6 @@ $(function(){
 	public static function AddEditId($id,$values,$errors,$bypost,$hasdraft,$back,$links)
 	{
 		static::Menu($id ? '' : 'addi');
-		$lang=Eleanor::$Language['blocks'];
 		$ltpl=Eleanor::$Language['tpl'];
 		if(Eleanor::$vars['multilang'])
 		{
@@ -636,8 +632,8 @@ $(function(){
 			->form()
 			->begin()
 			->item($ltpl['name'],Eleanor::$Template->LangEdit($title,null))
-			->item($lang['ser'],Eleanor::Select('service',$ss))
-			->item(array($lang['codei'],$GLOBALS['Eleanor']->Editor->Area('code',$values['code'],array('bypost'=>$bypost,'codemirror'=>array('type'=>'purephp'))),'descr'=>$lang['codei_']))
+			->item(static::$lang['ser'],Eleanor::Select('service',$ss))
+			->item(array(static::$lang['codei'],$GLOBALS['Eleanor']->Editor->Area('code',$values['code'],array('bypost'=>$bypost,'codemirror'=>array('type'=>'purephp'))),'descr'=>static::$lang['codei_']))
 			->end()
 			->submitline(
 				$back
@@ -651,8 +647,8 @@ $(function(){
 
 		if($errors)
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 
@@ -665,7 +661,7 @@ $(function(){
 	public static function DeleteI($a,$back)
 	{
 		static::Menu('');
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['blocks']['aysdi'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['aysdi'],$a['title']),$back));
 	}
 
 	/*
@@ -677,7 +673,7 @@ $(function(){
 	public static function Delete($a,$back)
 	{
 		static::Menu('');
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['blocks']['aysdb'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['aysdb'],$a['title']),$back));
 	}
 
 	/*
@@ -686,11 +682,6 @@ $(function(){
 	*/
 	public static function FatalError($e)
 	{		static::Menu('');
-		return Eleanor::$Template->Cover('',$e);;	}
-/*
-<	влево		&#9668;
-^	вверх		&#9650;
->	вправо		&#9658;
-Ў	вниз		&#9660;
-*/
+		return Eleanor::$Template->Cover('',isset(static::$lang[$e]) ? static::$lang[$e] : '');	}
 }
+TplBlocks::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/blocks-*.php',false);

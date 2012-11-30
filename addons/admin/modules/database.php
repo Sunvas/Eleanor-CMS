@@ -23,7 +23,7 @@ if(isset($_GET['do']))
 	switch($_GET['do'])
 	{
 		case'recovernames':
-			$title[]=$lang['list'];
+			$title[]=$lang['recovernames'];
 			$R=Eleanor::$Db->Query('SELECT COUNT(`name`) FROM `'.P.'tasks` WHERE `name`=\'recovernames\'');
 			list($cnt)=$R->fetch_row();
 
@@ -58,7 +58,7 @@ if(isset($_GET['do']))
 			}
 			$links=array(
 				'first_page'=>$Eleanor->Url->Construct(array('do'=>'recovernames')),
-				'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct(array('do'=>'recovernames','page'=>$n)); },
+				'pages'=>function($n){ return$GLOBALS['Eleanor']->Url->Construct(array('do'=>'recovernames','page'=>$n)); },
 				'pp'=>function($n){ return$GLOBALS['Eleanor']->Url->Construct(array('do'=>'recovernames','new-pp'=>$n)); },
 			);
 			$c=Eleanor::$Template->ShowList($items,$cnt,$page,$pp,$links);
@@ -140,7 +140,7 @@ function BackupAndRecovery()
 	$c=Eleanor::$Template->Sypex();	Start();
 	echo$c;}
 
-function AddEdit($id,$error='')
+function AddEdit($id,$errors=array())
 {global$title;
 	$lang=Eleanor::$Language['db'];
 	$runned=false;
@@ -169,9 +169,9 @@ function AddEdit($id,$error='')
 		$title[]=$lang['adding'];
 	}
 
-	if($error)
-	{		if($error===true)
-			$error='';
+	if($errors)
+	{		if($errors===true)
+			$errors=array();
 		$values['tables']=isset($_POST['tables']) ? (array)$_POST['tables'] : array();
 		$values['ids']=isset($_POST['ids']) ? (array)$_POST['ids'] : array();
 		$values['names']=isset($_POST['names']) ? (array)$_POST['names'] : array();
@@ -192,7 +192,7 @@ function AddEdit($id,$error='')
 	$links=array(
 		'delete'=>$id ? $Eleanor->Url->Construct(array('delete'=>$id)) : false,
 	);
-	$c=Eleanor::$Template->AddEdit($id,$tables,$values,$runned,$error,$back,$links);
+	$c=Eleanor::$Template->AddEdit($id,$tables,$values,$runned,$errors,$back,$links);
 	Start();
 	echo$c;
 }
@@ -200,26 +200,28 @@ function AddEdit($id,$error='')
 function Save($id)
 {	$lang=Eleanor::$Language['db'];	$tables=isset($_POST['tables']) ? (array)$_POST['tables'] : array();
 	if(!$tables)
-		return AddEdit($id,$lang['notables']);
+		return AddEdit($id,array('NO_TABLES'));
 	$ids=isset($_POST['ids']) ? (array)$_POST['ids'] : array();
 	$names=isset($_POST['names']) ? (array)$_POST['names'] : array();
-	$opts=array();
+	$opts=$errors=array();
 	$total=0;
 	foreach($tables as &$t)
-	{		foreach($ids as $k=>&$idv)
+	{		$opts[$t]=array();		foreach($ids as $k=>&$idv)
 			if(isset($names[$k]) and $idv!='' and $t!='' and $names[$k]!='')
 			{				$fidv=Eleanor::$Db->Escape($idv,false);				$ft=Eleanor::$Db->Escape($t,false);
 				try
 				{
 					$R=Eleanor::$Db->Query('SELECT COUNT(`'.$fidv.'`) FROM (SELECT `'.$fidv.'`, COUNT(`'.$fidv.'`) `cnt` FROM `'.$ft.'` WHERE `'.$fidv.'`!=0 GROUP BY `'.$fidv.'`) `t`');
+					list($cnt)=$R->fetch_row();
+					$opts[$t][$idv]=$cnt;
 				}
 				catch(EE_SQL$E)
-				{					return AddEdit($id,sprintf($lang['errort'],$t,$idv,$names[$k],$E->getMessage()));				}
-				list($cnt)=$R->fetch_row();
-				$opts[$t][$idv]=$cnt;
+				{					$errors[$t.$k]=sprintf($lang['errort'],$t,$idv,$names[$k],$E->getMessage());				}
 			}
 		$total+=array_sum($opts[$t]);
 	}
+	if($errors)
+		return AddEdit($id,$errors);
 	$per_load=isset($_POST['per_load']) ? (int)$_POST['per_load'] : 100;
 	if($per_load<1)
 		$per_load=1;
@@ -248,7 +250,7 @@ function Save($id)
 	{		$R=Eleanor::$Db->Query('SELECT `status` FROM `'.P.'tasks` WHERE `id`='.$id.' AND `name`=\'recovernames\' LIMIT 1');		if(!$a=$R->fetch_assoc())
 			return GoAway();
 		if($a['status'])
-			return AddEdit($id,$lang['reditrun']);
+			return AddEdit($id,array('RUNNED'));
 		Eleanor::$Db->Update(P.'tasks',$values,'`id`='.$id.' AND `name`=\'recovernames\' LIMIT 1');
 	}
 	else

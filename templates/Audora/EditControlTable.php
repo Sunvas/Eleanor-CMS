@@ -21,16 +21,16 @@ $onlyprev=&$v_3;
 $sgroup=&$v_4;
 $type=&$v_5;
 
-$l=Eleanor::$Language['controls'];
+$lang=Eleanor::$Language->Load($theme.'langs/controls-*.php',false);
 $prev=$error ? Eleanor::$Template->Message($error,'error') : ($a['preview'] ? Eleanor::$Template->LangEdit($a['preview'],null) : $a['preview']);
 if($onlyprev)
 	return$prev;
 $c='';
 
 if(!$ajax)
-	$c.='<table class="tabstyle tabform" id="edit-control-table"><tr><td class="label">'.$l['control_type'].'</td><td>'.$a['type'].' '.Eleanor::Button(Eleanor::$Language['tpl']['update'],'button',array('onclick'=>'EC.ChangeType(true)')).'</td></tr>';
+	$c.='<table class="tabstyle tabform" id="edit-control-table"><tr><td class="label">'.$lang['control_type'].'</td><td>'.$a['type'].' '.Eleanor::Button(Eleanor::$Language['tpl']['update'],'button',array('onclick'=>'EC.ChangeType(true)')).'</td></tr>';
 
-$c.='<tr style="border:3px solid black" class="temp"><td class="label">'.$l['preview'].'<br /><span class="small">'.$l['preview_'].'</span></td><td id="edit-control-preview">'.$prev.'</td></tr>';
+$c.='<tr style="border:3px solid black" class="temp"><td class="label">'.$lang['preview'].'<br /><span class="small">'.$lang['preview_'].'</span></td><td id="edit-control-preview">'.$prev.'</td></tr>';
 
 foreach($a['settings'] as $k=>&$v)
 	if($v)

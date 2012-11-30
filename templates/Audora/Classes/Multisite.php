@@ -11,15 +11,16 @@
 	Шаблоны мультисайта
 */
 class TPLMultisite
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['ms'];
-		$links=&$GLOBALS['Eleanor']->module['links'];
+	{		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
-			array($links['main'],$lang['conf'],'act'=>$act=='main'),
+			array($links['main'],Eleanor::$Language['ms']['conf'],'act'=>$act=='main'),
 			array($links['options'],Eleanor::$Language['main']['options'],'act'=>$act=='options'),
 		);
 
@@ -32,7 +33,6 @@ class TPLMultisite
 	*/
 	public static function Multisite($sites,$controls,$error)
 	{		static::Menu('main');		$GLOBALS['jscripts'][]='js/multisite_manager.js';
-		$lang=Eleanor::$Language['ms'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form(array('id'=>'multisite'));
 
 		foreach($sites as $sn=>&$site)
@@ -46,17 +46,17 @@ class TPLMultisite
 				{
 					switch($v)
 					{						case'site':
-							$h=$lang['sgd'].' <a href="#" class="delsite">'.$lang['dels'].'</a>';
+							$h=static::$lang['sgd'].' <a href="#" class="delsite">'.static::$lang['dels'].'</a>';
 						break;
 						default:
-							$h=$lang['dbt'].' <a href="#" class="checkdb">'.$lang['chdb'].'</a>';					}
+							$h=static::$lang['dbt'].' <a href="#" class="checkdb">'.static::$lang['chdb'].'</a>';					}
 					$Lst->head($h);
 				}
 				$cl='';
 			}
 			$Lst->end();
 		}
-		$Lst->submitline(Eleanor::Button($lang['addsite'],'button',array('class'=>'addsite')).' '.Eleanor::Button($lang['saveconf']))->endform();
+		$Lst->submitline(Eleanor::Button(static::$lang['addsite'],'button',array('class'=>'addsite')).' '.Eleanor::Button(static::$lang['saveconf']))->endform();
 		return Eleanor::$Template->Cover((string)$Lst,$error,'error');
 	}
 
@@ -68,3 +68,4 @@ class TPLMultisite
 	{		static::Menu('options');
 		return$c;	}
 }
+TplMultisite::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/multisite-*.php',false);

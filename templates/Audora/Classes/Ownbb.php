@@ -11,7 +11,9 @@
 	Шаблон отвечает за оформление админки "своих" BB кодов
 */
 class TplOwnBB
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/	protected static function Menu($act='')
 	{		$lang=Eleanor::$Language['ownbb'];
@@ -20,11 +22,11 @@ class TplOwnBB
 			array($links['list'],$lang['list'],'act'=>$act=='list',
 				'submenu'=>$links['add']
 				? array(
-					array($links['add'],$lang['add'],'act'=>$act=='add'),
+					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				)
 				: false,
 			),
-			array($links['recache'],$lang['update']),
+			array($links['recache'],static::$lang['update']),
 		);
 	}
 	/*
@@ -44,7 +46,7 @@ class TplOwnBB
 	{		static::Menu('list');		$lang=Eleanor::$Language['ownbb'];
 		$ltpl=Eleanor::$Language['tpl'];
 		$images=Eleanor::$Template->default['theme'].'images/';		$Lst=Eleanor::LoadListTemplate('table-list',5)->begin(
-			array($lang['tags'],'title'=>$lang['tags']),
+			array($lang['tags'],'title'=>$lang['tags_']),
 			array($lang['handler'],150),
 			array($lang['special'],'title'=>$lang['special_'],100),
 			array($lang['sp_tags'],'title'=>$lang['sp_tags_'],150),
@@ -119,12 +121,10 @@ class TplOwnBB
 			$back=Eleanor::Control('back','hidden',$back);
 		$Lst->form()->tabs($tabs)->submitline($back.Eleanor::Button().($id ? ' '.Eleanor::Button(Eleanor::$Language['tpl']['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))->endform();
 
-		if($errors)
-		{			$lang=Eleanor::$Language['ownbb'];
-			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
-		}
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
+
 		return Eleanor::$Template->Cover((string)$Lst,$errors,'error');
 	}
 
@@ -140,3 +140,4 @@ class TplOwnBB
 		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['ownbb']['deleting'],$a['tags']),$back));
 	}
 }
+TplOwnBB::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/ownbb-*.php',false);

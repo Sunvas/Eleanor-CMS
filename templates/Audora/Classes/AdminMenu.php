@@ -11,7 +11,8 @@
 	Админка модуля меню
 */
 class TplAdminMenu
-{	/*
+{	public static
+		$lang;	/*
 		Меню модуля
 	*/	protected static function Menu($act='')
 	{
@@ -21,7 +22,7 @@ class TplAdminMenu
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					array($links['add'],$lang['add'],'act'=>$act=='add'),
+					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),
 		);
@@ -95,7 +96,7 @@ class TplAdminMenu
 
 				$Lst->item(
 					array($k,'right'),
-					'<a id="it'.$k.'" href="'.$v['_aedit'].'">'.$v['title'].'</a><br /><span class="small"><a href="'.$v['_aparent'].'" style="font-weight:bold">'.$lang['submenu'].'</a> '.rtrim($subs,', ').' <a href="'.$v['_aaddp'].'" title="'.$lang['addsubmenu'].'"><img src="'.$images.'plus.gif" alt="" /></a></span>',
+					'<a id="it'.$k.'" href="'.$v['_aedit'].'">'.$v['title'].'</a><br /><span class="small"><a href="'.$v['_aparent'].'" style="font-weight:bold">'.static::$lang['submenu'].'</a> '.rtrim($subs,', ').' <a href="'.$v['_aaddp'].'" title="'.static::$lang['addsubmenu'].'"><img src="'.$images.'plus.gif" alt="" /></a></span>',
 					$posasc
 						? $Lst('func',
 							$v['_aup'] ? array($v['_aup'],$ltpl['moveup'],$images.'up.png') : false,
@@ -112,7 +113,7 @@ class TplAdminMenu
 			}
 		}
 		else
-			$Lst->empty($lang['not_found']);
+			$Lst->empty(static::$lang['not_found']);
 
 		return Eleanor::$Template->Cover(
 			'<form method="post">
@@ -135,7 +136,7 @@ $(function(){
 		</form>'
 			.($nav ? '<table class="filtertable"><tr><td style="font-weight:bold">'.join(' &raquo; ',$nav).'</td></tr></table>' : '')
 			.'<form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);	}
 
@@ -176,9 +177,10 @@ $(function(){
 
 		if($errors)
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 
 		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 }
+TplAdminMenu::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/menu-*.php',false);

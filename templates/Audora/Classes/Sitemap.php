@@ -11,20 +11,21 @@
 	Шаблоны для админки генератора sitemap-ов
 */
 class TPLSitemap
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['sitemap'];
-		$links=&$GLOBALS['Eleanor']->module['links'];
+	{		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
-			array($links['list'],$lang['list'],'act'=>$act=='list',
+			array($links['list'],Eleanor::$Language['sitemap']['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					array($links['add'],$lang['add'],'act'=>$act=='add'),
+					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),
-			array($links['er'],$lang['editrobots'],'act'=>$act=='er'),
+			array($links['er'],static::$lang['editrobots'],'act'=>$act=='er'),
 		);
 	}
 	/*
@@ -59,7 +60,6 @@ class TPLSitemap
 			pages - функция-генератор ссылок на остальные страницы
 	*/	public static function ShowList($items,$cnt,$modules,$page,$pp,$qs,$links)
 	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
-		$lang=Eleanor::$Language['sitemap'];
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$qs+=array(''=>array());
@@ -72,9 +72,9 @@ class TPLSitemap
 		$Lst=Eleanor::LoadListTemplate('table-list',6)
 			->begin(
 				$ltpl['name'],
-				array($lang['file'],'sort'=>$qs['sort']=='file' ? $qs['so'] : false,'href'=>$links['sort_file']),
+				array(static::$lang['file'],'sort'=>$qs['sort']=='file' ? $qs['so'] : false,'href'=>$links['sort_file']),
 				Eleanor::$Language['main']['modules'],
-				array($lang['status'],'sort'=>$qs['sort']=='status' ? $qs['so'] : false,'href'=>$links['sort_status']),
+				array(static::$lang['status'],'sort'=>$qs['sort']=='status' ? $qs['so'] : false,'href'=>$links['sort_status']),
 				array($ltpl['functs'],80,'sort'=>$qs['sort']=='id' ? $qs['so'] : false,'href'=>$links['sort_id']),
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
@@ -84,7 +84,7 @@ class TPLSitemap
 		{
 			foreach($items as $k=>&$v)
 			{				if($v['free'])
-					$status=$v['lastrun']===null ? '<span style="color:red">Error</span>' : '<span style="color:green" title="'.$lang['pnrun'].'">'.((int)$v['lastrun']>0 ? Eleanor::$Language->Date($v['lastrun'],'fdt') : '&empty;').' - '.($v['nextrun'] ? Eleanor::$Language->Date($v['nextrun'],'fdt') : '&empty;').'</span>';
+					$status=$v['lastrun']===null ? '<span style="color:red">Error</span>' : '<span style="color:green" title="'.static::$lang['pnrun'].'">'.((int)$v['lastrun']>0 ? Eleanor::$Language->Date($v['lastrun'],'fdt') : '&empty;').' - '.($v['nextrun'] ? Eleanor::$Language->Date($v['nextrun'],'fdt') : '&empty;').'</span>';
 				else
 					$status='<progress data-id="'.$k.'" style="width:100%" value="'.$v['already'].'" max="'.($v['total']>0 ? $v['total'] : 1).'" title="'.($pers=$v['total']>0 ? round($v['already']/$v['total']*100,2) : 0).'%"><span>'.$pers.'</span>%</progress>';				$ms='';
 				foreach($v['modules'] as &$mv)
@@ -106,13 +106,13 @@ class TPLSitemap
 			}
 		}
 		else
-			$Lst->empty($lang['nosm']);
+			$Lst->empty(static::$lang['nosm']);
 		return Eleanor::$Template->Cover(
 		'<form method="post">
 			<table class="tabstyle tabform" id="ftable">
 				<tr class="infolabel"><td colspan="2"><a href="#">'.$ltpl['filters'].'</a></td></tr>
 				<tr>
-					<td><b>'.$lang['file'].'</b><br />'.Eleanor::Edit('fi[file]',$qs['']['fi']['file']).'</td>
+					<td><b>'.static::$lang['file'].'</b><br />'.Eleanor::Edit('fi[file]',$qs['']['fi']['file']).'</td>
 					<td style="text-align:center;vertical-align:middle">'.Eleanor::Button($ltpl['apply']).'</td>
 				</tr>
 			</table>
@@ -128,7 +128,7 @@ $(function(){
 });//]]></script>
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
 		.$Lst->end()
-		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['smpp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['smpp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));	}
 
 	/*
@@ -173,7 +173,6 @@ $(function(){
 	*/
 	public static function AddEdit($id,$values,$modules,$settings,$errors,$bypost,$links,$back)
 	{		static::Menu($id ? '' : 'add');
-		$lang=Eleanor::$Language['sitemap'];
 		$ltpl=Eleanor::$Language['tpl'];
 
 		if(Eleanor::$vars['multilang'])
@@ -204,42 +203,41 @@ $(function(){
 			->begin()
 			->item($ltpl['name'],Eleanor::$Template->LangEdit($ml['title_l'],null))
 			->item(Eleanor::$Language['main']['modules'],Eleanor::Items('modules',$mods,10,array('id'=>'modules')))
-			->item(array($lang['file'],Eleanor::Edit('file',$values['file']),'tip'=>$lang['file_']))
-			->item($lang['egzip'],Eleanor::Check('compress',$values['compress']))
-			->item($lang['fullurl'],Eleanor::Check('fulllink',$values['fulllink']))
-			->item($lang['per_run'],Eleanor::Control('per_time','number',$values['per_time'],array('min'=>10,'max'=>65000)))
-			->item($lang['status'],Eleanor::Check('status',$values['status']))
-			->item($lang['sendservice'],Eleanor::Items('sendservice',$ss))
-			->item($lang['runnow'],Eleanor::Check('_runnow',$values['_runnow']));
+			->item(array(static::$lang['file'],Eleanor::Edit('file',$values['file']),'tip'=>static::$lang['file_']))
+			->item(static::$lang['egzip'],Eleanor::Check('compress',$values['compress']))
+			->item(static::$lang['fullurl'],Eleanor::Check('fulllink',$values['fulllink']))
+			->item(static::$lang['per_run'],Eleanor::Control('per_time','number',$values['per_time'],array('min'=>10,'max'=>65000)))
+			->item(static::$lang['status'],Eleanor::Check('status',$values['status']))
+			->item(static::$lang['sendservice'],Eleanor::Items('sendservice',$ss))
+			->item(static::$lang['runnow'],Eleanor::Check('_runnow',$values['_runnow']));
 		if($id)
-			$Lst->item($lang['recreate'],Eleanor::Check('_recreate',$values['_recreate']));
+			$Lst->item(static::$lang['recreate'],Eleanor::Check('_recreate',$values['_recreate']));
 		$ge=(string)$Lst->end();
 
 		$tt=(string)$Lst->begin()
-			->item(array($lang['runyear'],Eleanor::Edit('run_year',$values['run_year']),'tip'=>$lang['runyear_']))
-			->item(array($lang['runmonth'],Eleanor::Edit('run_month',$values['run_month']),'tip'=>$lang['runmonth_']))
-			->item(array($lang['runday'],Eleanor::Edit('run_day',$values['run_day']),'tip'=>$lang['runday_']))
-			->item(array($lang['runhour'],Eleanor::Edit('run_hour',$values['run_hour']),'tip'=>$lang['runhour_']))
-			->item(array($lang['runminute'],Eleanor::Edit('run_minute',$values['run_minute']),'tip'=>$lang['runminute_']))
-			->item(array($lang['runsecond'],Eleanor::Edit('run_second',$values['run_second']),'tip'=>$lang['runsecond_']))
+			->item(array(static::$lang['runyear'],Eleanor::Edit('run_year',$values['run_year']),'tip'=>static::$lang['runyear_']))
+			->item(array(static::$lang['runmonth'],Eleanor::Edit('run_month',$values['run_month']),'tip'=>static::$lang['runmonth_']))
+			->item(array(static::$lang['runday'],Eleanor::Edit('run_day',$values['run_day']),'tip'=>static::$lang['runday_']))
+			->item(array(static::$lang['runhour'],Eleanor::Edit('run_hour',$values['run_hour']),'tip'=>static::$lang['runhour_']))
+			->item(array(static::$lang['runminute'],Eleanor::Edit('run_minute',$values['run_minute']),'tip'=>static::$lang['runminute_']))
+			->item(array(static::$lang['runsecond'],Eleanor::Edit('run_second',$values['run_second']),'tip'=>static::$lang['runsecond_']))
 			->end();
 
 		$c=$Lst->form()
 			->tabs(
 				array($ltpl['general'],$ge),
-				array($lang['timetorun'],$tt),
+				array(static::$lang['timetorun'],$tt),
 				array(
-					$lang['mopts'],
-					'<div id="mod-options"'.($opts ? ' style="display:none"' : '').'>'.Eleanor::$Template->Message($lang['nomops'],'info').'</div><div id="msetts"'.($opts ? '' : ' style="display:none"').'>'.$opts.'</div>'
+					static::$lang['mopts'],
+					'<div id="mod-options"'.($opts ? ' style="display:none"' : '').'>'.Eleanor::$Template->Message(static::$lang['nomops'],'info').'</div><div id="msetts"'.($opts ? '' : ' style="display:none"').'>'.$opts.'</div>'
 				)
 			)
 			->submitline($back.Eleanor::Button().($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
 			->endform();
 
-		if($errors)
-			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
 
 		return Eleanor::$Template->Cover($c,$errors,'error').'<script type="text/javascript">//<![CDATA[
 $(function(){	var msetts={},
@@ -345,13 +343,13 @@ $(function(){	var msetts={},
 		$save - флаг сохраненности
 	*/	public static function EditRobots($v,$saved)
 	{		static::Menu('er');
-		$lang=Eleanor::$Language['sitemap'];		$Lst=Eleanor::LoadListTemplate('table-form')			->form()
+		$Lst=Eleanor::LoadListTemplate('table-form')			->form()
 			->begin()
-			->item($lang['robots'],Eleanor::Text('text',$v,array(),0))
+			->item(static::$lang['robots'],Eleanor::Text('text',$v,array(),0))
 			->button(Eleanor::Button())
 			->end()
 			->endform();
-		return Eleanor::$Template->Cover(($saved ? Eleanor::$Template->Message($lang['rsaved'],'info') : '').$Lst);	}
+		return Eleanor::$Template->Cover(($saved ? Eleanor::$Template->Message(static::$lang['rsaved'],'info') : '').$Lst);	}
 
 	/*
 		Страница удаления карты сайта
@@ -363,6 +361,7 @@ $(function(){	var msetts={},
 	public static function Delete($t,$back)
 	{
 		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['sitemap']['deleting'],$a['title'],$a['file']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title'],$a['file']),$back));
 	}
 }
+TplSitemap::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/sitemap-*.php',false);

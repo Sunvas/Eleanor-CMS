@@ -11,7 +11,9 @@
 	Шаблон админки системного модуля страниц ошибок
 */
 class TPLAdminErrors
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/	protected static function Menu($act='')
 	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
@@ -20,7 +22,7 @@ class TPLAdminErrors
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					array($links['add'],$lang['add'],'act'=>$act=='add'),
+					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),
 			array($links['letters'],$lang['letters'],'act'=>$act=='letters'),
@@ -82,7 +84,8 @@ class TPLAdminErrors
 				);
 		}
 		else
-			$Lst->empty($lang['not_found']);
+			$Lst->empty(static::$lang['not_found']);
+
 		return Eleanor::$Template->Cover(
 			'<form method="post">
 <table class="tabstyle tabform" id="ftable">
@@ -106,7 +109,7 @@ $(function(){
 	One2AllCheckboxes("#checks-form","#mass-check","[name=\"mass[]\"]",true);
 });//]]></script>
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);
 	}
@@ -116,8 +119,7 @@ $(function(){
 	*/
 	public static function ImagePreview()
 	{
-		$a=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['image'];
-		return'<img src="images/spacer.png" alt="'.$a.'" title="'.$a.'" id="previw" /><script type="text/javascript">//<![CDATA[
+		return'<img src="images/spacer.png" alt="" id="previw" /><script type="text/javascript">//<![CDATA[
 $(function(){
 	$("#image").change(function(){
 		var v=$(this).val();
@@ -168,12 +170,10 @@ $(function(){
 			.($hasdraft ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
 		)->end()->endform();
 
-		if($errors)
-		{			$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
-		}
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
+
 		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 
@@ -186,7 +186,7 @@ $(function(){
 	public static function Delete($a,$back)
 	{
 		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['deleting'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back));
 	}
 
 	/*
@@ -195,7 +195,7 @@ $(function(){
 		$values - результирующий HTML код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
 		$errors - массив ошибок
 	*/
-	public static function Letters($controls,$values,$error)
+	public static function Letters($controls,$values,$errors)
 	{		static::Menu('letters');
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
@@ -205,11 +205,10 @@ $(function(){
 				$Lst->head($v);
 		$Lst->button(Eleanor::Button())->end()->endform();
 
-		if($errors)
-		{			$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
-		}
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
+
 		return Eleanor::$Template->Cover((string)$Lst,$errors);	}
 }
+TplAdminErrors::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/errors-*.php',false);

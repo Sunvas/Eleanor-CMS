@@ -82,7 +82,7 @@ class Controls extends BaseClass
 						Eleanor::getInstance()->e_g_l=error_get_last();
 						$e='Error in load eval ('.$k.'): '.$e;
 						if($this->throw)
-							throw new EE($e,EE::DEV,array('code'=>1));
+							throw new EE($e,EE::DEV);
 						$this->errors[$k]=$e;
 					}
 					$rc=$f($a+$v+array('value'=>array()),$this);
@@ -125,7 +125,7 @@ class Controls extends BaseClass
 
 						$e='Error in result eval ('.$k.'): '.$e;
 						if($this->throw)
-							throw new EE($e,EE::DEV,array('code'=>1));
+							throw new EE($e,EE::DEV);
 						$this->errors[$k]=$e;
 					}
 					$ret[$k]=$f(array('value'=>$ret[$k],'multilang'=>$v['multilang'])+$co[$k],$this,$ret);
@@ -186,7 +186,7 @@ class Controls extends BaseClass
 
 						$e='Error in load eval ('.$k.'): '.$e;
 						if($this->throw)
-							throw new EE($e,EE::DEV,array('code'=>1));
+							throw new EE($e,EE::DEV);
 						$this->errors[$k]=$e;
 					}
 					$rc=$f($a+$v+array('value'=>array()),$this);
@@ -280,7 +280,7 @@ class Controls extends BaseClass
 
 						$e='Error in save eval ('.$k.'): '.$e;
 						if($this->throw)
-							throw new EE($e,EE::DEV,array('code'=>1));
+							throw new EE($e,EE::DEV);
 						$this->errors[$k]=$e;
 					}
 					$ret[$k]=$f(array('value'=>$ret[$k],'multilang'=>$v['multilang'])+$co[$k],$this,$ret);
@@ -349,7 +349,6 @@ class Controls extends BaseClass
 				'size' => 10,#Размер полей для типов items и item
 				'extra' = > '',#Дополнительные параметры для простых типов типа edit,text,select и пр.
 				'htmlsafe' => '',#Признак безопасности полученных ХТМЛ тегов. Это значит, значение, полученные из контрола будут пропущены через htmlspecialchars
-				'explode' => false,#Способ обработки типа items. true - будет сохранятся в серилизированном виде. false - explode(',',array())
 			),
 			lang - Идентификатор языка, если мы используем эту опцию в качестве одной из языковых
 			bypost - загрузить из POST запроса.
@@ -389,7 +388,7 @@ class Controls extends BaseClass
 				$e=ob_get_contents();
 				ob_end_clean();
 				Eleanor::getInstance()->e_g_l=error_get_last();
-				throw new EE('Error in load eval: '.$e,EE::DEV,array('code'=>1));
+				throw new EE('Error in load eval: '.$e,EE::DEV);
 			}
 			$col=$f($co,$this,$controls);
 			ob_end_clean();
@@ -412,7 +411,7 @@ class Controls extends BaseClass
 						$e=ob_get_contents();
 						ob_end_clean();
 						Eleanor::getInstance()->e_g_l=error_get_last();
-						throw new EE('Error in load user eval: '.$e,EE::DEV,array('code'=>1));
+						throw new EE('Error in load user eval: '.$e,EE::DEV);
 					}
 					$html=$f($co,$this,$controls);
 					ob_end_clean();
@@ -456,15 +455,7 @@ class Controls extends BaseClass
 				$html=Eleanor::$co['type']($co['controlname'],$co['value'],$co['options']['extra'],$co['options']['htmlsafe']);
 			break;
 			case'items':
-				$co['options']+=array('explode'=>false,'delim'=>',');
-				if($co['bypost'])
-					$value=$this->GetPostVal($co['name'],array());
-				else
-				{
-					$value=array();
-					if($co['value'])
-						$value=$co['options']['explode'] ? explode($co['options']['delim'],Strings::CleanForExplode($co['value'],$co['options']['delim'])) : $co['value'];
-				}
+				$value=$co['bypost'] ? (array)$this->GetPostVal($co['name'],array()) : (array)$co['value'];
 			case'item':
 				$co['options']+=array('size'=>10);
 				$items=true;
@@ -488,7 +479,10 @@ class Controls extends BaseClass
 						$err=ob_get_contents();
 						ob_end_clean();
 						Eleanor::getInstance()->e_g_l=error_get_last();
-						throw new EE('Error in options eval: '.$e,EE::DEV,array('code'=>1));
+						if($Obj->throw)
+							throw new EE('Error in options eval: <br />'.$e,EE::DEV);
+						$Obj->errors[__class__]='Error in options eval: <br />'.$e;
+						return;
 					}
 					$co['options']['options']=$f(array('value'=>$value)+$co,$this,$controls);
 					ob_end_clean();
@@ -582,7 +576,7 @@ class Controls extends BaseClass
 						$e=ob_get_contents();
 						ob_end_clean();
 						Eleanor::getInstance()->e_g_l=error_get_last();
-						throw new EE('Error in save user eval: '.$e,EE::DEV,array('code'=>1));
+						throw new EE('Error in save user eval: '.$e,EE::DEV);
 					}
 					$res=$f($co,$this,$controls);
 					ob_end_clean();
@@ -630,9 +624,6 @@ class Controls extends BaseClass
 				$res=$this->GetPostVal($co['name'],array());
 				if(!is_array($res))
 					$res=array();
-				$co['options']+=array('explode'=>false,'delim'=>',');
-				if($co['options']['explode'])
-					$res=$res ? $co['options']['delim'].join($co['options']['delim'],$res).$co['options']['delim'] : '';
 			break;
 			default:
 				if(!isset(self::$controls))
@@ -659,7 +650,7 @@ class Controls extends BaseClass
 				$e=ob_get_contents();
 				ob_end_clean();
 				Eleanor::getInstance()->e_g_l=error_get_last();
-				throw new EE('Error in save eval:'.$e,EE::DEV,array('code'=>1));
+				throw new EE('Error in save eval:'.$e,EE::DEV);
 			}
 			$res=$f($co,$this,$controls);
 			ob_end_clean();
@@ -699,7 +690,7 @@ class Controls extends BaseClass
 				$e=ob_get_contents();
 				ob_end_clean();
 				Eleanor::getInstance()->e_g_l=error_get_last();
-				throw new EE('Error in load eval: '.$e,EE::DEV,array('code'=>1));
+				throw new EE('Error in load eval: '.$e,EE::DEV);
 			}
 			$col=$f($co,$this,$controls);
 			ob_end_clean();
@@ -721,7 +712,7 @@ class Controls extends BaseClass
 						$e=ob_get_contents();
 						ob_end_clean();
 						Eleanor::getInstance()->e_g_l=error_get_last();
-						throw new EE('Error in save user eval: '.$e,EE::DEV,array('code'=>1));
+						throw new EE('Error in save user eval: '.$e,EE::DEV);
 					}
 					$res=$f($co,$this,$controls);
 					ob_end_clean();
@@ -746,14 +737,11 @@ class Controls extends BaseClass
 			break;
 			case'item':
 			case'select':
-				$single=true;
 			case'items':
-				$co['options']+=array('options'=>false,'explode'=>false,'delim'=>',','retvalue'=>false,'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
-				if(!is_array($co['value']))
-					$co['value']=$co['options']['explode'] ? explode($co['options']['delim'],$co['value']) : array($co['value']);
+				$co['options']+=array('options'=>false,'retvalue'=>false,'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
 				if($co['options']['retvalue'])
 				{
-					$res=$co['options']['explode'] ? join($co['options']['delim'],$co['value']) : (isset($single) ? reset($co['value']) : $co['value']);
+					$res=$co['value'];
 					break;
 				}
 				if(is_callable($co['options']['callback']) and (!isset($co['options']['type']) or $co['options']['type']=='callback'))
@@ -767,22 +755,28 @@ class Controls extends BaseClass
 						$e=ob_get_contents();
 						ob_end_clean();
 						Eleanor::getInstance()->e_g_l=error_get_last();
-						throw new EE('Error in options eval: '.$e,EE::DEV,array('code'=>1));
+						if($Obj->throw)
+							throw new EE('Error in options eval: <br />'.$e,EE::DEV);
+						$Obj->errors[__class__]='Error in options eval: <br />'.$e;
+						return;
 					}
 					$co['options']['options']=$f(array('value'=>$co['value'])+$co,$this,$controls);
 					ob_end_clean();
 				}
 				if(!is_array($co['options']['options']))
 				{
-					$res=$co['options']['explode'] ? join($co['options']['delim'],$co['value']) : (isset($single) ? reset($co['value']) : $co['value']);
+					$res=$co['value'];
 					break;
 				}
-				$r=array();
-				foreach($co['value'] as &$v)
-					if(isset($co['options']['options'][$v]))
-						$r[]=$co['options']['options'][$v];
-				$res=$co['options']['explode'] ? join($co['options']['delim'],$r) : (isset($single) ? reset($r) : $r);
-			break;
+				if(is_array($co['value']))
+				{
+					$res=array();
+					foreach($co['value'] as &$v)
+						if(isset($co['options']['options'][$v]))
+							$res[]=$co['options']['options'][$v];
+				}
+				else
+					$res=isset($co['options']['options'][ $co['value'] ]) ? $co['options']['options'][ $co['value'] ] : null;			break;
 			default:
 				if(!isset(self::$controls))
 					self::ScanControls();
@@ -808,7 +802,7 @@ class Controls extends BaseClass
 				$e=ob_get_contents();
 				ob_end_clean();
 				Eleanor::getInstance()->e_g_l=error_get_last();
-				throw new EE('Error in save eval: '.$e,EE::DEV,array('code'=>1));
+				throw new EE('Error in save eval: '.$e,EE::DEV);
 			}
 			$res=$f($co,$this,$controls);
 			ob_end_clean();

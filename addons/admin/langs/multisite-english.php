@@ -17,12 +17,4 @@ return array(
 	'dbp'=>'DB password',
 	'nom'=>'Table multisite not found',
 	'conf'=>'Configuration',
-
-	#For template
-	'sgd'=>'Site general settings',
-	'dels'=>'Delete site',
-	'dbt'=>'Data base',
-	'chdb'=>'Check',
-	'addsite'=>'Add site',
-	'saveconf'=>'Save configuration',
 );

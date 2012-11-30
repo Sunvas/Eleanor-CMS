@@ -20,6 +20,51 @@ class BBCodes extends BaseClass
 		$text=static::ParseContainer($text,'[ul','[/ul]',array(__class__,'DoList'),true);
 		$text=static::ParseContainer($text,'[ol','[/ol]',array(__class__,'DoList'),true);
 
+		foreach(array('DoImage'=>'img','DoUrl'=>'url') as $k=>$v)
+		{
+			$ocp=-1;
+			$cp=0;
+			while(false!==$cp=stripos($text,'['.$v,$cp))
+			{
+				if($cp==$ocp)
+				{
+					++$cp;
+					continue;
+				}
+
+				$tl=strlen($v);
+				if(trim($text{$cp+$tl+1},'=] ')!='')
+				{
+					++$cp;
+					continue;
+				}
+				$l=false;
+				do
+				{
+					$l=strpos($text,']',$l ? $l+1 : $cp);
+					if($l===false)
+					{
+						++$cp;
+						continue 2;
+					}
+				}while($text{$l-1}=='\\');
+				$ps=substr($text,$cp+$tl+1,$l-$cp-3-1);
+				$ps=str_replace('\\]',']',$ps);
+				if(false===$clpos=stripos($text,'[/'.$v.']',$l+1))
+				{
+					++$cp;
+					continue;
+				}
+
+				$ct=substr($text,$l+1,$clpos-$l-1);
+				$l=$clpos-$cp+$tl+3;#[/]
+
+				$r=static::$k($ct,$ps);
+				$text=substr_replace($text,$r,$cp,$l);
+				$ocp=$cp++;
+			}
+		}
+
 		$rk=array(
 			'[c]',
 			'[tm]',
@@ -44,11 +89,6 @@ class BBCodes extends BaseClass
 		$text=str_replace($rk,$r,$text);
 
 		$rk=$r=array();
-		$rk[]='#\[img([^\]]*?)\](.+?)\[/img\]#ie';
-		$r[]='static::DoImage(\'\2\',\'\1\')';
-
-		$rk[]='#\[url([^\]]*?)\](.+?)\[/url\]#ie';
-		$r[]='static::DoUrl(\'\2\',\'\1\')';
 
 		$rk[]='#\[email([^\]]*?)\](.+?)\[/email\]#ie';
 		$r[]='static::DoEmail(\'\2\',\'\1\')';
@@ -191,8 +231,7 @@ class BBCodes extends BaseClass
 	}
 
 	protected static function DoImage($url,$params)
-	{
-		$url=stripslashes($url);
+	{		$url=stripslashes($url);
 		$params=Strings::ParseParams(stripslashes($params),'url');
 		$tparams=array();
 		foreach($params as $k=>$v)
@@ -258,10 +297,7 @@ class BBCodes extends BaseClass
 	protected static function DoUrl($text,$params='')
 	{
 		if(is_string($params))#На случай, если мы обратимся из функции DoEmail
-		{
-			$text=stripslashes($text);
-			$params=Strings::ParseParams(stripslashes($params),'href');
-		}
+			$params=Strings::ParseParams($params,'href');
 		if(isset($params['name']))
 		{
 			unset($params['href'],$params['target']);
@@ -290,7 +326,7 @@ class BBCodes extends BaseClass
 				case'target':
 				case'href':
 				case'rel':
-					$tparams[$k]=' '.$k.'="'.str_replace('"','&quot;',$v).'"';
+					$tparams[$k]=' '.$k.'="'.htmlspecialchars($v,ELENT,CHARSET,false).'"';
 				break;
 				case'self':
 					unset($tparams['target']);

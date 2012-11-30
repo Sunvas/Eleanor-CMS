@@ -288,7 +288,7 @@ $(function(){
 
 						$page=htmlspecialchars($v['d']['p'],ELENT,CHARSET,false);
 						$log.='<div class="warning" data-id="'.$k.'"><code><pre><b>'.$v['d']['e'].'</b>('.$v['d']['n'].')<br />'
-							.(isset($v['d']['u']) ? '<a href="'.Eleanor::$Login->UserLink($v['d']['u'],$v['d']['id']).'">'.htmlspecialchars($v['d']['u'],ELENT,CHARSET).'</a>' : 'Guest')
+							.(isset($v['d']['u']) ? '<a href="'.Eleanor::$Login->UserLink($v['d']['u'],$v['d']['ui']).'">'.htmlspecialchars($v['d']['u'],ELENT,CHARSET).'</a>' : 'Guest')
 							.' &mdash; <a href="http://eleanor-cms.ru/whois/'.$v['d']['ip'].'">'.$v['d']['ip'].'</a> &mdash; '
 							.$v['d']['b'].'<br />'
 							.Eleanor::$Language->Date($v['d']['d'],'fdt')
@@ -344,5 +344,4 @@ $(function(){	$(".logs a[href=#]").click(function(){		var div=$(this).closest(
 			->OpenTable()
 			.'<div class="textarea license" style="margin-left:5px">'.$s.'</div><a href="addons/license/sanctions-'.Language::$main.'.html" target="_blank" style="margin-left:5px"><img src="'.Eleanor::$Template->default['theme'].'images/print.png" alt="" /> '.static::$lang['print'].'</a>'
 			.Eleanor::$Template->CloseTable();	}}
-
 TplGeneral::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/general-*.php',false);

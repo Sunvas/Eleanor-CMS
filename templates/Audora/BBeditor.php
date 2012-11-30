@@ -13,48 +13,48 @@
 */
 if(!defined('CMS'))die;
 $GLOBALS['head']['bbeditor']='<link rel="stylesheet" type="text/css" href="templates/Audora/style/bbeditor.css" media="screen" />';
-$l=Eleanor::$Language['bbeditor'];
+$lang=Eleanor::$Language->Load($theme.'langs/bbeditor-*.php',false);
 ?><!-- BB EDITOR TEXTAREA+PANEL -->
 <div class="bb_editor" id="ed-<?php echo$id?>">
 
 <!-- BB PANEL -->
 <div class="bb_panel">
 <div class="bb_rpanel">
-	<a href="#" title="<?php echo$l['preview']?>" class="bb_preview"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['increase_field']?>" class="bb_plus"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['decrease_field']?>" class="bb_minus"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['preview']?>" class="bb_preview"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['increase_field']?>" class="bb_plus"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['decrease_field']?>" class="bb_minus"><img src="images/spacer.png" alt="" /></a>
 </div>
-	<a href="#" title="<?php echo$l['bold']?>" class="bb_bold"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['italic']?>" class="bb_italic"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['underline']?>" class="bb_uline"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['strike']?>" class="bb_strike"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['left']?>" class="bb_left"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['center']?>" class="bb_center"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['right']?>" class="bb_right"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['justify']?>" class="bb_justify"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['hr']?>" class="bb_hr"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['link']?>" class="bb_url"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['email']?>" class="bb_mail"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['image']?>" class="bb_img"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['ul']?>" class="bb_ul"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['ol']?>" class="bb_ol"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['li']?>" class="bb_li"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['tm']?>" class="bb_tm"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['copyright']?>" class="bb_c"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['registered']?>" class="bb_r"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['font']?>" class="bb_font"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['tab']?>" class="bb_tab"><img src="images/spacer.png" alt="" /></a>
-	<a href="#" title="<?php echo$l['nobb']?>" class="bb_nobb"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['bold']?>" class="bb_bold"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['italic']?>" class="bb_italic"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['underline']?>" class="bb_uline"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['strike']?>" class="bb_strike"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['left']?>" class="bb_left"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['center']?>" class="bb_center"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['right']?>" class="bb_right"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['justify']?>" class="bb_justify"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['hr']?>" class="bb_hr"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['link']?>" class="bb_url"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['email']?>" class="bb_mail"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['image']?>" class="bb_img"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['ul']?>" class="bb_ul"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['ol']?>" class="bb_ol"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['li']?>" class="bb_li"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['tm']?>" class="bb_tm"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['copyright']?>" class="bb_c"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['registered']?>" class="bb_r"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['font']?>" class="bb_font"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['tab']?>" class="bb_tab"><img src="images/spacer.png" alt="" /></a>
+	<a href="#" title="<?php echo$lang['nobb']?>" class="bb_nobb"><img src="images/spacer.png" alt="" /></a>
 <div class="clr"></div>
 </div>
 <!--END BB PANEL -->
 	<div class="dtarea"><?php echo Eleanor::Text($name,$value,$extra+array('style'=>'width:99.5%','rows'=>10))?></div>
 	<div class="bb_fonts" style="position:absolute;display:none;">
 	<table><tr>
-	<td><?php echo$l['color']?>:</td>
+	<td><?php echo$lang['color']?>:</td>
 	<td>
 		<select class="bb_color" size="1">
-		<option value="0"><?php echo$l['select']?></option>
+		<option value="0"><?php echo$lang['select']?></option>
 		<option style="background-color: black; color: #ffffff;">black</option>
 		<option style="background-color: gray; color: #ffffff;">gray</option>
 		<option style="background-color: white; color: #000000;">white</option>
@@ -75,10 +75,10 @@ $l=Eleanor::$Language['bbeditor'];
 		</select>
 	</td>
 		</tr><tr>
-	<td><?php echo$l['background']?>:</td>
+	<td><?php echo$lang['background']?>:</td>
 	<td>
 		<select class="bb_background" size="1">
-		<option value="0"><?php echo$l['select']?></option>
+		<option value="0"><?php echo$lang['select']?></option>
 		<option style="background-color: black; color: #ffffff;">black</option>
 		<option style="background-color: gray; color: #ffffff;">gray</option>
 		<option style="background-color: white; color: #000000;">white</option>
@@ -99,15 +99,15 @@ $l=Eleanor::$Language['bbeditor'];
 		</select>
 	</td>
 		</tr><tr>
-	<td><?php echo$l['size']?>:</td>
+	<td><?php echo$lang['size']?>:</td>
 	<td>
-		<select class="bb_size" size="1"><option value="0"><?php echo$l['select']?></option><option>8</option><option>10</option><option>12</option><option>14</option><option>16</option><option>18</option><option>20</option><option>22</option><option>24</option><option>26</option><option>28</option><option>30</option><option>32</option></select>
+		<select class="bb_size" size="1"><option value="0"><?php echo$lang['select']?></option><option>8</option><option>10</option><option>12</option><option>14</option><option>16</option><option>18</option><option>20</option><option>22</option><option>24</option><option>26</option><option>28</option><option>30</option><option>32</option></select>
 	</td>
 	</tr><tr>
-	<td><?php echo$l['font']?>:</td>
+	<td><?php echo$lang['font']?>:</td>
 	<td>
 		<select class="bb_font" size="1">
-		<option value="0"><?php echo$l['select']?></option>
+		<option value="0"><?php echo$lang['select']?></option>
 		<option style="font-family: Arial, Helvetica, sans-serif;">Arial</option>
 		<option style="font-family: 'Times New Roman', Times, serif;">Times New Roman</option>
 		<option style="font-family: 'Courier New', Courier, monospace;">Courier New</option>

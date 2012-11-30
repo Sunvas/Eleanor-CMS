@@ -144,18 +144,23 @@ class OwnBB extends BaseClass
 					}
 					$tl=strlen($t);
 					#≈сли мы нашли нужный нам тег т.е. i != img (отшибем все следующие знаки после найденного тега - )
-					if(trim(substr($s,$cp+$tl+1,1),'=] ')!='')
+					if(trim($s{$cp+$tl+1},'=] ')!='')
 					{
 						++$cp;
 						continue;
 					}
-					$l=strpos($s,']',$cp);
-					if($l===false)
+					$l=false;
+					do
 					{
-						++$cp;
-						continue;
-					}
-					$ps=trim(substr($s,$cp+$tl+1,$l-$cp-$tl-1));
+						$l=strpos($s,']',$l ? $l+1 : $cp);
+						if($l===false)
+						{
+							++$cp;
+							continue 2;
+						}
+					}while($s{$l-1}=='\\');
+					$ps=substr($s,$cp+$tl+1,$l-$cp-$tl-1);
+					$ps=str_replace('\\]',']',trim($ps));
 					if($cch and !class_exists($c,false) and !include(Eleanor::$root.'core/ownbb/'.$bb['handler']))
 						continue 3;
 					$se=constant($c.'::SINGLE');

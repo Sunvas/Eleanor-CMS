@@ -12,7 +12,7 @@ if(!defined('CMS'))die;
 
 global$Eleanor,$title;
 $Eleanor->module['config']=$mc=include($Eleanor->module['path'].'config.php');
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_user-*.php',$mc['n']);
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$mc['n']);
 $Eleanor->Categories->Init($mc['c']);
 $Eleanor->module['etag']='';#Дополнение к ETAG
 Eleanor::LoadOptions($mc['opts']);
@@ -56,7 +56,7 @@ if(isset($_GET['do']))
 				{					$gn=GetGN();
 					$where='`id`'.($gn ? Eleanor::$Db->In($gn) : '=0');					$cntf='id';
 				}
-				$R=Eleanor::$Db->Query('SELECT COUNT(`'.$cntf.'`) FROM `'.$mc['t'].'` WHERE '.$where);
+				$R=Eleanor::$Db->Query('SELECT COUNT(`'.$cntf.'`) FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND '.$where);
 					list($cnt)=$R->fetch_row();
 
 				$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -226,7 +226,7 @@ if(isset($_GET['do']))
 						break;
 					}
 					$query=join(' AND ',$query);
-					$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `lstatus`=1 AND '.$query);
+					$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `lstatus`=1 AND `language` IN (\'\',\''.Language::$main.'\') AND '.$query);
 					list($cnt)=$R->fetch_row();
 					$cnt=(int)$cnt;
 
@@ -455,19 +455,11 @@ elseif($id or $puri)
 	SetData();
 
 	if(Eleanor::$vars['publ_rating'] and $a['status']==1)
-	{
-		$Eleanor->Rating->mid=$Eleanor->module['id'];
-		$Eleanor->Rating->tremark=Eleanor::$vars['publ_remark'].'d';
-		$Eleanor->Rating->once=Eleanor::$vars['publ_mark_users'];
-		$Eleanor->Rating->allow=!$uid || $uid!=$a['author_id'];
-		$Eleanor->Rating->marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
-		if(false!==$z=array_search(0,$Eleanor->Rating->marks))
-			unset($Eleanor->Rating->marks[$z]);
-		$rating=$Eleanor->Rating->Show(array($a['id']=>array('total'=>$a['r_total'],'average'=>$a['r_average'],'sum'=>$a['r_sum'],'extra'=>array('event'=>'rating','id'=>$a['id']))));
-		$rating=reset($rating);
+	{		$TCH=new TimeCheck($Eleanor->module['id'],false,$uid);
+		$a['_canrate']=(!Eleanor::$vars['publ_mark_users'] and Eleanor::$vars['publ_remark'] or $uid>0) && !$TCH->Check($a['id']);
 	}
 	else
-		$rating=false;
+		$a['_canrate']=false;
 
 	if($a['meta_title'])
 		$title=$a['meta_title'];
@@ -518,7 +510,7 @@ elseif($id or $puri)
 		$Eleanor->Comments->baseurl=array('module'=>$Eleanor->module['name'])+$u;
 
 	$hl=isset($_GET['hl']) && is_string($_GET['hl']) && preg_match('#^[a-z0-9'.constant(Language::$main.'::ALPHABET').' ]+$#i',$_GET['hl'])>0 ? preg_split('/\s+/',$_GET['hl']) : false;
-	$c=Eleanor::$Template->Show($a,$category,$rating,$voting,$Eleanor->Comments->off ? '' : $Eleanor->Comments->Show($a['id']),$hl);
+	$c=Eleanor::$Template->Show($a,$category,$voting,$Eleanor->Comments->off ? '' : $Eleanor->Comments->Show($a['id']),$hl);
 	Start();
 	echo$c;}
 elseif($cid or $curls)
@@ -604,7 +596,7 @@ function Main()
 {global$Eleanor,$title;
 	$title[]=Eleanor::$Language[$Eleanor->module['config']['n']]['n'];
 
-	$R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$Eleanor->module['config']['t'].'` WHERE `status`=1');
+	$R=Eleanor::$Db->Query('SELECT COUNT(`lstatus`) FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `lstatus`=1 AND `language` IN (\'\',\''.Language::$main.'\')');
 	list($cnt)=$R->fetch_row();
 
 	$np=$cnt % Eleanor::$vars['publ_per_page'];
@@ -637,7 +629,7 @@ function Main()
 }
 
 function FormatList($R,$caching=true,$anurl=array())
-{global$Eleanor;	$items=$cats=$rating=$tags=$cus=array();
+{global$Eleanor;	$items=$cats=$tags=$cus=array();
 	$lmod=0;
 	$ids=',';
 	$uid=(int)Eleanor::$Login->GetUserValue('id');
@@ -665,12 +657,12 @@ function FormatList($R,$caching=true,$anurl=array())
 					't'=>$Eleanor->Categories->dump[$a['_cat']]['title'],
 				);
 			}
-			if(Eleanor::$vars['publ_rating'] and $a['status']==1)
-				$rating[$a['id']]=array('total'=>$a['r_total'],'average'=>$a['r_average'],'sum'=>$a['r_sum'],'extra'=>array('event'=>'rating','id'=>$a['id']))+($uid && $uid==$a['author_id'] ? array('can'=>false) : array());
 
 			$a['tags']=$a['tags'] ? explode(',,',trim($a['tags'],',')) : array();
 			$tags=array_merge($tags,$a['tags']);
 
+			if(Eleanor::$vars['publ_rating'])
+				$v['_canrate']=false;
 			$a['_readmore']=$a['show_detail'] || $a['_hastext'];
 
 			OwnBB::$opts['alt']=$a['title'];
@@ -695,20 +687,12 @@ function FormatList($R,$caching=true,$anurl=array())
 	}
 	SetData();
 
-	if($rating and Eleanor::$vars['publ_rating'])
-	{		$Eleanor->Rating->mid=$Eleanor->module['id'];		$Eleanor->Rating->tremark=Eleanor::$vars['publ_remark'].'d';
-		$Eleanor->Rating->once=Eleanor::$vars['publ_mark_users'];
-		$Eleanor->Rating->allow=!Eleanor::$vars['publ_mark_details'];
-		if($Eleanor->Rating->allow)
-		{
-			$Eleanor->Rating->marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
-			if(false!==$z=array_search(0,$Eleanor->Rating->marks))
-				unset($Eleanor->Rating->marks[$z]);
-		}
-		$rating=$Eleanor->Rating->Show($rating);
+	if(Eleanor::$vars['publ_rating'] and !Eleanor::$vars['publ_mark_details'])
+	{		$TCH=new TimeCheck($Eleanor->module['id'],false,$uid);		$ch=$TCH->Check(array_keys($items));
+		$guests=!Eleanor::$vars['publ_mark_users'];
+		foreach($items as $k=>&$v)
+			$v['_canrate']=($guests and Eleanor::$vars['publ_remark'] or $uid>0) && !isset($ch[$k]);
 	}
-	else
-		$rating=array();
 
 	if($tags)
 	{
@@ -719,7 +703,7 @@ function FormatList($R,$caching=true,$anurl=array())
 			$tags[$a['id']]=array_slice($a,1);
 		}
 	}
-	return compact('items','cats','rating','tags');}
+	return compact('items','cats','tags');}
 
 function GetGN()
 {global$Eleanor;	$gn=Eleanor::GetCookie($Eleanor->module['config']['n'].'-gn');

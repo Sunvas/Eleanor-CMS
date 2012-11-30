@@ -28,7 +28,7 @@ class AccountIndex
 			while($a=$R->fetch_assoc())
 			{
 				$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
-				$a['_a']=$GLOBALS['Eleanor']->Url->Construct(array('module'=>$GLOBALS['Eleanor']->module['sections']['groups']),false).'#group-'.$a['id'];
+				$a['_a']=$GLOBALS['Eleanor']->Url->special.$GLOBALS['Eleanor']->Url->Construct(array('module'=>$GLOBALS['Eleanor']->module['sections']['groups']),false).'#group-'.$a['id'];
 				$a['_main']=$main==$a['id'];
 				$grs[$a['id']]=array_slice($a,1);
 				$tosort[$a['id']]=$a['title'];

@@ -413,7 +413,7 @@ function ShowGroup($gid,$errors=array(),$saved=false)
 			if($group)
 				$group=array();
 			else
-				return FatalError($lang['UNCREATABLE']);
+				return FatalError('UNCREATABLE');
 		}while(false);
 	}
 

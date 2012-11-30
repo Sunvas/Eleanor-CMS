@@ -39,7 +39,7 @@ class TplUserContacts
 		{			if($errors)
 			{
 				foreach($errors as $k=>&$v)
-					if(is_int($k) and isset(static::$lang[$v]))
+					if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 						$v=static::$lang[$v];
 				$content.=Eleanor::$Template->Message($errors,'error');
 			}

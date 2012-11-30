@@ -11,16 +11,16 @@
 	Оформление для админки системного модуля "Главная страница".
 */
 class TPLAdminMainpage
-{	/*
+{	public static
+		$lang;	/*
 		Меню модуля
 	*/	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['mp'];
-		$links=&$GLOBALS['Eleanor']->module['links'];
+	{		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
-			array($links['list'],$lang['list'],'act'=>$act=='list',
+			array($links['list'],static::$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					$links['add'] ? array($links['add'],$lang['add'],'act'=>$act=='add') : false,
+					$links['add'] ? array($links['add'],static::$lang['add'],'act'=>$act=='add') : false,
 				),
 			),
 		);	}
@@ -46,12 +46,12 @@ class TPLAdminMainpage
 	{		static::Menu('list');
 		$ltpl=Eleanor::$Language['tpl'];
 		$cnt=count($items);
-		$lang=Eleanor::$Language['mp'];
+
 		$Lst=Eleanor::LoadListTemplate('table-list',5)
 			->begin(
 				array($ltpl['title'],'colspan'=>2),
-				$lang['services'],
-				array($lang['pos'],80),
+				static::$lang['services'],
+				array(static::$lang['pos'],80),
 				array($ltpl['functs'],80)
 			);
 		if($items)
@@ -83,8 +83,8 @@ class TPLAdminMainpage
 					array($v['title'],'title'=>$v['descr'],'style'=>$v['protected'] ? 'font-weight:bold;' : '','href'=>$v['_aedit']),
 					array($services ? $services : $ltpl['all'],'style'=>$services ? '' : 'font-style:italic;text-align:center'),
 					$Lst('func',
-						$v['_aup'] ? array($v['_aup'],$lang['up'],$images.'up.png') : false,
-						$v['_adown'] ? array($v['_adown'],$lang['down'],$images.'down.png') : false
+						$v['_aup'] ? array($v['_aup'],static::$lang['up'],$images.'up.png') : false,
+						$v['_adown'] ? array($v['_adown'],static::$lang['down'],$images.'down.png') : false
 					),
 					$Lst('func',
 						$v['protected'] ? false : '<img src="'.$images.($v['active'] ? 'active.png' : 'inactive.png').'" alt="" title="'.($v['active'] ? $ltpl['active'] : $ltpl['inactive']).'" />',
@@ -96,7 +96,7 @@ class TPLAdminMainpage
 			}
 		}
 		else
-			$Lst->empty($lang['no']);
+			$Lst->empty(static::$lang['no']);
 		return Eleanor::$Template->Cover((string)$Lst->end());
 	}
 
@@ -122,15 +122,16 @@ class TPLAdminMainpage
 
 		if($back)
 			$back=Eleanor::Control('back','hidden',$back);
-		$lang=Eleanor::$Language['mp'];
+
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form()
 			->begin()
-			->item($lang['module'],Eleanor::Select('id',$mops,array('tabindex'=>1)))
-			->item(array($lang['pos'],'tip'=>$lang['pos_'],Eleanor::Control('pos','number',$values['pos'],array('tabindex'=>2,'min'=>1))))
+			->item(static::$lang['module'],Eleanor::Select('id',$mops,array('tabindex'=>1)))
+			->item(array(static::$lang['pos'],'tip'=>static::$lang['pos_'],Eleanor::Control('pos','number',$values['pos'],array('tabindex'=>2,'min'=>1))))
 			->button($back.Eleanor::Button('OK','submit',array('tabindex'=>10)).($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>3,'onclick'=>'if(confirm(\''.$ltpl['are_you_sure'].'\'))window.location=\''.$links['delete'].'\'')) : ''))
 			->end()
 			->endform();
 		return Eleanor::$Template->Cover((string)$Lst,$error);
 	}
 }
+TplAdminMainpage::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/mainpage-*.php',false);

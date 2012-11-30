@@ -23,13 +23,4 @@ return array(
 	'list'=>'List of own BB tags',
 	'adding'=>'Adding BB tag',
 	'editing'=>'Editing BB tags',
-
-	#For template
-	'EMPTY_TAGS'=>'You have not entered any tag',
-	'ERROR_TAGS'=>'Tag field is filled incorrectly!',
-	'ERROR_STAGS'=>'Field of special tags filled incorrectly!',
-	'add'=>'Add BB tag',
-	'update'=>'Refresh cache',
-	'notags'=>'BB tags do not found!',
-	'deleting'=>'Do you really want to delete tag &quot;%s&quot;?',
 );

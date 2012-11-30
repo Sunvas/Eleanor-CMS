@@ -15,6 +15,11 @@ class English
 	const
 		ALPHABET='abcdefghijklmnopqrstuvwxyz';
 
+	public static function Plural($n,array$forms)
+	{
+		return$n==1 ? $forms[0] : $forms[1];
+	}
+
 	public static function Date($d=false,$t='',$a=array())
 	{
 		if(!$d)

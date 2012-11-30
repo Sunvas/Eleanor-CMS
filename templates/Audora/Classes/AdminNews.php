@@ -11,7 +11,8 @@
 	Шаблон для админки модуля новостей
 */
 class TPLAdminNews
-{	/*
+{	public static
+		$lang;	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
@@ -24,18 +25,18 @@ class TPLAdminNews
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					$links['newlist'] ? array($links['newlist']['link'],sprintf($lang['news'],$links['links']['cnt']),'act'=>false) : false,
-					array($links['add'],$lang['add'],'act'=>$act=='add'),
+					$links['newlist'] ? array($links['newlist']['link'],sprintf(static::$lang['news'],$links['links']['cnt']),'act'=>false) : false,
+					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),
 			array($links['tags'],$lang['tags_list'],'act'=>$act=='tags',
 				'submenu'=>array(
-					array($links['addt'],$lang['add_tag'],'act'=>$act=='addt'),
+					array($links['addt'],static::$lang['add_tag'],'act'=>$act=='addt'),
 				),
 			),
 			$options ? $options : array($links['options'],Eleanor::$Language['main']['options'],'act'=>$act=='options'),
-			$categs ? $categs : array($links['categories'],$lang['cats_manage']),
-			//array($links['addf'],$lang['addf'],'act'=>$act=='addf'),
+			$categs ? $categs : array($links['categories'],static::$lang['cats_manage']),
+			//array($links['addf'],static::$lang['addf'],'act'=>$act=='addf'),
 		);
 	}
 	/*
@@ -79,7 +80,7 @@ class TPLAdminNews
 			->begin(
 				array($lang['tname'],'sort'=>$qs['sort']=='name' ? $qs['so'] : false,'href'=>$links['sort_name']),
 				Eleanor::$vars['multilang'] ? $lang['language'] : false,
-				array($lang['nums'],'sort'=>$qs['sort']=='cnt' ? $qs['so'] : false,'href'=>$links['sort_cnt']),
+				array(static::$lang['nums'],'sort'=>$qs['sort']=='cnt' ? $qs['so'] : false,'href'=>$links['sort_cnt']),
 				array($ltpl['functs'],80,'sort'=>$qs['sort']=='id' ? $qs['so'] : false,'href'=>$links['sort_id']),
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
@@ -98,14 +99,14 @@ class TPLAdminNews
 				);
 		}
 		else
-			$Lst->empty($lang['tnfn']);
+			$Lst->empty(static::$lang['tnfn']);
 
 		$opslangs=$finamet='';
 		$temp=array(
-			'b'=>$lang['begins'],
-			'q'=>$lang['match'],
-			'e'=>$lang['endings'],
-			'm'=>$lang['contains'],
+			'b'=>static::$lang['begins'],
+			'q'=>static::$lang['match'],
+			'e'=>static::$lang['endings'],
+			'm'=>static::$lang['contains'],
 		);
 		foreach($temp as $k=>&$v)
 			$finamet.=Eleanor::Option($v,$k,$qs['']['fi']['namet']==$k);
@@ -120,7 +121,7 @@ class TPLAdminNews
 		<td>'.(Eleanor::$vars['multilang'] ? '<b>'.$lang['language'].'</b><br />'.Eleanor::Items('fi[language]',$opslangs,3,array('style'=>'width:100%')) : '').'</td>
 	</tr>
 	<tr>
-		<td><label>'.Eleanor::Check(false,$qs['']['fi']['cntf']!==false or $qs['']['fi']['cntt']!==false,array('id'=>'ft')).'<b>'.$lang['nums'].'</b> '.$lang['from-to'].'</label><br />'.Eleanor::Control('fi[cntf]','number',(int)$qs['']['fi']['cntf'],array('min'=>0)).' - '.Eleanor::Control('fi[cntt]','number',(int)$qs['']['fi']['cntt'],array('min'=>0)).'</td>
+		<td><label>'.Eleanor::Check(false,$qs['']['fi']['cntf']!==false or $qs['']['fi']['cntt']!==false,array('id'=>'ft')).'<b>'.static::$lang['nums'].'</b> '.static::$lang['from-to'].'</label><br />'.Eleanor::Control('fi[cntf]','number',(int)$qs['']['fi']['cntf'],array('min'=>0)).' - '.Eleanor::Control('fi[cntt]','number',(int)$qs['']['fi']['cntt'],array('min'=>0)).'</td>
 		<td style="text-align:center;vertical-align:middle">'.Eleanor::Button($ltpl['apply']).'</td>
 	</tr>
 </table>
@@ -151,7 +152,7 @@ $(function(){
 	}).change();
 });//]]></script>
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['nto_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
+			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['nto_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);	}
 
@@ -160,7 +161,7 @@ $(function(){
 		$id - идентификатор редактируемого тега, если $id==0 значит тег добавляется
 		$controls - перечень контролов в соответствии с классом контролов. Если какой-то элемент массива не является массивом, значит это заголовок подгруппы контролов
 		$values - результирующий HTML код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
-		$error - ошибка, если ошибка пустая - значит ее нет
+		$errors - массив ошибок
 		$back - URL возврата
 		$hasdraft - признак наличия черновика
 		$links - перечень необходимых ссылок, массив с ключами:
@@ -168,7 +169,7 @@ $(function(){
 			nodraft - ссылка на правку/добавление категории без использования черновика или false
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
-	public static function AddEditTag($id,$controls,$values,$error,$back,$hasdraft,$links)
+	public static function AddEditTag($id,$controls,$values,$errors,$back,$hasdraft,$links)
 	{		static::Menu($id ? 'editt' : 'addt');		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
@@ -187,7 +188,12 @@ $(function(){
 			.Eleanor::$Template->DraftButton($links['draft'],1)
 			.($hasdraft ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
 		)->end()->endform();
-		return Eleanor::$Template->Cover($Lst,$error,'error');
+
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
+
+		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 
 	/*
@@ -221,7 +227,6 @@ $(function(){
 	*/
 	public static function ShowList($items,$categs,$cnt,$pp,$qs,$page,$links)
 	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$qs+=array(''=>array());
@@ -236,9 +241,9 @@ $(function(){
 
 		$Lst=Eleanor::LoadListTemplate('table-list',6)->begin(
 			array($ltpl['title'],'sort'=>$qs['sort']=='title' ? $qs['so'] : false,'href'=>$links['sort_title']),
-			$lang['category'],
-			array($lang['date'],'sort'=>$qs['sort']=='date' ? $qs['so'] : false,'href'=>$links['sort_date']),
-			array($lang['author'],'sort'=>$qs['sort']=='author' ? $qs['so'] : false,'href'=>$links['sort_author']),
+			static::$lang['category'],
+			array(static::$lang['date'],'sort'=>$qs['sort']=='date' ? $qs['so'] : false,'href'=>$links['sort_date']),
+			array(static::$lang['author'],'sort'=>$qs['sort']=='author' ? $qs['so'] : false,'href'=>$links['sort_author']),
 			array($ltpl['functs'],80,'sort'=>$qs['sort']=='id' ? $qs['so'] : false,'href'=>$links['sort_id']),
 			array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 		);
@@ -255,7 +260,7 @@ $(function(){
 					array($v['date'],'center'),
 					$v['author_id'] ? '<a href="'.Eleanor::$Login->UserLink(htmlspecialchars_decode($v['author'],ELENT),$v['author_id']).'">'.$v['author'].'</a>' : $v['author'],
 					$Lst('func',
-						$v['_aswap'] ? array($v['_aswap'],$v['status']<=0 ? $ltpl['activate'] : $ltpl['deactivate'],$v['status']<0 ? $images.'waiting.png' : $images.($v['status']==0 ? 'inactive.png' : 'active.png')) : '<img src="'.$images.'inactive.png'.'" alt="" title="'.$lang['endeddate'].'" />',
+						$v['_aswap'] ? array($v['_aswap'],$v['status']<=0 ? $ltpl['activate'] : $ltpl['deactivate'],$v['status']<0 ? $images.'waiting.png' : $images.($v['status']==0 ? 'inactive.png' : 'active.png')) : '<img src="'.$images.'inactive.png'.'" alt="" title="'.static::$lang['endeddate'].'" />',
 						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),
 						array($v['_adel'],$ltpl['delete'],$images.'delete.png')
 					),
@@ -264,21 +269,21 @@ $(function(){
 			}
 		}
 		else
-			$Lst->empty($lang['not_found']);
+			$Lst->empty(static::$lang['not_found']);
 
 		$fititlet=$statuses='';
 		$temp=array(
-			'b'=>$lang['begins'],
-			'q'=>$lang['match'],
-			'e'=>$lang['endings'],
-			'm'=>$lang['contains'],
+			'b'=>static::$lang['begins'],
+			'q'=>static::$lang['match'],
+			'e'=>static::$lang['endings'],
+			'm'=>static::$lang['contains'],
 		);
 		foreach($temp as $k=>&$v)
 			$fititlet.=Eleanor::Option($v,$k,$qs['']['fi']['titlet']==$k);
 		$temp=array(
-			-1=>$lang['waitmod'],
-			0=>$lang['blocked'],
-			1=>$lang['active'],
+			-1=>static::$lang['waitmod'],
+			0=>static::$lang['blocked'],
+			1=>static::$lang['active'],
 		);
 		foreach($temp as $k=>&$v)
 			$statuses.=Eleanor::Option($v,$k,$qs['']['fi']['status']!==false and $qs['']['fi']['status']==$k);
@@ -288,10 +293,10 @@ $(function(){
 	<tr class="infolabel"><td colspan="2"><a href="#">'.$ltpl['filters'].'</a></td></tr>
 	<tr>
 		<td><b>'.$ltpl['title'].'</b><br />'.Eleanor::Select('fi[titlet]',$fititlet,array('style'=>'width:30%')).Eleanor::Edit('fi[title]',$qs['']['fi']['title'],array('style'=>'width:68%')).'</td>
-		<td><b>'.$lang['category'].'</b><br />'.Eleanor::Select('fi[category]',Eleanor::Option('&mdash;',0,false,array(),2).Eleanor::Option($lang['nocat'],'no',$qs['']['fi']['category']=='no').$GLOBALS['Eleanor']->Categories->GetOptions($qs['']['fi']['category'])).'</td>
+		<td><b>'.static::$lang['category'].'</b><br />'.Eleanor::Select('fi[category]',Eleanor::Option('&mdash;',0,false,array(),2).Eleanor::Option(static::$lang['nocat'],'no',$qs['']['fi']['category']=='no').$GLOBALS['Eleanor']->Categories->GetOptions($qs['']['fi']['category'])).'</td>
 	</tr>
 	<tr>
-		<td><b>'.$lang['status'].'</b><br />'.Eleanor::Select('fi[status]',Eleanor::Option('&mdash;','-',false,array(),2).$statuses).'</td>
+		<td><b>'.static::$lang['status'].'</b><br />'.Eleanor::Select('fi[status]',Eleanor::Option('&mdash;','-',false,array(),2).$statuses).'</td>
 		<td style="text-align:center;vertical-align:middle">'.Eleanor::Button($ltpl['apply']).'</td>
 	</tr>
 </table>
@@ -306,7 +311,7 @@ $(function(){
 	One2AllCheckboxes("#checks-form","#mass-check","[name=\"mass[]\"]",true);
 });//]]></script>
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
-			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['tto_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($ltpl['deactivate'],'d').Eleanor::Option($ltpl['delete'],'k').Eleanor::Option($lang['waitmod'],'m')).Eleanor::Button('Ok').'</div></form>'
+			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['tto_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($ltpl['deactivate'],'d').Eleanor::Option($ltpl['delete'],'k').Eleanor::Option(static::$lang['waitmod'],'m')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
 		);	}
 
@@ -355,7 +360,6 @@ $(function(){
 	{		static::Menu($id ? 'edit' : 'add');		#$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js'; #Автор есть - это не нужно.
 		#$GLOBALS['head']['autocomplete']='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 		if(Eleanor::$vars['multilang'])
 		{			$ml=array();
@@ -386,32 +390,32 @@ $(function(){
 			->begin()
 			->item($ltpl['title'],Eleanor::$Template->LangEdit($ml['title'],null));
 		if($GLOBALS['Eleanor']->Categories->dump)
-			$Lst->item($lang['categs'],Eleanor::Items('cats',$GLOBALS['Eleanor']->Categories->GetOptions($values['cats']),10,array('id'=>'cs','tabindex'=>2)))
-				->item($lang['maincat'],Eleanor::Select('_maincat',$GLOBALS['Eleanor']->Categories->GetOptions($values['_maincat']),array('id'=>'mc','tabindex'=>3)));
+			$Lst->item(static::$lang['categs'],Eleanor::Items('cats',$GLOBALS['Eleanor']->Categories->GetOptions($values['cats']),10,array('id'=>'cs','tabindex'=>2)))
+				->item(static::$lang['maincat'],Eleanor::Select('_maincat',$GLOBALS['Eleanor']->Categories->GetOptions($values['_maincat']),array('id'=>'mc','tabindex'=>3)));
 		if(Eleanor::$vars['multilang'])
 			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,4));
 		$c=(string)$Lst->end();
 
 		$text=(string)$Lst->begin()
-			->item(array($lang['tags'],Eleanor::$Template->LangEdit($ml['tags'],null),'descr'=>$lang['tags_']))
-			->item(array($lang['announcement'],Eleanor::$Template->LangEdit($ml['announcement'],null),'descr'=>$lang['announcement_']))
-			->item($lang['text'],Eleanor::$Template->LangEdit($ml['text'],null))
-			->item(array($lang['show_sokr'],Eleanor::Check('show_sokr',$values['show_sokr'],array('tabindex'=>8)),'descr'=>$lang['show_sokr_']))
-			->item(array($lang['show_detail'],Eleanor::Check('show_detail',$values['show_detail'],array('tabindex'=>9)),'descr'=>$lang['show_detail_']))
-			->item($lang['status'],Eleanor::Select('status',Eleanor::Option($lang['waitmod'],-1,$values['status']==-1).Eleanor::Option($lang['blocked'],0,$values['status']==0).Eleanor::Option($lang['active'],1,$values['status']==1),array('tabindex'=>10)))
+			->item(array(static::$lang['tags'],Eleanor::$Template->LangEdit($ml['tags'],null),'descr'=>static::$lang['tags_']))
+			->item(array(static::$lang['announcement'],Eleanor::$Template->LangEdit($ml['announcement'],null),'descr'=>static::$lang['announcement_']))
+			->item(static::$lang['text'],Eleanor::$Template->LangEdit($ml['text'],null))
+			->item(array(static::$lang['show_sokr'],Eleanor::Check('show_sokr',$values['show_sokr'],array('tabindex'=>8)),'descr'=>static::$lang['show_sokr_']))
+			->item(array(static::$lang['show_detail'],Eleanor::Check('show_detail',$values['show_detail'],array('tabindex'=>9)),'descr'=>static::$lang['show_detail_']))
+			->item(static::$lang['status'],Eleanor::Select('status',Eleanor::Option(static::$lang['waitmod'],-1,$values['status']==-1).Eleanor::Option(static::$lang['blocked'],0,$values['status']==0).Eleanor::Option(static::$lang['active'],1,$values['status']==1),array('tabindex'=>10)))
 			->end();
 
 		$Lst->begin()
 			->item('URI',Eleanor::$Template->LangEdit($ml['uri'],null))
-			->item($lang['author'],Eleanor::$Template->Author($values['author'],$values['author_id'],12))
-			->item(array($lang['pdate'],Dates::Calendar('date',$values['date'],true,array('tabindex'=>13)),'tip'=>$lang['pdate_']))
-			->item($lang['pinned'],Dates::Calendar('pinned',$values['pinned'],true,array('tabindex'=>14)))
-			->item(array($lang['enddate'],Dates::Calendar('enddate',$values['enddate'],true,array('tabindex'=>15)),'tip'=>$lang['enddate_']))
-			->item($lang['reads'],Eleanor::Edit('reads',$values['reads'],array('tabindex'=>16)))
+			->item(static::$lang['author'],Eleanor::$Template->Author($values['author'],$values['author_id'],12))
+			->item(array(static::$lang['pdate'],Dates::Calendar('date',$values['date'],true,array('tabindex'=>13)),'tip'=>static::$lang['pdate_']))
+			->item(static::$lang['pinned'],Dates::Calendar('pinned',$values['pinned'],true,array('tabindex'=>14)))
+			->item(array(static::$lang['enddate'],Dates::Calendar('enddate',$values['enddate'],true,array('tabindex'=>15)),'tip'=>static::$lang['enddate_']))
+			->item(static::$lang['reads'],Eleanor::Edit('reads',$values['reads'],array('tabindex'=>16)))
 			->item('Window title',Eleanor::$Template->LangEdit($ml['meta_title'],null))
 			->item('Meta description',Eleanor::$Template->LangEdit($ml['meta_descr'],null));
 		if($id)
-			$Lst->item(array($lang['ping'],Eleanor::Check('_ping',$values['_ping'],array('tabindex'=>19)),'descr'=>$lang['ping_']));
+			$Lst->item(array(static::$lang['ping'],Eleanor::Check('_ping',$values['_ping'],array('tabindex'=>19)),'descr'=>static::$lang['ping_']));
 		$extra=(string)$Lst->end();
 
 		if($back)
@@ -419,7 +423,7 @@ $(function(){
 		$c.=$Lst->tabs(
 			array($ltpl['general'],$text),
 			array(Eleanor::$Language['main']['options'],$extra),
-			array($lang['voting'],$voting)
+			array(static::$lang['voting'],$voting)
 			//array('Дополнительные поля',Eleanor::$Template->Message('И это тоже в разработке...','info'))#ToDo!
 		)
 		->submitline((string)$uploader)
@@ -433,10 +437,9 @@ $(function(){
 		)
 		->endform();
 
-		if($errors)
-			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+		foreach($errors as $k=>&$v)
+			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+				$v=static::$lang[$v];
 
 		return Eleanor::$Template->Cover($c,$errors,'error').'<script type="text/javascript">//<![CDATA[
 $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each(function(i){			if($("option:eq("+i+")",cs).prop("selected"))
@@ -450,7 +453,7 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 				lang:(m && !$("input[name=\"_onelang\"]").prop("checked")) ? m[1] : ""
 			},
 			a=$(this).autocomplete({
-				serviceUrl:"'.Eleanor::$services['ajax']['file'].'",
+				serviceUrl:CORE.ajax_file,
 				minChars:2,
 				delimiter:/,\s*/,
 				params:p
@@ -467,7 +470,7 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 	*/
 	public static function Delete($a,$back)
 	{		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['submit_del'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['submit_del'],$a['title']),$back));
 	}
 
 	/*
@@ -479,7 +482,7 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 	public static function DeleteTag($a,$back)
 	{
 		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['deletingt'],$a['name']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deletingt'],$a['name']),$back));
 	}
 
 	/*
@@ -499,3 +502,4 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 		return$c;
 	}
 }
+TplAdminNews::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/news-*.php',false);

@@ -753,8 +753,6 @@ class Settings extends BaseClass
 				$links=array();
 				if($this->a_search)
 					$links['search']=$El->Url->Construct(array($this->pp.'sdo'=>'search'));
-				if($this->a_search)
-					$links['wg']=$El->Url->Construct(array($this->pp.'sg'=>'no'));
 				return Eleanor::$Template->SettGroupsCover($items,$links);
 			case'group':
 				return$this->ShowGroup($value);

@@ -12,18 +12,19 @@
 	переменные языка и прочее. Описание методов этого класса можно узнать, открыв файл core/others/voting_manager.php
 */
 class TplVotingManager
-{	/*
+{	public static
+		$lang;
+	/*
 		Элемент шаблона: добавление/редактирование опроса
 		$id - идентификатор редактируемого опроса, если $id==0 значит опрос добавляется
 		$controls - перечень контролов в соответствии с классом контролов. Если какой-то элемент массива не является массивом, значит это заголовок подгруппы контролов
 		$values - результирующий HTML код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
-		$lang - языковой массив
 	*/
-	public static function VmAddEdit($id,$controls,$values,$lang)
+	public static function VmAddEdit($id,$controls,$values)
 	{
 		array_push($GLOBALS['jscripts'],'js/voting_manager.js','js/jquery.drag.js');
 
-		$Lst=Eleanor::LoadListTemplate('table-form')->begin()->head($lang['questions']);
+		$Lst=Eleanor::LoadListTemplate('table-form')->begin()->head(static::$lang['questions']);
 		foreach($controls as $k=>&$v)
 			if($k!='_questions' and $values[$k])
 				if(is_array($v))
@@ -39,9 +40,8 @@ class TplVotingManager
 		Подэлемент шаблона: ввод всех вопросов опроса
 		$questions - массив всех вопросов опроса. Формат: номер вопрса=>результирующий HTML код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
 		$controls - перечень контролов в соответствии с классом контролов. Если какой-то элемент массива не является массивом, значит это заголовок подгруппы контролов
-		$lang - языковой массивr
 	*/
-	public static function VmQuestions($questions,$controls,$lang)
+	public static function VmQuestions($questions,$controls)
 	{
 		$Lst=Eleanor::LoadListTemplate('table-form');
 		foreach($questions as $kq=>&$values)
@@ -54,7 +54,7 @@ class TplVotingManager
 					else
 						$Lst->head($v);
 
-			$Lst->button(Eleanor::Button($lang['addq'],'button',array('class'=>'addquestion')).' '.Eleanor::Button($lang['delq'],'button',array('class'=>'deletequestion')))->end();
+			$Lst->button(Eleanor::Button(static::$lang['addq'],'button',array('class'=>'addquestion')).' '.Eleanor::Button(static::$lang['delq'],'button',array('class'=>'deletequestion')))->end();
 		}
 		return$Lst;
 	}
@@ -69,9 +69,8 @@ class TplVotingManager
 		$real - число пользователей, которые реально проголосовали за этот пункт. Реально проголосовали значит, что не в админке вручную были набиты
 			голоса для каждого варианта, а реальные пользователи выразили свою позицию. Формат: номер варианта=>число проголосовавших
 		$noans - флаг запрета редактирования количества голосов для каждого варианта
-		$lang - языковой массив
 	*/
-	public static function VmVariants($variants,$vn,$answers,$an,$ti,$real,$noans,$lang)
+	public static function VmVariants($variants,$vn,$answers,$an,$ti,$real,$noans)
 	{
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-list');
@@ -96,17 +95,18 @@ class TplVotingManager
 					$n2=$k;
 				break;
 				default:
-					$Lst->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Edit($vn.'['.$k.']',$va,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$k)),$noans ? false : Eleanor::Control($an.'['.$k.']','number',$ans,array('min'=>0,'tabindex'=>$ti,'style'=>'width:50px','class'=>'number'.$k,'data-class'=>'number'.$k,'title'=>isset($real[$k]) ? $lang['rvoters']($real[$k]) : $lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2));
+					$Lst->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Edit($vn.'['.$k.']',$va,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$k)),$noans ? false : Eleanor::Control($an.'['.$k.']','number',$ans,array('min'=>0,'tabindex'=>$ti,'style'=>'width:50px','class'=>'number'.$k,'data-class'=>'number'.$k,'title'=>isset($real[$k]) ? static::$lang['rvoters']($real[$k]) : static::$lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2));
 			}
 		}
 		$c=(string)$Lst->end();
 		return$Lst->begin(
-				array($lang['va'],'colspan'=>2,'style'=>'min-width:170px','tableextra'=>array('class'=>'tabstyle variants','data-max'=>max($k,$n1,$n2))),
-				$noans ? false : $lang['votes'],
+				array(static::$lang['va'],'colspan'=>2,'style'=>'min-width:170px','tableextra'=>array('class'=>'tabstyle variants','data-max'=>max($k,$n1,$n2))),
+				$noans ? false : static::$lang['votes'],
 				'&nbsp;'
 			)
-			->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Edit($vn.'['.$n1.']',$v1,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$n1)),$noans ? false : Eleanor::Control($an.'['.$n1.']','number',$a1,array('min'=>0,'style'=>'width:50px','tabindex'=>$ti,'class'=>'number'.$n1,'title'=>isset($real[$n1]) ? sprintf($lang['rvoters'],$real[$n1]) : $lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2))
-			->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Edit($vn.'['.$n2.']',$v2,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$n2)),$noans ? false : Eleanor::Control($an.'['.$n2.']','number',$a2,array('min'=>0,'style'=>'width:50px','tabindex'=>$ti,'class'=>'number'.$n2,'title'=>isset($real[$n2]) ? sprintf($lang['rvoters'],$real[$n2]) : $lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2))
+			->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Edit($vn.'['.$n1.']',$v1,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$n1)),$noans ? false : Eleanor::Control($an.'['.$n1.']','number',$a1,array('min'=>0,'style'=>'width:50px','tabindex'=>$ti,'class'=>'number'.$n1,'title'=>isset($real[$n1]) ? sprintf(static::$lang['rvoters'],$real[$n1]) : static::$lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2))
+			->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Edit($vn.'['.$n2.']',$v2,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$n2)),$noans ? false : Eleanor::Control($an.'['.$n2.']','number',$a2,array('min'=>0,'style'=>'width:50px','tabindex'=>$ti,'class'=>'number'.$n2,'title'=>isset($real[$n2]) ? sprintf(static::$lang['rvoters'],$real[$n2]) : static::$lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2))
 			.$c;
 	}
 }
+TplVotingManager::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/voting_manager-*.php',false);

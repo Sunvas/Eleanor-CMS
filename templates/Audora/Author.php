@@ -36,7 +36,7 @@ $(function(){
 			return false;
 		}).end()
 		.find("input:first").autocomplete({
-			serviceUrl:"'.Eleanor::$services['ajax']['file'].'",
+			serviceUrl:CORE.ajax_file,
 			minChars:2,
 			delimiter:null,
 			params:{

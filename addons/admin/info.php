@@ -65,7 +65,7 @@ $info=array(
 		'image'=>'groups-*.png',
 		'main'=>true,
 		'services'=>array(
-			'admin'=>'user_groups.php',
+			'admin'=>'groups.php',
 		),
 	),
 	'users'=>array(
@@ -105,15 +105,15 @@ $info=array(
 			'ajax'=>'database_ajax.php',
 		),
 	),
-	'themes_editor'=>array(
+	'themes'=>array(
 		'title'=>$lang['tmpe'],
 		'descr'=>$lang['tmpm_'],
 		'image'=>'themes_editor-*.png',
 		'services'=>array(
-			'admin'=>'themes_editor/index.php',
-			'ajax'=>'themes_editor/ajax.php',
-			'upload'=>'themes_editor/upload.php',
-			'download'=>'themes_editor/download.php',
+			'admin'=>'themes/index.php',
+			'ajax'=>'themes/ajax.php',
+			'upload'=>'themes/upload.php',
+			'download'=>'themes/download.php',
 		),
 	),
 	'ownbb'=>array(
@@ -150,12 +150,12 @@ $info=array(
 			'admin'=>'installer.php',
 		),
 	),*/
-	'lcomments'=>array(
+	'comments'=>array(
 		'title'=>$lang['comm'],
 		'descr'=>$lang['comm_'],
-		'image'=>'lastcomment-*.png',
+		'image'=>'comments-*.png',
 		'services'=>array(
-			'admin'=>'lcomments.php',
+			'admin'=>'comments.php',
 		),
 	),
 	'notes'=>array(
@@ -166,13 +166,13 @@ $info=array(
 			'ajax'=>'notes_ajax.php',
 		),
 	),
-	'edit_qmenu'=>array(
+	'qmenu'=>array(
 		'title'=>'Qmenu edit',
 		'descr'=>'',
 		'image'=>'',
 		'hidden'=>true,
 		'services'=>array(
-			'admin'=>'qmenu_editor.php',
+			'admin'=>'qmenu.php',
 		),
 	),
 	'autocomplete'=>array(

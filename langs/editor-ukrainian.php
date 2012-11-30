@@ -1,7 +1,6 @@
 <?php
 return array(
-	#Для шаблону обрамлення редакторів (Eleanor BB, tiny mce, ckeditor...), що знаходиться у файлі /templates/*/Editor.php
-	'smiles'=>'Смайли',
+	#Для core/others/editor.php
 	'code.php'=>'Додати ділянку коду',
 	'hide.php'=>'Додати прихований текст - не показується гостям',
 	'quote.php'=>'Додати цитату',

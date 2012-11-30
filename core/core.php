@@ -66,6 +66,10 @@ abstract class BaseClass
 		return$O;
 	}
 
+	/*
+		Может показаться, что данная функция абсурдна, поскольку, при попытке получить неопределенное свойство генерируется Notice.
+		Но все удобство функции проявлется при наличии в классе метода __get, который может вернуть не все запрашиваемые свойства.
+	*/
 	public function __get($n)
 	{
 		if(is_array($n))
@@ -76,7 +80,7 @@ abstract class BaseClass
 		else
 			$d=debug_backtrace();
 		$d=self::_BT($d);
-		$E=new EE('Trying to get value from the unknown variable <code><b>'.get_class($this).' -› '.$n.'</b></code>',EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
+		$E=new EE('Trying to get value from the unknown variable '.get_class($this).' -› '.$n,EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
 		if(DEBUG)
 			throw$E;
 		$E->Log();
@@ -692,7 +696,7 @@ final class Eleanor extends BaseClass
 			return$a[$l];
 		if(isset($a['']))
 			return$a[''];
-		return$d;
+		return isset($a[0]) ? $a[0] : $d;
 	}
 
 	public static function WinFiles($f,$inv=false)
@@ -760,34 +764,58 @@ final class Eleanor extends BaseClass
 		return$L;
 	}
 
-	public static function ExecBBLogic($s,array$r,$p='')
+	public static function ExecBBLogic($s,array$r)
 	{
 		foreach($r as $k=>&$v)
 		{
-			$k=$p.$k;
-			while(false!==$fp=strpos($s,'['.$k.']') and false!==$lp=strpos($s,'[/'.$k.']',$fp))
+			$fp=0;
+			while(false!==$fp=strpos($s,'['.$k,$fp))
 			{
-				$klen=strlen($k);
-				if(false!==$midpos=strpos($s,'[-'.$k.']',$fp) and $midpos<$lp)
+				$kl=strlen($k);
+
+				if(trim($s{$fp+$kl+1},'=] ')!='')
 				{
-					if($v)
-					{
-						$s=substr_replace($s,'',$midpos,$lp-$midpos+2+$klen*2);
-						$s=substr_replace($s,'',$fp,$klen+2);#2 - это /] закрывающего тега
-					}
-					else
-					{
-						$s=substr_replace($s,'',$lp,$klen+3);#3 - это [/] закрывающего тега
-						$s=substr_replace($s,'',$fp,$midpos-$fp+3+$klen);#2 - это - ] среднего тега
-					}
+					++$fp;
+					continue;
 				}
-				elseif($v)
+
+				$fpcl=false;#First Post Close
+				do
 				{
-					$s=substr_replace($s,'',$lp,$klen+3);#3 - это [/] закрывающего тега
-					$s=substr_replace($s,'',$fp,$klen+2);#2 - это / ] закрывающего тега
+					$fpcl=strpos($s,']',$fpcl ? $fpcl+1 : $fp);
+					if($fpcl===false)
+					{
+						++$fp;
+						continue 2;
+					}
+				}while($s{$fpcl-1}=='\\');
+
+				$ps=substr($s,$fp+$kl+1,$fpcl-$fp-$kl-1);
+				$ps=str_replace('\\]',']',trim($ps));
+
+				$fpcl++;#1 - это ]
+				$lp=strpos($s,'[/'.$k.']',$fp);
+				if($lp===false)
+				{
+					$len=$fpcl-$fp;
+					$cont=false;
 				}
 				else
-					$s=substr_replace($s,'',$fp,$lp-$fp+3+$klen);#3 - это [/] закрывающего тега
+				{
+					$len=$lp-$fp+$kl+3;#3 - это [/] закрывающего тега
+					$cont=substr($s,$fpcl,$lp-$fpcl);
+				}
+
+				switch($ps)
+				{
+					case'=plural':
+						$cont=call_user_func(array(Language::$main,'Plural'),$v,explode('|',$cont));
+					break;
+					default:
+						$cont=explode('[-'.$k.']',$cont,2)+array(1=>'');
+						$cont=$v ? $cont[0] : $cont[1];
+				}
+				$s=substr_replace($s,$cont,$fp,$len);
 			}
 			if(is_scalar($v))
 				$s=str_replace('{'.$k.'}',$v,$s);

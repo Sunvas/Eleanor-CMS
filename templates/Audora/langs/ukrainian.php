@@ -44,8 +44,11 @@ return array(
 	'moveup'=>'Перемістити вгору',
 	'movedown'=>'Перемістити вниз',
 
-	#Enter
+	#Для Enter.php
 	'login'=>'Логін:',
 	'pass'=>'Пароль:',
 	'enter'=>'Вхід',
+
+	#Для Editor.php
+	'smiles'=>'Смайли',
 );

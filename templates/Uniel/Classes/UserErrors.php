@@ -34,7 +34,7 @@ class TPLUserErrors
 	public static function ShowError($a,$sent,$values,$errors,$back,$captcha)
 	{		if($errors)
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset(static::$lang[$v]))
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
 		if($sent)
 			$tosend='<hr /><br />'.Eleanor::$Template->Message(static::$lang['sent'],'info');

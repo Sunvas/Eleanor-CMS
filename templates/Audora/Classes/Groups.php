@@ -11,17 +11,17 @@
 	Шаблоны управления группами пользователей в админке
 */
 class TplGroups
-{	/*
+{	public static
+		$lang;	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['g'];
-		$links=&$GLOBALS['Eleanor']->module['links'];
+	{		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
-			array($links['list'],$lang['list'],'act'=>$act=='list',
+			array($links['list'],Eleanor::$Language['g']['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					array($links['add'],$lang['add'],'act'=>$act=='add'),
+					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),
 		);
@@ -49,8 +49,8 @@ class TplGroups
 			title - заголовок крошки
 			_a - ссылка подпункта данной крошки. Может быть равно false
 	*/	public static function ShowList($items,$subitems,$navi)
-	{		static::Menu('list');		$lang=Eleanor::$Language['g'];
-		$ltpl=Eleanor::$Language['tpl'];
+	{		static::Menu('list');		$ltpl=Eleanor::$Language['tpl'];
+		$lang=Eleanor::$Language['g'];
 		$nav=array();
 		foreach($navi as &$v)
 			$nav[]=$v['_a'] ? '<a href="'.$v['_a'].'">'.$v['title'].'</a>' : $v['title'];
@@ -58,10 +58,10 @@ class TplGroups
 		$Lst=Eleanor::LoadListTemplate('table-list',6)
 			->begin(
 				$lang['g_name'],
-				array($lang['adminth'],'title'=>$lang['aa']),
-				array($lang['captchath'],'title'=>$lang['captcha_']),
-				array($lang['moderateth'],'title'=>$lang['moderate_']),
-				$lang['prot'],
+				array(static::$lang['adminth'],'title'=>$lang['aa']),
+				array(static::$lang['captchath'],'title'=>$lang['captcha_']),
+				array(static::$lang['moderateth'],'title'=>$lang['moderate_']),
+				static::$lang['prot'],
 				$ltpl['functs']
 			);
 
@@ -73,9 +73,9 @@ class TplGroups
 					foreach($subitems[$k] as $kk=>&$vv)
 						$subs.='<a href="'.$vv['_aedit'].'">'.$vv['title'].'</a>, ';
 
-				$adds=' <a href="'.$v['_aaddp'].'" title="'.$lang['addsubg'].'"><img src="'.$images.'plus.gif" alt="" /></a>';
+				$adds=' <a href="'.$v['_aaddp'].'" title="'.static::$lang['addsubg'].'"><img src="'.$images.'plus.gif" alt="" /></a>';
 				$Lst->item(
-					array($v['html_pref'].$v['title'].$v['html_end'].($subs ? '<br /><span class="small"><a href="'.$v['_aparent'].'" style="font-weight:bold">'.$lang['subg'].'</a> '.rtrim($subs,', ').$adds.'</span>' : $adds),'href'=>$v['_aedit']),
+					array($v['html_pref'].$v['title'].$v['html_end'].($subs ? '<br /><span class="small"><a href="'.$v['_aparent'].'" style="font-weight:bold">'.static::$lang['subg'].'</a> '.rtrim($subs,', ').$adds.'</span>' : $adds),'href'=>$v['_aedit']),
 					array(Eleanor::$Template->YesNo($v['access_cp']===null ? join(Eleanor::Permissions(array($v['id']),'access_cp')) : $v['access_cp']),'center'),
 					array(Eleanor::$Template->YesNo($v['captcha']===null ? join(Eleanor::Permissions(array($v['id']),'captcha')) : $v['captcha']),'center'),
 					array(Eleanor::$Template->YesNo($v['moderate']===null ? join(Eleanor::Permissions(array($v['id']),'moderate')) : $v['moderate']),'center'),
@@ -88,7 +88,7 @@ class TplGroups
 			}
 		}
 		else
-			$Lst->empty($lang['subgnf']);
+			$Lst->empty(static::$lang['subgnf']);
 		return Eleanor::$Template->Cover(($nav ? '<table class="filtertable"><tr><td style="font-weight:bold">'.join(' &raquo; ',$nav).'</td></tr></table>' : '').$Lst->end());	}
 	/*
 		Страница добавления/редактирования группы
@@ -104,9 +104,8 @@ class TplGroups
 	*/
 	public static function AddEdit($id,$controls,$values,$inherit,$errors,$back,$links)
 	{		static::Menu($id ? '' : 'add');		$ltpl=Eleanor::$Language['tpl'];
-		$lang=Eleanor::$Language['g'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin(array('id'=>'tg'))
-			->item($lang['parent'],Eleanor::Select('_parent',Eleanor::Option('&mdash;',0,!$values['_parent'],array(),2).UserManager::GroupsOpts($values['_parent'],$id ? $id : array()),array('id'=>'parent')));
+			->item(static::$lang['parent'],Eleanor::Select('_parent',Eleanor::Option('&mdash;',0,!$values['_parent'],array(),2).UserManager::GroupsOpts($values['_parent'],$id ? $id : array()),array('id'=>'parent')));
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array(
@@ -127,8 +126,8 @@ class TplGroups
 
 		if($errors)
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 
 		return Eleanor::$Template->Cover($Lst,$errors,'error').'<script type="text/javascript">//<![CDATA[
 $(function(){
@@ -139,7 +138,7 @@ $(function(){
 			if(typeof state=="undefined")
 				state=!ch.prop("checked");
 			if(state)
-				ch.end().css("text-decoration","line-through").prop("title","'.$lang['inherit'].'").next().children("div").hide();
+				ch.end().css("text-decoration","line-through").prop("title","'.static::$lang['inherit'].'").next().children("div").hide();
 			else
 				ch.end().css("text-decoration","").prop("title","").next().children("div").show();
 			ch.prop("checked",state)
@@ -179,7 +178,7 @@ $(function(){
 		$back - URL возврата
 	*/
 	public static function Delete($a,$back)
-	{		static::Menu();		$lang=Eleanor::$Language['g'];
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf($lang['deleting'],$a['html_pref'].$a['title'].$a['html_end']),$back));
+	{		static::Menu();		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['html_pref'].$a['title'].$a['html_end']),$back));
 	}
 }
+TplGroups::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/groups-*.php',false);

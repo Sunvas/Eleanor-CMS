@@ -9,7 +9,7 @@
 	*Pseudonym
 */
 if(!defined('CMS'))die;
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'lang_user-*.php',$Eleanor->module['config']['n']);
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$Eleanor->module['config']['n']);
 Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
 
 $title[]=$lang['who_online'];

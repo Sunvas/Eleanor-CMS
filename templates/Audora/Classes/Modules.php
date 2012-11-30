@@ -11,15 +11,16 @@
 	Админка управления модулями
 */
 class TPLModules
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['modules'];
-		$links=&$GLOBALS['Eleanor']->module['links'];
+	{		$links=&$GLOBALS['Eleanor']->module['links'];
 		$GLOBALS['Eleanor']->module['navigation']=array(
-			array($links['list'],$lang['list'],'modules','act'=>$act=='list',
+			array($links['list'],Eleanor::$Language['modules']['list'],'modules','act'=>$act=='list',
 				'submenu'=>array(
-					array($links['add'],$lang['add'],'addmodule','act'=>$act=='add'),
+					array($links['add'],static::$lang['add'],'addmodule','act'=>$act=='add'),
 				),
 			),
 		);	}
@@ -35,12 +36,11 @@ class TPLModules
 			active - флаг активности модуля
 	*/
 	public static function ShowList($items)
-	{		static::Menu('list');		$lang=Eleanor::$Language['modules'];
-		$ltpl=Eleanor::$Language['tpl'];
+	{		static::Menu('list');		$ltpl=Eleanor::$Language['tpl'];
 
 		$Lst=Eleanor::LoadListTemplate('table-list',4);
 		$Lstp=clone$Lst;#protected
-		$Lst->begin(array($lang['module'],15,'colspan'=>2),$lang['services'],$ltpl['functs']);
+		$Lst->begin(array(static::$lang['module'],15,'colspan'=>2),static::$lang['services'],$ltpl['functs']);
 
 		$images=Eleanor::$Template->default['theme'].'images/';
 		$di='images/modules/default-small.png';
@@ -108,7 +108,6 @@ class TPLModules
 	*/
 	public static function AddEdit($id,$values,$errors,$back,$links)
 	{		static::Menu($id ? '' : 'add');
-		$lang=Eleanor::$Language['modules'];
 		$ltpl=Eleanor::$Language['tpl'];
 
 		array_push($GLOBALS['jscripts'],'js/jquery.drag.js','addons/autocomplete/jquery.autocomplete.js','js/admin_modules.js','js/admin_modules-'.Language::$main.'.js');
@@ -132,7 +131,7 @@ class TPLModules
 			else
 				$data=array(''=>$data);
 
-			$section='<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" style="margin-right:30px" alt="" title="'.$lang['updown'].'" class="updown" /><span class="name" style="font-weight:bold;cursor:pointer">'.$name.'</span>:<a href="#" style="float:right;font-weight:bold;" class="delete">'.$ltpl['delete'].'</a><br />';
+			$section='<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" style="margin-right:30px" alt="" title="'.static::$lang['updown'].'" class="updown" /><span class="name" style="font-weight:bold;cursor:pointer">'.$name.'</span>:<a href="#" style="float:right;font-weight:bold;" class="delete">'.$ltpl['delete'].'</a><br />';
 			if(Eleanor::$vars['multilang'])
 			{
 				$flags='';
@@ -184,25 +183,25 @@ class TPLModules
 			->form()
 			->begin()
 			->item(array($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null),'imp'=>true))
-			->item($lang['sections'].'<br /><a href="#" id="addsession">'.$lang['add'].'</a>',$sections)
-			->item(array($ltpl['descr'],Eleanor::$Template->LangEdit($ml['descr'],null),'tip'=>$lang['descr_']))
-			->item(array($lang['m_folder'],Eleanor::Edit('path',$values['path'],$extra),'imp'=>true))
-			->item(array($lang['access_in_s'],Eleanor::Items('services[]',$services,10,$extra),'imp'=>true))
-			->item(array($lang['multi'],Eleanor::Check('multiservice',$values['multiservice'],$extra),'tip'=>$lang['multi_']))
-			->item(array($lang['filename'],Eleanor::Edit('file',$values['file'],$extra),'tr'=>array('class'=>'multitrue')))
-			->item(array($lang['files'],'<ul style="list-style-type:none;padding-left:0px" id="files">'.$files.'</ul>','tip'=>$lang['files_'],'tr'=>array('class'=>'multifalse')))
+			->item(static::$lang['sections'].'<br /><a href="#" id="addsession">'.static::$lang['add'].'</a>',$sections)
+			->item(array($ltpl['descr'],Eleanor::$Template->LangEdit($ml['descr'],null),'tip'=>static::$lang['descr_']))
+			->item(array(static::$lang['m_folder'],Eleanor::Edit('path',$values['path'],$extra),'imp'=>true))
+			->item(array(static::$lang['access_in_s'],Eleanor::Items('services[]',$services,10,$extra),'imp'=>true))
+			->item(array(static::$lang['multi'],Eleanor::Check('multiservice',$values['multiservice'],$extra),'tip'=>static::$lang['multi_']))
+			->item(array(static::$lang['filename'],Eleanor::Edit('file',$values['file'],$extra),'tr'=>array('class'=>'multitrue')))
+			->item(array(static::$lang['files'],'<ul style="list-style-type:none;padding-left:0px" id="files">'.$files.'</ul>','tip'=>static::$lang['files_'],'tr'=>array('class'=>'multifalse')))
 			->item($ltpl['active'],Eleanor::Check('active',$values['active'],$extra))
-			->item(array($lang['img'],Eleanor::Edit('image',$values['image'],array('id'=>'image')).' <img id="preview" src="'.$prevm.'" '.($values['image'] ? '' : ' style="display:none"').' />','tip'=>$lang['img_']))
+			->item(array(static::$lang['img'],Eleanor::Edit('image',$values['image'],array('id'=>'image')).' <img id="preview" src="'.$prevm.'" '.($values['image'] ? '' : ' style="display:none"').' />','tip'=>static::$lang['img_']))
 			->item('API',Eleanor::Edit('api',$values['api']))
-			->item(array($lang['prot'],Eleanor::Check('protected',$values['protected'],$id ? array('disabled'=>true) : array()),'imp'=>$lang['prot_']))
+			->item(array(static::$lang['prot'],Eleanor::Check('protected',$values['protected'],$id ? array('disabled'=>true) : array()),'imp'=>static::$lang['prot_']))
 			->button($back.Eleanor::Button().($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
 			->end()
 			->endform();
 
 		if($errors)
 			foreach($errors as $k=>&$v)
-				if(is_int($k) and isset($lang[$v]))
-					$v=$lang[$v];
+				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
+					$v=static::$lang[$v];
 		return Eleanor::$Template->Cover((string)$Lst,$errors,'error').'<script type="text/javascript">//<![CDATA[
 function AppyDragAndDrop()
 {
@@ -222,6 +221,7 @@ function AppyDragAndDrop()
 	public static function Delete($t,$back)
 	{
 		static::Menu('');
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['modules']['deleting'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back));
 	}
 }
+TplModules::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/modules-*.php',false);

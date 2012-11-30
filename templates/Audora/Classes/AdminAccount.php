@@ -10,7 +10,9 @@
 
 	Шаблоны для админки модуля аккаунт пользователя*/
 class TPLAdminAccount
-{	/*
+{	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
@@ -52,7 +54,6 @@ class TPLAdminAccount
 	*/
 	public static function InactiveUsers($items,$sletters,$cnt,$pp,$page,$qs,$links)
 	{		static::Menu('list');
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 		$GLOBALS['jscripts'][]='js/checkboxes.js';
 
@@ -71,17 +72,17 @@ class TPLAdminAccount
 
 		$finamet='';
 		$namet=array(
-			'b'=>$lang['begins'],
-			'q'=>$lang['match'],
-			'e'=>$lang['endings'],
-			'm'=>$lang['contains'],
+			'b'=>static::$lang['begins'],
+			'q'=>static::$lang['match'],
+			'e'=>static::$lang['endings'],
+			'm'=>static::$lang['contains'],
 		);
 		foreach($namet as $k=>&$v)
 			$finamet.=Eleanor::Option($v,$k,$qs['']['fi']['namet']==$k);
 
 		$Lst=Eleanor::LoadListTemplate('table-list',5)
 			->begin(
-				array($lang['user_name'],'href'=>$links['sort_name']),
+				array(static::$lang['user_name'],'href'=>$links['sort_name']),
 				array('E-mail','href'=>$links['sort_email']),
 				array('IP','href'=>$links['sort_ip']),
 				array($ltpl['functs'],'href'=>$links['sort_id']),
@@ -92,27 +93,27 @@ class TPLAdminAccount
 		{			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as $k=>&$v)
 				$Lst->item(
-					'<a href="'.$v['_aedit'].'">'.$v['name'].'</a>'.($v['name']==$v['full_name'] ? '' : '<br /><i>'.$v['full_name'].'</i>').(in_array($k,$sletters) ? '<br /><b style="color:green">'.$lang['lettersent'].'</b>' : ''),
+					'<a href="'.$v['_aedit'].'">'.$v['name'].'</a>'.($v['name']==$v['full_name'] ? '' : '<br /><i>'.$v['full_name'].'</i>').(in_array($k,$sletters) ? '<br /><b style="color:green">'.static::$lang['lettersent'].'</b>' : ''),
 					array($v['email'],'center'),
 					array($v['ip'],'center','href'=>'http://eleanor-cms.ru/whois/'.$v['ip'],'hrefextra'=>array('target'=>'_blank')),
 					$Lst('func',
 						array($v['_aact'],$ltpl['activate'],$images.'active.png'),
 						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),
 						$v['_adel'] ? array($v['_adel'],$ltpl['delete'],$images.'delete.png') : false,
-						$v['_adelr'] ? array($v['_adelr'],$lang['delr'],$images.'delete.png') : false
+						$v['_adelr'] ? array($v['_adelr'],static::$lang['delr'],$images.'delete.png') : false
 					),
 					Eleanor::Check('mass[]',false,array('value'=>$k))
 				);
 		}
 		else
-			$Lst->empty($lang['not_found']);
+			$Lst->empty(static::$lang['not_found']);
 
 		return Eleanor::$Template->Cover(
 		'<form method="post">
 			<table class="tabstyle tabform" id="ftable">
 				<tr class="infolabel"><td colspan="2"><a href="#">'.$ltpl['filters'].'</a></td></tr>
 				<tr>
-					<td><b>'.$lang['user_name'].'</b><br />'.Eleanor::Select('fi[namet]',$finamet,array('style'=>'width:30%')).Eleanor::Edit('fi[name]',$qs['']['fi']['name'],array('style'=>'width:68%')).'</td>
+					<td><b>'.static::$lang['user_name'].'</b><br />'.Eleanor::Select('fi[namet]',$finamet,array('style'=>'width:30%')).Eleanor::Edit('fi[name]',$qs['']['fi']['name'],array('style'=>'width:68%')).'</td>
 					<td><b>E-mail</b><br />'.Eleanor::Edit('fi[email]',$qs['']['fi']['email']).'</td>
 				</tr>
 				<tr>
@@ -120,7 +121,7 @@ class TPLAdminAccount
 					<td><b>IP</b><br />'.Eleanor::Edit('fi[ip]',$qs['']['fi']['ip']).'</td>
 				</tr>
 				<tr>
-					<td><b>'.$lang['register'].'</b> '.$lang['from-to'].'<br />'.Dates::Calendar('fi[regfrom]',$qs['']['fi']['regfrom'],true,array('style'=>'width:35%')).' - '.Dates::Calendar('fi[regto]',$qs['']['fi']['regto'],true,array('style'=>'width:35%')).'</td>
+					<td><b>'.static::$lang['register'].'</b> '.static::$lang['from-to'].'<br />'.Dates::Calendar('fi[regfrom]',$qs['']['fi']['regfrom'],true,array('style'=>'width:35%')).' - '.Dates::Calendar('fi[regto]',$qs['']['fi']['regto'],true,array('style'=>'width:35%')).'</td>
 					<td style="text-align:center;vertical-align:middle">'.Eleanor::Button($ltpl['apply']).'</td>
 				</tr>
 			</table>
@@ -137,7 +138,7 @@ $(function(){
 		</form>
 		<form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && ($(\'select\',this).val()==\'dr\' || confirm(\''.$ltpl['are_you_sure'].'\')))">'
 		.$Lst->end()
-		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf($lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($lang['sendlet'],'s').Eleanor::Option($ltpl['delete'],'d').Eleanor::Option($lang['delr'],'dr')).Eleanor::Button('Ok').'</div></form>'
+		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option(static::$lang['sendlet'],'s').Eleanor::Option($ltpl['delete'],'d').Eleanor::Option(static::$lang['delr'],'dr')).Eleanor::Button('Ok').'</div></form>'
 		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
 	}
 
@@ -151,13 +152,12 @@ $(function(){
 		static::Menu();
 		if($back)
 			$back=Eleanor::Control('back','hidden',$back);
-		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 		$tusers='';
 		foreach($users as $k=>&$v)
 			$tusers.='<label>'.Eleanor::Check('ids[]',true,array('value'=>$k)).' '.htmlspecialchars($v['name'],ELENT,CHARSET).($v['name']==$v['full_name'] ? '' : ' ('.htmlspecialchars($v['name'],ELENT,CHARSET).')').'</label><br />';
 		return Eleanor::$Template->Cover('<div class="wbpad"><div class="warning"><img src="'.Eleanor::$Template->default['theme'].'/images/confirm.png" class="info" alt="" /><div><form method="post" action="">'
-		.$back.'<h4>'.$lang['del_users'].'</h4><hr />'.$tusers.'<br /><h4>'.$lang['dreason'].'</h4><hr />'.$GLOBALS['Eleanor']->Editor->Area('reason').'<div style="text-align:center"><input class="button" type="submit" value="'.$ltpl['yes'].'" /><input class="button" type="button" value="'.$ltpl['no'].'" onclick="history.go(-1); return false;" /></div></form></div><div class="clr"></div></div></div>');
+		.$back.'<h4>'.static::$lang['del_users'].'</h4><hr />'.$tusers.'<br /><h4>'.static::$lang['dreason'].'</h4><hr />'.$GLOBALS['Eleanor']->Editor->Area('reason').'<div style="text-align:center"><input class="button" type="submit" value="'.$ltpl['yes'].'" /><input class="button" type="button" value="'.$ltpl['no'].'" onclick="history.go(-1); return false;" /></div></form></div><div class="clr"></div></div></div>');
 	}
 
 	/*
@@ -186,3 +186,4 @@ $(function(){
 		return$c;
 	}
 }
+TplAdminAccount::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/account-*.php',false);

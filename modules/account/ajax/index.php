@@ -12,7 +12,7 @@ if(!defined('CMS'))die;
 global$Eleanor;
 BeAs('user');
 $Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-Eleanor::$Language->Load($Eleanor->module['path'].'lang_ajax-*.php',$Eleanor->module['config']['n']);
+Eleanor::$Language->Load($Eleanor->module['path'].'ajax-*.php',$Eleanor->module['config']['n']);
 Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
 
 function GetHandlers($type)

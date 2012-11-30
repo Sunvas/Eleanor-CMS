@@ -70,7 +70,7 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 				'append'=>'<script type="text/javascript">//<![CDATA[
 $(function(){
 	$(".uploadfile-path:first").removeClass("uploadfile-path").autocomplete({
-		serviceUrl:"'.Eleanor::$services['ajax']['file'].'",
+		serviceUrl:CORE.ajax_file,
 		minChars:2,
 		delimiter: null,
 		params:{
@@ -246,8 +246,7 @@ $(function(){
 	}
 
 	public static function Control($a,$Obj)
-	{
-		$a['options']+=array(
+	{		$a['options']+=array(
 			'types'=>array('jpg','png','gif','bmp','jpeg'),
 			'path'=>Eleanor::$uploads,
 			'max_size'=>false,
@@ -257,15 +256,12 @@ $(function(){
 			'source'=>array('address','upload'),
 			'preview'=>false,
 			'prevsuff'=>'_preview',
-
-			'old'=>$a['value'],
-			'new'=>false,
 		);
-		$a['options']['max_image_size']=explode(' ',$a['options']['max_image_size']);
+		$a['options']['max_image_size']=explode(' ',$a['options']['max_image_size'],2);
 
-		$saddr=in_array('address',$a['options']['source']);
-		$sup=in_array('upload',$a['options']['source']);
-		if(!$saddr and !$sup)
+		$write=in_array('address',$a['options']['source']);
+		$upload=in_array('upload',$a['options']['source']);
+		if(!$write and !$upload)
 			return'';
 
 		if($a['bypost'] and $sessid=$Obj->GetPostVal($a['name'],false))
@@ -274,222 +270,70 @@ $(function(){
 			if(isset($_SESSION[__class__][$a['controlname']]))
 			{
 				$sv=&$_SESSION[__class__][$a['controlname']];
-				if($sv['new'])
-					$a['value']=$sv['new'];
 				if(isset($sv['moved']))
-				{
-					$av=(array)$a['value'];
-					$fp=array();
-					foreach($sv['moved'] as $k=>$v)
-						if(isset($av[$k]))
-							rename($v,$fp[$k]=Eleanor::FormatPath($av[$k]));
-					unset($sv['moved']);
-				}
+				{					$temp=Eleanor::$uploads.'/'.uniqid().'/';
+					if(!is_dir($temp))
+						Files::MkDir($temp);
+					$a['value']=array();
+					foreach($sv['moved'] as $k=>&$v)
+					{						$bp=$temp.basename($v);						if(rename($v,Eleanor::$root.$bn))
+							$a['value'][$k]=$bp;					}
+					unset($sv['moved']);				}
+
+				if(isset($sv['deleted']))
+				{					$path=Eleanor::FormatPath($a['options']['path']).DIRECTORY_SEPARATOR;
+					foreach($sv['deleted'] as &$v)
+					{						$bn=basename($v);
+						rename($v,$path.$bn);					}				}
+
 			}
 		}
 		elseif(!isset($_SESSION))
 			Eleanor::StartSession();
 
-		if(!isset($av))
-			$av=(array)$a['value'];#0 - картинка, 1 - превьюшка
-		if(!isset($fp))
-		{
-			$fp=array();
-			foreach($av as $k=>&$v)
+		$a['options']['path']=rtrim($a['options']['path'],'\\/');
+		$a['value']=$a['value'] ? (array)$a['value'] : array();
+		$full=array();
+		foreach($a['value'] as $k=>&$v)
+			if(strpos($v,'://')===false)
 			{
 				if($v==basename($v))
-					$v=rtrim($a['options']['path'],'\\/').'/'.$v;
-				if(strpos($v,'://')===false)
-					$fp[$k]=Eleanor::FormatPath($v);
+					$v=$a['options']['path'].'/'.$v;
+				$full[$k]=Eleanor::FormatPath($v);
 			}
-		}
 
-		$writed=isset($av[0]) && !isset($fp[0]);
-		$a['file']=isset($fp[0]) && is_file($fp[0]);
+		$writed=isset($a['value'][0]);
+		$uploaded=isset($full['image']) && is_file($full['image']);
 
 		array_walk_recursive($a['options'],function(&$v){			if(is_object($v))
 				$v=null;		});
-
 		$_SESSION[__class__][$a['controlname']]=$a['options'];
-		$sid=session_id();
 
-		array_push($GLOBALS['jscripts'],$saddr ? 'addons/autocomplete/jquery.autocomplete.js' : false,'addons/swfupload/swfupload.js','addons/colorbox/jquery.colorbox-min.js');
-		$GLOBALS['head']['autocomplete|style']='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
-		$GLOBALS['head']['colorbox']='<link rel="stylesheet" media="screen" href="addons/colorbox/colorbox.css" />';
-
-		if($sup)
+		if($upload)
 		{
-			$types=$a['options']['types'] ? '*.*' : '*.'.join(';*.',$a['options']['types']).';';
+			$types=$a['options']['types'];
 			$maxsize=Files::SizeToBytes(ini_get('upload_max_filesize'));
 			if($a['options']['max_size'] and $maxsize>$a['options']['max_size'])
 				$maxsize=$a['options']['max_size'];
 		}
+		else
+			$types=$maxsize=false;
 
-		$id=uniqid();
-		return'<script type="text/javascript">//<![CDATA[
-		$(function(){
-			var I=$("#i'.$id.'");
-			//Max-width для div-a
-			I.each(function(){
-				var p=$(this).parent();
-				setTimeout(function(){
-					if(p.width()>0)
-						p.end().width(p.width()+"px");
-					'.($a['file'] || $writed
-						? 'I.find(".aimage").show().prop("href","'.$av[0].'").find("img").prop("src","'.(isset($av[1]) ? $av[1] : $av[0]).'");
-						$(".delete",I).show();'
-						: '$(".screenblock",I).show();'
-					).'
-	 			},200);
-			})
-
-			.on("click",".delete",function(){
-				CORE.Ajax(
-					{
-						type:"uploadimage",
-						"do":"delete",
-						session:"'.$sid.'",
-						name:"'.$a['controlname'].'"
-					},
-					function(result)
-					{
-						$(".aimage,.delete",I).hide();
-						$(".screenblock",I).show();
-					}
-				);
-				return false;
-			})
-
-			.find(".aimage").colorbox({
-				title:function(){
-					var url=$(this).attr("href"),
-						title=$(this).find("img").attr("title");
-					return "<a href=\""+url+"\" target=\"_blank\">"+(title ? title : url)+"</a>";
-				},
-				maxWidth:Math.round(screen.width/1.5),
-				maxHeight:Math.round(screen.height/1.5)
-			});
-
-			'.($sup ? 'var I'.$id.'=new SWFUpload({
-				flash_url:"'.PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.'addons/swfupload/swfupload.swf",
-				upload_url:"'.PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.'upload.php",
-				file_post_name:"image",
-				post_params:{type:"uploadimage",session:"'.$sid.'",name:"'.$a['controlname'].'"},
-				file_size_limit:"'.$maxsize.' B",
-				file_types:"'.$types.'",
-				file_types_description:"Images",
-				file_upload_limit:"0",
-				file_queue_limit:"1",
-				file_dialog_complete_handler:function(numFilesSelected,numFilesQueued)
-					{
-						try
-						{
-							if(numFilesQueued>0)
-							{
-								this.startUpload();
-								$(".cancel",I).show();
-							}
-						}
-						catch(ex){this.debug(ex)}
-					},
-				upload_progress_handler:function(file,bytesLoaded)
-					{
-						$(".cancel",I).text("'.static::$Language['cancel'].' ("+Math.ceil(bytesLoaded/file.size*100)+"%)");
-					},
-				upload_error_handler:function(file, errorCode, message)
-					{
-						$(".cancel",I).hide();
-					},
-				upload_success_handler:function(file,sd)
-					{
-						sd=$.parseJSON(sd);
-						if(sd.error)
-							alert(sd.error);
-						else
-						{
-							$(".aimage",I).show().prop("href",sd.file).find("img").prop("src",sd.preview ? sd.preview : sd.file);
-							$(".delete",I).show();
-							$(".screenblock,.enterhere",I).hide();
-						}
-						$(".cancel",I).hide();
-					},
-				button_placeholder_id:"i'.$id.'-upload",
-				button_image_url:"'.PROTOCOL.Eleanor::$domain.Eleanor::$site_path.'images/uploader/uploadbtn.png",
-				button_text:\'<span class="upbtntext">'.static::$Language['upload'].'</span>\',
-				button_text_style:".upbtntext { font-size: 11px; color: #6D6A65; font-family: Tahoma, Arial, sans-serif; font-weight: bold; }",
-				button_text_left_padding:16,
-				button_text_top_padding:4,
-				button_width:129,
-				button_height:27,
-				button_action:SWFUpload.BUTTON_ACTION.SELECT_FILE,
-				button_window_mode:SWFUpload.WINDOW_MODE.OPAQUE,
-				button_cursor:SWFUpload.CURSOR.HAND,
-				debug:false
-			});
-			$("#i'.$id.'-cancel").click(function(){I'.$id.'.cancelUpload(); return false;});' : '')
-
-			.($saddr ? '$(".enterhere input",I).autocomplete({
-				serviceUrl:"'.Eleanor::$services['ajax']['file'].'",
-				minChars:2,
-				delimiter: null,
-				params:{
-					direct:"'.Eleanor::$service.'",
-					file:"autocomplete",
-					filter:"types",
-					types:"'.join(',',$a['options']['types']).'"
-				}
-			});
-			var DoWrited=function()
-				{
-					var text=$(".enterhere",I).find(":text");
-					if(!$.trim(text.val()))
-						return false;
-					CORE.Ajax(
-						{
-							type:"uploadimage",
-							"do":"write",
-							session:"'.$sid.'",
-							name:"'.$a['controlname'].'",
-							image:text.val()
-						},
-						function(result)
-						{
-							$(".aimage",I).attr("href",text.val()).find("img").attr("src",text.val());
-							text.val("");
-							$(".enterhere,.screenblock",I).hide();
-							$(".delete,.aimage",I).show();
-						}
-					);
-				}
-			$(".enterhere",I).hide().find(":text").keypress(function(e){
-				if(e.keyCode==13)
-				{
-					e.preventDefault();
-					DoWrited();
-					return false;
-				}
-			}).end().find(":button").click(DoWrited);
-			$(".enter",I).click(function(){
-				$(".enterhere",I).toggle();
-				return false;
-			});' : '').'
-		});//]]></script><div id="i'.$id.'">'
-			.($sup ? '<span id="i'.$id.'-upload"></span>' : '')
-			.($saddr ? '<a class="imagebtn enter" href="#">'.static::$Language['address'].'</a><div class="clr"></div><div class="enterhere">'.static::$Language['enter_address'].Eleanor::Edit('','',array('style'=>'width:70%')).' '.Eleanor::Button('OK','button').'</div>' : '')
-			.'<div style="padding:5px 0;">
-				<span style="width:'.($a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '180').'px;height:'.($a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '145').'px;text-decoration:none;max-height:100%;max-width:100%;display:none;" class="screenblock"><b>'.static::$Language['upload_image'].'</b><br /><span>'.sprintf('<b>%s</b> <small>x</small> <b>%s</b> <small>px</small>',$a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '&infin;',$a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '&infin;').'</span></span>
-				<a href="#" class="aimage" style="display:none;"><img style="border:1px solid #c9c7c3;max-width:'.($a['options']['max_image_size'][0]>0 ? $a['options']['max_image_size'][0] : '100%').';max-height:'.($a['options']['max_image_size'][1]>0 ? $a['options']['max_image_size'][1] : '100%').'" src="images/spacer.png" /></a>
-			</div>
-			<a class="imagebtn delete" style="display:none;" href="#">'.static::$Language['delete'].'</a>'
-			.($sup ? '<a class="imagebtn cancel" href="#" style="display:none;"></a>' : '')
-			.Eleanor::Control($a['controlname'],'hidden',$sid).'</div>';
+		return Eleanor::$Template->ControlUploadImage(session_id(),$upload,$write,$types,$maxsize,$a['controlname'],$a['options']['max_image_size'][0],$a['options']['max_image_size'][1],array(
+			'write'=>$writed ? $a['value'][0] : '',
+			'image'=>isset($a['value']['image']) ? $a['value']['image'] : '',
+			'preview'=>isset($a['value']['preview']) ? $a['value']['preview'] : '',
+		));
 	}
 
 	public static function Save($a,$Obj)
 	{
 		$a['options']+=array(
+			'path'=>Eleanor::$uploads,
 			'filename_eval'=>null,
 			'filename'=>null,
+			'preview'=>false,
+			'prevsuff'=>'_preview',
 		);
 		if(!$sessid=$Obj->GetPostVal($a['name'],''))
 			return'';
@@ -504,43 +348,50 @@ $(function(){
 				$Obj->errors[]='SESSION_LOST';
 			return;
 		}
-		$sarr=$_SESSION[__class__][$name];
+		$sess=&$_SESSION[__class__][$name];
 
-		if(!$sarr['new'])
-			return$sarr['old'];
+		if($sess['value']==$a['value'])
+			return$a['value'];
 
-		$aold=(array)$sarr['old'];
-		$ofp=array();
-		foreach($aold as $k=>&$v)
-		{
-			if($v==basename($v))
-				$v=rtrim($sarr['path'],'\\/').'/'.$v;
-			if(strpos($v,'://')===false)
-				$ofp[$k]=Eleanor::FormatPath($v);
+		$a['options']['path']=rtrim($a['options']['path'],'\\/');
+		$a['value']=$a['value'] ? (array)$a['value'] : array();
+		if($a['value'])
+		{			$u=uniqid();
+			$temp=Eleanor::$root.Eleanor::$uploads.'/temp/'.$u.'/';
+			$delete=!is_dir($temp) && !Files::MkDir($temp);
 		}
 
-		$ofile=isset($ofp[0]) && is_file($ofp[0]);
-		$owrited=$ofile && dirname($aold[0])!=trim($sarr['path'],'/\\') || isset($aold[0]) && !isset($ofp[0]);
+		foreach($a['value'] as $k=>&$v)
+			if(strpos($v,'://')===false)
+			{				if($v==basename($v))
+					$v=$a['options']['path'].'/'.$v;
+				elseif(dirname($v)!=$a['options']['path'])
+				{
+					unset($a['value'][$k]);
+					continue;
+				}
+				$v=Eleanor::FormatPath($v);
+				if($delete)
+					Files::Delete($v);
+				else
+				{					$del=$temp.basename($v);
+					if(rename($v,$del))
+						$sess['deleted'][]=$del;
+				}
+			}
+			else
+				unset($a['value'][$k]);
 
-		if(!isset($ofp[1]) and $ofile and $sarr['preview'])
-			$ofp[1]=substr_replace($ofp[0],$sarr['prevsuff'],strrpos($ofp[0],'.'),0);
+		if(!isset($a['value']['preview']) and isset($a['value'][0]) and $a['options']['preview'])
+		{
+			$preview=substr_replace($a['value'][0],$a['prevsuff'],strrpos($a['value'][0],'.'),0);
+			Files::Delete($preview);
+		}
 
-		if($ofile and !$owrited)
-			foreach($ofp as &$v)
-				Files::Delete($v);
+		if(is_string($sess['value']))
+			return$sess['value'];
 
-		$snew=is_array($sarr['new']) ? reset($sarr['new']) : $sarr['new'];#Single new
-
-		$writed=strpos($snew,'://')!==false;
-		$saddr=in_array('address',$sarr['source']);
-		$sup=in_array('upload',$sarr['source']);
-		if($snew===true or $writed and !$saddr or !$writed and !$sup or !$sup and !$saddr)
-			return'';
-
-		if($writed)
-			return$sarr['new'];
-
-		$path=($sarr['path'] ? Eleanor::FormatPath($sarr['path']) : Eleanor::$root.Eleanor::$uploads).DIRECTORY_SEPARATOR;
+		$path=($a['options']['path'] ? Eleanor::FormatPath($a['options']['path']) : Eleanor::$root.Eleanor::$uploads).DIRECTORY_SEPARATOR;
 		if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
 		{
 			if($Obj->throw)
@@ -551,45 +402,47 @@ $(function(){
 		}
 
 		if(is_callable($a['options']['filename']))
-			$filename=call_user_func($a['options']['filename'],array('filename'=>basename($snew))+$a,__class__);
+			$filename=call_user_func($a['options']['filename'],array('filename'=>basename($sess['value']['image']))+$a,$Obj);
 		elseif($a['options']['filename_eval'])
 		{
 			ob_start();
 			$func=create_function('$a,$Obj',$a['options']['filename_eval']);
 			if($func===false)
 			{
-				$err=ob_get_contents();
+				$e=ob_get_contents();
 				ob_end_clean();
 				Eleanor::getInstance()->e_g_l=error_get_last();
 				if($Obj->throw)
-					throw new EE('Error in filename eval: <br />'.$err,EE::DEV,array('code'=>1));
+					throw new EE('Error in filename eval: <br />'.$e,EE::DEV);
 				else
 					$Obj->errors['ERROR_FILENAME']=$err;
 			}
-			$filename=$func(array('filename'=>basename($snew))+$a,__class__);
+			$filename=$func(array('filename'=>basename($sess['value']['image']))+$a,$Obj);
 			ob_end_clean();
 		}
 		else
-			$filename=basename($snew);
+			$filename=basename($sess['value']['image']);
 
-		$rpath=rtrim($sarr['path'] ? $sarr['path'] : Eleanor::$uploads,'/\\').'/';
-		$r=array();
-		foreach((array)$sarr['new'] as $k=>$s)
+		$r=$sess['moved']=array();
+		$a['options']['path'].='/';
+
+		$f=Eleanor::$root.$sess['value']['image'];
+		$t=$path.$filename;
+		if(is_file($f) and Files::Delete($t) and rename($f,$t))
 		{
-			$s=Eleanor::$root.$s;
-			$fn=$k==0 ? $filename : substr_replace($filename,$sarr['prevsuff'],strrpos($filename,'.'),0);
-			$d=$path.$fn;
-			$m=false;
-			if(is_file($s) and ($s==$d or Files::Delete($d) and $m=rename($s,$d)))
-			{
-				if($m)
-					$_SESSION[__class__][$name]['moved'][$k]=$d;
-				$r[$k]=$rpath.$fn;
-			}
-			if(!$sarr['preview'])
-				break;
+			$sess['moved']['image']=$t;
+			$r['image']=$a['options']['path'].$filename;
 		}
-		return$sarr['preview'] ? $r : reset($r);
+
+		if($a['options']['preview'])
+		{			$filename=substr_replace($filename,$a['options']['prevsuff'],strrpos($filename,'.'),0);			$f=Eleanor::$root.$sess['value']['preview'];
+			$t=$path.$filename;
+			if(is_file($f) and Files::Delete($t) and rename($f,$t))
+			{
+				$sess['moved']['preview']=$t;
+				$r['preview']=$a['options']['path'].$filename;
+			}		}
+		return$a['options']['preview'] ? $r : reset($r);
 	}
 
 	public static function Result($a,$Obj,$co)
@@ -599,15 +452,18 @@ $(function(){
 		if(!$a['value'])
 			return$a['options']['retempty'] ? null : '<span style="width:'.($a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '180').'px;height:'.($a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '145').'px;text-decoration:none;max-height:100%;max-width:100%;" class="screenblock"><b>'.static::$Language['noimage'].'</b></span>';
 		if(is_array($a['value']))
-			list($img,$prev)=$a['value'];
+		{			$image=isset($a['value']['image']) ? $a['value']['image'] : '';
+			$preview=isset($a['value']['preview']) ? $a['value']['preview'] : '';
+		}
 		else
-			$img=$prev=$a['value'];
+			$image=$preview=$a['value'];
+
 		if($a['options']['onlyimage'])
-			return'<img style="border:1px solid #c9c7c3;max-width:'.($a['options']['max_image_size'][0]>0 ? $a['options']['max_image_size'][0] : '100%').';max-height:'.($a['options']['max_image_size'][1]>0 ? $a['options']['max_image_size'][1] : '100%').'" src="'.$img.'" alt="'.$a['options']['alt'].'" />';
+			return'<img style="border:1px solid #c9c7c3;max-width:'.($a['options']['max_image_size'][0]>0 ? $a['options']['max_image_size'][0] : '100%').';max-height:'.($a['options']['max_image_size'][1]>0 ? $a['options']['max_image_size'][1] : '100%').'" src="'.$image.'" alt="'.$a['options']['alt'].'" />';
 		$GLOBALS['jscripts'][]='addons/colorbox/jquery.colorbox-min.js';
 		$GLOBALS['head']['colorbox']='<link rel="stylesheet" media="screen" href="addons/colorbox/colorbox.css" />';
 		$u=uniqid();
-		return'<a href="'.$img.'" id="img-'.$u.'"><img style="border:1px solid #c9c7c3;max-width:'.($a['options']['max_image_size'][0]>0 ? $a['options']['max_image_size'][0] : '100%').';max-height:'.($a['options']['max_image_size'][1]>0 ? $a['options']['max_image_size'][1] : '100%').'" src="'.$prev.'" alt="'.$a['options']['alt'].'" /></a><script type="text/javascript">//<![CDATA[
+		return'<a href="'.$image.'" id="img-'.$u.'"><img style="border:1px solid #c9c7c3;max-width:'.($a['options']['max_image_size'][0]>0 ? $a['options']['max_image_size'][0] : '100%').';max-height:'.($a['options']['max_image_size'][1]>0 ? $a['options']['max_image_size'][1] : '100%').'" src="'.$preview.'" alt="'.$a['options']['alt'].'" /></a><script type="text/javascript">//<![CDATA[
 $(function(){
 	$("#img-'.$u.'").colorbox({
 		title: function(){
@@ -629,30 +485,37 @@ $(function(){
 		if(!isset($_SESSION[__class__][$name]))
 			return Error(static::$Language['session_lost']);
 		$a=$_SESSION[__class__][$name];
-		$type=isset($_POST['do']) ? $_POST['do'] : '';
-		switch($type)
+
+		switch(isset($_POST['do']) ? (string)$_POST['do'] : '')
 		{
 			case'write':
 				if(!in_array('address',$a['source']))
 					return Error();
-				$a['new']=isset($_POST['image']) ? (string)$_POST['image'] : '';
-				if(strpos($a['new'],'://')!==false && is_file($f=Eleanor::FormatPath($a['new'])))
+				$value=isset($_POST['image']) ? (string)$_POST['image'] : false;
+				if($value and (strpos($value,'://')!==false or is_file($f=Eleanor::FormatPath($value))))
 				{
 					if($a['types'] and !in_array(substr(strrchr($a['new'],'.'),1),$a['types']))
 						return Error(sprintf(static::$Language['only_types'],join(', ',$a['types'])));
-					if(!$sizes=@getimagesize($f))
-						return Error(static::$Language['not_image']);
-					list($w,$h)=$sizes;
-					if($a['max_image_size'][0]>0 and $a['max_image_size'][0]<$w)
-						return Error(sprintf(static::$Language['bigger_w'],$a['max_image_size'][0],$w));
-					if($a['max_image_size'][1]>0 and $a['max_image_size'][1]<$h)
-						return Error(sprintf(static::$Language['bigger_h'],$a['max_image_size'][1],$h));
-					if($a['nosmaller'] and ($a['max_image_size'][1]>0 and $a['max_image_size'][1]>$h or $a['max_image_size'][0]>0 and $a['max_image_size'][0]>$w))
-						return Error(sprintf(static::$Language['smaller'],$w,$h,$a['max_image_size'][0] ? $a['max_image_size'][0] : '&infin;',$a['max_image_size'][1] ? $a['max_image_size'][1] : '&infin;'));
+
+					if(isset($f))
+					{
+						if(!$sizes=@getimagesize($f))
+							return Error(static::$Language['not_image']);
+						list($w,$h)=$sizes;
+						if($a['max_image_size'][0]>0 and $a['max_image_size'][0]<$w)
+							return Error(sprintf(static::$Language['bigger_w'],$a['max_image_size'][0],$w));
+						if($a['max_image_size'][1]>0 and $a['max_image_size'][1]<$h)
+							return Error(sprintf(static::$Language['bigger_h'],$a['max_image_size'][1],$h));
+						if($a['nosmaller'] and ($a['max_image_size'][1]>0 and $a['max_image_size'][1]>$h or $a['max_image_size'][0]>0 and $a['max_image_size'][0]>$w))
+							return Error(sprintf(static::$Language['smaller'],$w,$h,$a['max_image_size'][0] ? $a['max_image_size'][0] : '&infin;',$a['max_image_size'][1] ? $a['max_image_size'][1] : '&infin;'));
+					}
+					$a['value']=$value;
 				}
+				else
+					$a['value']='';
 			break;
 			case'delete':
-				$a['new']=true;
+				$a['value']='';
 			break;
 			default:
 				return Error();
@@ -667,15 +530,16 @@ $(function(){
 		$name=isset($_POST['name']) ? (string)$_POST['name'] : '';
 		Eleanor::StartSession($session);
 		if(!isset($_SESSION[__class__][$name]))
-			return Error('No session!');
+			return Error('Session lost');
 		$a=$_SESSION[__class__][$name];
 
 		if(!isset($_FILES['image']) or !is_uploaded_file($_FILES['image']['tmp_name']) or !in_array('upload',$a['source']))
-			return Error('No file!');
+			return Error('No file');
 
 		if(!$sizes=@getimagesize($_FILES['image']['tmp_name']))
 			return Error(static::$Language['not_image']);
 		list($w,$h)=$sizes;
+
 		if($a['nosmaller'] and ($a['max_image_size'][1]>0 and $a['max_image_size'][1]>$h or $a['max_image_size'][0]>0 and $a['max_image_size'][0]>$w))
 			return Error(sprintf(static::$Language['smaller'],$w,$h,$a['max_image_size'][0] ? $a['max_image_size'][0] : '&infin;',$a['max_image_size'][1] ? $a['max_image_size'][1] : '&infin;'));
 
@@ -688,12 +552,15 @@ $(function(){
 			if($max_h)
 				return Error(sprintf(static::$Language['bigger_h'],$a['max_image_size'][1],$h));
 		}
-		if(!is_dir(Eleanor::$root.DIRECTORY_SEPARATOR.Eleanor::$uploads.'/temp/'))
-			Files::MkDir(Eleanor::$root.DIRECTORY_SEPARATOR.Eleanor::$uploads.'/temp/');
-		$a['new']=Eleanor::$uploads.'/temp/'.uniqid().strrchr($_FILES['image']['name'],'.');
-		$ufn=Eleanor::$root.$a['new'];
+
+		$to=Eleanor::$uploads.'/temp/';
+		if(!is_dir(Eleanor::$root.DIRECTORY_SEPARATOR.$to))
+			Files::MkDir(Eleanor::$root.DIRECTORY_SEPARATOR.$to);
+
+		$to.=uniqid().strrchr($_FILES['image']['name'],'.');
+		$ufn=Eleanor::$root.$to;
 		if(!move_uploaded_file($_FILES['image']['tmp_name'],$ufn))
-			return Error('File not loaded!');
+			return Error('File not loaded');
 
 		try
 		{
@@ -709,18 +576,17 @@ $(function(){
 						'newname'=>$ufn,
 					)
 				);
-			if($a['preview'])
-				$a['new']=array(
-					$a['new'],
-					Eleanor::$uploads.'/temp/'.basename(Image::Preview($ufn,array('suffix'=>$a['prevsuff'])+(is_array($a['preview']) ? $a['preview'] : array())))
-				);
+			$a['value']=array(
+				'image'=>$to,
+				'preview'=>$a['preview'] ? Eleanor::$uploads.'/temp/'.basename(Image::Preview($ufn,array('suffix'=>$a['prevsuff'])+(is_array($a['preview']) ? $a['preview'] : array()))) : false
+			);
 		}
 		catch(EE$E)
 		{
 			return Error($E->getMessage());
 		}
 		$_SESSION[__class__][$name]=$a;
-		Result($a['preview'] ? array('file'=>$a['new'][0],'preview'=>$a['new'][1]) : array('file'=>$a['new']));
+		Result($a['preview'] ? array('file'=>$a['value']['image'],'preview'=>$a['value']['preview']) : array('file'=>$a['value']['image']));
 	}
 }
 ControlUploadImage::$Language=new Language;

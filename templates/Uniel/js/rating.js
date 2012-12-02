@@ -25,7 +25,6 @@ function Rating(module,control,id,marks)
 			CORE.Ajax(
 					{
 						module:module,
-						language:CORE.language,
 						event:"rating",
 						mark:marks[rate.data("p")-1],
 						id:id

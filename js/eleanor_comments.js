@@ -25,8 +25,7 @@ CORE.Comments=function(opts)
 		opts	);
 	opts.dataquery=opts.dataquery.reverse();
 
-	var aq=$.extend({language:CORE.lang_name},opts.postquery),
-		container=$(opts.container),
+	var container=$(opts.container),
 		updateskip=0,//Задержка автообновления
 		autoupdate=opts.autoupdate && opts.pages==opts.page,//Автообновление комментариев
 		nochangepages=opts.reverse,//Признак того, что количество страниц менять не нужно
@@ -92,7 +91,7 @@ CORE.Comments=function(opts)
 			}
 			CORE.QAjax(
 				$.extend(
-					aq,
+					opts.postquery,
 					Prepare({
 						event:"page",
 						baseurl:opts.baseurl,
@@ -206,7 +205,7 @@ CORE.Comments=function(opts)
 		DoLNC=function(auto)
 		{			CORE.QAjax(
 				$.extend(
-					aq,
+					opts.postquery,
 					Prepare({
 						event:"lnc",
 						lastpost:opts.lastpost,
@@ -245,7 +244,7 @@ CORE.Comments=function(opts)
 		DeleteComments=function(ids,reload)
 		{			CORE.QAjax(
 				$.extend(
-					aq,
+					opts.postquery,
 					Prepare({
 						event:"delete",
 						ids:ids
@@ -286,7 +285,7 @@ CORE.Comments=function(opts)
 			DeleteComments([$(this).data("id")]);
 		return false;	}).on("click",".cb-edit",function(){		var th=$(this);		CORE.QAjax(
 			$.extend(
-				aq,
+				opts.postquery,
 				Prepare({
 					event:"edit",
 					id:th.data("id")
@@ -305,7 +304,7 @@ CORE.Comments=function(opts)
 
 					CORE.Ajax(
 						$.extend(
-							aq,
+							opts.postquery,
 							Prepare($.extend(params,{
 								event:"save",
 								id:th.data("id"),
@@ -391,7 +390,7 @@ CORE.Comments=function(opts)
 
 		CORE.QAjax(
 			$.extend(
-				aq,
+				opts.postquery,
 				Prepare({
 					event:"post",
 					lastpost:opts.lastpost,
@@ -462,7 +461,7 @@ CORE.Comments=function(opts)
 			else
 			{				CORE.QAjax(
 					$.extend(
-						aq,
+						opts.postquery,
 						Prepare({
 							event:"moderate",
 							status:$(this).val(),

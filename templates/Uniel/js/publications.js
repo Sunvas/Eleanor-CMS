@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright © Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
@@ -23,7 +23,6 @@ $(function(){	$(this).on("click","div.base .getmore, div.base .getmore-active "
 		else
 			CORE.Ajax(
 				{
-					language:CORE.language,
 					module:module,
 					event:"getmore",
 					id:th.data("id")

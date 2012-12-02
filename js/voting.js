@@ -41,11 +41,10 @@ function Voting(opts)
 	this.Load=function(type,data)
 	{		if(typeof types[type]=="undefined")			CORE.Ajax(
 				$.extend(
-					{						language:CORE.language,
-						voting:{
-							data:data,
-							type:type
-						}					},
+					{voting:{
+						data:data,
+						type:type
+					}},
 					opts.request
 				),
 				function(r)

@@ -149,7 +149,7 @@ if(isset($_GET['do']))
 			$values=array();
 			$error='';
 			$data=$cnt=$page=false;
-			if($_SERVER['REQUEST_METHOD']=='POST' or isset($_GET['q']))
+			if($_SERVER['REQUEST_METHOD']=='POST')
 				do
 				{
 					$T=new TimeCheck($Eleanor->module['id']);

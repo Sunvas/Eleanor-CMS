@@ -135,7 +135,6 @@ class TPLSmiles
 						direct:"admin",
 						file:"smiles",
 						event:"setemotion",
-						language:CORE.language,
 						emotion:t,
 						id:th.parent().data("id")
 					},

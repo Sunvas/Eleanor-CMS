@@ -529,7 +529,7 @@ class Controls extends BaseClass
 			break;
 			case'date':
 				$co['options']+=array('time'=>false,'extra'=>array());
-				$html=Dates::Calendar($co['controlname'],$co['bypost'] ? $this->GetPostVal($co['name'],false) : $co['value'],$co['options']['time'],$co['options']['extra']);
+				$html=Dates::Calendar($co['controlname'],$co['bypost'] ? $this->GetPostVal($co['name'],$co['value']) : $co['value'],$co['options']['time'],$co['options']['extra']);
 			break;
 			default:
 				if(!isset(self::$controls))

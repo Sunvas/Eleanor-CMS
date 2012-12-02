@@ -26,7 +26,6 @@ CORE.Archive=function(opts)
 				CORE.Ajax(
 					{
 						module:opts.module,
-						language:CORE.language,
 						event:"archive",
 						month:opts.month,
 						year:opts.year

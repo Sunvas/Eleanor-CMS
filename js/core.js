@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright © Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.su, http://eleanor-cms.com, http://eleanor-cms.net, http://eleanor.su
 	E-mail: support@eleanor-cms.ru
@@ -70,7 +70,8 @@ var uagent=navigator.userAgent.toLowerCase(),
 						$.each(s,function(k,v){							r+=$.isNumeric(k) && CORE.Lang(v) ? CORE.Lang(v) : v;
 							r+="\n";						})
 						s=r;					}
-					alert(s);
+					if(s!="")
+						alert(s);
 				}			},
 			info
 		);

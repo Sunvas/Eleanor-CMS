@@ -386,7 +386,6 @@ $(function(){
 		var th=$(this);
 		CORE.Ajax({
 				direct:"admin",
-				language:CORE.language,
 				file:"users",
 				event:"killsession",
 				key:th.data("key"),

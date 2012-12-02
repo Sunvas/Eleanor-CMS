@@ -12,8 +12,6 @@ class Url extends BaseClass
 {	public static
 		$curpage;#Текущая ссылка
 	public
-		$s_prefix,#Префикс всех УРЛов в статике
-		$d_prefix='?',#Префикс всех УРЛов в динамике
 		$delimiter='/',#Символ, или последовательсность символов для разделения параметров в статике
 		$defis='_',#Символ для отделения параметров от значений в статике
 		$ending='.html',#Окончание УРЛа может использоваться только в статике
@@ -22,11 +20,23 @@ class Url extends BaseClass
 		$file,#файл для динамических ссылок
 		$furl=false;#ЧПУ - включает человекопонятный УРЛ
 
+	protected
+		$sp,#Префикс всех УРЛов в статике
+		$dp='?';#Префикс всех УРЛов в динамике
+
 /*
 	#ToDo!
 	public function __invoke(array$p=array(),$pr=true,$e=true)
 	{		return$this->Construct($p,$pr,$e);	}
 */
+
+	/**
+	 * Метод для генерации URL-ов
+	 *
+	 * @param array $p - массив параметров ссылки. Например, если передать массив array('k1'=>'v1','k2'=>'v2') в результате получим k1=>v1&amp;k2=>v2 для динамических ссылок и v1/v2.html для ЧПУ
+	 * @param bool $pr - флаг использования префикса
+	 * @param bool|string $e - окончание будущего URLа, имеет смысл только для ЧПУ. Передача true включает использование стандартного окончания, false - в качестве окончания подставится разделитесь, если передать строку - она и станет окончанием
+	 */
 	public function Construct(array$p=array(),$pr=true,$e=true)
 	{		if(isset($p['']))
 		{			$suf=static::Query($p['']);			unset($p['']);
@@ -59,7 +69,7 @@ class Url extends BaseClass
 					$r[]=static::Encode($pv);
 
 			if($pr===true)
-				$pr=$this->s_prefix;
+				$pr=$this->sp;
 			$r=$r ? $pr.join($this->delimiter,$r).$e : $pr;
 
 			if($suf)
@@ -79,7 +89,7 @@ class Url extends BaseClass
 			if($suf)
 				$r[]=$suf;
 			if($pr===true)
-				$pr=$this->file.$this->d_prefix;
+				$pr=$this->file.$this->dp;
 
 			if($e===true)
 				$e='';
@@ -89,7 +99,13 @@ class Url extends BaseClass
 		return$r;
 	}
 
-	public function Parse(array$params=array(),$pd=true)#Parse defis
+	/**
+	 * Метод разбора текущей ссылки для преобразования ЧПУ в понятный массив запроса
+	 *
+	 * @param array $params - массив недостающих ключей для ЧПУ, поскольку при генерации ЧПУ ключи выкидываются
+	 * @param bool $pd - флаг обработки значений с дефисом, как разделитель ключ=>значения
+	 */
+	public function Parse(array$params=array(),$pd=true)
 	{		if($this->is_static)
 		{			$input=$this->string;
 
@@ -127,9 +143,12 @@ class Url extends BaseClass
 		return$r;
 	}
 
-	/*
-		Функция возвращает "окончание" строки. т.е. ".html", "/". Работает только для статики (по понятным причинам)
-		Внимание! Рекомендуется всегда использовать окончание в УРЛах, если окончания не будет - функция будет работать неправильно.
+	/**
+	 * Функция возвращает "окончание" строки. т.е. ".html", "/". Работает только для статики (по понятным причинам)
+	 * Внимание! Рекомендуется всегда использовать окончание в УРЛах, если окончания не будет - функция будет работать неправильно.
+	 *
+	 * @param array $es - массив возможных окончаний
+	 * @param bool $cut - флаг удаления окончания из обрабатываемой ссылки
 	*/
 	public function GetEnding($es=array(),$cut=true)
 	{		if($es)
@@ -144,10 +163,15 @@ class Url extends BaseClass
 		if($e and $cut)
 			$this->string=substr($this->string,0,-strlen($e));
 		return$e;	}
-	/*
-		Распарсить до первого нужного значения. Все, что идет после этого - уже параметры модуля.
+
+	/**
+	 * Распарсить до первого нужного значения. Все, что идет после этого - уже параметры модуля.
+	 *
+	 * @param string $p - параметр, до которого нужно парсить ссылку
+	 * @param bool $cut - флаг удаления обработанных значений из обрабатываемой ссылки
+	 * @param bool $pd - флаг обработки значений с дефисом, как разделитель ключ=>значения
 	*/
-	public function ParseToValue($p,$cut=true,$pd=true)#parse defis
+	public function ParseToValue($p,$cut=true,$pd=true)
 	{		if(!$this->is_static)
 			return isset($_GET[$p]) ? $_GET[$p] : false;
 		$str=strtok($this->string,$this->delimiter);
@@ -175,8 +199,12 @@ class Url extends BaseClass
 		return$value;
 	}
 
-	/*
-		Функция создает из строки ее ЧПУшное представление - заменяет все непечатаемые символы и пробелы на $rep
+	/**
+	 * Метод преобразует строку в корректную последовательность символов для возможности использования её в URI
+	 *
+	 * @param string $s - входящая строка
+	 * @param string|FALSE $l - язык строки для корректной транслитерации, в случае передачи false, используется текущей язык систмы
+	 * @param string|FALSE $rep - последовательность символов, которыми будут заменены пробелы
 	*/
 	public function Filter($s,$l=false,$rep=false)
 	{		if(!$l)
@@ -191,27 +219,35 @@ class Url extends BaseClass
 		return preg_replace('#^('.$rep.')+|('.$rep.')+$#','',$s);
 	}
 
+	/**
+	 * Метод возвращает текущий префикс для использования её в качестве корректного URL
+	 *
+	 * @param bool|string $e - окончание URL
+	 */
 	public function Prefix($e=true)
 	{		if($this->furl)
-			return$e===false ? $this->s_prefix : preg_replace('#'.preg_quote($this->delimiter,'#').'$#','',$this->s_prefix).($e===true ? $this->ending : $e);
+			return$e===false ? $this->sp : preg_replace('#'.preg_quote($this->delimiter,'#').'$#','',$this->sp).($e===true ? $this->ending : $e);
 
-		$p=$this->file.$this->d_prefix;
+		$p=$this->file.$this->dp;
 		return$e===false ? $p : preg_replace('#(&amp;|&|\?)$#','',$p).($e===true ? '' : $e);
 	}
 
-	public function GetDel()
-	{		return $this->furl ? $this->delimiter : '&amp;';	}
-
+	/**
+	 * Метод установки перефикса для всех генерируемых URL-ов
+	 *
+	 * @param array|string $p - префикс в виде строки, либо массива сходного с первым параметром метода Construct
+	 * @param bool $a - флаг добавления к ссылки к текщуему префиксу
+	 */
 	public function SetPrefix($p,$a=false)
 	{		if($p and is_array($p))
 		{			$f=$this->furl;
-			$this->furl=true;			$this->s_prefix=($a ? $this->s_prefix : '').$this->Construct($p,false,false);			$this->furl=false;
-			$this->d_prefix=($a ? $this->d_prefix : '?').$this->Construct($p,false,false);
+			$this->furl=true;			$this->sp=($a ? $this->sp : '').$this->Construct($p,false,false);			$this->furl=false;
+			$this->dp=($a ? $this->dp : '?').$this->Construct($p,false,false);
 			$this->furl=$f;
 		}
 		elseif($this->furl)
 		{			$p=preg_replace('#('.preg_quote($this->delimiter,'#').'|'.preg_quote($this->ending,'#').')+$#','',$p).$this->delimiter;
-			$this->s_prefix=$a ? $this->s_prefix.$p : $p;
+			$this->sp=$a ? $this->sp.$p : $p;
 		}
 		else
 		{
@@ -224,10 +260,15 @@ class Url extends BaseClass
 					$p=substr($p,$qp);
 				$p.='&amp;';
 			}
-			$this->d_prefix=$a ? $this->d_prefix.$p : $p;
+			$this->dp=$a ? $this->dp.$p : $p;
 		}
 	}
 
+	/**
+	 * Конструктор
+	 *
+	 * @param string|bool $qs - сссылка для разбора
+	 */
 	public function __construct($qs=false)
 	{
 		if($qs===false)
@@ -245,17 +286,54 @@ class Url extends BaseClass
 		$this->file=Eleanor::$filename;
 	}
 
+	/**
+	 * Метод кодирования строк для использования кириличных и других символов, не относящихся к латиннице, в ссылках
+	 *
+	 * @param string $s - входящая строка
+	 */
 	public static function Encode($s)
 	{
 		return urlencode(CHARSET=='utf-8' ? $s : mb_convert_encoding((string)$s,'utf-8'));
 	}
 
+	/**
+	 * Метод декодирования строк, обратное действие методу Encode
+	 *
+	 * @param string $s - входящая строка
+	 */
 	public static function Decode($s)
 	{		$s=urldecode($s);
 		return preg_match('/^.{1}/us',$s)==1 ? mb_convert_encoding($s,CHARSET,'utf-8') : $s;
 	}
 
-	protected static function QueryPart($a,$p,&$r)
+	/**
+	 * Метод для генерации сложных динамических URLов, состоящих из многомерных массивов
+	 *
+	 * @param array $a - многомерный массив параметров, которых должен быть преобразован в URL
+	 * @param string $d - разделитель параметров, получаемого URLа
+	 */
+	public static function Query(array$a,$d='&amp;')
+	{
+		$r=array();
+		foreach($a as $k=>&$v)
+		{
+			$k=urlencode($k);
+			if(is_array($v))
+				static::QueryPart($v,$k.'[',$r);
+			elseif($v or (string)$v=='0')
+				$r[]=$k.'='.(is_string($v) ? urlencode($v) : (int)$v);
+		}
+		return join($d,$r);
+	}
+
+	/**
+	 * Метод генерации многомерных параметров для метода Query.
+	 *
+	 * @param array $a - массив параметров
+	 * @param string $p - префикс для каждого параметра
+	 * @param array &$r - ссылка на массив для помещения результатов
+	 */
+	protected static function QueryPart(array$a,$p,&$r)
 	{
 		$i=0;
 		foreach($a as $k=>&$v)
@@ -263,22 +341,6 @@ class Url extends BaseClass
 				static::QueryPart($v,$p.$k.'][',$r);
 			elseif($v or (string)$v=='0')
 				$r[]=$p.(($k===$i++) ? '' : urlencode($k)).']='.(is_string($v) ? urlencode($v) : (int)$v);
-	}
-
-	public static function Query($a,array$o=array())
-	{
-		$o+=array(
-			'delim'=>'&amp;',
-		);
-		$r=array();
-		foreach($a as $k=>&$v)
-		{			$k=urlencode($k);
-			if(is_array($v))
-				static::QueryPart($v,$k.'[',$r);
-			elseif($v or (string)$v=='0')
-				$r[]=$k.'='.(is_string($v) ? urlencode($v) : (int)$v);
-		}
-		return join($o['delim'],$r);
 	}
 }
 

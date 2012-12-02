@@ -291,6 +291,9 @@ $(function(){
 		elseif(!isset($_SESSION))
 			Eleanor::StartSession();
 
+		#Сохранение старого значения для сессии
+		$a['options']['value']=$a['value'];
+
 		$a['options']['path']=rtrim($a['options']['path'],'\\/');
 		$a['value']=$a['value'] ? (array)$a['value'] : array();
 		$full=array();
@@ -484,43 +487,43 @@ $(function(){
 		Eleanor::StartSession($session);
 		if(!isset($_SESSION[__class__][$name]))
 			return Error(static::$Language['session_lost']);
-		$a=$_SESSION[__class__][$name];
+		$sess=$_SESSION[__class__][$name];
 
 		switch(isset($_POST['do']) ? (string)$_POST['do'] : '')
 		{
 			case'write':
-				if(!in_array('address',$a['source']))
+				if(!in_array('address',$sess['source']))
 					return Error();
 				$value=isset($_POST['image']) ? (string)$_POST['image'] : false;
 				if($value and (strpos($value,'://')!==false or is_file($f=Eleanor::FormatPath($value))))
 				{
-					if($a['types'] and !in_array(substr(strrchr($a['new'],'.'),1),$a['types']))
-						return Error(sprintf(static::$Language['only_types'],join(', ',$a['types'])));
+					if($sess['types'] and !in_array(substr(strrchr($sess['new'],'.'),1),$sess['types']))
+						return Error(sprintf(static::$Language['only_types'],join(', ',$sess['types'])));
 
 					if(isset($f))
 					{
 						if(!$sizes=@getimagesize($f))
 							return Error(static::$Language['not_image']);
 						list($w,$h)=$sizes;
-						if($a['max_image_size'][0]>0 and $a['max_image_size'][0]<$w)
-							return Error(sprintf(static::$Language['bigger_w'],$a['max_image_size'][0],$w));
-						if($a['max_image_size'][1]>0 and $a['max_image_size'][1]<$h)
-							return Error(sprintf(static::$Language['bigger_h'],$a['max_image_size'][1],$h));
-						if($a['nosmaller'] and ($a['max_image_size'][1]>0 and $a['max_image_size'][1]>$h or $a['max_image_size'][0]>0 and $a['max_image_size'][0]>$w))
-							return Error(sprintf(static::$Language['smaller'],$w,$h,$a['max_image_size'][0] ? $a['max_image_size'][0] : '&infin;',$a['max_image_size'][1] ? $a['max_image_size'][1] : '&infin;'));
+						if($sess['max_image_size'][0]>0 and $sess['max_image_size'][0]<$w)
+							return Error(sprintf(static::$Language['bigger_w'],$sess['max_image_size'][0],$w));
+						if($sess['max_image_size'][1]>0 and $sess['max_image_size'][1]<$h)
+							return Error(sprintf(static::$Language['bigger_h'],$sess['max_image_size'][1],$h));
+						if($sess['nosmaller'] and ($sess['max_image_size'][1]>0 and $sess['max_image_size'][1]>$h or $sess['max_image_size'][0]>0 and $sess['max_image_size'][0]>$w))
+							return Error(sprintf(static::$Language['smaller'],$w,$h,$sess['max_image_size'][0] ? $sess['max_image_size'][0] : '&infin;',$sess['max_image_size'][1] ? $sess['max_image_size'][1] : '&infin;'));
 					}
-					$a['value']=$value;
+					$sess['value']=$value;
 				}
 				else
-					$a['value']='';
+					$sess['value']='';
 			break;
 			case'delete':
-				$a['value']='';
+				$sess['value']='';
 			break;
 			default:
 				return Error();
 		}
-		$_SESSION[__class__][$name]=$a;
+		$_SESSION[__class__][$name]=$sess;
 		Result(true);
 	}
 
@@ -531,26 +534,26 @@ $(function(){
 		Eleanor::StartSession($session);
 		if(!isset($_SESSION[__class__][$name]))
 			return Error('Session lost');
-		$a=$_SESSION[__class__][$name];
+		$sess=$_SESSION[__class__][$name];
 
-		if(!isset($_FILES['image']) or !is_uploaded_file($_FILES['image']['tmp_name']) or !in_array('upload',$a['source']))
+		if(!isset($_FILES['image']) or !is_uploaded_file($_FILES['image']['tmp_name']) or !in_array('upload',$sess['source']))
 			return Error('No file');
 
 		if(!$sizes=@getimagesize($_FILES['image']['tmp_name']))
 			return Error(static::$Language['not_image']);
 		list($w,$h)=$sizes;
 
-		if($a['nosmaller'] and ($a['max_image_size'][1]>0 and $a['max_image_size'][1]>$h or $a['max_image_size'][0]>0 and $a['max_image_size'][0]>$w))
-			return Error(sprintf(static::$Language['smaller'],$w,$h,$a['max_image_size'][0] ? $a['max_image_size'][0] : '&infin;',$a['max_image_size'][1] ? $a['max_image_size'][1] : '&infin;'));
+		if($sess['nosmaller'] and ($sess['max_image_size'][1]>0 and $sess['max_image_size'][1]>$h or $sess['max_image_size'][0]>0 and $sess['max_image_size'][0]>$w))
+			return Error(sprintf(static::$Language['smaller'],$w,$h,$sess['max_image_size'][0] ? $sess['max_image_size'][0] : '&infin;',$sess['max_image_size'][1] ? $sess['max_image_size'][1] : '&infin;'));
 
-		$max_w=$a['max_image_size'][0]>0 && $a['max_image_size'][0]<$w;
-		$max_h=$a['max_image_size'][1]>0 && $a['max_image_size'][1]<$h;
-		if($a['resize']=='d')
+		$max_w=$sess['max_image_size'][0]>0 && $sess['max_image_size'][0]<$w;
+		$max_h=$sess['max_image_size'][1]>0 && $sess['max_image_size'][1]<$h;
+		if($sess['resize']=='d')
 		{
 			if($max_w)
-				return Error(sprintf(static::$Language['bigger_w'],$a['max_image_size'][0],$w));
+				return Error(sprintf(static::$Language['bigger_w'],$sess['max_image_size'][0],$w));
 			if($max_h)
-				return Error(sprintf(static::$Language['bigger_h'],$a['max_image_size'][1],$h));
+				return Error(sprintf(static::$Language['bigger_h'],$sess['max_image_size'][1],$h));
 		}
 
 		$to=Eleanor::$uploads.'/temp/';
@@ -568,25 +571,25 @@ $(function(){
 				Image::Preview(
 					$ufn,
 					array(
-						'width'=>$a['max_image_size'][0],
-						'height'=>$a['max_image_size'][1],
+						'width'=>$sess['max_image_size'][0],
+						'height'=>$sess['max_image_size'][1],
 						'cut_first'=>false,
-						'cut_last'=>$a['resize']!='b',
-						'first'=>$a['resize'],
+						'cut_last'=>$sess['resize']!='b',
+						'first'=>$sess['resize'],
 						'newname'=>$ufn,
 					)
 				);
-			$a['value']=array(
+			$sess['value']=array(
 				'image'=>$to,
-				'preview'=>$a['preview'] ? Eleanor::$uploads.'/temp/'.basename(Image::Preview($ufn,array('suffix'=>$a['prevsuff'])+(is_array($a['preview']) ? $a['preview'] : array()))) : false
+				'preview'=>$sess['preview'] ? Eleanor::$uploads.'/temp/'.basename(Image::Preview($ufn,array('suffix'=>$sess['prevsuff'])+(is_array($sess['preview']) ? $sess['preview'] : array()))) : false
 			);
 		}
 		catch(EE$E)
 		{
 			return Error($E->getMessage());
 		}
-		$_SESSION[__class__][$name]=$a;
-		Result($a['preview'] ? array('file'=>$a['value']['image'],'preview'=>$a['value']['preview']) : array('file'=>$a['value']['image']));
+		$_SESSION[__class__][$name]=$sess;
+		Result($sess['preview'] ? array('file'=>$sess['value']['image'],'preview'=>$sess['value']['preview']) : array('file'=>$sess['value']['image']));
 	}
 }
 ControlUploadImage::$Language=new Language;

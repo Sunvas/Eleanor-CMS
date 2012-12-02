@@ -216,7 +216,7 @@ switch($step)
 			if(!$error)
 				break;
 		}
-		elseif(is_file(Eleanor::$root.'config_general.php') and !is_file(Eleanor::$root.'config_general.bak'))
+		elseif(is_file(Eleanor::$root.'config_general.php') and (!is_file(Eleanor::$root.'config_general.bak') or isset($_GET['igbak'])))
 		{			Install::IncludeDb();
 			$percent=65;
 			$navi=$lang['enter_pass'];
@@ -281,7 +281,7 @@ switch($step)
 			</form></div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';
 			break;
 		}
-		elseif(isset($_POST['s']))
+		elseif(isset($_GET['s']))
 		{
 			if(is_file(Eleanor::$root.'config_general.bak') and !is_file(Eleanor::$root.'config_general.php'))
 			{
@@ -329,7 +329,7 @@ switch($step)
 
 			$percent=65;
 			$navi=$title=$lang['updating'];
-			$url='update.php?step=2&s='.session_id();
+			$url='update.php?step=2&igbak=1&s='.session_id();
 			Eleanor::$Template->RedirectScreen($url,5);
 
 			$text='<div class="wpbox wpbwhite"><div class="wptop"><b>&nbsp;</b></div><div class="wpmid"><div class="wpcont">

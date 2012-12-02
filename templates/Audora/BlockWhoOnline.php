@@ -19,8 +19,7 @@ $(function(){
 					event:"online_detail",
 					ip:$(this).data("gip")||"",
 					id:$(this).data("uid")||0,
-					service:$(this).data("s"),
-					language:CORE.language
+					service:$(this).data("s")
 				},
 				function(r)
 				{					win.document.open('text/html','replace');
@@ -37,8 +36,7 @@ $(function(){
 			{
 				direct:"admin",
 				file:"users",
-				event:"online",
-				language:CORE.language
+				event:"online"
 			},
 			function(r)
 			{

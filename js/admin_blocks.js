@@ -30,7 +30,6 @@ function BlocksList()
 						direct:"admin",
 						file:"blocks",
 						event:"settitle",
-						language:CORE.language,
 						title:t,
 						id:th.parent().data("id")
 					},
@@ -79,7 +78,6 @@ function AddEditBlock()
 								direct:"admin",
 								file:"blocks",
 								event:"tryconf",
-								language:CORE.language,
 								f:v
 							},
 							function(r)

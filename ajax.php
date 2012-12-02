@@ -26,7 +26,7 @@ if(CHARSET!='utf-8' and $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest')
 	array_walk_recursive($_GET,$F);
 }
 
-ApplyLang(isset($_POST['language']) ? (string)$_POST['language'] : (isset($_GET['lang']) ? (string)$_GET['lang'] : false));
+ApplyLang();
 
 if(Eleanor::$vars['site_closed'] and !Eleanor::LoadLogin(Eleanor::$services['admin']['login'])->IsUser())
 	return Error(Eleanor::$Language['main']['site_closed']);
@@ -180,11 +180,11 @@ function SomeAjax()
 	}
 }
 
-function ApplyLang($l=false)
+function ApplyLang($gl=false)
 {
 	if(Eleanor::$vars['multilang'])
 	{
-		if(($l or !Eleanor::$Login->IsUser() and $l=Eleanor::GetCookie(Eleanor::$service.'_lang')) and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
+		if(!Eleanor::$Login->IsUser() and ($gl or $gl=Eleanor::GetCookie('lang')) and isset(Eleanor::$langs[$gl]) and $gl!=LANGUAGE)
 		{
 			Language::$main=$l;
 			Eleanor::$Language->Change($l);
@@ -204,23 +204,11 @@ function BeAs($n)
 
 	Eleanor::$filename=Eleanor::$services[$n]['file'];
 
+	Eleanor::$service=$n;
+	Eleanor::$Language->queue['main'][]='langs/'.$n.'-*.php';
 	if(Eleanor::$services[$n]['login']!=Eleanor::$services[Eleanor::$service]['login'])
 		Eleanor::ApplyLogin(Eleanor::$services[$n]['login']);
-	Eleanor::$service=$n;
-
-	Eleanor::$Language->queue['main'][]='langs/'.$n.'-*.php';
-	if(Eleanor::$vars['multilang'])
-	{
-		if(!Eleanor::$Login->IsUser() and $l=Eleanor::GetCookie(Eleanor::$service.'_lang') and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
-		{
-			Language::$main=$l;
-			Eleanor::$Language->Change($l);
-		}
-		foreach(Eleanor::$lvars as $k=>&$v)
-			Eleanor::$vars[$k]=Eleanor::FilterLangValues($v);
-	}
-	else
-		Eleanor::$lvars=array();
+	ApplyLang();
 
 	if($n=='user')
 	{
@@ -242,5 +230,4 @@ function BeAs($n)
 	}
 	else
 		Eleanor::InitTemplate(Eleanor::$services[$n]['theme']);
-	ApplyLang();
 }

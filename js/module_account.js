@@ -19,7 +19,6 @@ CORE.AcRegister={	max_name:15,	module:"",
 			return CORE.Ajax(
 				{
 					module:this.module,
-					language:CORE.language,
 					"do":"register",
 					event:"login",
 					name:name
@@ -42,7 +41,6 @@ CORE.AcRegister={	max_name:15,	module:"",
 			return CORE.Ajax(
 				{
 					module:this.module,
-					language:CORE.language,
 					"do":"register",
 					event:"email",
 					email:email

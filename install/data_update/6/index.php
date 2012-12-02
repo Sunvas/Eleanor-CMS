@@ -248,7 +248,7 @@ SQL
 
 		Eleanor::$Db->Query('INSERT INTO `'.P.<<<'SQL'
 config_l` (`id`, `language`, `title`, `descr`, `value`, `serialized`, `default`, `extra`, `startgroup`) VALUES
-(1, 'russian', 'Основной домен', 'Вводится без приставки http://', 'eleanor.ru', 0, 'eleanor.ru', '', 'Домен'),
+(1, 'russian', 'Основной домен', 'Вводится без приставки http://', '', 0, '', '', 'Домен'),
 (2, 'russian', 'Поддержка паркованных доменов', 'При запуске сайта на паркованном домене', 'redirect', 0, 'redirect', 'array(\r\n		''options''=>array(\r\n			''ignore''=>''Игнорировать'',\r\n			''redirect''=>''Перенаправить все ссылки на основной домен'',\r\n			''rel''=>''Добавить rel canonical'',\r\n		),\r\n	)', ''),
 (3, 'russian', 'Кеширование страниц браузером', 'Введите стандартный срок кеширования страницы в минутах. 0 - отключить кеширование.', '600', 0, '600', '', 'Оптимизация нагрузки'),
 (4, 'russian', 'Включать GZIP сжатие?', 'Включение этой опции позволит сэкономить трафик', '1', 0, '1', '', ''),
@@ -301,7 +301,7 @@ config_l` (`id`, `language`, `title`, `descr`, `value`, `serialized`, `default`,
 (51, 'russian', 'Высота captcha', '', '60', 0, '60', '', ''),
 (52, 'russian', 'Разброс символов по вертикали', 'Максимальное отклонение символов по вертикали от центра.', '5', 0, '5', '', ''),
 (53, 'russian', 'Способ отправки e-mail', '', 'mail', 0, 'mail', 'array(''options''=>array(''php''=>''PHP mail'',''smtp''=>''SMTP'',))', 'Общие настройки'),
-(54, 'russian', 'E-mail отправителя', '', 'ss@ss.ru', 0, 'ss@ss.ru', '', ''),
+(54, 'russian', 'E-mail отправителя', '', '', 0, '', '', ''),
 (55, 'russian', 'Важность', '', '3', 0, '3', 'array(\r\n		''options''=>array(1=>''Высочайшая'',''Высокая'',''Обычная'',''Низкая'',''Низшая''),\r\n	)', ''),
 (56, 'russian', 'E-mail для ответа', 'В случае, если ответы от пользователей необходимо принимать на другой e-mail, заполните это поле.', '', 0, '', '', ''),
 (57, 'russian', 'E-mail для подтверждения о прочтении', '', '', 0, '', '', ''),
@@ -361,7 +361,7 @@ config_l` (`id`, `language`, `title`, `descr`, `value`, `serialized`, `default`,
 (111, 'russian', 'Период между оцениваниями в днях', 'Если выставлять оценку могут не только пользователи, но и гости, эта опция определяет время, по истечению которого гость сможет вновь выставить оценку.', '3', 0, '3', '', ''),
 (112, 'russian', 'Минимальная негативная оценка', 'Значение не может быть выше нуля. Для отключения негативных оценок, введите 0.', '-3', 0, '-3', '', ''),
 (113, 'russian', 'Максимальная позитивная оценка', 'Значение не может быть ниже нуля. Для отключения позитивных оценок, введите 0.', '3', 0, '3', '', ''),
-(1, 'ukrainian', 'Основний домен', 'Вводиться без приставки http://', 'eleanor.ru', 0, 'eleanor.ru', '', 'Домен'),
+(1, 'ukrainian', 'Основний домен', 'Вводиться без приставки http://', '', 0, '', '', 'Домен'),
 (2, 'ukrainian', 'Підтримка паркованих доменів', 'При запуску сайту на паркованому домені', 'redirect', 0, 'redirect', 'array(\r\n		''options''=>array(\r\n			''ignore''=>''Ігнорувати'',\r\n			''redirect''=>''Перенаправити всі посилання на основний домен'',\r\n			''rel''=>''Додати rel canonical'',\r\n		),\r\n	)', ''),
 (3, 'ukrainian', 'Кешування сторінок браузером', 'Введіть стандартний термін кешування сторінки у хвилинах. 0 - відключити кешування.', '600', 0, '600', '', 'Оптимізація навантаження'),
 (4, 'ukrainian', 'Включати GZIP стиснення?', 'Включення цієї опції дозволить заощадити трафік', '1', 0, '', '', ''),
@@ -414,7 +414,7 @@ config_l` (`id`, `language`, `title`, `descr`, `value`, `serialized`, `default`,
 (51, 'ukrainian', 'Висота captcha', '', '60', 0, '60', '', ''),
 (52, 'ukrainian', 'Розкид символів по вертикалі', 'Максимальне відхилення символів по вертикалі від центру.', '5', 0, '5', '', ''),
 (53, 'ukrainian', 'Спосіб відправки e-mail', '', 'mail', 0, 'mail', 'array(''options''=>array(''php''=>''PHP mail'',''smtp''=>''SMTP'',))', 'Загальні налаштування'),
-(54, 'ukrainian', 'E-mail відправника', 'С какого ящика будут приходить письма?', 'ss@ss.ru', 0, 'ss@ss.ru', '', ''),
+(54, 'ukrainian', 'E-mail відправника', 'С какого ящика будут приходить письма?', '', 0, '', '', ''),
 (55, 'ukrainian', 'Важливість', '', '3', 0, '3', 'array(\r\n		''options''=>array(1=>''Найвища'',''Висока'',''Нормальна'',''Низька'',''Найнижча''),\r\n	)', ''),
 (56, 'ukrainian', 'E-mail для відповіді', 'У разі, якщо відповіді від користувачів необхідно приймати на інший e-mail, заповніть це поле.', '', 0, '', '', ''),
 (57, 'ukrainian', 'E-mail для підтвердження про прочитання', '', '', 0, '', '', ''),
@@ -474,7 +474,7 @@ config_l` (`id`, `language`, `title`, `descr`, `value`, `serialized`, `default`,
 (111, 'ukrainian', 'Період між оцінювання у днях', 'Якщо виставляти оцінку можуть не лише користувачі, але й гості, ця опція визначає час, по закінченню якого гість зможе знову виставити оцінку.', '3', 0, '3', '', ''),
 (112, 'ukrainian', 'Мінімальна негативна оцінка', 'Значення не може бути більше нуля. Для відключення негативних оцінок, введіть 0.', '-3', 0, '-3', '', ''),
 (113, 'ukrainian', 'Максимальна позитивна оцінка', 'Значення не може бути нижче нуля. Для відключення позитивних оцінок, введіть 0', '3', 0, '3', '', ''),
-(1, 'english', 'Primary domain', 'Enter without prefix http://', 'eleanor.ru', 0, 'eleanor.ru', '', 'Domain'),
+(1, 'english', 'Primary domain', 'Enter without prefix http://', '', 0, '', '', 'Domain'),
 (2, 'english', 'Support for parked domains', 'When site running on a parked domain', 'redirect', 0, 'redirect', 'array(\r\n		''options''=>array(\r\n			''ignore''=>''Ignore'',\r\n			''redirect''=>''Redirect all links to the primary domain'',\r\n			''rel''=>''Add rel canonical'',\r\n		),\r\n	)', ''),
 (3, 'english', 'Browser page caching', 'Enter the standard term caching pages in minutes. 0 - disable caching.', '600', 0, '600', '', 'Optimizing workload'),
 (4, 'english', 'Enamble GZIP compression?', 'Enabling this option will save bandwidth', '1', 0, '', '', ''),
@@ -527,7 +527,7 @@ config_l` (`id`, `language`, `title`, `descr`, `value`, `serialized`, `default`,
 (51, 'english', 'Captcha height', '', '60', 0, '60', '', ''),
 (52, 'english', 'The scatter symbols on the vertical', 'The maximum deviation of the symbols on the vertical line from the center.', '5', 0, '5', '', ''),
 (53, 'english', 'Way to send e-mail', '', 'mail', 0, 'mail', 'array(''options''=>array(''php''=>''PHP mail'',''smtp''=>''SMTP'',))', 'General settiongs'),
-(54, 'english', 'Sender e-mail', 'From what email letters will send?', 'ss@ss.ru', 0, 'ss@ss.ru', '', 'Общие настройки'),
+(54, 'english', 'Sender e-mail', 'From what email letters will send?', '', 0, '', '', 'Общие настройки'),
 (55, 'english', 'Importance', '', '3', 0, '3', 'array(\r\n		''options''=>array(1=>''Highest'',''High'',''Normal'',''Low'',''Lowest''),\r\n	);', ''),
 (56, 'english', 'E-mail for response', 'If the response from the user should be taken to another e-mail, fill out this field.', '', 0, '', '', ''),
 (57, 'english', 'E-mail to confirm a read', '', '', 0, '', '', ''),
@@ -598,7 +598,7 @@ SQL
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'news_l` ADD `announcement` TEXT NOT NULL AFTER `title`, CHANGE `url` `uri` VARCHAR(100) NOT NULL,  DROP INDEX `url`, ADD INDEX `uri` ( `uri` ), DROP INDEX `title`, ADD FULLTEXT `title` (`title`, `announcement`, `text`)');
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'news_tags` CHANGE `news` `cnt` SMALLINT UNSIGNED NOT NULL, DROP INDEX `news`, ADD INDEX `cnt`(`cnt`)');
 
-		Eleanor::$Db->Query('RENAME TABLE `'.P.'news_nt` TO `a_news_rt`');
+		Eleanor::$Db->Query('RENAME TABLE `'.P.'news_nt` TO `'.P.'news_rt`');
 		$cr=Eleanor::$Db->Query('SHOW CREATE TABLE `'.P.'news_rt`')->fetch_row();
 		preg_match('#CONSTRAINT `('.P.'news_rt_ibfk_\d+)` FOREIGN KEY \(`news`\)#',$cr[1],$cr);
 
@@ -608,6 +608,7 @@ SQL
 		Eleanor::$Db->Query('UPDATE `'.P.'news_l` SET `announcement`=LEFT(`text`,LOCATE(\'[_separator_]\',`text`)-1), `text`=SUBSTRING(`text`,LOCATE(\'[_separator_]\',`text`)+13) WHERE LOCATE(\'[_separator_]\',`text`)!=0');
 
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'users_extra` CHANGE `vkontakte` `vk` VARCHAR( 40 ) NOT NULL');
+		Eleanor::$Db->Update(P.'users_site',array('login_keys'=>''));
 		Eleanor::$Db->Query('RENAME TABLE `'.P.'users_loginza` TO `'.P.'users_external_auth`');
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'users` CHANGE `ban_date` `banned_until` TIMESTAMP NOT NULL DEFAULT \'0000-00-00 00:00:00\'');
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'blocks_groups` CHANGE `addon` `extra` TEXT NOT NULL');

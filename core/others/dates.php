@@ -15,11 +15,14 @@ class Dates
 			$value='';
 		else
 			$value=preg_replace('#(\d{1,2}):(\d{1,2}):00#','\1:\2',$value);
+		$ba=array();
+		if(isset($a['tabindex']))
+			$ba['tabindex']=$a['tabindex']+1;
 		array_push($GLOBALS['jscripts'],'addons/calendar/calendar.js','addons/calendar/lang/'.substr(Language::$main,0,3).'.js');
 		$GLOBALS['head'][__class__.__function__]='<link media="screen" href="addons/calendar/style.css" type="text/css" rel="stylesheet" />';
 		if(!isset($a['id']))
 			$a['id']=preg_replace('#[^a-z0-9\-_]+#i','',$name);
-		return Eleanor::Edit($name,$value,$a).Eleanor::Button('...','button')
+		return Eleanor::Edit($name,$value,$a).Eleanor::Button('...','button',$ba)
 		.'<script type="text/javascript">//<![CDATA[
 $(function(){
 	$("#'.$a['id'].'").on("clone",function(){		this.Calendar=new Calendar({

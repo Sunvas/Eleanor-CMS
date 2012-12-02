@@ -28,7 +28,7 @@ if(Eleanor::$vars['multilang'])
 			Eleanor::SetCookie(Eleanor::$service.'_lang',$_GET['language']);
 		return GoAway(html_entity_decode(LangNewUrl(getenv('HTTP_REFERER'),$_GET['language'])));
 	}
-	if(!Eleanor::$Login->IsUser() and $l=Eleanor::GetCookie(Eleanor::$service.'_lang') and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
+	if(!Eleanor::$Login->IsUser() and $l=Eleanor::GetCookie('lang') and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
 	{
 		Language::$main=$l;
 		Eleanor::$Language->Change($l);

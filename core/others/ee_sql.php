@@ -10,7 +10,7 @@
 */
 class EE_SQL extends EE
 {
-	private
+	public#private - #PHP 5.4, заменить после того, как уберется костыль $THIS ниже
 		$type;
 
 	public function __construct($type,$extra=array(),$PO=null)
@@ -22,7 +22,7 @@ class EE_SQL extends EE
 		if(isset($d[1],$d[2],$d[0]['class'],$d[1]['class']) and $d[0]['class']=='EE_SQL' and $d[1]['class']=='Db')
 			$d=isset($d[1]['function']) && $d[1]['function']=='Query' ? $d[1] : $d[2];
 		else
-			$d=$d[0];
+			$d=isset($d[1]) ? $d[1] : $d[0];
 
 		$this->file=$d['file'];
 		$this->line=$d['line'];

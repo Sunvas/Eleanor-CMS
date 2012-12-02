@@ -186,7 +186,6 @@ class TplUserAccount
 		return$C.$Lst->end().'<script type="text/javascript">//<![CDATA[
 $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(this);
 		CORE.Ajax({				module:"'.$GLOBALS['Eleanor']->module['name'].'",
-				language:CORE.language,
 				event:"killsession",
 				key:th.data("key")			},
 			function()
@@ -311,13 +310,13 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form(array('id'=>'regform'))
 			->begin()
-			->item(array(static::$lang['name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>1,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_name'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="name-error" style="color:red;display:none;">'.$errname.'</div>','tip'=>static::$lang['name_'],'imp'=>true,'td1'=>array('style'=>'width:150px;')))
+			->item(array(static::$lang['name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>1,'required'=>true,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_name'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="name-error" style="color:red;display:none;">'.$errname.'</div>','tip'=>static::$lang['name_'],'imp'=>true,'td1'=>array('style'=>'width:150px;')))
 			->item($lang['full_name'],Eleanor::Edit('full_name',$values['full_name'],array('tabindex'=>2,'style'=>'width:80%')))
-			->item(array('E-mail',Eleanor::Edit('email',$values['email'],array('tabindex'=>3,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_email'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="email-error" style="color:red;display:none;">'.$erremail.'</div>','tip'=>static::$lang['email_'],'imp'=>true))
+			->item(array('E-mail',Eleanor::Edit('email',$values['email'],array('tabindex'=>3,'required'=>true,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_email'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="email-error" style="color:red;display:none;">'.$erremail.'</div>','tip'=>static::$lang['email_'],'imp'=>true))
 			->item(array(static::$lang['pass'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>4)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>static::$lang['pass_']))
 			->item(static::$lang['rpass'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>5)).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>');
 		if($captcha)
-			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>6)),'tip'=>static::$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>6,'required'=>true)),'tip'=>static::$lang['captcha_']));
 
 		return Eleanor::JsVars(
 				array(
@@ -710,7 +709,7 @@ $(function(){	var ef={//Error field
 			->form()
 			->begin()
 			->item(array(static::$lang['curr_email'],($em=Eleanor::$Login->GetUserValue('email')) ? $em : '&mdash;','td1'=>array('style'=>'width:200px')))
-			->item(static::$lang['new_email'],Eleanor::Edit('email',$values['email'],array('tabindex'=>1)));
+			->item(static::$lang['new_email'],Eleanor::Edit('email',$values['email'],array('tabindex'=>1,'required'=>true)));
 
 		if($captcha)
 			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_']));
@@ -1185,7 +1184,7 @@ $(function(){
 
 		$C.=$Lst->begin()
 			.'<tr><td rowspan="5" style="padding:5px;width:10%">'.$avatar.'</td><td class="label" style="width:150px">'.static::$lang['nickname'].'</td><td>'.$sname.'</td></tr>'
-			.($sname==$user['full_name'] ? '' : $Lst->item(static::$lang['full_name'],$user['full_name']));
+			.($sname==$user['full_name'] ? '' : $Lst->item($lang['full_name'],$user['full_name']));
 
 		$Lst->item(static::$lang['registered'],Eleanor::$Language->Date($user['register'],'fdt'))
 			->item(static::$lang['last_visit'],Eleanor::$Language->Date($user['last_visit'],'fdt'));

@@ -24,30 +24,16 @@ unset(Eleanor::$vars['site_close_mes']);
 
 $title=array();
 
-if(Eleanor::$vars['multilang'])
-{
-	$isu=Eleanor::$Login->IsUser();
-	if(!$isu and $l=Eleanor::GetCookie(Eleanor::$service.'_lang') and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
-	{
-		Language::$main=$l;
-		Eleanor::$Language->Change($l);
-	}
-	if(isset($_GET['lang']))
-	{
-		$lang=$_GET['lang'];
-		foreach(Eleanor::$langs as $k=>&$v)
-			if($v['uri']==$lang and Language::$main!=$lang)
-			{
-				Language::$main=$k;
-				break;
-			}
-	}
+$lang=false;
+if(isset($_GET['lang']) and LANGUAGE!=$_GET['lang'])
+	foreach(Eleanor::$langs as $k=>&$v)
+		if($v['uri']==$_GET['lang'])
+		{
+			$lang=$k;
+			break;
+		}
+ApplyLang($lang);
 
-	foreach(Eleanor::$lvars as $k=>&$v)
-		Eleanor::$vars[$k]=Eleanor::FilterLangValues($v);
-}
-else
-	Eleanor::$lvars=array();
 if(Eleanor::$Permissions->IsBanned())
 	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::USER,array('ban'=>'group'));
 
@@ -57,16 +43,9 @@ if($m)
 	$Eleanor->modules=Modules::GetCache();
 	if(!isset($Eleanor->modules['ids'][$m]))
 		return ExitPage();
-	$R=Eleanor::$Db->Query('SELECT `id`,`services`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files`,`image`,`user_groups` FROM `'.P.'modules` WHERE `id`='.(int)$Eleanor->modules['ids'][$m].' AND `active`=1 LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `id`,`services`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files`,`image` FROM `'.P.'modules` WHERE `id`='.(int)$Eleanor->modules['ids'][$m].' AND `active`=1 LIMIT 1');
 	if(!$a=$R->fetch_assoc())
 		return ExitPage(404);
-	if($a['user_groups'])
-	{
-		$groups=explode(',,',trim($a['user_groups'],','));
-		$user_groups=Eleanor::GetUserGroups();
-		if(count(array_intersect($groups,$user_groups))==0)
-			return ExitPage(403);
-	}
 	if(!$a['multiservice'])
 	{
 		$files=unserialize($a['files']);
@@ -332,22 +311,11 @@ function ExitPage($code=403,$r=301)
 	GoAway(PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>'errors','code'=>$code),false,true,Eleanor::$vars['furl']),$r);
 }
 
-#Функция "Будь как", делает сервис другим. Полностью :)
-function BeAs($n)
-{global$Eleanor;
-	if(Eleanor::$service==$n or !isset(Eleanor::$services[$n]))
-		return;
-
-	Eleanor::$filename=Eleanor::$services[$n]['file'];
-
-	if(Eleanor::$services[$n]['login']!=Eleanor::$services[Eleanor::$service]['login'])
-		Eleanor::ApplyLogin(Eleanor::$services[$n]['login']);
-	Eleanor::$service=$n;
-
-	Eleanor::$Language->queue['main'][]='langs/'.$n.'-*.php';
+function ApplyLang($l=false)
+{
 	if(Eleanor::$vars['multilang'])
 	{
-		if(!Eleanor::$Login->IsUser() and $l=Eleanor::GetCookie(Eleanor::$service.'_lang') and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
+		if(($l or !Eleanor::$Login->IsUser() and $l=Eleanor::GetCookie('lang')) and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
 		{
 			Language::$main=$l;
 			Eleanor::$Language->Change($l);
@@ -357,6 +325,37 @@ function BeAs($n)
 	}
 	else
 		Eleanor::$lvars=array();
+}
+
+function ApplyLang($gl=false)
+{
+	if(Eleanor::$vars['multilang'])
+	{
+		if(!Eleanor::$Login->IsUser() and ($gl or $gl=Eleanor::GetCookie('lang')) and isset(Eleanor::$langs[$gl]) and $gl!=LANGUAGE)
+		{
+			Language::$main=$l;
+			Eleanor::$Language->Change($l);
+		}
+		foreach(Eleanor::$lvars as $k=>&$v)
+			Eleanor::$vars[$k]=Eleanor::FilterLangValues($v);
+	}
+	else
+		Eleanor::$lvars=array();
+}
+
+#Функция "Будь как", делает сервис другим. Полностью :)
+function BeAs($n)
+{global$Eleanor;
+	if(Eleanor::$service==$n or !isset(Eleanor::$services[$n]))
+		return;
+
+	Eleanor::$filename=Eleanor::$services[$n]['file'];
+
+	Eleanor::$service=$n;
+	Eleanor::$Language->queue['main'][]='langs/'.$n.'-*.php';
+	if(Eleanor::$services[$n]['login']!=Eleanor::$services[Eleanor::$service]['login'])
+		Eleanor::ApplyLogin(Eleanor::$services[$n]['login']);
+	ApplyLang();
 
 	if($n=='user')
 	{
@@ -378,5 +377,4 @@ function BeAs($n)
 	}
 	else
 		Eleanor::InitTemplate(Eleanor::$services[$n]['theme']);
-	ApplyLang();
 }

@@ -22,8 +22,8 @@ class TaskInformer extends BaseClass implements Task
 		$vars=Eleanor::LoadOptions(array('errors','site'),true);
 
 		$f=Eleanor::$root.'addons/logs/errors.log.inc';
-		if(is_file($f))
-		{			$vars['errors_code_users']=$vars['errors_code_users'] ? explode(',,',trim($vars['errors_code_users'],',')) : array();
+		if($vars['errors_code_users'] and is_file($f))
+		{			$vars['errors_code_users']=explode(',,',trim($vars['errors_code_users'],','));
 			$users=array();
 			$R=Eleanor::$Db->Query('SELECT `email`,`name`,`language` FROM `'.P.'users_site` WHERE `id`'.Eleanor::$Db->In($vars['errors_code_users']));
 			while($a=$R->fetch_assoc())
@@ -54,9 +54,9 @@ class TaskInformer extends BaseClass implements Task
 					);				}			}		}
 
 		$f=Eleanor::$root.'addons/logs/db_errors.log.inc';
-		if(is_file($f))
+		if($vars['errors_db_users'] and is_file($f))
 		{
-			$vars['errors_db_users']=$vars['errors_db_users'] ? explode(',,',trim($vars['errors_db_users'],',')) : array();
+			$vars['errors_db_users']=explode(',,',trim($vars['errors_db_users'],','));
 			$users=array();
 			$R=Eleanor::$Db->Query('SELECT `email`,`name`,`language` FROM `'.P.'users_site` WHERE `id`'.Eleanor::$Db->In($vars['errors_db_users']));
 			while($a=$R->fetch_assoc())
@@ -104,9 +104,9 @@ class TaskInformer extends BaseClass implements Task
 		}
 
 		$f=Eleanor::$root.'addons/logs/request_errors.log.inc';
-		if(is_file($f))
+		if($vars['errors_requests_users'] and is_file($f))
 		{
-			$vars['errors_requests_users']=$vars['errors_requests_users'] ? explode(',,',trim($vars['errors_requests_users'],',')) : array();
+			$vars['errors_requests_users']=explode(',,',trim($vars['errors_requests_users'],','));
 			$users=array();
 			$R=Eleanor::$Db->Query('SELECT `email`,`name`,`language` FROM `'.P.'users_site` WHERE `id`'.Eleanor::$Db->In($vars['errors_requests_users']));
 			while($a=$R->fetch_assoc())

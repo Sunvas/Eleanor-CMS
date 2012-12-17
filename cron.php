@@ -27,7 +27,7 @@ $Eleanor=Eleanor::getInstance();
 Eleanor::$service='cron';#ID сервиса
 if(0<$t=strpos(Eleanor::$site_path,Eleanor::$filename))
 	Eleanor::$site_path=$t==1 ? '' : substr(Eleanor::$site_path,0,$t-1);
-Eleanor::LoadService();
+Eleanor::InitService();
 Eleanor::$Language->queue['main'][]='langs/main-*.php';
 
 ApplyLang(isset($_REQUEST['language']) ? (string)$_REQUEST['language'] : false);
@@ -218,11 +218,12 @@ function BeAs($n)
 		return;
 
 	Eleanor::$filename=Eleanor::$services[$n]['file'];
-
-	Eleanor::$service=$n;
 	Eleanor::$Language->queue['main'][]='langs/'.$n.'-*.php';
+
 	if(Eleanor::$services[$n]['login']!=Eleanor::$services[Eleanor::$service]['login'])
 		Eleanor::ApplyLogin(Eleanor::$services[$n]['login']);
+
+	Eleanor::$service=$n;
 	ApplyLang();
 
 	if($n=='user')

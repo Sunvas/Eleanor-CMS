@@ -113,12 +113,12 @@ class TPLAdminAccount
 			<table class="tabstyle tabform" id="ftable">
 				<tr class="infolabel"><td colspan="2"><a href="#">'.$ltpl['filters'].'</a></td></tr>
 				<tr>
-					<td><b>'.static::$lang['user_name'].'</b><br />'.Eleanor::Select('fi[namet]',$finamet,array('style'=>'width:30%')).Eleanor::Edit('fi[name]',$qs['']['fi']['name'],array('style'=>'width:68%')).'</td>
-					<td><b>E-mail</b><br />'.Eleanor::Edit('fi[email]',$qs['']['fi']['email']).'</td>
+					<td><b>'.static::$lang['user_name'].'</b><br />'.Eleanor::Select('fi[namet]',$finamet,array('style'=>'width:30%')).Eleanor::Input('fi[name]',$qs['']['fi']['name'],array('style'=>'width:68%')).'</td>
+					<td><b>E-mail</b><br />'.Eleanor::Input('fi[email]',$qs['']['fi']['email']).'</td>
 				</tr>
 				<tr>
-					<td><b>IDs</b><br />'.Eleanor::Edit('fi[id]',$qs['']['fi']['id']).'</td>
-					<td><b>IP</b><br />'.Eleanor::Edit('fi[ip]',$qs['']['fi']['ip']).'</td>
+					<td><b>IDs</b><br />'.Eleanor::Input('fi[id]',$qs['']['fi']['id']).'</td>
+					<td><b>IP</b><br />'.Eleanor::Input('fi[ip]',$qs['']['fi']['ip']).'</td>
 				</tr>
 				<tr>
 					<td><b>'.static::$lang['register'].'</b> '.static::$lang['from-to'].'<br />'.Dates::Calendar('fi[regfrom]',$qs['']['fi']['regfrom'],true,array('style'=>'width:35%')).' - '.Dates::Calendar('fi[regto]',$qs['']['fi']['regto'],true,array('style'=>'width:35%')).'</td>
@@ -151,7 +151,7 @@ $(function(){
 	{
 		static::Menu();
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 		$ltpl=Eleanor::$Language['tpl'];
 		$tusers='';
 		foreach($users as $k=>&$v)

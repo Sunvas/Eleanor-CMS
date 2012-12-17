@@ -11,11 +11,16 @@
 class ControlUploadFile extends BaseClass implements ControlsBase
 {
 	public static
-		$Language;
+		$Language;#Языковой объект
 
 	private static
-		$bypost;
+		$bypost;#Флаг чтения данных из POST
 
+	/**
+	 * Получение настроек контрола
+	 *
+	 * @param ControlsManager $Obj
+	 */
 	public static function GetSettings($Obj)
 	{
 		$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
@@ -26,7 +31,7 @@ class ControlUploadFile extends BaseClass implements ControlsBase
 			'path'=>array(
 				'title'=>static::$Language['path_to_save'],
 				'descr'=>static::$Language['path_to_save_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'options'=>array(
 					'extra'=>array(
 						'class'=>'uploadfile-path',
@@ -83,7 +88,7 @@ $(function(){
 			'types'=>array(
 				'title'=>static::$Language['file_types'],
 				'descr'=>static::$Language['file_types_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'default'=>$ml ? array(''=>array()) : array(),
 				'save'=>function($a)
 				{
@@ -134,7 +139,7 @@ $(function(){
 			'max_size'=>array(
 				'title'=>static::$Language['max_size_f'],
 				'descr'=>static::$Language['max_size_fd'],
-				'type'=>'edit',
+				'type'=>'input',
 				'default'=>$ml ? array(''=>'') : '',
 				'save'=>function($a)
 				{
@@ -188,6 +193,12 @@ $(function(){
 		);
 	}
 
+	/**
+	 * Получение контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Control($a,$Obj)
 	{
 		$a['options']+=array(
@@ -211,6 +222,12 @@ $(function(){
 		return Eleanor::$Template->ControlUploadFile('control',$uploaded,$writed,$a['value'],$a['controlname'],$a['options']);
 	}
 
+	/**
+	 * Сохранение контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Save($a,$Obj)
 	{
 		$a['options']+=array(
@@ -299,6 +316,12 @@ $(function(){
 		return'';
 	}
 
+	/**
+	 * Получение результата контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Result($a,$Obj,$co)
 	{		return Eleanor::$Template->ControlUploadFile('result',$a['value']);	}
 }

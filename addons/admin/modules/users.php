@@ -64,7 +64,7 @@ $Eleanor->us=array(
 	'location'=>array(
 		'title'=>$lang['location'],
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
@@ -106,7 +106,7 @@ $Eleanor->us=array(
 	'jabber'=>array(
 		'title'=>'Jabber',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
@@ -118,7 +118,7 @@ $Eleanor->us=array(
 	'skype'=>array(
 		'title'=>'Skype',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
@@ -130,7 +130,7 @@ $Eleanor->us=array(
 	'icq'=>array(
 		'title'=>'ICQ',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'save'=>function($a,$Obj)
 		{
 			$v=preg_replace('#[^0-9\s,]+#','',$a['value']);
@@ -150,7 +150,7 @@ $Eleanor->us=array(
 	'vk'=>array(
 		'title'=>$lang['vk'],
 		'descr'=>$lang['vk_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'save'=>'SaveVK',
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
@@ -163,7 +163,7 @@ $Eleanor->us=array(
 	'facebook'=>array(
 		'title'=>'Facebook',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'save'=>'SaveVK',
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
@@ -176,7 +176,7 @@ $Eleanor->us=array(
 	'twitter'=>array(
 		'title'=>'Twitter',
 		'descr'=>$lang['twitter_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->us_post,
 		'options'=>array(
 			'htmlsafe'=>true,
@@ -270,20 +270,20 @@ $Eleanor->gp=array(
 		'descr'=>$langg['flood_limit_'],
 		'bypost'=>&$Eleanor->us_post,
 		'save'=>'IntSave',
-		'type'=>'edit',
+		'type'=>'input',
 	),
 	'search_limit'=>array(
 		'title'=>$langg['search_limit'],
 		'descr'=>$langg['search_limit_'],
 		'bypost'=>&$Eleanor->us_post,
 		'save'=>'IntSave',
-		'type'=>'edit',
+		'type'=>'input',
 	),
 	'max_upload'=>array(
 		'title'=>$langg['max_size'],
 		'descr'=>$langg['max_size_'],
 		'bypost'=>&$Eleanor->us_post,
-		'type'=>'edit',
+		'type'=>'input',
 		'default'=>0,
 	),
 );
@@ -332,7 +332,7 @@ if(isset($_GET['do']))
 				'new_t'=>array(
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['descr4new'],
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>true,
 					'bypost'=>&$post,
 					'options'=>array(
@@ -355,7 +355,7 @@ if(isset($_GET['do']))
 				'name_t'=>array(
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['descr4name'],
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>true,
 					'bypost'=>&$post,
 					'options'=>array(
@@ -378,7 +378,7 @@ if(isset($_GET['do']))
 				'pass_t'=>array(
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['descr4name'],
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>true,
 					'bypost'=>&$post,
 					'options'=>array(
@@ -1141,7 +1141,7 @@ function Save($id)
 					'oldlogin'=>$old['name'],
 					'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 				);
-				Eleanor::Mail(
+				Email::Simple(
 					$values['email'],
 					Eleanor::ExecBBLogic($l['name_t'],$repl),
 					Eleanor::ExecBBLogic($l['name'],$repl)
@@ -1156,7 +1156,7 @@ function Save($id)
 					'pass'=>$extra['pass'],
 					'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 				);
-				Eleanor::Mail(
+				Email::Simple(
 					$values['email'],
 					Eleanor::ExecBBLogic($l['pass_t'],$repl),
 					Eleanor::ExecBBLogic($l['pass'],$repl)
@@ -1238,7 +1238,7 @@ function Save($id)
 				);
 				try
 				{
-					Eleanor::Mail(
+					Email::Simple(
 						$values['email'],
 						Eleanor::ExecBBLogic($l['new_t'],$repl),
 						Eleanor::ExecBBLogic($l['new'],$repl)

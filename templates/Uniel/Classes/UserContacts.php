@@ -53,16 +53,16 @@ class TplUserContacts
 			if($wh)
 				$Lst->item(static::$lang['whom'],Eleanor::Select('whom',$wh,array('tabindex'=>1)));
 			$Lst
-				->item(static::$lang['subject'],Eleanor::Edit('subject',$values['subject'],array('tabindex'=>2)))
+				->item(static::$lang['subject'],Eleanor::Input('subject',$values['subject'],array('tabindex'=>2)))
 				->item(static::$lang['message'],$GLOBALS['Eleanor']->Editor->Area('message',$values['message'],array('bypost'=>$bypost,'no'=>array('tabindex'=>3))));
 
 			if($canupload)
-				$Lst->item(array(static::$lang['file'],Eleanor::Control('file','file'),'descr'=>$canupload===true ? '' : sprintf(static::$lang['maxfs'],Files::BytesToSize($canupload))));
+				$Lst->item(array(static::$lang['file'],Eleanor::Input('file',false,array('type'=>'file')),'descr'=>$canupload===true ? '' : sprintf(static::$lang['maxfs'],Files::BytesToSize($canupload))));
 
 			if($captcha)
-				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>4)),'descr'=>static::$lang['captcha_']));
+				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>4)),'descr'=>static::$lang['captcha_']));
 
-			$content.=$Lst->end()->submitline(Eleanor::Control('sess','hidden',$values['sess']).Eleanor::Button('OK','submit',array('tabindex'=>5)))->endform();
+			$content.=$Lst->end()->submitline(Eleanor::Input('sess',$values['sess'],array('type'=>'hidden')).Eleanor::Button('OK','submit',array('tabindex'=>5)))->endform();
 		}
 		return$content;
 	}

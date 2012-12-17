@@ -15,22 +15,25 @@ class Ping extends BaseClass
 		PROCCESS_LIMIT=50;#Лимит пингов за раз
 
 	protected static
-		$services;
+		$services;#Все поисковые системы, поддерживающие пинг, список берется из файла addons/config_ping.php
 
-	/*
-		id - ID для уникализации записи. При записи с одинаковым ИД, остается только та запись, которая была записана последней
-		main - ссылка на сайт, где изменилась информация
-		[site] - название сайта.
-		[services] - поисковые сайты, которые нужно пинговать (ключи). Если не вводить - будут пинговаться все сайты.
-		[exclude] - поисквые сайты, которые нужно исключить из пинга. Если не вводить - исключений не будет.
-		[changes] - страница на которой произошли изменения
-		[rss] - RSS сайта
-		[categories] - категории. Ввести несколько, разделяя |. Либо массивом.
-	*/	public static function Add(array$a)
+	/**
+	 * Добавление задания для пинга поисковых систем об изменении содержимого сайта
+	 *
+	 * @param array $a Массив входящих параметров, ключи:
+	 * string id Уникальный id зписи
+	 * [string main] Ссылка на сайт, где изменилась информация
+	 * [string site] Название сайта.
+	 * [array services] Названия поисковых систем, которые нужно пинговать. Если опущено, будут пинговаться все системы.
+	 * [array exclude] Названия поисквых систем, которые нужно исключить из пинга. Если опущено, исключений не будет.
+	 * [string changes] Страница на которой произошли изменения
+	 * [string rss] RSS сайта
+	 * [array categories] Категории
+	 */	public static function Add(array$a)
 	{		Eleanor::$Db->Replace(
 			P.'ping',
 			array(
-				'id'=>isset($a['id']) ? (string)$a['id'] : '',
+				'id'=>isset($a['id']) ? (string)$a['id'] : uniqid(),
 				'pinged'=>0,
 				'!date'=>'NOW()',
 				'site'=>empty($a['site']) ? '' : join(',',(array)$a['site']),
@@ -45,9 +48,19 @@ class Ping extends BaseClass
 		Eleanor::$Db->Update(P.'tasks',array('!nextrun'=>'NOW()'),'`name`=\'ping\'');
 		Tasks::UpdateNextRun();	}
 
-	/*
-		Функция единичного пинга. Возвращает результат.
-	*/
+	/**
+	 * Единичный пинг поисковых систем
+	 *
+	 * @param array $a Массив входящих параметров, ключи:
+	 * [string main] Ссылка на сайт, где изменилась информация
+	 * [string site] Название сайта.
+	 * [array services] Названия поисковых систем, которые нужно пинговать. Если опущено, будут пинговаться все системы.
+	 * [array exclude] Названия поисквых систем, которые нужно исключить из пинга. Если опущено, исключений не будет.
+	 * [string changes] Страница на которой произошли изменения
+	 * [string rss] RSS сайта
+	 * [array categories] Категории
+	 * @return array Результат, возвращенный каждой из поисковых систем
+	 */
 	public static function Once(array$a)
 	{		if(!isset(self::$services))
 			self::$services=include Eleanor::$root.'addons/config_ping.php';
@@ -111,6 +124,9 @@ class Ping extends BaseClass
 		}
 		return$r;	}
 
+	/**
+	 * Запуск процесса пинга. Запускается через cron
+	 */
 	public static function Proccess()
 	{		$R=Eleanor::$Db->Query('SELECT `id`,`site`,`services`,`exclude`,`main`,`changes`,`rss`,`categories` FROM `'.P.'ping` WHERE `pinged`=0 ORDER BY `date` ASC LIMIT '.self::PROCCESS_LIMIT);
 		$n=$R->num_rows;

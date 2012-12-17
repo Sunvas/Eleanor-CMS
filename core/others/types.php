@@ -9,7 +9,11 @@
 	*Pseudonym
 */
 class Types
-{	public static function TimeZonesOptions($act=false)
+{	/**
+	 * Получение всех доступных временных зон сервера в виде option-ов для select-а
+	 *
+	 * @param string|array $act Выбранные пункты (включается параметр selected)
+	 */	public static function TimeZonesOptions($act=false)
 	{		$tzi=timezone_identifiers_list();
 
 		#http://php.net/manual/ru/timezones.others.php Пожалуйста, не используйте описанные здесь временные зоны (кроме UTC), они существуют только по причинам обратной совместимости.
@@ -33,9 +37,12 @@ class Types
 				$res.=Eleanor::Option($v,$v,$act==$v);
 		return$res;	}
 
-	/*
-		Функция возвращает Mime тип файла в зависимости от его расширения.
-	*/
+	/**
+	 * Определение Mime типа файла в зависимости от его расширения
+	 *
+	 * @param string $ext Расширения файла, либо полное имя файла
+	 * @param string $def Mime тип применяемый по умолчанию (если Mime тип не удастся определить)
+	 */
 	public static function MimeTypeByExt($ext,$def='application/octet-stream')
 	{
 		if(strpos($ext,'.')!==false)

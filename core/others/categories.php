@@ -11,22 +11,38 @@
 
 class Categories extends BaseClass
 {	public
-		$lid='cid',#название параметра на категорию в динамической ссылке
-		$imgfolder='images/categories/',
-		$dump;#Дамп БД категорий. Ведь очень часто приходиться выстраивать их в каком-то определенном порядке.
+		$lid='cid',#Название параметра категории в динамической ссылке
+		$imgfolder='images/categories/',#Каталог с логотипами категорий
+		$dump;#Дамп БД категорий, в удобном упорядоченном виде
 
-	public function Init($t,$hard=false,$nc=false)
-	{		if($nc)
-			$hard=true;
-		$r=$hard ? false : Eleanor::$Cache->Get($t.'_'.Language::$main);
+	/**
+	 * Конструктор, самый обыкновенный, ничем не приметный конструктор. Все входящие переменные передаются методу Init
+	 */
+	public function __construct()
+	{		$a=func_get_args();
+		if($a)			call_user_func_array(array($this,'Init'),$a);	}
+
+	/**
+	 * Инициализация класса, здесь задается имя таблицы, откуда будут формироваться категории
+	 *
+	 * @param string $t Имя основной (не языковой) таблицы
+	 * @param int|FALSE $cache Флаг, определяющий время кэширования дампа таблицы, передача FALSE отключает кэширование
+	 */
+	public function Init($t,$cache=86400)
+	{		$r=$cache ? Eleanor::$Cache->Get($t.'_'.Language::$main) : false;
 		if($r===false)
 		{			$R=Eleanor::$Db->Query('SELECT * FROM `'.$t.'` INNER JOIN `'.$t.'_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\')');
-			$r=$this->GetDump($R);			if(!$nc)
+			$r=$this->GetDump($R);			if($cache)
 				Eleanor::$Cache->Put($t.'_'.Language::$main,$r,86400,false);
 		}
 		return$this->dump=$r;
 	}
 
+	/**
+	 * Формирование дампа таблицы в удобном иерархическом виде
+	 *
+	 * @param mysqli_result $R Результат выполнения дамп-запроса из базы данных
+	 */
 	public function GetDump($R)
 	{		$maxlen=0;
 		$r=$to2sort=$to1sort=$db=array();
@@ -60,16 +76,14 @@ class Categories extends BaseClass
 		return$r;
 	}
 
-	/*
-		Функция возвращает одну запись для категории
-	*/
-	public function GetCategory($id,$tr=array())
+	/**
+	 * Функция осуществляет поиск по дампу категорий исходя из переданного ID или последовательности URI категории
+	 *
+	 * @param int|array $id Числовой идентификатор категории либо массив последовательности URI
+	 */
+	public function GetCategory($id)
 	{
-		if($id)
-		{			if(isset($this->dump[$id]))
-				return $this->dump[$id];
-		}
-		else
+		if(is_array($id))
 		{			$tr=(array)$tr;
 			$cnt=count($tr)-1;
 			$parent=0;
@@ -83,14 +97,16 @@ class Categories extends BaseClass
 					$parent=$v['id'];
 				}
 		}
+		elseif(isset($this->dump[$id]))
+			return$this->dump[$id];
 	}
 
-	/*
-		Функция возвращает список категорий в виде option-ов, для select-a
-		<option value="ID" selected="selected">VALUE</option>
-		$sel - пункты, которые будут отмечены (массив, но может быть и число).
-		$no - ИДы исключаемых категорий (не попадут и их дети). Может быть массивом, но может быть и числом.
-	*/
+	/**
+	 * Получение списка категорий в виде option-ов, для select-a: <option value="ID" selected>VALUE</option>
+	 *
+	 * @param int|array $sel Пункты, которые будут отмечены
+	 * @param int|array $no ИДы исключаемых категорий (не попадут и их дети)
+	 */
 	public function GetOptions($sel=array(),$no=array())
 	{		$opts='';
 		$sel=(array)$sel;
@@ -104,6 +120,11 @@ class Categories extends BaseClass
 		}
 		return$opts;	}
 
+	/**
+	 * Получение массива URI для дальнейшего передачи его в класс URL с последующей генерации ссылки
+	 *
+	 * @param int $id Числовой идентификатор категории
+	 */
 	public function GetUri($id)
 	{		if(!isset($this->dump[$id]))
 			return array();

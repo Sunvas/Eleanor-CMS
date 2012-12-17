@@ -333,7 +333,7 @@ class TplUserNews
 			.($cnt===0 ? Eleanor::$Template->Message(static::$lang['notfound'],'info') : '')
 			.'<form method="post">'
 			.$Lst->begin()
-				->item(static::$lang['what'],Eleanor::Edit('text',$values['text']))
+				->item(static::$lang['what'],Eleanor::Input('text',$values['text']))
 				->item(static::$lang['swhere'],Eleanor::Select('where',Eleanor::Option(static::$lang['title'],'title',$values['where']=='t').Eleanor::Option(static::$lang['ta'],'ta',$values['where']=='ta').Eleanor::Option(static::$lang['tat'],'tat',$values['where']=='tat')))
 				->item($lang['categs'],Eleanor::Items('categs',$GLOBALS['Eleanor']->Categories->GetOptions($values['categs'])).'<br /><label>'.Eleanor::Radio('c','and',$values['c']=='and').static::$lang['and'].'</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>'.Eleanor::Radio('c','or',$values['c']=='or').static::$lang['or'].'</label>')
 				->item(static::$lang['tags'],Eleanor::Items('tags',$tagopts).'<br /><label>'.Eleanor::Radio('t','and',$values['t']=='and').static::$lang['and'].'</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>'.Eleanor::Radio('t','or',$values['t']=='or').static::$lang['or'].'</label>')
@@ -466,7 +466,7 @@ class TplUserNews
 				<div class="active" style="width:'.$width.'%;"></div>
 			</div>
 		</div>';
-		return$r.($full ? '<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" class="hidden"><span itemprop="ratingValue">'.$newa.'</span><span itemprop="ratingCount">'.$total.'</span><span itemprop="bestRating">'.count($marks).'</span><span itemprop="worstRating">1</span></div>' : '');
+		return$r.($full ? '<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" class="hidden"><span itemprop="ratingValue">'.round($newa,1).'</span><span itemprop="ratingCount">'.$total.'</span><span itemprop="bestRating">'.count($marks).'</span><span itemprop="worstRating">1</span></div>' : '');
 	}
 }
 TplUserNews::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/news-*.php',false);

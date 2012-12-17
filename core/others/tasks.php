@@ -10,7 +10,9 @@
 */
 
 class Tasks extends BaseClass
-{
+{	/**
+	 * ѕересчет точной даты и времени следующего запуска крона
+	 */
 	public static function UpdateNextRun()
 	{
 		$R=Eleanor::$Db->Query('SELECT UNIX_TIMESTAMP(`nextrun`) FROM `'.P.'tasks` WHERE `status`=1 AND `locked`=0 ORDER BY `free` ASC, `nextrun` ASC');
@@ -21,6 +23,12 @@ class Tasks extends BaseClass
 		Eleanor::$Cache->Put('nextrun',$next,0,true);
 	}
 
+	/**
+	 * ¬ыбор первого числа из массива, меньшего, чем заданное
+	 *
+	 * @param array $ints ћассив числел
+	 * @param int $from „исло-критерий выбора
+	 */
 	public static function MinFrom($ints,$from)
 	{
 		foreach($ints as &$v)
@@ -29,28 +37,42 @@ class Tasks extends BaseClass
 		return false;
 	}
 
+	/**
+	 * –аскрытие диапазонов, описанных в строке с последовательностью чисел.
+	 *
+	 * 1,2,5-10 будет преобразовано в 1,2,5,6,7,8,9,10
+	 * “ак же существует возможность задани€ шага раскрытий указав после диапазона : и шаг, например 1,2,5-10:2,15 будет преобразовано в 1,2,5,7,9,10,15
+	 */
 	public static function FillInt($str)
 	{
 		$str=preg_replace('#[^0-9,:\-*]+#','',$str);
-		$str=preg_replace_callback('/([0-9]+)\-([0-9]+)(?::([0-9]+))?/',array(__class__,'FillInt2'),$str);
-		return $str;
+		$str=preg_replace_callback(
+			'/([0-9]+)\-([0-9]+)(?::([0-9]+))?/',
+			function($abc)
+			{
+				$a=(int)$abc[1];
+				$b=(int)$abc[2];
+				$c=isset($abc[3]) ? (int)$abc[3] : 1;
+				if($c<1)
+					$c=1;
+				if($a>=$b)
+					return$a.','.$b;
+				$result='';
+				for(;$a<$b;$a+=$c)
+					$result.=$a.',';
+				return$result.$b;
+			},
+			$str
+		);
+		return$str;
 	}
 
-	public static function FillInt2(array$abc)
-	{
-		$a=(int)$abc[1];
-		$b=(int)$abc[2];
-		$c=isset($abc[3]) ? (int)$abc[3] : 1;
-		if($c<1)
-			$c=1;
-		if($a>=$b)
-			return$a.','.$b;
-		$result='';
-		for(;$a<$b;$a+=$c)
-			$result.=$a.',';
-		return$result.$b;
-	}
-
+	/**
+	 * ¬ычисление времени ближайшего запуска, исход€ из вход€щий пожалений
+	 *
+	 * @param array $t ћассив пожеланий времени, детали смотрите в начале тела метода
+	 * @param int|FALSE $do —мещение в секундах по часовому по€су
+	 */
 	public static function CalcNextRun(array$t=array(),$do=false)
 	{
 		$t+=array(

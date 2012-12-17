@@ -91,7 +91,7 @@ class AccountActivate
 							'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 							'confirm'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'activate','id'=>$actid,'md'=>$hash),true,''),
 						);
-						Eleanor::Mail(
+						Email::Simple(
 							$a['email'],
 							Eleanor::ExecBBLogic($l['reg_t'],$repl),
 							Eleanor::ExecBBLogic($l['reg_act'],$repl)
@@ -134,7 +134,7 @@ class AccountActivate
 					'login'=>$sname,
 					'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 				);
-				Eleanor::Mail(
+				Email::Simple(
 					$a['email'],
 					Eleanor::ExecBBLogic($l['act_t'],$repl),
 					Eleanor::ExecBBLogic($l['act_success'],$repl)

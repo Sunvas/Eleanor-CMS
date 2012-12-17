@@ -12,11 +12,16 @@
 class ControlUploadImage extends BaseClass implements ControlsBase
 {
 	public static
-		$Language;
+		$Language;#Языковой объект
 
 	private static
-		$bypost;
+		$bypost;#Флаг чтения данных из POST
 
+	/**
+	 * Получение настроек контрола
+	 *
+	 * @param ControlsManager $Obj
+	 */
 	public static function GetSettings($Obj)
 	{
 		$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
@@ -27,7 +32,7 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 			'path'=>array(
 				'title'=>static::$Language['path_to_save'],
 				'descr'=>static::$Language['path_to_save_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'options'=>array(
 					'extra'=>array(
 						'class'=>'uploadfile-path',
@@ -84,7 +89,7 @@ $(function(){
 			'types'=>array(
 				'title'=>static::$Language['file_types'],
 				'descr'=>static::$Language['file_types_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'default'=>$ml ? array(''=>array('png','jpeg','jpg','bmp','gif')) : array('png','jpeg','jpg','bmp','gif'),
 				'save'=>function($a)
 				{
@@ -135,7 +140,7 @@ $(function(){
 			'max_size'=>array(
 				'title'=>static::$Language['max_size_f'],
 				'descr'=>static::$Language['max_size_f_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'default'=>$ml ? array(''=>'') : '',
 				'save'=>function($a)
 				{
@@ -245,6 +250,12 @@ $(function(){
 		);
 	}
 
+	/**
+	 * Получение контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Control($a,$Obj)
 	{		$a['options']+=array(
 			'types'=>array('jpg','png','gif','bmp','jpeg'),
@@ -329,6 +340,12 @@ $(function(){
 		));
 	}
 
+	/**
+	 * Сохранение контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Save($a,$Obj)
 	{
 		$a['options']+=array(
@@ -448,6 +465,12 @@ $(function(){
 		return$a['options']['preview'] ? $r : reset($r);
 	}
 
+	/**
+	 * Получение результата контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Result($a,$Obj,$co)
 	{
 		$a['options']+=array('retempty'=>true,'onlyimage'=>true,'max_image_size'=>'0 0','alt'=>'');
@@ -480,6 +503,9 @@ $(function(){
 });//]]></script>';
 	}
 
+	/**
+	 * Обработка Ajax запроса контрола
+	 */
 	public static function DoAjax()
 	{
 		$session=isset($_POST['session']) ? (string)$_POST['session'] : '';
@@ -527,6 +553,9 @@ $(function(){
 		Result(true);
 	}
 
+	/**
+	 * Обработка Upload запроса контрола
+	 */
 	public static function DoUpload()
 	{
 		$session=isset($_POST['session']) ? (string)$_POST['session'] : '';

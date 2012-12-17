@@ -12,20 +12,30 @@
 class Categories_Manager extends Categories
 {
 	public
-		$pp='c_',#Param pref - префикс всех параметров
-		$table,
-		$template='CategoriesManager',
-		$deletecb,
-		$post=false,
-		$controls=false,
-		$Language;
+		$pp='c_',#Префикс всех параметров динамических ссылок, генерируемых данным классом
+		$table,#Имя основной таблицы категорий
+		$template='CategoriesManager',#Название класса оформления
+		$ondelete,#Callback функции, вызывамая при удалении категории, первым параметром передается массив всех удалямых категорий
+		$post=false,#Флаг bypost контролов
+		$controls=false,#Контролы категорий
+		$Language;#Языковой объект
 
+	/**
+	 * Конструктор менеджера категорий
+	 *
+	 * @param string $l Путь к языковому файлу
+	 */
 	public function __construct($l='categories_manager-*.php')
 	{
 		$this->Language=new Language;
 		$this->Language->queue[]=$l;
 	}
 
+	/**
+	 * Показ содержимого менеджера категорий
+	 *
+	 * @return Template
+	 */
 	public function Show()
 	{
 		$El=Eleanor::getInstance();
@@ -55,10 +65,10 @@ class Categories_Manager extends Categories
 				while($temp=$R->fetch_assoc())
 					$ids[]=$temp['id'];
 
-				if(is_callable($this->deletecb))
+				if(is_callable($this->ondelete))
 					try
 					{
-						call_user_func($this->deletecb,$ids);
+						call_user_func($this->ondelete,$ids);
 					}
 					catch(EE $E)
 					{
@@ -71,7 +81,7 @@ class Categories_Manager extends Categories
 				Eleanor::$Db->Delete($this->table.'_l','`id`'.$ids);
 				Eleanor::$Db->Update($this->table,array('!pos'=>'`pos`-1'),'`pos`>'.$a['pos'].' AND `parent`=\''.$a['parent'].'\'');
 
-				Eleanor::$Cache->Lib->CleanByTag($this->table);
+				Eleanor::$Cache->Lib->DeleteByTag($this->table);
 				GoAway(empty($_POST['back']) ? true : $_POST['back']);
 			}while(false);
 
@@ -155,6 +165,11 @@ class Categories_Manager extends Categories
 		return$this->Manager();
 	}
 
+	/**
+	 * Получение контролов категорий по умолчанию
+	 *
+	 * @return array Массив контролов
+	 */
 	public function Controls()
 	{		$THIS=$this;#PHP 5.4 Убрать этот костыль
 		return array(
@@ -194,7 +209,7 @@ class Categories_Manager extends Categories
 			'title'=>array(
 				'title'=>$this->Language['name'],
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'check'=>function($value)use($THIS)
 				{					$errors=array();
 					if(Eleanor::$vars['multilang'])
@@ -224,7 +239,6 @@ class Categories_Manager extends Categories
 				'multilang'=>Eleanor::$vars['multilang'],
 				'options'=>array(
 					'htmlsafe'=>true,
-					'4alt'=>'title',
 				),
 				'extra'=>array(
 					'no'=>array('tabindex'=>3)
@@ -233,7 +247,7 @@ class Categories_Manager extends Categories
 			'meta_title'=>array(
 				'title'=>'Window title',
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$this->post,
 				'multilang'=>Eleanor::$vars['multilang'],
 				'options'=>array(
@@ -247,7 +261,7 @@ class Categories_Manager extends Categories
 			'meta_descr'=>array(
 				'title'=>'Meta description',
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$this->post,
 				'multilang'=>Eleanor::$vars['multilang'],
 				'options'=>array(
@@ -261,7 +275,7 @@ class Categories_Manager extends Categories
 			'uri'=>array(
 				'title'=>'URI',
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$this->post,
 				'multilang'=>Eleanor::$vars['multilang'],
 				'options'=>array(
@@ -320,7 +334,7 @@ class Categories_Manager extends Categories
 			'pos'=>array(
 				'title'=>$this->Language['pos'],
 				'descr'=>$this->Language['pos_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$this->post,
 				'options'=>array(
 					'htmlsafe'=>true,
@@ -332,6 +346,11 @@ class Categories_Manager extends Categories
 		);
 	}
 
+	/**
+	 * Получение списка всех категорий
+	 *
+	 * @return Template
+	 */
 	protected function Manager()
 	{
 		$GLOBALS['title'][]=$this->Language['list'];
@@ -415,7 +434,7 @@ class Categories_Manager extends Categories
 				foreach($v as $kk=>&$vv)
 					$vv=array(
 						'title'=>$vv,
-						'_aedit'=>$El->Url->Construct(array('edit'=>$kk)),
+						'_aedit'=>$El->Url->Construct(array($this->pp.'edit'=>$kk)),
 					);
 			}
 		}
@@ -433,6 +452,11 @@ class Categories_Manager extends Categories
 		return Eleanor::$Template->CMList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links);
 	}
 
+	/**
+	 * Получение формы правки категории
+	 *
+	 * @return Template
+	 */
 	protected function AddEdit($id,$errors=array())
 	{
 		if(!$this->controls)
@@ -529,6 +553,9 @@ class Categories_Manager extends Categories
 		return Eleanor::$Template->CMAddEdit($id,$this->controls,$values,$errors,$back,$links);
 	}
 
+	/**
+	 * Сохранение категории
+	 */
 	protected function Save($id,$redir=true)
 	{
 		if(!$this->controls)
@@ -672,11 +699,16 @@ class Categories_Manager extends Categories
 			}
 			Eleanor::$Db->Insert($this->table.'_l',$values);
 		}
-		Eleanor::$Cache->Lib->CleanByTag($this->table);
+		Eleanor::$Cache->Lib->DeleteByTag($this->table);
 		if($redir)
 			GoAway(empty($_POST['back']) ? true : $_POST['back']);
 	}
 
+	/**
+	 * Оптимизация положений категорий, все позиции приводятся к корректному виду
+	 *
+	 * @param string $p Идентификатор родителей категории (parents)
+	 */
 	public function Optimize($p='')
 	{
 		$R=Eleanor::$Db->Query('SELECT `id`,`pos` FROM `'.$this->table.'` WHERE `parents`=\''.$p.'\' ORDER BY `pos` ASC');

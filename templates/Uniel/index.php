@@ -89,7 +89,7 @@ echo'<div id="maincol',$br ? 'R' : '','">
 		<span style="width: 88px;"><!-- êíîïêà, ñ÷åò÷èê --></span>
 		<span style="width: 88px;"><!-- êíîïêà, ñ÷åò÷èê --></span>
 		<span style="width: 88px;"><!-- êíîïêà, ñ÷åò÷èê --></span>
-		<span style="width: 60px;">  <a href="http://validator.w3.org/check?uri=referer"><img src="<?php echo$theme?>images/xhtml_valid.png" alt="Valid HTML 5" title="Valid HTML 5" width="60" height="31" /></a></span>
+		<span style="width: 60px;">  <a href="http://validator.w3.org/check?uri=referer"><img src="<?php echo$theme?>images/html5_valid.png" alt="Valid HTML 5" title="Valid HTML 5" width="60" height="31" /></a></span>
 
 	</div>
 	<!-- ÊÎÏÈÐÀÉÒÛ -->

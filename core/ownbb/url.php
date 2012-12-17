@@ -9,8 +9,17 @@
 	*Pseudonym
 */
 
+#Класс, отвечает за работку ownbb тега [url]
 class OwnBbCode_url extends OwnBbCode
-{	public static function PreDisplay($t,$p,$c,$cu)
+{	/**
+	 * Обработка информации перед показом на странице
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
+	public static function PreDisplay($t,$p,$c,$cu)
 	{
 		$p=$p ? Strings::ParseParams($p,'href') : array();
 		if(isset($p['noparse']))
@@ -56,6 +65,14 @@ class OwnBbCode_url extends OwnBbCode
 		return'<a'.Eleanor::TagParams($np).'>'.$c.'</a>';
 	}
 
+	/**
+	 * Обработка информации перед её сохранением
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
 	public static function PreSave($t,$p,$c,$cu)
 	{
 		return parent::PreSave($t,array_intersect_key(Strings::ParseParams($p,$t),array('title'=>'','href'=>'',$t=>'','self'=>'','target'=>'')),$c,$cu);

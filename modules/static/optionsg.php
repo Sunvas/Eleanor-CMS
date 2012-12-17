@@ -17,8 +17,8 @@ return array(
 		$u=uniqid();
 		return'<div>'.Eleanor::Select('',$items,array('id'=>'sel-'.$u,'style'=>'float:left'))
 	.'<a href="#" id="add-'.$u.'" style="float:left;margin:0px 5px"><img src="'.Eleanor::$Template->default['theme'].'images/add.png" alt="" /></a></div>'
-	.Eleanor::Control($co['controlname'],'hidden',$co['value'],array('id'=>'input-'.$u))
-	.Eleanor::Item('',$now,14,array('id'=>'res-'.$u,'style'=>'float:left'))
+	.Eleanor::Input($co['controlname'],$co['value'],array('id'=>'input-'.$u,'type'=>'hidden'))
+	.Eleanor::Select('',$now,array('id'=>'res-'.$u,'style'=>'float:left','size'=>14))
 	.'<div style="float:left;padding:0px 5px;width:16px"><a href="#" id="up-'.$u.'"><img src="'.Eleanor::$Template->default['theme'].'images/up.png" alt="" /></a><a href="#" id="down-'.$u.'"><img src="'.Eleanor::$Template->default['theme'].'images/down.png" alt="" /></a><a href="#" id="del-'.$u.'"><img src="'.Eleanor::$Template->default['theme'].'images/delete.png" alt="" /></a></div>
 <script type="text/javascript">//<![CDATA[
 $(function(){
@@ -35,48 +35,43 @@ $(function(){
 		},
 		butt=$("#up-'.$u.',#down-'.$u.',#del-'.$u.'");
 
-	if(res.val())
-		butt.show();
-	else
-		butt.hide();
-
 	sel.change(function(){
-		var val=$(this).val(),
-			plus=res.find("option");
-
-		if(plus.size()>1)
-			plus=filter(function(){
-				var r=val==$(this).val();
-				if(r)
-					$(this).prop("selected",true);
-				return r;
-			}).size()>0;
-		else
-			plus=true;
-
-		if(plus)
+		if( res.find("[value="+$(this).val()+"]").prop("selected",true).size()>0 )
 			add.hide();
 		else
 			add.show();
 	}).change();
 
-	add.click(function(){
-		var arr=[];
-		res.find("option").each(function(){
-			arr.push($(this).val());
-		});
-		sel.find("option:selected").filter(function(){
-			return $.inArray($(this).val(),arr)==-1;
-		}).clone().each(function(){
-			$(this).html($(this).html().replace(/^(&nbsp;|›)+/g,""));
-		}).prop("selected",false).appendTo(res).end().end().change();
+	res.change(function(){
+		butt.hide();
+		if($(this).val())
+		{			if($("option",this).size()==1)
+				$("#del-'.$u.'").show();
+			else if($("option:last",this).prop("selected"))
+				$("#up-'.$u.',#del-'.$u.'").show();
+			else if($("option:last",this).prop("selected"))
+				$("#up-'.$u.',#del-'.$u.'").show();
+			else if($("option:first",this).prop("selected"))
+				$("#down-'.$u.',#del-'.$u.'").show();
+			else
+				butt.show();
+		}
+	}).change();
+
+	add.click(function(){		if(res.find("[value="+sel.val()+"]").size()==0)
+			sel.find("option:selected:first").clone().each(function(){
+				$(this).html($(this).html().replace(/^(&nbsp;|›)+/g,""));
+			}).prop("selected",false).appendTo(res);
+		res.change();
+		add.hide();
 		UpdateInput();
 		return false;
 	});
 
 	$("#del-'.$u.'").click(function(){
-		res.find("option:selected").remove();
-		sel.change();
+		res.find("option:selected:first").remove();
+		add.show();
+		res.change();
 		UpdateInput();
 		return false;
 	});
@@ -88,7 +83,7 @@ $(function(){
 				return false;
 			th.insertBefore(th.prev());
 			UpdateInput();
-		});
+		}).end().change();
 		return false;
 	});
 
@@ -99,7 +94,7 @@ $(function(){
 				return false;
 			th.insertAfter(th.next());
 			UpdateInput();
-		});
+		}).end().change();
 		return false;
 	});
 

@@ -65,7 +65,7 @@ $Eleanor->sc=array(
 	'title'=>array(
 		'title'=>$lang['text'],
 		'descr'=>$lang['text_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
@@ -78,7 +78,7 @@ $Eleanor->sc=array(
 	'url'=>array(
 		'title'=>$lang['url'],
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
@@ -91,7 +91,7 @@ $Eleanor->sc=array(
 	'eval_url'=>array(
 		'title'=>$lang['eval_url'],
 		'descr'=>$lang['eval_url_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
@@ -114,7 +114,7 @@ $Eleanor->sc=array(
 			}
 			return$a['value'] ? ' '.trim($a['value']) : '';
 		},
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
@@ -127,7 +127,7 @@ $Eleanor->sc=array(
 	'pos'=>array(
 		'title'=>$lang['pos'],
 		'descr'=>$lang['pos_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
 			'htmlsafe'=>true,
@@ -216,7 +216,7 @@ elseif(isset($_GET['delete']))
 	Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$ids);
 	Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`-1'),'`pos`>'.$a['pos'].' AND `parents`=\''.$a['parents'].'\'');
 	Eleanor::$Db->Delete(P.'drafts','`key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
-	Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 	GoAway();
 }
 elseif(isset($_GET['swap']))
@@ -225,7 +225,7 @@ elseif(isset($_GET['swap']))
 	if(Eleanor::$our_query)
 	{
 		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`='.$id.' LIMIT 1');
-		Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+		Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 	}
 	$back=getenv('HTTP_REFERER');
 	GoAway($back ? $back.'#it'.$id : true);
@@ -645,7 +645,7 @@ function Save($id)
 		}
 		Eleanor::$Db->Insert($Eleanor->module['config']['tl'],$values);
 	}
-	Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 	GoAway(empty($_POST['back']) ? true : $_POST['back']);
 }
 

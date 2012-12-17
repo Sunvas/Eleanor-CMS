@@ -9,49 +9,78 @@
 	*Pseudonym
 */
 class LoginNo extends BaseClass implements LoginClass
-{	protected static
-		$Instance;
-
-	public static function getInstance()
-	{		if(!isset(self::$Instance))
-			self::$Instance=new self;
-		return self::$Instance;	}
-
-	public function __get($n)
-	{		if($n=='Permissions')
-		{			if(!class_exists($n,false))
-				include Eleanor::$root.'core/permissions.php';
-			return $this->$n=new Permissions($this);		}
-		return parent::__get($n);
-	}
-
-	protected function __construct(){}
-
-	public function Login(array $b)
+{	/**
+	 * Аутентификация по определенным входящим параметрам, например, по логину и паролю
+	 *
+	 * @param array $data Массив с данными
+	 * @throws EE
+	 */	public static function Login(array$b)
 	{		return false;
 	}
 
-	public function IsUser($a=false)
+	/**
+	 * Авторизация пользователя: проверка является ли пользователь пользователем
+	 *
+	 * @param bool $hard Метод кэширует результат, для сброса кэша передайте true
+	 * @return bool
+	 */
+	public static function IsUser($a=false)
 	{
 		return false;
 	}
 
-	public function Auth($id){}
+	/**
+	 * Аутентификация только по ID пользователя
+	 *
+	 * @param int $id ID пользователя
+	 * @throws EE
+	 */
+	public static function Auth($id){}
 
-	public function ApplyCheck()
+	/**
+	 * Применение логина, как главного в системе: подстройка системы под пользователя, настройка часового пояса, проверка забаненности и т.п.
+	 */
+	public static function ApplyCheck()
 	{
-		return false;
+
 	}
 
-	public function Logout()
+	/**
+	 * Выход пользователя из учетной записи
+	 */
+	public static function Logout()
 	{		return false;
 	}
 
-	public function UserLink($a,$b=0)
+	/**
+	 * Формирование ссылки на учётную запись пользователя
+	 *
+	 * @param string $name Имя пользователя
+	 * @param string $id ID пользователя
+	 * @return string|FALSE
+	 */
+	public static function UserLink($a,$b=0)
 	{		return false;
 	}
 
-	public function GetUserValue($a,$b=true)
+	/**
+	 * Получение значения пользовательского параметра
+	 *
+	 * @param array|string $key Один или несколько параметров, значения которых нужно получить
+	 * @return array|string В зависимости от типа переданной переменной
+	 */
+	public static function GetUserValue($name,$id=0)
 	{		return false;
+	}
+
+	/**
+	 * Установка значения пользовательского параметра. Метод не должен обновлять данны пользователя в БД! Только на время работы скрипта
+	 *
+	 * @param array|string $key Имя параметра, либо массив в виде $key=>$value
+	 * @param mixed $value Значения
+	 */
+	public static function SetUserValue($key,$value=null)
+	{
+
 	}
 }

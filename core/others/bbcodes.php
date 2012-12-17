@@ -15,7 +15,12 @@ class BBCodes extends BaseClass
 
 		#BB теги, подлежащие замене.
 		$tags=array('b','p','i','s','a','q','li','ul','ol','em','tt','big','sub','sup','var','abbr','cite','code','spansmall','strong','noindex','legend','blockquote','span','address','option','optgroup','select','table','tr','td','th','thead','tfoot','tbody','caption','col','colgroup','legend','fieldset','object','param','article','aside','details','details','figcaption','figure','footer','header','hgroup','mark','nav','wbr','source','video','time','summary','section','ruby','rp','rt','progress','output');
-	public static function Save($text)
+
+	/**
+	 * Преобразование текста, размеченного BB кодами в HTML разметку
+	 *
+	 * @param string $text Текст с BB разметкой
+	 */	public static function Save($text)
 	{
 		$text=static::ParseContainer($text,'[ul','[/ul]',array(__class__,'DoList'),true);
 		$text=static::ParseContainer($text,'[ol','[/ol]',array(__class__,'DoList'),true);
@@ -124,6 +129,11 @@ class BBCodes extends BaseClass
 		return nl2br($text);
 	}
 
+	/**
+	 * Преобразование HTML разметки в текст, текст размеченный BB кодами
+	 *
+	 * @param string $text Текст с HTML разметкой
+	 */
 	public static function Load($text)
 	{
 		$text=self::ParseContainer($text,'<ul','</ul>',array(__class__,'UnDoList'),true);
@@ -186,50 +196,43 @@ class BBCodes extends BaseClass
 		return str_replace($rk,$r,$text);
 	}
 
-	/*
-		Функция парсинга контейнера
-		Простой пример. Есть текст: '[quote]Первая цитатая [quote]Цитата в цитате[/quote][/quote]';
-		Если мы будем пытаться отпарсить этот текст при помощи регулярки '#\[quote([^\]]*)\](.*)\[/quote\]#Use'	=>	'DoQuote(\'\2\',\'\1\')',
-		то полчим мягко говоря херню:
-
-			    |------------Первая цитатая------------------|
-			    |                     |-----Вторая цитата----|-------|
-			'[quote]Первая цитатая [quote]Цитата в цитате[/quote][/quote]';
-
-		Эта фукнция позволяет получить нормальный парсинг текста, чтобы было:
-
-			    |------------Первая цитатая--------------------------|
-			    |                     |-----Вторая цитата----|       |
-			'[quote]Первая цитатая [quote]Цитата в цитате[/quote][/quote]';
-
-		$s - входящая строка
-		$be - начало цитаты
-		$eb - конец цитаты
-		$cb - функция которой будет передана строка для обработки. Первым параметром - текст цитаты
-		$ret_beg - Возвращать начало цитаты?
-		$reg_end - возвращать конец цитаты?
-	*/
-
-	public static function ParseContainer($s,$be,$en,$cb,$ret_beg=false,$re=false)
-	{
-		if(!is_callable($cb))
-			return$s;
-		$bl=strlen($be);
-		$el=strlen($en);
-		for(;;)
-		{
-			if(false===$bp=strpos($s,$be) or false===$ep=strpos($s,$en,$bp+1+$bl))
-				break;
-			$brp=strrpos(substr($s,0,$ep-$bp+1),$be);
+	/**
+	 * Обработка контейнера в тексте
+	 *
+	 * Простой пример. Есть текст: '[quote]Первая цитатая[quote]Цитата в цитате[/quote][/quote]';
+	 * сли мы будем пытаться обработать цитату при помощи регулярки '#\[quote([^\]]*)\](.*)\[/quote\]#Use'=>'DoQuote(\'\2\',\'\1\')',
+	 * то получим следующее:
+	 *    |------------Первая цитатая------------------|
+	 *    |                     |-----Вторая цитата----|-------|
+	 * '[quote]Первая цитатая [quote]Цитата в цитате[/quote][/quote]';
+	 * Текущий метод метод позволяет добиться корректной обработки цитаты:
+	 *    |------------Вторая цитатая--------------------------|
+	 *    |                     |-----Первая цитата----|       |
+	 * '[quote]Первая цитатая [quote]Цитата в цитате[/quote][/quote]';
+	 *
+	 * @param string $s Входящий текст с контейнером
+	 * @param string $beg Начало контейнера
+	 * @param string $eb Конец контейнера
+	 * @params callable $cb Функция которой будет передана строка для обработки, содержащая начало и содержимое контейнера, но не содержащая его конец
+	 */
+	public static function ParseContainer($s,$beg,$end,$cb)
+	{		$bl=strlen($beg);
+		$el=strlen($end);		while(false!==$bp=strpos($s,$beg) and false!==$ep=strpos($s,$end,$bp+1+$bl))
+		{			$brp=strrpos(substr($s,0,$ep-1),$beg);
 			if($brp>$bp)
 				$bp=$brp;
-			$ns=substr($s,$bp+($ret_beg ? 0 : $bl),$ep-$bp-($ret_beg ? 0 : $bl)+($re ? $el : 0));
+			$ns=substr($s,$bp,$ep-$bp);
 			$ns=call_user_func($cb,$ns);
-			$s=substr_replace($s,$ns,$bp,$ep-$bp+$el);
-		}
+			$s=substr_replace($s,$ns,$bp,$ep-$bp+$el);		}
 		return$s;
 	}
 
+	/**
+	 * Внутренний метод создания картинки
+	 *
+	 * @param string $url Адрес картинки
+	 * @param string $params Необработанная строка параметров картинки
+	 */
 	protected static function DoImage($url,$params)
 	{		$url=stripslashes($url);
 		$params=Strings::ParseParams(stripslashes($params),'url');
@@ -264,7 +267,11 @@ class BBCodes extends BaseClass
 		return'<img src="'.$url.'"'.join($tparams).' />';
 	}
 
-
+	/**
+	 * Внутренний метод создания списка
+	 *
+	 * @param string $text Предварительно размеченный bb кодами списоков текст
+	 */
 	protected static function DoList($text)
 	{
 		if(preg_match('#^\[(ul|ol)([^\]]*)\](.+)$#is',$text,$m)==0)
@@ -294,6 +301,12 @@ class BBCodes extends BaseClass
 		return'<'.$type.join($tparams).'>'.$text.'</'.$type.'>';
 	}
 
+	/**
+	 * Внутренний метод создания ссылок
+	 *
+	 * @param string $text Текст ссылки
+	 * @param string $params Необработанная строка параметров ссылки
+	 */
 	protected static function DoUrl($text,$params='')
 	{
 		if(is_string($params))#На случай, если мы обратимся из функции DoEmail
@@ -334,6 +347,12 @@ class BBCodes extends BaseClass
 		return'<a'.join($tparams).' />'.$text.'</a>';
 	}
 
+	/**
+	 * Внутренний метод создания ссылок на e-mail
+	 *
+	 * @param string $text Текст ссылки
+	 * @param string $params Необработанная строка параметров ссылки
+	 */
 	protected static function DoEmail($text,$params='')
 	{
 		$text=stripslashes($text);
@@ -344,6 +363,13 @@ class BBCodes extends BaseClass
 		return static::DoUrl($text,$params);
 	}
 
+	/**
+	 * Внутренний метод создания выделения текста определенным цветом
+	 *
+	 * @param string $param Название параметра, который будет настроен в тексте: size - размер, background - фон, color - цвет, font - шрифт
+	 * @param string $value Значение параметра настройки
+	 * @param string $text Текст для настройки
+	 */
 	protected static function FontAttr($param,$value,$text)
 	{
 		$text=stripslashes($text);
@@ -367,6 +393,11 @@ class BBCodes extends BaseClass
 			return'<span style="font-family:'.$value.'">'.$text.'</span>';
 	}
 
+	/**
+	 * Внутренний метод преобразования списка, размеченного на HTML в список, размеченный BB кодами
+	 *
+	 * @param string $text HTML размеченного списка
+	 */
 	protected static function UnDoList($text)
 	{
 		if(preg_match('#^<(ul|ol)([^>]*)>(.+)$#is',$text,$m)==0)
@@ -389,6 +420,12 @@ class BBCodes extends BaseClass
 		return'['.$type.ltrim($tparams).']'.$text."\n[/".$type.']';
 	}
 
+	/**
+	 * Внутренний метод преобразования HTML ссылок в ссылки на BB кодах
+	 *
+	 * @param string $text Текст ссылки
+	 * @param string $params Необработанная строка параметров ссылки
+	 */
 	protected static function UnDoUrl($text,$params)
 	{
 		$text=stripslashes($text);
@@ -436,6 +473,11 @@ class BBCodes extends BaseClass
 		return'['.$tag.$ta.join($params_a).']'.$text.'[/'.$tag.']';
 	}
 
+	/**
+	 * Внутренний метод преобразования HTML картинок в картинки на BB кодах
+	 *
+	 * @param string $params Необработанная строка параметров картинки
+	 */
 	protected static function UnDoImage($params)
 	{
 		$params=Strings::ParseParams(stripslashes($params));

@@ -67,9 +67,9 @@ $(function(){
 		$bs=Eleanor::Button('+','button',array('class'=>'sb-plus')).' '
 			.Eleanor::Button('&minus;','button',array('class'=>'sb-minus'),2);
 		foreach($emails as $k=>&$v)
-			$trs.='<tr><td><img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" /></td><td>'.Eleanor::Edit($n.'[email][]',$k,array('style'=>'width:100%')).'</td><td>'.Eleanor::Edit($n.'[whom][]',$v,array('style'=>'width:100%')).'</td><td style="function">'.$bs.'</td></tr>';
+			$trs.='<tr><td><img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" /></td><td>'.Eleanor::Input($n.'[email][]',$k,array('style'=>'width:100%')).'</td><td>'.Eleanor::Input($n.'[whom][]',$v,array('style'=>'width:100%')).'</td><td style="function">'.$bs.'</td></tr>';
 		return'<table class="tabstyle whoms" style="width:420px"><tr class="first tablethhead"><th></th><th>E-mail</th><th>'.Eleanor::$Language['contacts']['who'].'</th><th style="width:60px">'.Eleanor::$Language['tpl']['functs'].'</th></tr>'
-			.($trs ? $trs : '<tr><td><img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" /></td><td>'.Eleanor::Edit($n.'[email][]','',array('style'=>'width:100%')).'</td><td>'.Eleanor::Edit($n.'[whom][]','',array('style'=>'width:100%')).'</td><td class="function">'.$bs.'</td></tr>')
+			.($trs ? $trs : '<tr><td><img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" /></td><td>'.Eleanor::Input($n.'[email][]','',array('style'=>'width:100%')).'</td><td>'.Eleanor::Input($n.'[whom][]','',array('style'=>'width:100%')).'</td><td class="function">'.$bs.'</td></tr>')
 			.'</table>';
 	}
 }

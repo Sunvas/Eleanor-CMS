@@ -10,24 +10,23 @@
 */
 class Controls_Manager extends Controls
 {
-	/*
-		Функция отображает интерфейс для конфигурирования контрола
-		$co
-			type - тип контрола
-
-			Необязательные параметры
-			bypost - брать значения из POST-a
-			template - оформление таблицы
-			controls_name - массив для задания имени превьюшки
-			settings_name - массив для задания имен настройкам контролам
-
-			Следующие ключи могут быть мультиязычными в зависимости от $this->langs
-			default - значение каждого контрола для отображения
-			options - Экстра каждого контрола
-		$ajax - признак AJAX запроса.
-		$onlyprev - признак того, что нужно загрузить только превью
-		$alient - защита от применения сторонних
-	*/
+	/**
+	 * Получение интерфейса конфигурирования контрола
+	 *
+	 * @param array $co Редактируемый контрол, ключи массива:
+	 * Обязательные параметры:
+	 * type - тип контрола
+	 * Необязательные параметры
+	 * bypost Указание брать значения из POST запроса
+	 * template Название оформления таблицы
+	 * controls_name Имя превьюшки
+	 * settings_name Имя настроек контрола
+	 * Следующие ключи могут быть мультиязычными в зависимости от $this->langs
+	 * default значение по умолчанию каждого контрола для отображения
+	 * options дополнительные параметры каждого контрола
+	 * @param bool $ajax признак AJAX запроса.
+	 * @param bool $onlyprev признак того, что нужно загрузить только превью контрола без загрузки самих настроек контрола
+	 */
 	public function ConfigureControl(array$co=array(),$ajax=false,$onlyprev=false)
 	{
 		if($ajax)
@@ -45,7 +44,7 @@ class Controls_Manager extends Controls
 		}
 
 		$co+=array(
-			'type'=>'edit',
+			'type'=>'input',
 			'bypost'=>false,
 			'template'=>'EditControlTable',
 			'controls_name'=>array('controls'),
@@ -56,11 +55,11 @@ class Controls_Manager extends Controls
 			'load_eval'=>null,
 		);
 		$this->ScanControls();
-		$types=array('edit','text','items','item','select','editor','user','check','input','date');
+		$types=array('input','text','items','select','editor','user','check','date');
 		if(self::$controls)
 			$types=array_merge($types,self::$controls);
 		if(!in_array($co['type'],$types))
-			$co['type']='edit';
+			$co['type']='input';
 
 		$result=array();
 		$oldname=$this->arrname;
@@ -79,8 +78,8 @@ class Controls_Manager extends Controls
 		if(isset($setts[0]))
 		{
 			/*
-				Контролы сгруппированы по общим признакам. Так, скажем, у edit и text очень много схожих свойств, поэтому они помещаются в одну
-				группу. Тогда при переключении между типами - параметры edit-a будут переносится на text и наоборот.
+				Контролы сгруппированы по общим признакам. Так, скажем, у input и text очень много схожих свойств, поэтому они помещаются в одну
+				группу. Тогда при переключении между типами - параметры input-a будут переносится на text и наоборот.
 			*/
 			$sgroup=$setts[0];
 			unset($setts[0]);
@@ -187,10 +186,13 @@ class Controls_Manager extends Controls
 		return Eleanor::$Template->$co['template']($result,$ajax,$error,$onlyprev,$sgroup,$co['type']);
 	}
 
-	/*
-		$prevlang - сохранить настройку только с одним заданным языком и размножить ее для других языков.
-	*/
-	public function SaveConfigureControl(array $co=array(),$prevlang=false)
+	/**
+	 * Сохранение результатов конфигурируемого контрола
+	 *
+	 * @param array $co Редактируемый контрол
+	 * $prevlang Сохранить настройку только с одним заданным языком и размножить ее для других языков.
+	 */
+	public function SaveConfigureControl(array$co=array(),$prevlang=false)
 	{
 		$co+=array(
 			'controls_name'=>array('controls'),
@@ -198,7 +200,7 @@ class Controls_Manager extends Controls
 		);
 
 		$this->ScanControls();
-		$types=array('edit','text','items','item','select','editor','user','check');
+		$types=array('input','text','items','select','editor','user','check');
 		if(self::$controls)
 			$types=array_merge($types,self::$controls);
 
@@ -261,6 +263,11 @@ class Controls_Manager extends Controls
 		return$result;
 	}
 
+	/**
+	 * Получение массива настроек контрола определенного типа
+	 *
+	 * @param string $type Название контрола
+	 */
 	public function GetSettings($type)
 	{
 		$ml=(bool)$this->langs;
@@ -268,7 +275,7 @@ class Controls_Manager extends Controls
 		$a=array(
 			'title'=>$lang['extra_tag_params'],
 			'descr'=>$lang['extra_tag_params_'],
-			'type'=>'edit',
+			'type'=>'input',
 			'multilang'=>$ml,
 			'default'=>$ml ? array(''=>array()) : array(),
 			'load'=>function($co)
@@ -378,7 +385,6 @@ class Controls_Manager extends Controls
 				);
 			break;
 			case'items':
-			case'item':
 			case'select':
 				$res=array(
 					'select',#Группа контрола
@@ -432,7 +438,6 @@ class Controls_Manager extends Controls
 			case'check':
 				$res=array('extra'=>$a);
 			break;
-			case'edit':
 			case'text':
 				$res=array(
 					'text',#Группа контрола
@@ -447,6 +452,7 @@ class Controls_Manager extends Controls
 						'type'=>'select',
 						'options'=>array(
 							'options'=>array(
+								'text'=>$lang['t_text'],
 								'color'=>$lang['t_color'],
 								'date'=>$lang['t_date'],
 								'datetime'=>$lang['t_datetime'],
@@ -487,7 +493,12 @@ class Controls_Manager extends Controls
 		return$res;
 	}
 
-	public function SettingsSelectLoad($co)
+	/**
+	 * Получение массива настроек для контролов select, item, items
+	 *
+	 * @param array $co Массив данных контрола
+	 */
+	public function SettingsSelectLoad(array$co)
 	{static$data=array();
 		$n=$co['controlname'];
 		if($co['param']=='type')
@@ -505,6 +516,11 @@ class Controls_Manager extends Controls
 			$data[$co['param']]=array($n,$co['value']);
 	}
 
+	/**
+	 * Сохранение настроек для контролов select, item, items
+	 *
+	 * @param array $co Массив данных контрола
+	 */
 	public function SettingsSelectSave($co)
 	{
 		switch($co['param'])

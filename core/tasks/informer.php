@@ -47,7 +47,7 @@ class TaskInformer extends BaseClass implements Task
 				$vars['errors_code_text']=OwnBB::Parse($vars['errors_code_text']);
 				foreach($users as &$v)
 				{					Language::$main=$v['language'] ? $v['language'] : LANGUAGE;
-					$repl['name']=$v['name'];					Eleanor::Mail(
+					$repl['name']=$v['name'];					Email::Simple(
 						$v['email'],
 						Eleanor::ExecBBLogic($vars['errors_code_title'],$repl),
 						Eleanor::ExecBBLogic($vars['errors_code_text'],$repl)
@@ -94,7 +94,7 @@ class TaskInformer extends BaseClass implements Task
 				{
 					Language::$main=$v['language'] ? $v['language'] : LANGUAGE;
 					$repl['name']=$v['name'];
-					Eleanor::Mail(
+					Email::Simple(
 						$v['email'],
 						Eleanor::ExecBBLogic($vars['errors_db_title'],$repl),
 						Eleanor::ExecBBLogic($vars['errors_db_text'],$repl)
@@ -133,7 +133,7 @@ class TaskInformer extends BaseClass implements Task
 				foreach($users as &$v)
 				{					Language::$main=$v['language'] ? $v['language'] : LANGUAGE;
 					$repl['name']=$v['name'];
-					Eleanor::Mail(
+					Email::Simple(
 						$v['email'],
 						Eleanor::ExecBBLogic($vars['errors_requests_title'],$repl),
 						Eleanor::ExecBBLogic($vars['errors_requests_text'],$repl)

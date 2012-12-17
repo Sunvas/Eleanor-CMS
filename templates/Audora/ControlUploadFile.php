@@ -69,12 +69,12 @@ if($uploaded or $writed)
 }
 
 echo$r,'<li class="upload"',$writed ? ' style="display:none"' : '','>',
-	Eleanor::Control($name.'[file]','file',false,array('onchange'=>'$(this).closest(\'form\').attr(\'enctype\',\'multipart/form-data\')')),
+	Eleanor::Input($name.'[file]',false,array('type'=>'file','onchange'=>'$(this).closest(\'form\').attr(\'enctype\',\'multipart/form-data\')')),
 	'<br /><a class="small" href="#" onclick="$(\'li.upload\').hide();$(\'li.write\').show();$(\'#type-',$u,'\').val(\'w\');return false">',
 	$lang['write'].'</a></li><li class="write"',$writed ? '' : ' style="display:none"','>',
-	Eleanor::Edit($name.'[text]','',array('id'=>'text-'.$u)),
+	Eleanor::Input($name.'[text]','',array('id'=>'text-'.$u)),
 	'<br /><a class="small" href="#" onclick="var f=$(this).closest(\'form\');f.find(\'li.upload\').show();f.find(\'li.write\').hide();$(\'#type-'.$u.'\').val(\'u\');return false">',
 	$lang['upload'],'</a></li>',
 	$options['max_size'] ? '<li class="upload"'.($writed ? ' style="display:none"' : '').'><span class="small" style="font-weight:bold">'.sprintf($lang['max_size'],Files::BytesToSize($options['max_size'])).'</span></li>' : '',
 	$options['types'] ? '<li><span class="small" style="font-weight:bold">'.sprintf($lang['allowed_types'],join(', ',$options['types'])).'</span></li>' : '',
-	'</ul>',Eleanor::Control($name.'[type]','hidden',$writed ? 'w' : 'u',array('id'=>'type-'.$u));
+	'</ul>',Eleanor::Input($name.'[type]',$writed ? 'w' : 'u',array('id'=>'type-'.$u,'type'=>'hidden'));

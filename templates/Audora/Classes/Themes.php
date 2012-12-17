@@ -128,7 +128,7 @@ $(function(){
 <img src="'.Eleanor::$Template->default['theme'].'images/warning.png" class="info" alt="" title="'.$t.'" />
 <div>
 	<h4>'.$t.'</h4><hr /><div class="wbpad" style="max-height:300px;margin:10px 0 10px 0;">'.$lic.'</div><hr />
-	<form method="post">'.($back ? '' : Eleanor::Control('back','hidden',$back)).'<div style="text-align:center;margin-top:10px">
+	<form method="post">'.($back ? '' : Eleanor::Input('back',$back,array('type'=>'hidden'))).'<div style="text-align:center;margin-top:10px">
 	<input class="button" name="submit" type="submit" value="'.static::$lang['submitlic'].'" />
 	<input class="button" name="refuse" type="submit" value="'.static::$lang['refuselic'].'" />
 	<input class="button" type="button" value="'.static::$lang['cancel'].'" onclick="history.go(-1); return false;" />

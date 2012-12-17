@@ -10,7 +10,14 @@
 */
 
 class UserManager extends BaseClass
-{	public static function Add(array$user=array())
+{	/**
+	 * Создание пользователя системы
+	 *
+	 * @param array $user Данные создаваемого пользователя. Ключи должны совпадать с названиями полей в БД, исключением:
+	 * string _password Ключ для указания пароля пользователя
+	 * array groups Массив групп пользователя
+	 * @throws EE
+	 */	public static function Add(array$user=array())
 	{		Eleanor::LoadOptions('user-profile');
 		if(!isset($user['name']) or $user['name']=='')
 			throw new EE('EMPTY_NAME',EE::DEV);
@@ -78,6 +85,15 @@ class UserManager extends BaseClass
 		return$id;
 	}
 
+	/**
+	 * Обновление пользователя системы
+	 *
+	 * @param array $user Данные для обновления. Ключи должны совпадать с названиями полей в БД, исключением:
+	 * string _password Ключ для указания пароля пользователя
+	 * array groups Массив групп пользователя
+	 * @param int|array|FALSE $ids ID пользователей, в данные которых будут вносится коррективы
+	 * @throws EE
+	 */
 	public static function Update(array$user,$ids=false)
 	{		if($ids)
 		{
@@ -166,7 +182,12 @@ class UserManager extends BaseClass
 			Integration::Update($todb+$tosite+$toextra,$user,$ids);
 	}
 
-	public static function Delete($ids,array$data=array())
+	/**
+	 * Удаление пользователя из системы
+	 *
+	 * @param int|array $ids ID удаляемых пользователей
+	 */
+	public static function Delete($ids)
 	{		if(is_array($ids) and false!==$k=array_search(0,$ids))
 			unset($ids[$k]);
 		if(!$ids)
@@ -209,17 +230,17 @@ class UserManager extends BaseClass
 			{				$lastid+=count($del);
 				Eleanor::$Cache->Put('deleted-users',$lastid,true);			}
 		}
-		if(!isset($data['_ni']))
-			Integration::Delete($ids);
+
+		Integration::Delete($ids);
 		return$q;
 	}
 
-	/*
-		Функция выполняет синхронизацию базы текущих пользователей с базой глобальных пользователей.
-		$ids - массив ID пользователей, которых нужно синхронизировать. Возможно так же, заполнение массива в виде
-			ID => array( field1, ... ), где ID - ID пользователя, а  field1, ... - поля, взятые из глобальной таблицы для частной
-		$extra - определение дополнительных полей БД.
-	*/
+	/**
+	 * Синхронизация базы текущих пользователей системы с базой глобальных пользователей.
+	 *
+	 * @param array $ids ID пользователей, которых нужно синхронизировать. Допускается заполнение в виде ID => array( field1, ... ), где ID - ID пользователя, а  field1, ... - поля, взятые из глобальной таблицы для частной
+	 * @param array $extra Дополнительные поля синхронизации
+	 */
 	public static function Sync($ids,array$extra=array())
 	{		$ids=(array)$ids;		#Поля, которые одинаковые для таблиц users_site и глобальной таблицы пользователей		$fields=array('full_name','name','register','language','timezone');
 		$tosite=$toextra=$sync=$update=array();
@@ -279,6 +300,13 @@ class UserManager extends BaseClass
 		Eleanor::$Db->Insert(P.'users_extra',$toextra);
 	}
 
+	/**
+	 * Определение корректности пароля определенного пользователя
+	 *
+	 * @param string $pass Предполагаемый пароль пользователя
+	 * @param id|FALSE ID пользователя
+	 * @return bool
+	 */
 	public static function MatchPass($pass,$id=false)
 	{		if(!$id)
 			$id=Eleanor::$Login->GetUserValue('id');		$R=Eleanor::$UsersDb->Query('SELECT `pass_salt`,`pass_hash` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' LIMIT 1');
@@ -287,6 +315,12 @@ class UserManager extends BaseClass
 		return$a['pass_hash']==self::PassHash($a['pass_salt'],$pass);
 	}
 
+	/**
+	 * Проверка имени пользователя на заблокированность в системе
+	 *
+	 * @param string $name Имя пользователя
+	 * @throws EE
+	 */
 	public static function IsNameBlocked($name)
 	{
 		if(!Eleanor::$vars['blocked_names'])
@@ -296,6 +330,12 @@ class UserManager extends BaseClass
 				throw new EE('NAME_BLOCKED',EE::UNIT);
 	}
 
+	/**
+	 * Проверка email на заблокированность в системе
+	 *
+	 * @param string $email Email
+	 * @throws EE
+	 */
 	public static function IsEmailBlocked($email)
 	{
 		if(!Eleanor::$vars['blocked_emails'])
@@ -305,14 +345,11 @@ class UserManager extends BaseClass
 				throw new EE('EMAIL_BLOCKED',EE::UNIT);
 	}
 
-	/*
-		Функция проверяет, соответствует ли строка маске.
-		Маска вводиться как:
-		? - один любой символ
-		* - любая последовтальность символов
-		=====
-		Я знаю о функции fnmatch, но "На данный момент эта функция недоступна в Windows и других POSIX-несовместимых системах."
-	*/
+	/**
+	 * Проверка соответствия строки маске. Разработчику известно о существовании функции fnmatch, но "На данный момент эта функция недоступна в Windows и других POSIX-несовместимых системах."
+	 *
+	 * @param string $mast Маска. Спецсимволы: ? - один любой символ, * - любая последовтальность символов
+	 */
 	public static function MatchMask($mask,$string)
 	{
 		$mask=preg_quote(trim($mask),'#');
@@ -322,11 +359,24 @@ class UserManager extends BaseClass
 		return preg_match('#'.$mask.'#i',$string)>0;
 	}
 
+	/**
+	 * Генерация хеша пароля
+	 *
+	 * @param string $salt Соль усиления хеша
+	 * @param string $pass Пароль
+	 * @param bool $md Флаг указывает на то, что переданный уже пропущен через функцию md5. Для кодирования пароля на стороне клиента.
+	 */
 	public static function PassHash($salt,$pass,$md=false)
 	{
 		return md5(md5($salt).($md ? $pass : md5($pass)));
 	}
 
+	/**
+	 * Генерация групп пользователей в виде иерархии option-ов для select-а
+	 *
+	 * @param int|array $sel Идентификаторы выделенных пунктов (наличия параметра selected в option-е)
+	 * @param int|array $no Идентификатор исключаемых из списка групп (дочерние группы так же будут исключены)
+	 */
 	public static function GroupsOpts($sel=array(),$no=array())
 	{
 		$r=Eleanor::$Cache->Get('groups_'.Language::$main);
@@ -391,6 +441,11 @@ class UserManager extends BaseClass
 		return$opts;
 	}
 
+	/**
+	 * Преобразование групп пользователя в строковую последовательность для записи в БД
+	 *
+	 * @param array|int $g Группы пользователя
+	 */
 	private static function DoGroups($g)
 	{		if(!$g)
 			return','.GROUP_USER.',';

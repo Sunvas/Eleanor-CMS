@@ -219,14 +219,14 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form($links['login'])
 			->begin()
-			->item($ltpl['login'],Eleanor::Edit('login[name]',$values['name'],array('style'=>'width:300px','tabindex'=>1)))
-			->item($ltpl['pass'],Eleanor::Control('login[password]','password',$values['password'],array('style'=>'width:300px','tabindex'=>2)));
+			->item($ltpl['login'],Eleanor::Input('login[name]',$values['name'],array('style'=>'width:300px','tabindex'=>1)))
+			->item($ltpl['pass'],Eleanor::Input('login[password]',$values['password'],array('type'=>'password','style'=>'width:300px','tabindex'=>2)));
 
 		if($captcha)
-			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'descr'=>static::$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>3)),'descr'=>static::$lang['captcha_']));
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		#Метод отвечает за внешний вид интерфейса для входа пользователя
 		return$C.$Lst->button($back.Eleanor::Button($ltpl['enter'],'submit',array('tabindex'=>5)))->end()->endform()
@@ -310,13 +310,13 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form(array('id'=>'regform'))
 			->begin()
-			->item(array(static::$lang['name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>1,'required'=>true,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_name'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="name-error" style="color:red;display:none;">'.$errname.'</div>','tip'=>static::$lang['name_'],'imp'=>true,'td1'=>array('style'=>'width:150px;')))
-			->item($lang['full_name'],Eleanor::Edit('full_name',$values['full_name'],array('tabindex'=>2,'style'=>'width:80%')))
-			->item(array('E-mail',Eleanor::Edit('email',$values['email'],array('tabindex'=>3,'required'=>true,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_email'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="email-error" style="color:red;display:none;">'.$erremail.'</div>','tip'=>static::$lang['email_'],'imp'=>true))
-			->item(array(static::$lang['pass'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>4)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>static::$lang['pass_']))
-			->item(static::$lang['rpass'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>5)).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>');
+			->item(array(static::$lang['name'],Eleanor::Input('name',$values['name'],array('tabindex'=>1,'required'=>true,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_name'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="name-error" style="color:red;display:none;">'.$errname.'</div>','tip'=>static::$lang['name_'],'imp'=>true,'td1'=>array('style'=>'width:150px;')))
+			->item($lang['full_name'],Eleanor::Input('full_name',$values['full_name'],array('tabindex'=>2,'style'=>'width:80%')))
+			->item(array('E-mail',Eleanor::Input('email',$values['email'],array('tabindex'=>3,'required'=>true,'style'=>'width:80%','placeholder'=>static::$lang['enter_g_email'])).' <a href="#" title="'.static::$lang['check'].'"><img src="'.Eleanor::$Template->default['theme'].'images/no_dublicate.png" alt="" /></a><div id="email-error" style="color:red;display:none;">'.$erremail.'</div>','tip'=>static::$lang['email_'],'imp'=>true))
+			->item(array(static::$lang['pass'],Eleanor::Input('password',$values['password'],array('type'=>'password','tabindex'=>4)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>static::$lang['pass_']))
+			->item(static::$lang['rpass'],Eleanor::Input('password2',$values['password2'],array('type'=>'password','tabindex'=>5)).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>');
 		if($captcha)
-			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>6,'required'=>true)),'tip'=>static::$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>6,'required'=>true)),'tip'=>static::$lang['captcha_']));
 
 		return Eleanor::JsVars(
 				array(
@@ -466,10 +466,10 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form()
 			->begin(array('id'=>'rpass'))
-			->item(array(static::$lang['enterna'],Eleanor::Edit('name',$values['name'],array('tabindex'=>1)).'<br /><a href="#" class="small">'.static::$lang['fogotname'].'</a>','tr'=>array('id'=>'tr-name','style'=>$em ? 'display:none' : ''),'td1'=>array('style'=>'width:170px')))
-			->item(array(static::$lang['enterem'],Eleanor::Edit('email',$values['email'],array('tabindex'=>2)).'<br /><a href="#" class="small">'.static::$lang['fogotemail'].'</a>','tr'=>array('id'=>'tr-email','style'=>$em ? '' : 'display:none'),'td1'=>array('style'=>'width:170px')));
+			->item(array(static::$lang['enterna'],Eleanor::Input('name',$values['name'],array('tabindex'=>1)).'<br /><a href="#" class="small">'.static::$lang['fogotname'].'</a>','tr'=>array('id'=>'tr-name','style'=>$em ? 'display:none' : ''),'td1'=>array('style'=>'width:170px')))
+			->item(array(static::$lang['enterem'],Eleanor::Input('email',$values['email'],array('tabindex'=>2)).'<br /><a href="#" class="small">'.static::$lang['fogotemail'].'</a>','tr'=>array('id'=>'tr-email','style'=>$em ? '' : 'display:none'),'td1'=>array('style'=>'width:170px')));
 		if($captcha)
-			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'tip'=>static::$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>3)),'tip'=>static::$lang['captcha_']));
 
 		$Lst->button(Eleanor::Button('OK','submit',array('tabindex'=>4)))->end()->endform();
 		return$C.$Lst.'<script type="text/javascript">//<![CDATA[
@@ -540,10 +540,10 @@ $(function(){	$("#rpass a.small").click(function(){		$("#tr-email,#tr-name").t
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form(array('id'=>'newpass'))
 			->begin()
-			->item(array(static::$lang['ent_newp'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>1)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>static::$lang['pass_'],'td1'=>array('style'=>'width:200px')))
-			->item(static::$lang['rep_newp'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>2)).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>');
+			->item(array(static::$lang['ent_newp'],Eleanor::Input('password',$values['password'],array('tabindex'=>1,'type'=>'password')).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>','tip'=>static::$lang['pass_'],'td1'=>array('style'=>'width:200px')))
+			->item(static::$lang['rep_newp'],Eleanor::Input('password2',$values['password2'],array('tabindex'=>2,'type'=>'password')).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>');
 		if($captcha)
-			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'descr'=>static::$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>3)),'descr'=>static::$lang['captcha_']));
 
 		return$C.$Lst->button(Eleanor::Button('OK','submit',array('tabindex'=>4)))->end()->endform()
 			.'<script type="text/javascript">//<!CDATA[
@@ -674,7 +674,7 @@ $(function(){	var ef={//Error field
 				->begin();
 
 			if($captcha)
-				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_']));
+				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_']));
 
 			$C.=$Lst->button(Eleanor::Button(static::$lang['ractletter'],'submit',array('tabindex'=>2)))
 				->end()->endform();
@@ -709,10 +709,10 @@ $(function(){	var ef={//Error field
 			->form()
 			->begin()
 			->item(array(static::$lang['curr_email'],($em=Eleanor::$Login->GetUserValue('email')) ? $em : '&mdash;','td1'=>array('style'=>'width:200px')))
-			->item(static::$lang['new_email'],Eleanor::Edit('email',$values['email'],array('tabindex'=>1,'required'=>true)));
+			->item(static::$lang['new_email'],Eleanor::Input('email',$values['email'],array('tabindex'=>1,'required'=>true)));
 
 		if($captcha)
-			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>1)),'descr'=>static::$lang['captcha_']));
 
 		return$C.$Lst->button(Eleanor::Button(static::$lang['continue'],'submit',array('tabindex'=>3)))->end()->endform();
 	}
@@ -787,10 +787,10 @@ $(function(){	var ef={//Error field
 			->form(array('id'=>'newpass'))
 			->begin()
 			->head(static::$lang['your_curr_pass'])
-			->item(array(static::$lang['en_ycp'],Eleanor::Control('old','password',$values['old'],array('tabindex'=>1)),'td1'=>array('style'=>'width:200px')))
+			->item(array(static::$lang['en_ycp'],Eleanor::Input('old',$values['old'],array('tabindex'=>1,'type'=>'password')),'td1'=>array('style'=>'width:200px')))
 			->head(static::$lang['new_pass_me'])
-			->item(static::$lang['ent_newp'],Eleanor::Control('password','password',$values['password'],array('tabindex'=>2)).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>')
-			->item(static::$lang['rep_newp'],Eleanor::Control('password2','password',$values['password2'],array('tabindex'=>3)).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>')
+			->item(static::$lang['ent_newp'],Eleanor::Input('password',$values['password'],array('tabindex'=>2,'type'=>'password')).'<div id="password-error" style="color:red;display:none;">'.$errpass.'</div>')
+			->item(static::$lang['rep_newp'],Eleanor::Input('password2',$values['password2'],array('tabindex'=>3,'type'=>'password')).'<div id="password2-error" style="color:red;display:none;">'.static::$lang['PASSWORD_MISMATCH'].'</div>')
 			->button(Eleanor::Button('OK','submit',array('tabindex'=>4)))
 			->end()
 			->endform();
@@ -952,7 +952,7 @@ $(function(){
 			)
 			->item(
 				static::$lang['amanage'],
-				Eleanor::Control('avatar_location','hidden',$values['avatar_location'],array('id'=>'avatar-input'))
+				Eleanor::Input('avatar_location',$values['avatar_location'],array('id'=>'avatar-input','type'=>'hidden'))
 				.'<div id="avatar-local">
 					<div id="avatar-select"></div>
 					<div id="avatar-view">
@@ -1171,7 +1171,6 @@ $(function(){
 			->item($lang['timezone'],$user['timezone'] ? $user['timezone'] : '<i>'.$lang['by_default'].'</i>')
 			->end();
 
-		$user['skype']=htmlspecialchars($user['skype'],ELENT,CHARSET,false);
 		if($user['icq'])
 			$icq=number_format($user['icq'],0,3,'-');
 		$connect=(string)$Lst->begin()
@@ -1179,6 +1178,7 @@ $(function(){
 			->item('Skype',$user['skype'] ? '<a href="skype:'.$user['skype'].'">'.$user['skype'].'</a>' : '&mdash;')
 			->item('ICQ',$user['icq'] ? '<img src="http://status.icq.com/online.gif?icq='.$user['icq'].'&amp;img=5" alt="'.$icq.'" title="'.$icq.'" /> '.$icq : '&mdash;')
 			->item($lang['vk'],$user['vk'] ? $user['vk'] : '&mdash;')
+			->item('Facebook',$user['facebook'] ? $user['facebook'] : '&mdash;')
 			->item('Twitter',$user['twitter'] ? $user['twitter'] : '&mdash;')
 			->end();
 

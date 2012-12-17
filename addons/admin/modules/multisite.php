@@ -37,7 +37,7 @@ switch($d)
 			'title'=>array(
 				'title'=>$lang['sn'],
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'imp'=>true,
 				'multilang'=>Eleanor::$vars['multilang'],
 				'save'=>function($a) use ($lang)
@@ -68,7 +68,7 @@ switch($d)
 				'title'=>$lang['sa'],
 				'descr'=>$lang['sa_'],
 				'default'=>PROTOCOL,
-				'type'=>'edit',
+				'type'=>'input',
 				'imp'=>true,
 				'save'=>function($a) use ($lang)
 				{
@@ -101,7 +101,7 @@ switch($d)
 			'secret'=>array(
 				'title'=>$lang['secret'],
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'imp'=>true,
 				'bypost'=>&$post,
 			),
@@ -109,7 +109,7 @@ switch($d)
 			'prefix'=>array(
 				'title'=>$lang['pref'],
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'imp'=>false,
 				'bypost'=>&$post,
 				'options'=>array(
@@ -121,7 +121,7 @@ switch($d)
 			'host'=>array(
 				'title'=>$lang['dbhost'],
 				'descr'=>$lang['dbhost_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'imp'=>false,
 				'default'=>'localhost',
 				'bypost'=>&$post,
@@ -136,7 +136,7 @@ switch($d)
 				'title'=>$lang['dbn'],
 				'descr'=>'',
 				'imp'=>false,
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$post,
 				'options'=>array(
 					'extra'=>array(
@@ -147,7 +147,7 @@ switch($d)
 			'user'=>array(
 				'title'=>$lang['dbu'],
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'imp'=>false,
 				'bypost'=>&$post,
 				'options'=>array(
@@ -160,7 +160,7 @@ switch($d)
 				'title'=>$lang['dbp'],
 				'descr'=>'',
 				'imp'=>false,
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$post,
 				'options'=>array(
 					'extra'=>array(

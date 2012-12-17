@@ -10,7 +10,9 @@
 */
 
 class Voting_Ajax extends Voting
-{	public function Process()
+{	/**
+	 * Осуществление действий по Ajax заспросу
+	 */	public function Process()
 	{		if(!isset($this->status))
 			$this->Status();
 		if($this->tpl)

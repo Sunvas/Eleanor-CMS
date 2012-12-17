@@ -13,13 +13,24 @@
 class Ukrainian
 {
 	const
-		ALPHABET='абвгдеёжзийклмнопрстуфхцчшщьъыэюяєії';
+		ALPHABET='абвгдеёжзийклмнопрстуфхцчшщьъыэюяєії';#Украинский технический алфавит
 
+	/**
+	 * Образование множественной формы слова
+	 *
+	 * @param int $n Число
+	 * @param array $forms Формы слова. Пример array('один','два, три, четыре','пять, шесть, семь, восемь, девять, ноль')
+	 */
 	public static function Plural($n,array$forms)
 	{		$forms+=array(false,false,false);
 		return $n%10==1&&$n%100!=11?$forms[0]:($n%10>=2&&$n%10<=4&&($n%100<10||$n%100>=20)?$forms[1]:$forms[2]);
 	}
 
+	/**
+	 * Транслитерация строки в латинницу
+	 *
+	 * @param string $s Текст
+	 */
 	public static function Translit($s)
 	{
 		return str_replace(
@@ -29,6 +40,13 @@ class Ukrainian
 		);
 	}
 
+	/**
+	 * Человеческое представление даты с настройками
+	 *
+	 * @param int|string $d Дата в обычном машинном формате, либо timestamp
+	 * @param string $t Тип вывода: t - машинное время, d - машинная дата, dt - машинная дата и время, my - месяц и год, fd - полная дата, fdt - полная дата и время
+	 * @param array $a Дополнительные опции, например включения ключа advanced позволит выводить значения "Сегодня", "Завтра", "Вчера"
+	 */
 	public static function Date($d=false,$t='',$a=array())
 	{
 		if(!$d)
@@ -110,6 +128,12 @@ class Ukrainian
 		return $a['lowercase'] ? mb_strtolower($r) : $r;
 	}
 
+	/**
+	 * Человеческое представление даты
+	 *
+	 * @param int $t Дата в оформате timestamp
+	 * @param bool $adv Флаг включения значений "Сегодня", "Завтра", "Вчера"
+	 */
 	public static function DateText($t,$adv)
 	{
 		$day=explode(',',date('Y,n,j,t',$t));

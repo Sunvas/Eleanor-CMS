@@ -47,7 +47,7 @@ elseif(isset($_GET['delete']))
 	{
 		Eleanor::$Db->Delete(P.'modules','`id`='.$id.' AND `protected`=0');
 		Eleanor::$Cache->Obsolete('mainpage');
-		Eleanor::$Cache->Lib->CleanByTag('modules');
+		Eleanor::$Cache->Lib->DeleteByTag('modules');
 		return GoAway(empty($_POST['back']) ? true : $_POST['back']);
 	}
 	$title[]=$lang['delc'];
@@ -333,6 +333,6 @@ function Save($id)
 	else
 		Eleanor::$Db->Insert(P.'modules',$values);
 	Eleanor::$Cache->Obsolete('mainpage');
-	Eleanor::$Cache->Lib->CleanByTag('modules');
+	Eleanor::$Cache->Lib->DeleteByTag('modules');
 	GoAway(empty($_POST['back']) ? true : $_POST['back']);
 }

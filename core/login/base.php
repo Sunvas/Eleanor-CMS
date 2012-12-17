@@ -11,109 +11,95 @@
 class LoginBase extends BaseClass implements LoginClass
 {	const
 		MAX_SESSIONS=10,#Максимальное число сессий
-		UNIQUE='user',
-		INTEGRATION=true;
-
-	public
-		$user=array(),
-		$Plugin;
-	protected
-		$login;
+		UNIQUE='user';#Для упрощения наследования этого класса создана эта константа. Наследуем класс, меняем константу: вуаля! и у нас новый класс логина системы
 
 	protected static
-		$Instance;
+		$user=array(),
+		$login,
+		$Plugin;
 
-	public function __get($n)
-	{
-		if($n=='Permissions')
-		{
-			if(!class_exists($n,false))
-				include Eleanor::$root.'core/permissions.php';
-			return$this->$n=new Permissions($this);
-		}
-		return parent::__get($n);
-	}
-
-	public static function getInstance()
-	{		if(!isset(static::$Instance))
-			static::$Instance=new static;
-		return static::$Instance;	}
-
-	protected function __construct()
-	{
-		if(static::INTEGRATION and is_file(Eleanor::$root.'core/login/integration.php'))
-		{
-			require Eleanor::$root.'core/login/integration.php';
-			$this->Plugin=new Integration;
-		}
-	}
-
-	public function Login(array$data,array$extra=array())
+	/**
+	 * Аутентификация по определенным входящим параметрам, например, по логину и паролю
+	 *
+	 * @param array $data Массив с данными
+	 * @throws EE
+	 */
+	public static function Login(array$data,array$extra=array())
 	{		if(!isset($data['name'],$data['password']))
 			throw new EE('EMPTY_DATA',EE::UNIT);
-		$this->AuthByName($data['name'],$data['password'],$extra);
+		static::AuthByName($data['name'],$data['password'],$extra);
 
 		$data+=array('rememberme'=>true);
-		Eleanor::SetCookie(static::UNIQUE,base64_encode((isset($this->user['login_key']) ? $this->user['login_key'] : '').'|'.$this->user['id']),$data['rememberme'] ? false : 0,true);
-		if(static::INTEGRATION and method_exists($this->Plugin,'Login'))
-			$this->Plugin->Login($this->user);
-		$this->login=true;
+		Eleanor::SetCookie(static::UNIQUE,base64_encode((isset(static::$user['login_key']) ? static::$user['login_key'] : '').'|'.static::$user['id']),$data['rememberme'] ? false : 0,true);
+		static::$login=true;
 	}
 
-	public function IsUser($hard=false)
+	/**
+	 * Авторизация пользователя: проверка является ли пользователь пользователем
+	 *
+	 * @param bool $hard Метод кэширует результат, для сброса кэша передайте true
+	 * @return bool
+	 */
+	public static function IsUser($hard=false)
 	{
-		if(isset($this->login) and !$hard)
-			return$this->login;
+		if(isset(static::$login) and !$hard)
+			return static::$login;
 
 		if(!$cookie=Eleanor::GetCookie(self::UNIQUE))
-			return$this->login=false;
+			return static::$login=false;
 
 		list($k,$id)=explode('|',base64_decode($cookie),2);
 
-		if(!$k or !$id or !$this->AuthByKey($id,$k))
-			return$this->login=false;
+		if(!$k or !$id or !static::AuthByKey($id,$k))
+			return static::$login=false;
 
-		if($hard)
-			unset($this->Permissions);
-
-		if(self::INTEGRATION and method_exists($this->Plugin,'IsUser'))
-			$this->Plugin->IsUser($this->user);
-		return$this->login=true;
+		return static::$login=true;
 	}
 
-	public function Logout($alls=false)
-	{		$this->login=false;
+	/**
+	 * Выход пользователя из учетной записи
+	 */
+	public static function Logout($alls=false)
+	{		static::$login=false;
 		Eleanor::SetCookie(static::UNIQUE,false,365,true);
-		if(isset($this->user['id']))
+		if(isset(static::$user['id']))
 		{
-			if(self::INTEGRATION and method_exists($this->Plugin,'LogOut'))
-				$this->Plugin->LogOut($this->user);
-			$R=Eleanor::$Db->Query('SELECT `login_keys` FROM `'.P.'users_site` WHERE `id`='.$this->user['id'].' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `login_keys` FROM `'.P.'users_site` WHERE `id`='.static::$user['id'].' LIMIT 1');
 			if($a=$R->fetch_assoc())
 			{
 				$lks=$a['login_keys'] ? (array)unserialize($a['login_keys']) : array();
-				$cl=get_class($this);
+				$cl=get_class();
 
 				if($alls)
 					unset($lks[$cl]);
 				else
-					unset($lks[$cl][$this->user['login_key']]);
+					unset($lks[$cl][ static::$user['login_key'] ]);
 
-				Eleanor::$Db->Update(P.'users_site',array('login_keys'=>$lks ? serialize($lks) : ''),'`id`='.$this->user['id'].' LIMIT 1');
-				Eleanor::$Db->Delete(P.'sessions','`ip_guest`=\'\' AND `user_id`='.$this->user['id'].' AND `service`=\''.Eleanor::$service.'\'');
+				Eleanor::$Db->Update(P.'users_site',array('login_keys'=>$lks ? serialize($lks) : ''),'`id`='.static::$user['id'].' LIMIT 1');
+				Eleanor::$Db->Delete(P.'sessions','`ip_guest`=\'\' AND `user_id`='.static::$user['id'].' AND `service`=\''.Eleanor::$service.'\'');
 			}
 		}
-		$this->user=array();
+		static::$user=array();
 	}
 
-	public function UserLink($name,$id=0)
-	{static$ma;
+	protected static
+		$ma;
+
+	/**
+	 * Формирование ссылки на учётную запись пользователя
+	 *
+	 * @param string $name Имя пользователя
+	 * @param string $id ID пользователя
+	 * @return string|FALSE
+	 */
+	public static function UserLink($name,$id=0)
+	{
 		$El=Eleanor::getInstance();
-		if(!$ma)
-		{			$ma=array_keys($El->modules['sections'],'user');
-			if(!$ma)
+		if(!self::$ma)
+		{			self::$ma=array_keys($El->modules['sections'],'user');
+			if(!self::$ma)
 				return false;
-			$ma=reset($ma);		}		$a=array('module'=>$ma);
+			self::$ma=reset(self::$ma);		}		$a=array('module'=>self::$ma);
 		if($name and $id)
 			$a['user']=html_entity_decode($name);
 		elseif($id)
@@ -123,7 +109,16 @@ class LoginBase extends BaseClass implements LoginClass
 		return$El->Url->special.$El->Url->Construct($a,false,'');
 	}
 
-	public function AuthByName($name,$pass,array$extra=array())
+	/**
+	 * Аутентификация пользователя его имени и паролю
+	 *
+	 * @param string $name Имя пользователя
+	 * @param string $pass Пароль пользователя
+	 * @param array $extra Дополнительные параметры аутентификации, возможные ключи массива:
+	 * ismd Признак того, что пароль уже преобразован в md5 (на стороне клиента для защиты от снифферов)
+	 * captcha Признак того, что пользователь корректно ввел капчу (защита от подбора пароля)
+	 */
+	public static function AuthByName($name,$pass,array$extra=array())
 	{		$extra+=array('ismd'=>false,'captcha'=>false);
 		if(Eleanor::$Db===Eleanor::$UsersDb)
 		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`pass_salt`,`pass_hash`,`banned_until`,`ban_explain`,`u`.`language`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`failed_logins`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `u`.`name`='.Eleanor::$Db->Escape($name).' LIMIT 1');
@@ -150,8 +145,7 @@ class LoginBase extends BaseClass implements LoginClass
 			$atime=(int)Eleanor::$vars['antibrute_time'];
 			if($fls)
 			{
-				usort($fls,function($a,$b)
-				{
+				usort($fls,function($a,$b){
 					$a=(int)$a[0];
 					$b=(int)$b[0];
 					if($a==$b)
@@ -164,7 +158,7 @@ class LoginBase extends BaseClass implements LoginClass
 					{
 						if(Eleanor::$vars['antibrute']==2)
 						{
-							Eleanor::SetCookie('Captcha_'.get_class($this),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
+							Eleanor::SetCookie('Captcha_'.get_class(),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
 							throw new EE('CAPTCHA',EE::UNIT,array('remain'=>$atime-$lt));
 						}
 						throw new EE('TEMPORARILY_BLOCKED',EE::UNIT,array('remain'=>$atime-$lt));
@@ -173,7 +167,7 @@ class LoginBase extends BaseClass implements LoginClass
 			}
 		}
 		if($user['pass_hash']===UserManager::PassHash($user['pass_salt'],$pass,$extra['ismd']))
-			$this->SetUser($user);
+			static::SetUser($user);
 		else
 		{			if(Eleanor::$vars['antibrute'])
 			{
@@ -189,7 +183,7 @@ class LoginBase extends BaseClass implements LoginClass
 							throw new EE('TEMPORARILY_BLOCKED',EE::UNIT,array('remain'=>$atime-$lt));
 						else
 						{
-							Eleanor::SetCookie('Captcha_'.get_class($this),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
+							Eleanor::SetCookie('Captcha_'.get_class(),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
 							throw new EE('WRONG_PASSWORD',EE::UNIT,array('captcha'=>true,'remain'=>$atime-$lt));
 						}
 				}
@@ -198,7 +192,13 @@ class LoginBase extends BaseClass implements LoginClass
 		}
 	}
 
-	public function AuthByKey($id,$k)
+	/**
+	 * Авторизация пользователя по ключу
+	 *
+	 * @param int $id ID пользователя
+	 * @param string $k Ключ пользователя
+	 */
+	public static function AuthByKey($id,$k)
 	{		if(Eleanor::$Db===Eleanor::$UsersDb)
 		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`banned_until`,`ban_explain`,`u`.`language`,`staticip`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
 			if(!$user=$R->fetch_assoc())
@@ -222,7 +222,7 @@ class LoginBase extends BaseClass implements LoginClass
 		$lks=$user['login_keys'] ? (array)unserialize($user['login_keys']) : array();
 		$user['groups_overload']=$user['groups_overload'] ? unserialize($user['groups_overload']) : array();
 		$user['groups']=$user['groups'] ? explode(',,',trim($user['groups'],',')) : array();
-		$cl=get_class($this);
+		$cl=get_class();
 		if(!isset($lks[$cl][$k]) or $user['staticip'] and $lks[$cl][$k][1]!=Eleanor::$ip)
 			return false;
 		$t=time();
@@ -233,12 +233,17 @@ class LoginBase extends BaseClass implements LoginClass
 		}
 		unset($user['login_keys'],$user['ip']);
 		$user['login_key']=$k;
-		$this->user=$user;
+		static::$user=$user;
 		return true;
 	}
 
-	#Жесткая авторизация. Мы указываем только ID пользователя и авторизумся! Для external_auth прежде всего.
-	public function Auth($id,$data=array())
+	/**
+	 * Аутентификация только по ID пользователя. Прежде всего для External
+	 *
+	 * @param int $id ID пользователя
+	 * @throws EE
+	 */
+	public static function Auth($id,$data=array())
 	{
 		if(Eleanor::$Db===Eleanor::$UsersDb)
 		{
@@ -262,20 +267,23 @@ class LoginBase extends BaseClass implements LoginClass
 			$R=Eleanor::$Db->Query('SELECT `id`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.P.'users_site` INNER JOIN `'.P.'users_extra` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
 			$user+=$R->fetch_assoc();
 		}
-		$this->SetUser($user);
+		static::SetUser($user);
 		$data+=array('rememberme'=>true);
-		Eleanor::SetCookie(static::UNIQUE,base64_encode((isset($this->user['login_key']) ? $this->user['login_key'] : '').'|'.$this->user['id']),$data['rememberme'] ? false : 0,true);
-		if(static::INTEGRATION and method_exists($this->Plugin,'Login'))
-			$this->Plugin->Auth($this->user);
+		Eleanor::SetCookie(static::UNIQUE,base64_encode((isset(static::$user['login_key']) ? static::$user['login_key'] : '').'|'.static::$user['id']),$data['rememberme'] ? false : 0,true);
 		return true;
 	}
 
-	protected function SetUser($user)
+	/**
+	 * Метод, вызываемый после успешной авторизации и аутентификации пользователя: обрабатывает данные и заносит их в таблицу
+	 *
+	 * @param array $user Данные пользователя
+	 */
+	protected static function SetUser(array$user)
 	{		$lks=$user['login_keys'] ? unserialize($user['login_keys']) : array();
 		$user['login_key']=md5(uniqid($user['id']));
 		$user['groups_overload']=$user['groups_overload'] ? unserialize($user['groups_overload']) : array();
 		$user['groups']=$user['groups'] ? explode(',,',trim($user['groups'],',')) : array();
-		$cl=get_class($this);
+		$cl=get_class();
 		$lks[$cl][$user['login_key']]=array(Eleanor::$vars['time_online'][$cl]+time(),Eleanor::$ip,getenv('HTTP_USER_AGENT'));
 		if(count($lks[$cl])>static::MAX_SESSIONS)
 			array_splice($lks[$cl],0,static::MAX_SESSIONS);
@@ -284,33 +292,55 @@ class LoginBase extends BaseClass implements LoginClass
 		Eleanor::$Db->Delete(P.'sessions','`ip_guest`=\''.Eleanor::$ip.'\'');
 		unset($user['failed_logins'],$user['pass_salt'],$user['pass_hash'],$user['login_keys']);
 		if(Eleanor::$vars['antibrute']==2)
-			Eleanor::SetCookie('Captcha_'.get_class($this),false);
-		$this->user=$user;	}
+			Eleanor::SetCookie('Captcha_'.get_class(),false);
+		static::$user=$user;	}
 
-	public function ApplyCheck()
+	/**
+	 * Применение логина, как главного в системе: подстройка системы под пользователя, настройка часового пояса, проверка забаненности и т.п.
+	 *
+	 * @throws EE
+	 */
+	public static function ApplyCheck()
 	{
-		if($this->user['banned_until'] and 0<strtotime($this->user['banned_until'])-time())
-			throw new EE($this->user['ban_explain'],EE::USER,array('ban'=>'user','banned_until'=>$this->user['banned_until']));
+		if(static::$user['banned_until'] and 0<strtotime(static::$user['banned_until'])-time())
+			throw new EE(static::$user['ban_explain'],EE::USER,array('ban'=>'user','banned_until'=>static::$user['banned_until']));
 	}
 
-	public function GetUserValue($param,$safe=true,$query=true)
+	/**
+	 * Получение значения пользовательского параметра
+	 *
+	 * @param array|string $key Один или несколько параметров, значения которых нужно получить
+	 * @return array|string В зависимости от типа переданной переменной
+	 */
+	public static function GetUserValue($param,$safe=true,$query=true)
 	{		if(!$isa=is_array($param))
 			$param=(array)$param;
 		$pnew=$res=array();
 		foreach($param as &$v)
-			if(array_key_exists($v,$this->user))
-				$res[$v]=$safe ? FilterArrays::Filter($this->user[$v]) : $this->user[$v];
+			if(array_key_exists($v,static::$user))
+				$res[$v]=$safe ? GlobalsWrapper::Filter(static::$user[$v]) : static::$user[$v];
 			else
 				$pnew[]=$v;
-		if($pnew and $query and isset($this->user['id']))
+		if($pnew and $query and isset(static::$user['id']))
 		{
-			$R=Eleanor::$Db->Query('SELECT `'.join('`,`',$pnew).'` FROM `'.P.'users_site` INNER JOIN `'.P.'users_extra` USING(`id`) WHERE `id`='.(int)$this->user['id'].' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `'.join('`,`',$pnew).'` FROM `'.P.'users_site` INNER JOIN `'.P.'users_extra` USING(`id`) WHERE `id`='.(int)static::$user['id'].' LIMIT 1');
 			if($a=$R->fetch_assoc())
 			{
-				$this->user+=$a;
-				$res+=$this->GetUserValue($pnew,$safe,false);
+				static::$user+=$a;
+				$res+=static::GetUserValue($pnew,$safe,false);
 			}
 		}
 		return$isa ? $res : reset($res);
+	}
+
+	/**
+	 * Установка значения пользовательского параметра. Метод не должен обновлять данны пользователя в БД! Только на время работы скрипта
+	 *
+	 * @param array|string $key Имя параметра, либо массив в виде $key=>$value
+	 * @param mixed $value Значения
+	 */
+	public static function SetUserValue($key,$value=null)
+	{
+		static::$user[$key]=$value;
 	}
 }

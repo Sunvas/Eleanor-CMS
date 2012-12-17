@@ -9,7 +9,14 @@
 	*Pseudonym
 */
 class Dates
-{	public static function Calendar($name,$value=false,$time=false,array$a=array())
+{	/**
+	 * Вывод календаря: контрола выбора даты и времени
+	 *
+	 * @param string $name Имя контрола
+	 * @param string $value Значение контрола
+	 * @param bool $time Флаг возможности выбирать время (минуты и секунды)
+	 * @param array $a Дополнительные параметры контрола
+	 */	public static function Calendar($name,$value='',$time=false,array$a=array())
 	{
 		if(strncmp('0000-00-00',$value,10)==0)
 			$value='';
@@ -22,7 +29,7 @@ class Dates
 		$GLOBALS['head'][__class__.__function__]='<link media="screen" href="addons/calendar/style.css" type="text/css" rel="stylesheet" />';
 		if(!isset($a['id']))
 			$a['id']=preg_replace('#[^a-z0-9\-_]+#i','',$name);
-		return Eleanor::Edit($name,$value,$a).Eleanor::Button('...','button',$ba)
+		return Eleanor::Input($name,$value,$a).Eleanor::Button('...','button',$ba)
 		.'<script type="text/javascript">//<![CDATA[
 $(function(){
 	$("#'.$a['id'].'").on("clone",function(){		this.Calendar=new Calendar({
@@ -55,11 +62,13 @@ $(function(){
 });//]]></script>';
 	}
 
-	/*
-		Метод возвращает календарь в виде array[week][day]
-		Где week от 1 до 5 или 6, а  day от 1 до 7.
-		При этом $prev_next может писать в начало и конец числа следующих месяцев, иначе - заменяет нулями.
-	*/
+	/**
+	 * Генерация "календаря" в виде array[week][day], где week это от 1 до 5 или 6, а day от 1 до 7.
+	 *
+	 * @param int $y Год
+	 * @param int $m Месяц
+	 * @param bool $pn Флаг дописывания в начало и конец календаря числа следующих месяцев, если FALSE - вставляются нули
+	 */
 	public static function BuildCalendar($y,$m,$pn=true)
 	{		$mt=mktime(0,0,0,$m,1,$y);
 		$t=idate('w',$mt);

@@ -12,20 +12,31 @@
 class Voting extends BaseClass
 {	public
 		$mid,#ID модул€
-		$uid,#uid
-		$tpl='Voting',
+		$uid,#ID пользовател€
+		$tpl='Voting',# ласс шаблона с оформлением опроса
 		$status;#—татус пользовател€ по отношению к голосованию: [false] - можно голосовать, voted - уже проголосовали, refused - голос не защитан, confirmed - голос защитан, guest - голосовать нельз€, потому что голосование только дл€ пользователей, wait - ожидает открыти€, finished - голосование завершено
 	protected
-		$TC,
-		$table,
-		$voting;
-	public function __construct($id,$t=false,$uid=false)
+		$TC,#ќбъект TimeCheck
+		$table,#“аблица опроса
+		$voting;#ƒамп опроса
+	/**
+	 *  онструктор
+	 *
+	 * @param int $id идентификатор опроса
+	 * @param string|FALSE $t им€ основной таблицы с опросами, в случае FALSE беретс€ таблица по умолчанию
+	 */
+	public function __construct($id,$t=false)
 	{		$this->table=$t ? $t : P.'voting';
-		$this->uid=$uid===false ? (int)Eleanor::$Login->GetUserValue('id') : $uid;
+		$this->uid=(int)Eleanor::$Login->GetUserValue('id');
 		$R=Eleanor::$Db->Query('SELECT * FROM `'.$this->table.'` WHERE `id`='.(int)$id.' LIMIT 1');
 		$this->voting=$R->fetch_assoc();
 	}
 
+	/**
+	 * ќтображение опроса
+	 *
+	 * @param array $request ћассив параметров AJAX запроса
+	 */
 	public function Show(array$request=array())
 	{		if(!$this->voting)
 			return'';
@@ -41,6 +52,9 @@ class Voting extends BaseClass
 			Eleanor::$Template->queue[]=$this->tpl;
 		return Eleanor::$Template->VotingCover($this->voting,$qs,$this->status,$request);	}
 
+	/**
+	 * ѕолучение статуса опроса (смотри выше описание всех возможных статусов)
+	 */
 	public function Status()
 	{		if((int)$this->voting['begin']>0 and time()<strtotime($this->voting['begin']))
 			return$this->status='wait';
@@ -48,15 +62,16 @@ class Voting extends BaseClass
 		if((int)$this->voting['end']>0 and time()>strtotime($this->voting['end']))
 			return$this->status='finished';
 		if($this->voting['onlyusers'] or $this->uid)
+		{
 			if($this->uid)
 			{
 				$R=Eleanor::$Db->Query('SELECT `id` FROM `'.$this->table.'_results` WHERE `id`='.$this->voting['id'].' AND `uid`='.$this->uid.' LIMIT 1');
-				$this->status=$R->num_rows==0 ? false : 'voted';
+				return$this->status=$R->num_rows==0 ? false : 'voted';
 			}
-			else
-				$this->status='guest';
-		else
-		{			if(!isset($this->TC))
-				$this->TC=new TimeCheck($this->mid,false,$this->uid);
-			$this->status=$this->TC->Check('v'.$this->voting['id']) ? 'voted' : false;
-		}	}}
+			return$this->status='guest';
+		}
+
+		if(!isset($this->TC))
+			$this->TC=new TimeCheck($this->mid,false,$this->uid);
+		$this->status=$this->TC->Check('v'.$this->voting['id']) ? 'voted' : false;
+	}}

@@ -12,7 +12,7 @@
 */
 class Uploader extends BaseClass
 {	const
-		FILENAME='Filedata';
+		FILENAME='Filedata';#Имя input type="file" при загрузке файла через flash
 	public
 		$prevsuff='_preview',#Суффикс превьюшек
 		$pp=20,#Количество файлов на страницу
@@ -21,27 +21,28 @@ class Uploader extends BaseClass
 		$allow_delete=true,#Разрешить удаление файлов и папок?
 		$allow_walk=true,#Позволить "гулять" по папкам
 
-		$buttons_top=array(
-			'create_file'=>false,
-			'show_previews'=>true,
-			'create_previews'=>true,
-			'watermark'=>true,
-			'create_folder'=>true,
-			'update'=>true,
+		$buttons_top=array(#Кнопки управления интерфейса
+			'create_file'=>false,#Создание файла
+			'show_previews'=>true,#Показать / скрыть превьюшки
+			'create_previews'=>true,#Включение / выключение создание превьюшек
+			'watermark'=>true,#Включение / выключение создание ватермарка
+			'create_folder'=>true,#Создание каталога
+			'update'=>true,#Обновление содержимого
 		),
 
-		$buttons_item=array(
-			'edit'=>false,
-			'insert_attach'=>true,
-			'insert_link'=>true,
-			'file_rename'=>true,
-			'file_delete'=>true,
+		$buttons_item=array(#Кнопки управление конкретным каталогом или файлом
+			#Для файлов
+			'edit'=>false,#Правка файла
+			'insert_attach'=>true,#Вставить файл используя ownbb код [attach]
+			'insert_link'=>true,#Вставить ссылку на файл
+			'file_rename'=>true,#Переименование файла
+			'file_delete'=>true,#Удаление файла
 			#Для каталогов
-			'folder_rename'=>true,
-			'folder_open'=>false,
-			'folder_delete'=>true,
+			'folder_rename'=>true,#Переименование каталога
+			'folder_open'=>false,#Открытие каталога (переход в каталог)
+			'folder_delete'=>true,#Удаление каталога
 		),
-		$editable=array('php','css','txt','js','html','htm'),
+		$editable=array('php','css','txt','js','html','htm'),#Перечень файлов, которые возможно редактировать
 
 		$max_size,#Максимальный размер всех залитых файлов. Поставьте в false, если не хотите, чтобы пользователь мог загружать файлы.
 		$max_files=0,#Максимальное число файлов, которые пользователь может загрузить
@@ -52,12 +53,15 @@ class Uploader extends BaseClass
 
 	protected
 		$pathlimit='',#Предел перемещений, за который нельзя заходить
-		$vars,
+		$vars,#Внутренние переменные
 		$path='';#Ограничитель. За пределы этого каталога выходить нельзя.
 
-	/*
-		$path - обязательно с / в конце!
-	*/
+	/**
+	 * Конструктор загрузчика файлов
+	 *
+	 * @param string|FALSE $path Полный абсолютный путь к коневому каталогу загрузчика. Обязательно с / в конце.
+	 * @param string $tpl Название класса оформления загрузчика
+	 */
 	public function __construct($path=false,$tpl='Uploader')
 	{		$this->vars=Eleanor::LoadOptions('files',true);
 		$this->max_size=Eleanor::$Permissions->MaxUpload();
@@ -70,6 +74,13 @@ class Uploader extends BaseClass
 			Eleanor::$Template->queue[]=$tpl;
 		$this->uid=Eleanor::$Login->GetUserValue('id');	}
 
+	/**
+	 * Получение HTML кода загрузчика. Метод можно вызывать несколько раз, передавая каждый раз уникальный параметр $uniq для создания нескольких независимых загрузчиков на странице
+	 *
+	 * @param string|FALSE $path Относительный путь внутреннего каталога для загрузки файла. В случае передачи FALSE, загрузка будет происходить в temp каталог
+	 * @param string $uniq Уникальная строка-идентификатор каждого отдельного загрузчика на странице
+	 * @param string|FALSE $title Название загрузчика
+	 */
 	public function Show($path=false,$uniq='',$title=false)
 	{		$max_upload=Files::SizeToBytes(ini_get('upload_max_filesize'));
 		if(is_int($this->max_size))
@@ -114,7 +125,7 @@ class Uploader extends BaseClass
 		}
 		else
 		{			$path=preg_replace('#/|\\\\#',DIRECTORY_SEPARATOR,trim($path,'/\\'));
-			$this->path=$this->pathlimit.($path ? Eleanor::WinFiles($path).DIRECTORY_SEPARATOR : '');
+			$this->path=$this->pathlimit.($path ? Files::Windows($path).DIRECTORY_SEPARATOR : '');
 			$_SESSION[__class__][$uniq]=array(
 				'prevsuff'=>$this->prevsuff,
 				'pp'=>$this->pp,
@@ -149,6 +160,12 @@ class Uploader extends BaseClass
 		);
 	}
 
+	/**
+	 * Получение адреса рабочего каталога загрузчика для работы с загруженными файлами
+	 *
+	 * @param string $uniq Уникальная строка-идентификатор загрузчика
+	 * @param string|FALSE $sess Идентификатор сессии
+	 */
 	public function WorkingPath($uniq='',$sess=false)
 	{		if($sess===false)
 		{
@@ -160,7 +177,14 @@ class Uploader extends BaseClass
 		return isset($_SESSION[__class__][$uniq]) ? $_SESSION[__class__][$uniq]['path'] : false;
 	}
 
-	public function MoveFiles($path=false,$uniq='',$sess=false)
+	/**
+	 * Перемещение загруженных файлов в определенный каталог
+	 *
+	 * @param string $path Путь к катлогу, куда необходимо переместить загруженные файлы. Если каталог не существует, он будет создан
+	 * @param string $uniq Уникальная строка-идентификатор загрузчика
+	 * @param string|FALSE $sess Идентификатор сессии
+	 */
+	public function MoveFiles($path,$uniq='',$sess=false)
 	{		if($sess===false)
 		{
 			$oldpath=Eleanor::GetCookie(__class__.'-'.$uniq);
@@ -194,8 +218,14 @@ class Uploader extends BaseClass
 		throw new EE('Upload error',EE::ENV);
 	}
 
+	/**
+	 * Осуществление перехода по каталогам, внутри основного каталога
+	 *
+	 * @param string $start Путь текущего положения
+	 * @param string $to Путь, куда нужно перейти
+	 */
 	protected function GetPath($start,$to='')
-	{		$start=Eleanor::WinFiles(trim($start,'/\\'));
+	{		$start=Files::Windows(trim($start,'/\\'));
 		$p=realpath($this->path.($start ? $start.DIRECTORY_SEPARATOR : '').trim($to,'/\\'));
 		if(is_dir($p))
 			$p.=DIRECTORY_SEPARATOR;
@@ -205,6 +235,11 @@ class Uploader extends BaseClass
 		return$this->path;
 	}
 
+	/**
+	 * Получение количества загруженных файлов и их общего размера
+	 *
+	 * @param string $path Путь к каталогу, в котором находятся файлы
+	 */
 	protected function FilesSize($path)
 	{		if(!is_dir($path))
 			return array(0,0);
@@ -232,6 +267,11 @@ class Uploader extends BaseClass
 		return array($size,$cnt);
 	}
 
+	/**
+	 * Загрузка опций аплоадера из сессии при ajax или upload запросах
+	 *
+	 * @param string $uniq Уникальная строка-идентификатор загрузчика
+	 */
 	protected function LoadOptions($u)
 	{
 		if(!isset($_SESSION[__class__][$u]))

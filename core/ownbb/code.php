@@ -11,6 +11,14 @@
 
 class OwnBbCode_code extends OwnBbCode
 {
+	/**
+	 * Обработка информации перед показом на странице
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
 	public static function PreDisplay($t,$p,$c,$cu)
 	{
 		$p=$p ? Strings::ParseParams($p,$t) : array();
@@ -34,13 +42,20 @@ $(function(){	CORE.AddHead("highlight",$("<link>").attr({rel:"stylesheet",type:
 		return'<div class="code"><pre><code'.(isset($p['auto']) ? '' : ' class="'.(isset($p[$t]) ? 'language-'.$p[$t] : 'no-highlight').'"').'>'.$c.'</code></pre></div>';
 	}
 
+	/**
+	 * Обработка информации перед её правкой
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
 	public static function PreEdit($t,$p,$c,$cu)
 	{
 		$p=$p ? Strings::ParseParams($p,$t) : array();
 		if(isset($p[$t]) and $p[$t]=='no-highlight')
 			unset($p[$t]);
-		$Eleanor=Eleanor::getInstance();
-		if(in_array($Eleanor->Editor->type,$Eleanor->Editor->visual))
+		if(!empty(OwnBB::$opts['visual']))
 		{
 			$c=str_replace("\t",'    ',$c);
 			$c=str_replace(' ','&nbsp;',$c);
@@ -49,14 +64,22 @@ $(function(){	CORE.AddHead("highlight",$("<link>").attr({rel:"stylesheet",type:
 		return parent::PreSave($t,$p,$c,true);
 	}
 
+	/**
+	 * Обработка информации перед её сохранением
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
 	public static function PreSave($t,$p,$c,$cu)
-	{		$Ed=new Editor_Result;
-		if(in_array($Ed->type,$Ed->visual))
+	{		if(!empty(OwnBB::$opts['visual']))
 		{
 			$c=preg_replace("#<br ?/?>#i","\r\n",$c);
 			$c=strip_tags($c,'<span><a><img><input><b><i><u><s><em><strong>');
 		}
 		else			$c=htmlspecialchars($c,ENT_NOQUOTES | ENT_HTML5 | ENT_SUBSTITUTE | ENT_DISALLOWED,CHARSET);
+		$Ed=new Editor_Result;
 		$c=$Ed->SafeHtml($c);
 		return parent::PreSave($t,$p,$c,$cu);
 	}

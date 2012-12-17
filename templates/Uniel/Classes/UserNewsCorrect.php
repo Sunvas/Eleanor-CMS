@@ -85,33 +85,33 @@ class TplUserNewsCorrect
 		if(Eleanor::$vars['multilang'])
 		{			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
-			{				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
+			{				$ml['title'][$k]=Eleanor::Input('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
 				$ml['announcement'][$k]=$GLOBALS['Eleanor']->Editor->Area('announcement['.$k.']',Eleanor::FilterLangValues($values['announcement'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>6,'rows'=>10)));
 				$ml['text'][$k]=$GLOBALS['Eleanor']->Editor->Area('text['.$k.']',Eleanor::FilterLangValues($values['text'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>7,'rows'=>15)));
-				$ml['uri'][$k]=Eleanor::Edit('uri['.$k.']',Eleanor::FilterLangValues($values['uri'],$k),array('onfocus'=>'if(!$(this).val())$(this).val($(\'#title-'.$k.'\').val())','tabindex'=>2));
+				$ml['uri'][$k]=Eleanor::Input('uri['.$k.']',Eleanor::FilterLangValues($values['uri'],$k),array('onfocus'=>'if(!$(this).val())$(this).val($(\'#title-'.$k.'\').val())','tabindex'=>2));
 
-				$ml['tags'][$k]=Eleanor::Edit('tags['.$k.']',Eleanor::FilterLangValues($values['tags'],$k),array('tabindex'=>5));
+				$ml['tags'][$k]=Eleanor::Input('tags['.$k.']',Eleanor::FilterLangValues($values['tags'],$k),array('tabindex'=>5));
 			}
 		}
 		else
 			$ml=array(
-				'title'=>Eleanor::Edit('title',$GLOBALS['Eleanor']->Editor->imgalt=$values['title'],array('id'=>'title','tabindex'=>1)),
+				'title'=>Eleanor::Input('title',$GLOBALS['Eleanor']->Editor->imgalt=$values['title'],array('id'=>'title','tabindex'=>1)),
 				'announcement'=>$GLOBALS['Eleanor']->Editor->Area('announcement',$values['announcement'],array('bypost'=>$bypost,'no'=>array('tabindex'=>6,'rows'=>10))),
 				'text'=>$GLOBALS['Eleanor']->Editor->Area('text',$values['text'],array('bypost'=>$bypost,'no'=>array('tabindex'=>7,'rows'=>15))),
-				'uri'=>Eleanor::Edit('uri',$values['uri'],array('onfocus'=>'if(!$(this).val())$(this).val($(\'#title\').val())','tabindex'=>2)),
+				'uri'=>Eleanor::Input('uri',$values['uri'],array('onfocus'=>'if(!$(this).val())$(this).val($(\'#title\').val())','tabindex'=>2)),
 
-				'tags'=>Eleanor::Edit('tags',Eleanor::FilterLangValues($values['tags']),array('tabindex'=>5)),
+				'tags'=>Eleanor::Input('tags',Eleanor::FilterLangValues($values['tags']),array('tabindex'=>5)),
 			);
 
 		$Lst=Eleanor::LoadListTemplate('table-form')->begin();
 
 		if(isset($values['author']))
-			$Lst->item(static::$lang['author'],Eleanor::Edit('author',$values['author']));
+			$Lst->item(static::$lang['author'],Eleanor::Input('author',$values['author']));
 		$Lst->item(static::$lang['title'],Eleanor::$Template->LangEdit($ml['title'],null))
 			->item('URI',Eleanor::$Template->LangEdit($ml['uri'],null));
 		if($GLOBALS['Eleanor']->Categories->dump)
 		{			$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-			$Lst->item($lang['categs'],Eleanor::Items('cats',$GLOBALS['Eleanor']->Categories->GetOptions($values['cats']),10,array('id'=>'cs','tabindex'=>3)))
+			$Lst->item($lang['categs'],Eleanor::Items('cats',$GLOBALS['Eleanor']->Categories->GetOptions($values['cats']),array('id'=>'cs','tabindex'=>3,'size'=>10)))
 				->item(static::$lang['maincat'],Eleanor::Select('_maincat',$GLOBALS['Eleanor']->Categories->GetOptions($values['_maincat']),array('id'=>'mc','tabindex'=>4)));
 		}
 		$Lst->item(array(static::$lang['tags'],Eleanor::$Template->LangEdit($ml['tags'],null),'descr'=>static::$lang['ftags_']))
@@ -125,11 +125,11 @@ class TplUserNewsCorrect
 		if(isset($values['status']))
 			$Lst->item(static::$lang['status'],Eleanor::Select('status',Eleanor::Option(static::$lang['blocked'],0,$values['status']==0).Eleanor::Option(static::$lang['active'],1,$values['status']==1),array('tabindex'=>12)));
 		if($captcha)
-			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>13)),'descr'=>static::$lang['captcha_']));
+			$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>13)),'descr'=>static::$lang['captcha_']));
 		$general=(string)$Lst->end();
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		if($errors)
 			foreach($errors as $k=>&$v)
@@ -147,7 +147,7 @@ class TplUserNewsCorrect
 			->submitline(
 				$back.Eleanor::Button('OK','submit',array('tabindex'=>14))
 				.($id ? ' '.Eleanor::Button(Eleanor::$Language['tpl']['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
-				.($links['draft'] ? Eleanor::Control('_draft','hidden',$id).Eleanor::$Template->DraftButton($links['draft'],1).($hasdraft ? ' <a href="'.$links['nodraft'].'">'.static::$lang['nodraft'].'</a>' : '') : '')
+				.($links['draft'] ? Eleanor::Input('_draft',$id,array('type'=>'hidden')).Eleanor::$Template->DraftButton($links['draft'],1).($hasdraft ? ' <a href="'.$links['nodraft'].'">'.static::$lang['nodraft'].'</a>' : '') : '')
 			)
 			->endform()
 			.'<script type="text/javascript">//<![CDATA[

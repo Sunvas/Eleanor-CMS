@@ -118,7 +118,7 @@ class TplOwnBB
 		$tabs[]=array($head,(string)$Lst->end());
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 		$Lst->form()->tabs($tabs)->submitline($back.Eleanor::Button().($id ? ' '.Eleanor::Button(Eleanor::$Language['tpl']['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))->endform();
 
 		foreach($errors as $k=>&$v)

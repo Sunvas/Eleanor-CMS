@@ -11,24 +11,35 @@
 
 interface ControlsBase
 {
-	/*
-		Получение настроек контрола. Для его настройки
-	*/
+	/**
+	 * Получение настроек контрола
+	 *
+	 * @param ControlsManager $Obj
+	 */
 	public static function GetSettings($Obj);
 
-	/*Отображение контрола
-		$a - массив данных, включая $a['options']
-	*/
+	/**
+	 * Вывод контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Control($a,$Obj);
 
-	/*
-		Сохранение контрола
-	*/
+	/**
+	 * Сохранение контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Save($a,$Obj);
 
-	/*
-		Показ результата контрола
-	*/
+	/**
+	 * Вывод результата контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Result($a,$Obj,$controls);
 }
 
@@ -42,7 +53,7 @@ class Controls extends BaseClass
 		$langs=array();#Массив языков
 
 	protected static
-		$controls;#Массив доступных контролов.
+		$controls;#Массив доступных контролов
 
 	public function __construct()
 	{
@@ -51,9 +62,12 @@ class Controls extends BaseClass
 				$this->langs[]=$k;
 	}
 
-	/*
-		Функция должна отобразить результаты контролов
-	*/
+	/**
+	 * Массовое получение результатов контролов
+	 *
+	 * @param array $co Массив входящих контролов, формат имя=>данные
+	 * @param array $lco Массив языковых параметров контрола, формат имя=>язык=>данные
+	 */
 	public function DisplayResults(array$co,array$lco=array())
 	{
 		$ret=$this->errors=array();
@@ -157,6 +171,12 @@ class Controls extends BaseClass
 		return$ret;
 	}
 
+	/**
+	 * Массовое получение контролов
+	 *
+	 * @param array $co Массив входящих контролов, формат имя=>данные
+	 * @param array $lco Массив языковых параметров контрола, формат имя=>язык=>данные
+	 */
 	public function DisplayControls(array$co,array$lco=array())
 	{
 		$ret=$this->errors=array();
@@ -205,7 +225,7 @@ class Controls extends BaseClass
 					if(isset($v['default']))
 						$al['default']=Eleanor::FilterLangValues($v['default'],$l,'');
 					$v['name']['lang']=$l ? $l : Language::$main;
-					if(null===$tmp=$this->DisplayControl($al+$v,$ret,$lco))
+					if(null===$tmp=$this->DisplayControl($al+$v,$ret))
 						continue;
 					$ret[$k][$l]=$tmp;
 				}
@@ -221,7 +241,7 @@ class Controls extends BaseClass
 				}
 				try
 				{
-					if(null===$tmp=$this->DisplayControl($a+$v,$ret,$lco))
+					if(null===$tmp=$this->DisplayControl($a+$v,$ret))
 						continue;
 					$ret[$k]=$tmp;
 				}
@@ -233,6 +253,12 @@ class Controls extends BaseClass
 		return$ret;
 	}
 
+	/**
+	 * Массовое сохранение контролов
+	 *
+	 * @param array $co Массив входящих контролов, формат имя=>данные
+	 * @param array $lco Массив языковых параметров контрола, формат имя=>язык=>данные
+	 */
 	public function SaveControls(array$co,array$lco=array())
 	{
 		$ret=array();
@@ -311,66 +337,42 @@ class Controls extends BaseClass
 		return$ret;
 	}
 
-	/*
-		Функция отображающая контрол
-		$v - параметры контрола
-			type - Тип контрола
-
-			#Два ключа, отвечающих за обработку значения при загрузке контрола
-			load
-			load_eval
-
-			Пример:
-			function($co,$Obj)
-			{
-				return$co['value'];
-			}
-			Эти же переменные получает и eval.
-
-
-			#Два ключа, отвечающих за обработку значения при сохранении контрола
-			save
-			save_eval
-
-			Пример:
-			function($co,$Obj)
-			{
-				return$co['value'];
-			}
-			Эти же переменные получает и eval.
-
-
-			default - Значение по-умолчанию
-			value - Значение, полученное из БД. Имеет приоритет над default
-			name - нужное имя контрола на странице
-
-			options => array(#Дополнительные настройки для контролов из файлов. Кроме этого для типов select, items, item этот массив содержит значения пунктов
-				#Пример некоторых полей
-				'size' => 10,#Размер полей для типов items и item
-				'extra' = > '',#Дополнительные параметры для простых типов типа edit,text,select и пр.
-				'htmlsafe' => '',#Признак безопасности полученных ХТМЛ тегов. Это значит, значение, полученные из контрола будут пропущены через htmlspecialchars
-			),
-			lang - Идентификатор языка, если мы используем эту опцию в качестве одной из языковых
-			bypost - загрузить из POST запроса.
-			prepend - строка, определяющая содержимое ПЕРЕД контролом
-			append - строка, определяющая содержимое ПОСЛЕ контрола
-			$controls - результат предыдущих контролов из DisplayControls
-			$massarr - массив всех контролово
-	*/
-	public function DisplayControl(array$co,$controls=array(),$lco=array())
+	/**
+	 * Получение контрола
+	 *
+	 * @param array $co Данные контрола. Подробнее смотрите в теле метода.
+	 * @param array $controls Если этот метод вызывается из DisplayControls, то в текущий массив попадают все предыдущие обработанные контролы
+	 */
+	public function DisplayControl(array$co,array$controls=array())
 	{
 		#Добавить недостающие ключи
 		$co+=array(
-			'type'=>'edit',
+			'type'=>'input',#Тип контрола
+
+			/*
+			2 ключа, отвечающих за обработку данных при загрузке контрола. Пример:
+			function($control - текущий контрол,$Obj - $this,$controls)
+			{				return array('value'=>$control['value']+1);			}
+			Эти же переменные получает и load_eval.
+			*/
 			'load'=>null,
 			'load_eval'=>null,
-			'default'=>null,
-			'value'=>null,
-			'name'=>'noname',
+
+			'default'=>null,#Значение по умолчанию
+			'value'=>null,#Значение, полученное из БД. Имеет приоритет над default
+			'name'=>'noname',#имя контрола на странице
+
+			/*
+			options => array(#Дополнительные настройки. Для типов select, items, item этот массив содержит значения пунктов
+				#Пример некоторых полей
+				'extra' = > '',#Дополнительные параметры для простых типов типа edit,text,select и пр.
+			),
+			*/
 			'options'=>array(),
-			'bypost'=>false,
-			'append'=>'',
-			'prepend'=>'',
+
+			'bypost'=>false,#загрузить из POST запроса
+			'prepend'=>'',#содержимое ПЕРЕД контролом
+			'append'=>'',#содержимое ПОСЛЕ контрола
 		);
 		$co['options']=(array)$co['options'];
 		$co['controlname']=$this->GenName($co['name']);
@@ -424,28 +426,17 @@ class Controls extends BaseClass
 			case'editor':
 				if($co['bypost'])
 					$co['value']=$this->GetPostVal($co['name'],$co['value']);
-				if(is_array($co['value']))
-					$co['value']=join(',',$co['value']);
 				$E=new Editor;
 				foreach($co['options'] as $k=>&$v)
 					if($k=='type' and $v==-1)
 						continue;
+					elseif($k=='imgalt')
+						$E->imgalt=is_array($v) ? Eleanor::FilterLangValues($v,isset($co['name']['lang']) ? $co['name']['lang'] : false) : $v;
 					elseif(property_exists($E,$k))
 						$E->$k=$v;
-					elseif($k=='4alt' and isset($lco[$v]['value']))
-					{
-						if(is_string($lco[$v]['value']))
-							$alt=$lco[$v]['value'];
-						elseif(is_array($lco[$v]['value']) and is_array($co['name']) and isset($co['name']['lang']))
-							$alt=Eleanor::FilterLangValues($lco[$v]['value'],$co['name']['lang']);
-						else
-							continue;
-						if($alt)
-							$E->imgalt=$alt;
-					}
 				$html=$E->Area($co['controlname'],$co['value'],array('bypost'=>$co['bypost'])+(isset($co['extra']) ? $co['extra'] : array()));
 			break;
-			case'edit':
+			case'input':
 			case'text':
 				$co['options']+=array('extra'=>array(),'htmlsafe'=>false);
 				if($co['bypost'])
@@ -456,8 +447,6 @@ class Controls extends BaseClass
 			break;
 			case'items':
 				$value=$co['bypost'] ? (array)$this->GetPostVal($co['name'],array()) : (array)$co['value'];
-			case'item':
-				$co['options']+=array('size'=>10);
 				$items=true;
 			case'select':
 				$co['options']+=array('extra'=>array(),'strict'=>false,'options'=>array(),'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
@@ -510,7 +499,7 @@ class Controls extends BaseClass
 				else
 					$html=$co['options']['options'];
 				if($items)
-					$html=Eleanor::$co['type']($co['controlname'],$html,$co['options']['size'],$co['options']['extra']);
+					$html=Eleanor::Items($co['controlname'],$html,$co['options']['extra']);
 				else
 					$html=Eleanor::Select($co['controlname'],$html,$co['options']['extra']);
 				unset($value);
@@ -518,14 +507,6 @@ class Controls extends BaseClass
 			case'check':
 				$co['options']+=array('extra'=>array());
 				$html=Eleanor::Check($co['controlname'],$co['bypost'] ? $this->GetPostVal($co['name'],false) : $co['value'],$co['options']['extra']);
-			break;
-			case'input':
-				$co['options']+=array('type'=>'edit','extra'=>array(),'htmlsafe'=>false);
-				if($co['bypost'])
-					$co['value']=$this->GetPostVal($co['name'],$co['value']);
-				if(is_array($co['value']))
-					$co['value']=join(',',$co['value']);
-				$html=Eleanor::Control($co['controlname'],$co['options']['type'],$co['value'],$co['options']['extra'],$co['options']['htmlsafe']);
 			break;
 			case'date':
 				$co['options']+=array('time'=>false,'extra'=>array());
@@ -542,22 +523,34 @@ class Controls extends BaseClass
 		return is_string($html) ? $co['prepend'].$html.$co['append'] : $html;
 	}
 
-	/*
-		Функция сохранения контрола
-		$co - параметры контрола
-		$controls - результат предыдущих контролов из SaveControls
-	*/
+	/**
+	 * Сохранение контрола
+	 *
+	 * @param array $co Данные контрола. Подробнее смотрите в теле метода.
+	 * @param array $controls Если этот метод вызывается из SaveControls, то в текущий массив попадают все предыдущие обработанные контролы
+	 */
 	public function SaveControl(array$co,array$controls=array())
 	{
 		#Добавить недостающие ключи
 		$co+=array(
+			'type'=>'input',#Тип контрола
+
+			/*
+			2 ключа, отвечающих за обработку значения при сохранении контрола. Пример:
+			function($control,$Obj,$controls)
+			{
+				return$co['value']-1;
+			}
+			Эти же переменные получает и save_eval.
+			*/
 			'save'=>null,
 			'save_eval'=>null,
+
+			'default'=>null,#Значение по умолчанию
+			'name'=>'noname',#имя контрола на странице
+
 			'multilang'=>false,#Необходимо для save_eval и save
-			'options'=>array(),
-			'type'=>'edit',
-			'name'=>'noname',
-			'default'=>null,
+			'options'=>array(),#Дополнительные настройки, в зависимости от типа контрола
 		);
 
 		switch($co['type'])
@@ -586,38 +579,26 @@ class Controls extends BaseClass
 			break;
 			case'editor':
 				$E=new Editor_Result;
-				foreach($co['options'] as $k=>&$v)
+				foreach($co['options'] as $k=>$v)
 					if($k=='type' and $v==-1)
 						continue;
-					elseif(property_exists($E,$k))
+					elseif($k=='imgalt')
+						$E->imgalt=is_array($v) ? Eleanor::FilterLangValues($v,isset($co['name']['lang']) ? $co['name']['lang'] : false) : $v;					elseif(property_exists($E,$k))
 						$E->$k=$v;
-					elseif($k=='4alt' and isset($controls[$v]))
-					{
-						if(is_string($controls[$v]))
-							$alt=$controls[$v];
-						elseif(is_array($controls[$v]) and is_array($co['name']) and isset($co['name']['lang']))
-							$alt=Eleanor::FilterLangValues($controls[$v],$co['name']['lang']);
-						else
-							continue;
-						if($alt)
-							$E->imgalt=$alt;
-					}
 				$res=$E->GetHTML($this->GetPostVal($co['name'],$co['default']),true);
 			break;
 			case'check':
 				$co+=array('default'=>false);
 				$res=(bool)$this->GetPostVal($co['name']);
 			break;
-			case'edit':
 			case'text':
-			case'item':
 			case'select':
 			case'input':
 			case'date':
 				$co['options']+=array('htmlsafe'=>false);
 				$res=$this->GetPostVal($co['name'],$co['default']);
 				if($co['options']['htmlsafe'])
-					$res=FilterArrays::Filter($res);
+					$res=GlobalsWrapper::Filter($res);
 			break;
 			case'items':
 				$co+=array('default'=>array());
@@ -658,22 +639,42 @@ class Controls extends BaseClass
 		return$res;
 	}
 
-	/*
-		Функция отображения результата контрола
-		$co - параметры контрола
-		$controls - результат предыдущих контролов из DisplayResults
-	*/
+	/**
+	 * Получение результата контрола
+	 *
+	 * @param array $co Данные контрола. Подробнее смотрите в теле метода.
+	 * @param array $controls Если этот метод вызывается из DisplayResults, то в текущий массив попадают все предыдущие обработанные контролы
+	 */
 	public function DisplayResult(array$co,array$controls=array())
 	{
 		#Добавить недостающие ключи
 		$co+=array(
-			'result'=>null,
-			'result_eval'=>null,
+			'type'=>'input',#Тип контрола
+
+			/*
+			2 ключа, отвечающих за обработку данных при загрузке контрола. Пример:
+			function($control - текущий контрол,$Obj - $this,$controls)
+			{
+				return array('value'=>$control['value']+1);
+			}
+			Эти же переменные получает и load_eval.
+			*/
 			'load'=>null,
 			'load_eval'=>null,
+
+			/*
+			2 ключа, отвечающих за обработку значений перед выводом контрола. Пример:
+			function($control - текущий контрол,$Obj - $this,$controls)
+			{
+				return $control['value'].' лет';
+			}
+			Эти же переменные получает и load_eval.
+			*/
+			'result'=>null,
+			'result_eval'=>null,
+
 			'multilang'=>false,#Необходимо для save_eval и save
 			'options'=>array(),
-			'type'=>'edit',
 			'default'=>null,
 		);
 		$co['options']=(array)$co['options'];
@@ -729,13 +730,11 @@ class Controls extends BaseClass
 			case'check':
 				$res=(bool)$co['value'];
 			break;
-			case'edit':
 			case'text':
 			case'input':
 			case'date':
 				$res=$co['value'];
 			break;
-			case'item':
 			case'select':
 			case'items':
 				$co['options']+=array('options'=>false,'retvalue'=>false,'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
@@ -810,6 +809,12 @@ class Controls extends BaseClass
 		return$res;
 	}
 
+	/**
+	 * Генерация имени для элемента формы
+	 *
+	 * @param string|array $n Уникальное имя элемента формы
+	 * @return string Готовое имя для элемента формы, состоящее из $this->arrname + $n
+	 */
 	public function GenName($n)
 	{
 		$name='';
@@ -837,6 +842,11 @@ class Controls extends BaseClass
 		return$name;
 	}
 
+	/**
+	 * Получение значения элемента формы
+	 *
+	 * @param string|array $n Уникальное имя элемента формы
+	 */
 	public function GetPostVal($n,$def=null)
 	{
 		$workarr=array_merge($this->arrname,(array)$n);
@@ -856,6 +866,9 @@ class Controls extends BaseClass
 		return$p;
 	}
 
+	/**
+	 * Получение всех внешних специальных контролов
+	 */
 	protected static function ScanControls()
 	{
 		self::$controls=array();

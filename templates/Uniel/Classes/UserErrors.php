@@ -41,11 +41,11 @@ class TPLUserErrors
 		elseif($a['mail'])
 			$tosend='<hr />'.($errors ? Eleanor::$Template->Message($errors,'error') : '')
 				.'<form method="post">'
-				.(Eleanor::$Login->IsUser() ? '' : '<div class="errorinput"><span>'.static::$lang['yourname'].'</span><br />'.Eleanor::Edit('name',$values['name'] || $errors ? $values['name'] : static::$lang['guest']).'</div><br />')
+				.(Eleanor::$Login->IsUser() ? '' : '<div class="errorinput"><span>'.static::$lang['yourname'].'</span><br />'.Eleanor::Input('name',$values['name'] || $errors ? $values['name'] : static::$lang['guest']).'</div><br />')
 				.'<div class="errorinput"><span>'
 				.static::$lang['tell_us'].'</span><br />'.$GLOBALS['Eleanor']->Editor->Area('text',$values['text']).'</div>'
-				.($back ? Eleanor::Control('back','hidden',$back) : '')
-				.($captcha ? '<br /><div class="errorinput"><span>'.static::$lang['captcha'].'</span><br /><span class="small">'.static::$lang['captcha_'].'</span><br />'.Eleanor::Edit('check','').'<br />'.$captcha.'</div>' : '')
+				.($back ? Eleanor::Input('back',$back,array('type'=>'hidden')) : '')
+				.($captcha ? '<br /><div class="errorinput"><span>'.static::$lang['captcha'].'</span><br /><span class="small">'.static::$lang['captcha_'].'</span><br />'.Eleanor::Input('check','').'<br />'.$captcha.'</div>' : '')
 				.'<div style="text-align:center;"><a href="#" onclick="$(this).closest(\'form\').submit();return false;" class="button">'.static::$lang['send'].'</a></div></form>';
 		else
 			$tosend='';

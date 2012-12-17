@@ -14,7 +14,7 @@ $controls=array(
 	'id'=>array(
 		'title'=>'Google search id',
 		'descr'=>'<a href="http://google.com/cse/">Google custom search</a>',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$post,
 		'options'=>array(
 			'htmlsafe'=>true,
@@ -23,7 +23,7 @@ $controls=array(
 	'ads'=>array(
 		'title'=>'Google AdSense id',
 		'descr'=>'Please, do not edit this field!',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$post,
 		'options'=>array(
 			'htmlsafe'=>true,

@@ -16,7 +16,7 @@ $b=isset($v_1) ? $v_1 : false;
 	<div>
 		<h4><?php echo$t?></h4>
 		<hr />
-		<form method="post"><?php echo$v_0.($b ? Eleanor::Control('back','hidden',$b) : $b)?>
+		<form method="post"><?php echo$v_0.($b ? Eleanor::Input('back',$b,array('type'=>'hidden')) : $b)?>
 		<br />
 		<input class="button" type="submit" value="<?php echo$l['yes']?>" name="ok" />
 		<input class="button" type="button" value="<?php echo$l['no']?>" onclick="history.go(-1);/>

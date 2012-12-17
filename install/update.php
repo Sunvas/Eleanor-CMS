@@ -156,7 +156,7 @@ switch($step)
 				$text='<div class="wpbox wpbwhite"><div class="wptop"><b>&nbsp;</b></div>
 					<div class="wpmid"><div class="wpcont"><form method="post" action="update.php?step=4">
 					<div class="information" align="center"><h3>'.sprintf($lang['update_to'],$a['version'],ELEANOR_VERSION).'</h3></div>
-					<div class="submitline">'.Eleanor::Control('s','hidden',session_id())
+					<div class="submitline">'.Eleanor::Input('s',session_id(),array('type'=>'hidden'))
 					.Eleanor::Button($lang['yes'],'submit',array('class'=>'button','tabindex'=>1)).Eleanor::Button($lang['no'],'button',array('class'=>'button','tabindex'=>2,'onclick'=>'window.close()'))
 					.'</div></form></div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';
 			}
@@ -201,14 +201,14 @@ switch($step)
 				<form method="post">
 				<h3 class="subhead">'.$lang['vcf'].'</h3>
 				<ul class="reset formfield">
-				<li class="ffield"><span class="label">'.$lang['db_host'].'</span><div class="ffdd"><h4>'.$_POST['host'].'</h4></div></li>
-				<li class="ffield"><span class="label">'.$lang['db_name'].'</span><div class="ffdd"><h4>'.htmlspecialchars($_POST['name'],ELENT,CHARSET).'</h4></div></li>
-				<li class="ffield"><span class="label">'.$lang['db_user'].'</span><div class="ffdd"><h4>'.htmlspecialchars($_POST['user'],ELENT,CHARSET).'</h4></div></li>
-				<li class="ffield"><span class="label">'.$lang['db_pass'].'</span><div class="ffdd"><h4>'.htmlspecialchars($_POST['pass'],ELENT,CHARSET).'</h4></div></li>
-				<li class="ffield"><span class="label">'.$lang['db_pref'].'</span><div class="ffdd"><h4>'.htmlspecialchars($_POST['pref'],ELENT,CHARSET).'</h4></div></li>
+				<li class="ffield"><span class="label">'.$lang['db_host'].'</span><div class="ffdd"><h4>'.(string)$_POST['host'].'</h4></div></li>
+				<li class="ffield"><span class="label">'.$lang['db_name'].'</span><div class="ffdd"><h4>'.htmlspecialchars((string)$_POST['name'],ELENT,CHARSET).'</h4></div></li>
+				<li class="ffield"><span class="label">'.$lang['db_user'].'</span><div class="ffdd"><h4>'.htmlspecialchars((string)$_POST['user'],ELENT,CHARSET).'</h4></div></li>
+				<li class="ffield"><span class="label">'.$lang['db_pass'].'</span><div class="ffdd"><h4>'.htmlspecialchars((string)$_POST['pass'],ELENT,CHARSET).'</h4></div></li>
+				<li class="ffield"><span class="label">'.$lang['db_pref'].'</span><div class="ffdd"><h4>'.htmlspecialchars((string)$_POST['pref'],ELENT,CHARSET).'</h4></div></li>
 				<li class="ffield"><span class="label">'.$lang['addl'].'</span><div class="ffdd"><h4>'.($langs ? implode(', ',$langs) : $lang['no']).'</h4></div></li>
 				</ul>
-				<div class="submitline">'.Eleanor::Control('s','hidden',session_id())
+				<div class="submitline">'.Eleanor::Input('s',session_id(),array('type'=>'hidden'))
 				.Eleanor::Button($lang['back'],'button',array('class'=>'button','onclick'=>'history.go(-1)','tabindex'=>2),2)
 				.Eleanor::Button($lang['next'],'submit',array('class'=>'button','tabindex'=>1),2).'</div></form>
 				</div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';
@@ -271,10 +271,10 @@ switch($step)
 			.'<form method="post">
 			<ul class="reset formfield">
 				<li class="ffield">
-					<span class="label">'.$lang['login'].'</span><div class="ffdd">'.Eleanor::Edit('login',$values['login'],array('class'=>'f_text','tabindex'=>1)).'</div>
+					<span class="label">'.$lang['login'].'</span><div class="ffdd">'.Eleanor::Input('login',$values['login'],array('class'=>'f_text','tabindex'=>1)).'</div>
 				</li>
 				<li class="ffield">
-					<span class="label">'.$lang['db_pass'].'</span><div class="ffdd">'.Eleanor::Control('pass','password','',array('class'=>'f_text','tabindex'=>2)).'</div>
+					<span class="label">'.$lang['db_pass'].'</span><div class="ffdd">'.Eleanor::Input('pass','',array('type'=>'password','class'=>'f_text','tabindex'=>2)).'</div>
 				</li>
 			</ul>
 			<div class="submitline">'.Eleanor::Button($lang['next'],'submit',array('class'=>'button','tabindex'=>3),2).'</div>
@@ -439,19 +439,19 @@ switch($step)
 		<h3 class="subhead">'.$lang['db'].'</h3>
 		<ul class="reset formfield">
 			<li class="ffield">
-				<span class="label"><b>'.$lang['db_host'].'</b></span><div class="ffdd">'.Eleanor::Edit('host',$host,array('class'=>'f_text','tabindex'=>1)).'</div>
+				<span class="label"><b>'.$lang['db_host'].'</b></span><div class="ffdd">'.Eleanor::Input('host',$host,array('class'=>'f_text','tabindex'=>1)).'</div>
 			</li>
 			<li class="ffield">
-				<span class="label"><b>'.$lang['db_name'].'</b></span><div class="ffdd">'.Eleanor::Edit('name',$name,array('class'=>'f_text','tabindex'=>2)).'</div>
+				<span class="label"><b>'.$lang['db_name'].'</b></span><div class="ffdd">'.Eleanor::Input('name',$name,array('class'=>'f_text','tabindex'=>2)).'</div>
 			</li>
 			<li class="ffield">
-				<span class="label"><b>'.$lang['db_user'].'</b></span><div class="ffdd">'.Eleanor::Edit('user',$user,array('class'=>'f_text','tabindex'=>3)).'</div>
+				<span class="label"><b>'.$lang['db_user'].'</b></span><div class="ffdd">'.Eleanor::Input('user',$user,array('class'=>'f_text','tabindex'=>3)).'</div>
 			</li>
 			<li class="ffield">
-				<span class="label"><b>'.$lang['db_pass'].'</b></span><div class="ffdd">'.Eleanor::Edit('pass',$pass,array('class'=>'f_text','tabindex'=>4)).'</div>
+				<span class="label"><b>'.$lang['db_pass'].'</b></span><div class="ffdd">'.Eleanor::Input('pass',$pass,array('class'=>'f_text','tabindex'=>4)).'</div>
 			</li>
 			<li class="ffield">
-				<span class="label"><b>'.$lang['db_pref'].'</b></span><div class="ffdd">'.Eleanor::Edit('pref',$pref,array('class'=>'f_text','tabindex'=>5)).'</div>
+				<span class="label"><b>'.$lang['db_pref'].'</b></span><div class="ffdd">'.Eleanor::Input('pref',$pref,array('class'=>'f_text','tabindex'=>5)).'</div>
 			</li>
 		</ul>
 		<br />
@@ -459,10 +459,10 @@ switch($step)
 		<ul class="reset formfield">
 			<li class="ffield">
 				<span class="label">'.$lang['addl_'].'</span>
-				</span><div class="ffdd">'.Eleanor::Items('languages',$languages,5,array('class'=>'f_text','tabindex'=>6)).'</div>
+				</span><div class="ffdd">'.Eleanor::Items('languages',$languages,array('class'=>'f_text','tabindex'=>6,'size'=>2)).'</div>
 			</li>
 		</ul>
-		<div class="submitline">'.Eleanor::Control('s','hidden',session_id()).Eleanor::Button($lang['next'],'submit',array('class'=>'button','tabindex'=>7),2).'</div></form></div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';
+		<div class="submitline">'.Eleanor::Input('s',session_id(),array('type'=>'hidden')).Eleanor::Button($lang['next'],'submit',array('class'=>'button','tabindex'=>7),2).'</div></form></div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';
 }
 if($error and !$text)
 	$text=Eleanor::$Template->Message($error,'error');

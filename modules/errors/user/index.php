@@ -67,7 +67,7 @@ if($a['mail'] and $_SERVER['REQUEST_METHOD']=='POST')
 	{		$l=include$Eleanor->module['path'].'letters-'.LANGUAGE.'.php';
 		$repl=array(
 			'site'=>Eleanor::$vars['site_name'],
-			'name'=>FilterArrays::Filter($name),
+			'name'=>GlobalsWrapper::Filter($name),
 			'fullname'=>$isu ? $user['full_name'] : '',
 			'userlink'=>$isu ? PROTOCOL.Eleanor::$domain.Eleanor::$site_path.Eleanor::$Login->UserLink($user['name'],$user['id']) : ýý,
 			'text'=>$values['text'],
@@ -75,7 +75,7 @@ if($a['mail'] and $_SERVER['REQUEST_METHOD']=='POST')
 			'linkerror'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.Url::$curpage,
 			'from'=>$back,
 		);
-		Eleanor::Mail(
+		Email::Simple(
 			$a['mail'],
 			Eleanor::ExecBBLogic($l['error_t'],$repl),
 			Eleanor::ExecBBLogic($l['error'],$repl)

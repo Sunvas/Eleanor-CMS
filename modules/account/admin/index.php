@@ -30,7 +30,7 @@ if(isset($_GET['do']))
 				'reg_t'=>array(
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_reg_'],
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>true,
 					'bypost'=>&$post,
 					'options'=>array(
@@ -77,7 +77,7 @@ if(isset($_GET['do']))
 				'act_t'=>array(
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_act_success_'],
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>true,
 					'bypost'=>&$post,
 					'options'=>array(
@@ -112,7 +112,7 @@ if(isset($_GET['do']))
 				'passrem_t'=>array(
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_passrem_'],
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>true,
 					'bypost'=>&$post,
 					'options'=>array(
@@ -135,7 +135,7 @@ if(isset($_GET['do']))
 				'passremfin_t'=>array(
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_passremfin_'],
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>true,
 					'bypost'=>&$post,
 					'options'=>array(
@@ -158,7 +158,7 @@ if(isset($_GET['do']))
 				'newemail_t'=>array(
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_newemail_'],
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>true,
 					'bypost'=>&$post,
 					'options'=>array(
@@ -277,7 +277,7 @@ elseif(isset($_GET['delete']))
 				'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 				'reason'=>$Eleanor->Editor_result->GetHtml('reason'),
 			);
-			Eleanor::Mail(
+			Email::Simple(
 				$a['email'],
 				Eleanor::ExecBBLogic($l[$a['language']]['act_t'],$repl),
 				Eleanor::ExecBBLogic($l[$a['language']]['act_refused'],$repl)
@@ -439,7 +439,7 @@ function InactiveUsers()
 				'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 				'confirm'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$Eleanor->Url->Construct(array('module'=>$ma[$a['language']],'do'=>'activate','id'=>$actid,'md'=>$hash),Eleanor::$services['user']['file'].'?',false,false),
 			);
-			Eleanor::Mail(
+			Email::Simple(
 				$a['email'],
 				Eleanor::ExecBBLogic($l[$a['language']]['reg_t'],$repl),
 				Eleanor::ExecBBLogic($l[$a['language']]['reg_act'],$repl)
@@ -467,7 +467,7 @@ function InactiveUsers()
 				'login'=>htmlspecialchars($a['name'],ELENT,CHARSET),
 				'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 			);
-			Eleanor::Mail(
+			Email::Simple(
 				$a['email'],
 				Eleanor::ExecBBLogic($l[$a['language']]['act_t'],$repl),
 				Eleanor::ExecBBLogic($l[$a['language']]['act_success'],$repl)

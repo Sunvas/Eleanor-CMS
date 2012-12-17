@@ -12,10 +12,10 @@
 class Comments extends BaseClass
 {
 	public
-		$reverse=false,#Включить обратный порядок сортировки комментариев
+		$reverse=false,#Флаг обратного порядка сортировки комментариев
 		$pp=10,#Количество комментариев на страницу
-		$off=false,#Выключить комментарии
-		$template='Comments',#Класс оформления комментариев
+		$off=false,#Флаг выключения комментариев
+		$template='Comments',#Имя класса оформления комментариев
 
 		$baseurl,#Базовый URL страницы, где находятся комментарии
 		$upref='c',#Префикс для параметров в GET запросах для комментариев (при переходе со страницы на страницу)
@@ -23,20 +23,26 @@ class Comments extends BaseClass
 		$gs=false,#Уникальная строчка для подписи гостевой куки
 
 		$rights=array(#Права пользователя. Эти права можно "нарисовать" в табличке внизу страницы
-			'edit'=>true,#Право редактировать свои комментарии. Если число - это количество секунд по истечению которых после написания комментария право теряется.
-			'delete'=>true,#Право удалять свои комментарии. Если число - это количество секунд по истечению которых после написания комментария право теряется.
+			'edit'=>true,#Право редактировать свои комментарии. Если число - это количество секунд по истечению которых право теряется (считая от времени создания комментария).
+			'delete'=>true,#Право удалять свои комментарии. Если число - это количество секунд по истечению которых право теряется (считая от времени создания комментария).
 			'post'=>1,#Право создавать новые комментарии, свойство определяет статус новых комментариев: -1 - для перемодерации, 0 - для блокировки, 1 - без премодерации, false - для запрета публикации
 			'medit'=>false,#Право редактировать чужие комментарии
 			'mdelete'=>false,#Право удалять чужие комментарии
 			'ip'=>false,#Право просматривать IP с которых были отправлены комментарии
 			'status'=>false,#Право менять статусы постов
-		);#Массив языковых значений
+		);
 
 	protected
 		$table,#Таблица комментариев
 		$ut=true,#Признак того, что мы работаем с общей таблицей комментариев, где есть поле module
 		$cs;#Смотри GuestSign
 
+	/**
+	 * Конструктор комментариев
+	 *
+	 * @param string $table Таблица комментариев
+	 * @param string Признак того, что мы работаем с общей таблицей комментариев, где есть поле module
+	 */
 	public function __construct($table=false,$ut=true)
 	{
 		if($table===false)
@@ -57,12 +63,14 @@ class Comments extends BaseClass
 			$this->rights['post']=Eleanor::$Permissions->Moderate() ? -1 : 1;
 	}
 
-	/*
-		$id - идентификатор контентины
-		$postquery - этом массив параметров будет передан в $_POST запросе при ajax запросе
-		$dataquery - содержимое ajax запроса будет в массиев $_POST в этих ключах
-		$mid - ид модуля
-	*/
+	/**
+	 * Получение интерфейса комментирования
+	 *
+	 * @param string $id Идентификатор за которым будут закреплены комментарии. Обычно это идентификатор контентины модуля.
+	 * @param string|FALSE $postquery Этот массив параметров будет передан в POST запросе при AJAX запросе
+	 * @param string|FALSE $dataquery Очередность ключей $_POST массива, в которых будет передано содержимое AJAX запроса
+	 * @param int|FALSE $mid ID модуля
+	 */
 	public function Show($id,$postquery=false,$mid=false,$dataquery=array('comments'))
 	{
 		if($this->off)
@@ -180,7 +188,14 @@ class Comments extends BaseClass
 	}
 
 #Служебное
-	protected function CalcOffsetPage($get,$cnt)
+	/**
+	 * Получение числа страниц, страницы и смещения для секции LIMIT в запросе извлечения комментариев
+	 *
+	 * @param array $get Массив с GET запросом для комментариев
+	 * @param int $cnt Количество комментариев
+	 * @return array $pages,$page,$offset,$limit
+	 */
+	protected function CalcOffsetPage(array$get,$cnt)
 	{
 		$limit=$this->pp;
 		if($this->reverse)
@@ -213,6 +228,12 @@ class Comments extends BaseClass
 		return array($pages,$page,$offset,$limit);
 	}
 
+	/**
+	 * Получение количества комментариев каждого статуса отдельно
+	 *
+	 * @param string $w WHERE секция SQL запроса по извлечению комментариев без ключевого слова WHERE
+	 * @param int $uid ID пользователя
+	 */
 	protected function GetStatuses($w,$uid)
 	{
 		$st=array(-1=>0,0,0);
@@ -239,18 +260,19 @@ class Comments extends BaseClass
 		return$st;
 	}
 
-	/*
-		Получение постов, пользователей, групп
-		$where - WHERE условия
-		$st - статусы
-		$offset - отступ
-		$limit - если reverse, предел выборки, потому что в этом случае первая страница всегда больше.
-		$cbn - начальный номер комментария +1
-		$parent - родительский комментарий
-		$uid - ID нашего пользователя
-		$qpinch - отщипывание от цитат
-	*/
-	protected function GetPAGPQ($where,$st,$offset,$limit,$cbn,$parent,$uid,$qpinch=false)
+	/**
+	 * Получение постов, пользователей, групп, данных комментария-родителя, цитат
+	 *
+	 * @param string $where WHERE секция SQL запроса по извлечению комментариев без ключевого слова WHERE
+	 * @param array $st Количество комментариев каждого статуса отдельно (возвращает метод GetStatuses)
+	 * @param int $offset Отступ выборки комментариев
+	 * @param int $limit Предел выборки
+	 * @param int $cbn Начальный номер комментария +1
+	 * @param int $parent ID комментария-родителя
+	 * @param int $uid ID пользователя
+	 * @param array $qpinch Массив идентификаторов комментарив, цитаты которых не нужно отображать
+	 */
+	protected function GetPAGPQ($where,$st,$offset,$limit,$cbn,$parent,$uid,array$qpinch=array())
 	{
 		$lq=$fq='';
 		if($this->reverse)
@@ -286,7 +308,9 @@ class Comments extends BaseClass
 		OwnBB::$replace['quote']='CommentsQoute';
 		if(!class_exists('CommentsQoute',false))
 			include Eleanor::$root.'core/others/comments/ownbb-quote.php';
-		CommentsQoute::$findlink=$this->Url(array($this->upref.'find'=>true));
+
+		$THIS=$this;#PHP 5.4 Убрать этот костыль
+		CommentsQoute::$findlink=function($id) use ($THIS){ return$THIS->Url(array($this->upref.'find'=>$id)); };
 
 		if($parent)
 		{
@@ -383,7 +407,13 @@ class Comments extends BaseClass
 		return array($posts,$authors,$groups,$parent,$quotes);
 	}
 
-	protected function CanEditDel($a,$uid)
+	/**
+	 * Определение возможности править и удалять каждый конкретный комментарий
+	 *
+	 * @param array $a Дамп-массив конкретного комментария
+	 * @param int $uid ID пользователя
+	 */
+	protected function CanEditDel(array$a,$uid)
 	{
 		$e=$this->rights['medit'];
 		$d=$this->rights['mdelete'];
@@ -398,10 +428,12 @@ class Comments extends BaseClass
 		return array($e,$d);
 	}
 
-	/*
-		Функция возвращает массив всех параметров $_GET, которые относятся к комментариям
-	*/
-	protected function GET($cut=false)
+	/**
+	 * Получения всех GET параметров, относящихся к комментариям. Определение производится по наличию префикса $this->upref в каждом ключе GET запроса
+	 *
+	 * @param bool $cut Указывает обрезать ли префиксы в возвращаемом массиве
+	 */
+	public function GET($cut=false)
 	{
 		$r=array();
 		$l=strlen($this->upref);
@@ -411,7 +443,12 @@ class Comments extends BaseClass
 		return$r;
 	}
 
-	protected function Url($u=array())
+	/**
+	 * Генерация ссылок для интерфейса комментарие
+	 *
+	 * @param array $u Массив параметров ссылки
+	 */
+	protected function Url(array$u=array())
 	{
 		if(!$this->baseurl)
 		{
@@ -432,9 +469,11 @@ class Comments extends BaseClass
 		return rtrim($u,'?&');
 	}
 
-	/*
-		Проверка гостевых комментариев
-	*/
+	/**
+	 * Запись / считывание ID комментариев, которые принадлежат гостю (записывается в массив $this->cs)
+	 *
+	 * @param bool $add Флаг записи комментариев (хранятся в куках)
+	 */
 	protected function GuestSign($add=false)
 	{
 		if(!isset($this->cs))
@@ -455,7 +494,13 @@ class Comments extends BaseClass
 		}
 	}
 
-	protected function GetUWM($id,$mid)
+	/**
+	 * Получение ID пользователя, секции WHERE для SQL запроса по извлечению комментариев без слова WHERE и ID модуля
+	 *
+	 * @param string $id Идентификатор, за которым закреплены комментарии
+	 * @param int $mid ID модуля
+	 */
+	protected function GetUWM($id,$mid=false)
 	{
 		if(Eleanor::$Login->IsUser())
 			$uid=(int)Eleanor::$Login->GetUserValue('id');

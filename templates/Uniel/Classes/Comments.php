@@ -75,10 +75,10 @@ class TplComments
 				($rights['post']==-1 ? Eleanor::$Template->Message(static::$lang['needch'],'info') : '')
 				.$Lst->form(array('id'=>'newcomment'))->begin()
 				.'<tr class="infolabel first"><td colspan="2" class="answerto">'.static::$lang['addc'].'</td></tr>'
-				.($gname===false ? '' : $Lst->item(static::$lang['yn'],Eleanor::Edit('name',$gname,array('tabindex'=>1))))
+				.($gname===false ? '' : $Lst->item(static::$lang['yn'],Eleanor::Input('name',$gname,array('tabindex'=>1))))
 				.$Lst->item(static::$lang['yc'],$GLOBALS['Eleanor']->Editor->Area('text','',array('bb'=>array('tabindex'=>2))))
-				.($captcha ? $Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Edit('check','',array('tabindex'=>3)),'descr'=>static::$lang['captcha_'])) : '')
-				.$Lst->button(Eleanor::Control('parent','hidden',$pagpq[3] ? $pagpq[3]['id'] : 0).Eleanor::Button(static::$lang['addc']))
+				.($captcha ? $Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>3)),'descr'=>static::$lang['captcha_'])) : '')
+				.$Lst->button(Eleanor::Input('parent',$pagpq[3] ? $pagpq[3]['id'] : 0,array('type'=>'hidden')).Eleanor::Button(static::$lang['addc']))
 				->end()->endform();
 		}
 		$reverse=$page<0;

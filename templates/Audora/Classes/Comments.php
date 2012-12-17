@@ -155,7 +155,7 @@ $(function(){
 	public static function Edit($id,$module,$info,$values,$bypost,$error,$back,$links)
 	{		static::Menu();
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form');
 		return Eleanor::$Template->Cover($Lst->form()

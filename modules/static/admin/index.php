@@ -24,6 +24,7 @@ $Eleanor->module['links']=array(
 	'options'=>$Eleanor->Url->Construct(array('do'=>'options')),
 );
 
+$imgalt='';
 $Eleanor->sc_post=false;
 $Eleanor->sc=array(
 	'parents'=>array(
@@ -70,10 +71,11 @@ $Eleanor->sc=array(
 	'title'=>array(
 		'title'=>$lang['name'],
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
-		'load'=>function($a)
+		'load'=>function($a)use(&$imgalt)
 		{
+			$imgalt=$a['value'];
 			$r=array();
 			if($a['multilang'])
 				foreach(Eleanor::$langs as $k=>&$v)
@@ -88,6 +90,9 @@ $Eleanor->sc=array(
 			}
 			return$r;
 		},
+		'save'=>function($co)use(&$imgalt)
+		{			$imgalt=$co['value'];
+			return$co['value'];		},
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>true,
@@ -104,7 +109,7 @@ $Eleanor->sc=array(
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>true,
-			'4alt'=>'title',
+			'imgalt'=>&$imgalt,
 		),
 		'extra'=>array(
 			'no'=>array('tabindex'=>3)
@@ -113,7 +118,7 @@ $Eleanor->sc=array(
 	'uri'=>array(
 		'title'=>'URI',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'load'=>function($a)
 		{
@@ -142,7 +147,7 @@ $Eleanor->sc=array(
 	'pos'=>array(
 		'title'=>$lang['pos'],
 		'descr'=>$lang['pos_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
 			'htmlsafe'=>true,
@@ -166,7 +171,7 @@ $Eleanor->sc=array(
 	'meta_title'=>array(
 		'title'=>'Window title',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
@@ -176,7 +181,7 @@ $Eleanor->sc=array(
 	'meta_descr'=>array(
 		'title'=>'Meta description',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
@@ -276,7 +281,7 @@ elseif(isset($_GET['delete']))
 		Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$ids);
 		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`-1'),'`pos`>'.$a['pos'].' AND `parents`=\''.$a['parents'].'\'');
 		Eleanor::$Db->Delete(P.'drafts','`key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
-		Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+		Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 		return GoAway(empty($_POST['back']) ? true : $_POST['back']);
 	}
 	$title=$lang['delc'];
@@ -294,7 +299,7 @@ elseif(isset($_GET['swap']))
 	if(Eleanor::$our_query)
 	{
 		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`='.$id.' LIMIT 1');
-		Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+		Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 	}
 	$back=getenv('HTTP_REFERER');
 	GoAway($back ? $back.'#it'.$id : true);
@@ -723,7 +728,7 @@ function Save($id)
 		Eleanor::$Db->Insert($Eleanor->module['config']['tl'],$values);
 		Eleanor::$Db->Commit();
 	}
-	Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 	GoAway(empty($_POST['back']) ? true : $_POST['back']);
 }
 

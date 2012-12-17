@@ -13,7 +13,7 @@ require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::LoadOptions(array('site','users-on-site'));
 Eleanor::$service='ajax';#ID сервиса
-Eleanor::LoadService();
+Eleanor::InitService();
 Eleanor::$Language->queue['main'][]='langs/ajax-*.php';
 
 #Три предустановленные переменные
@@ -76,11 +76,10 @@ else
 	SomeAjax();
 
 #Предопределенные функции.
-function Start()
-{
- static $one=true;
+function Start($code=200)
+{static$one=true;
 	if($one)
-		Eleanor::HookOutPut();
+		Eleanor::HookOutPut('',$code);
 	$one=false;
 }
 
@@ -103,7 +102,7 @@ function GoAway($info=false,$code=301,$hash='')
 	die;
 }
 
-function Error($e='')
+function Error($e='',$extra=array())
 {global$Eleanor;
 	if(isset($Eleanor))
 	{		$le=Eleanor::$Language['errors'];
@@ -111,7 +110,7 @@ function Error($e='')
 			$e=$le['happened'];
 		elseif(is_string($e) and isset($le[$e]))
 			$e=$le[$e];
-		Start();
+		Start(isset($extra['httpcode']) ? $extra['httpcode'] : 200);
 	}
 	echo Eleanor::JsVars(array('error'=>$e),false,true);
 }
@@ -203,11 +202,12 @@ function BeAs($n)
 		return;
 
 	Eleanor::$filename=Eleanor::$services[$n]['file'];
-
-	Eleanor::$service=$n;
 	Eleanor::$Language->queue['main'][]='langs/'.$n.'-*.php';
+
 	if(Eleanor::$services[$n]['login']!=Eleanor::$services[Eleanor::$service]['login'])
 		Eleanor::ApplyLogin(Eleanor::$services[$n]['login']);
+
+	Eleanor::$service=$n;
 	ApplyLang();
 
 	if($n=='user')

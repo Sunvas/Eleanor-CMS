@@ -112,7 +112,7 @@ class TPLSitemap
 			<table class="tabstyle tabform" id="ftable">
 				<tr class="infolabel"><td colspan="2"><a href="#">'.$ltpl['filters'].'</a></td></tr>
 				<tr>
-					<td><b>'.static::$lang['file'].'</b><br />'.Eleanor::Edit('fi[file]',$qs['']['fi']['file']).'</td>
+					<td><b>'.static::$lang['file'].'</b><br />'.Eleanor::Input('fi[file]',$qs['']['fi']['file']).'</td>
 					<td style="text-align:center;vertical-align:middle">'.Eleanor::Button($ltpl['apply']).'</td>
 				</tr>
 			</table>
@@ -179,15 +179,15 @@ $(function(){
 		{
 			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
-				$ml['title_l'][$k]=Eleanor::Edit('title_l['.$k.']',Eleanor::FilterLangValues($values['title_l'],$k));
+				$ml['title_l'][$k]=Eleanor::Input('title_l['.$k.']',Eleanor::FilterLangValues($values['title_l'],$k));
 		}
 		else
 			$ml=array(
-				'title_l'=>Eleanor::Edit('title_l',Eleanor::FilterLangValues($values['title_l'])),
+				'title_l'=>Eleanor::Input('title_l',Eleanor::FilterLangValues($values['title_l'])),
 			);
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$ss=$mods=$opts='';
 		foreach($modules as $k=>&$v)
@@ -202,11 +202,11 @@ $(function(){
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->begin()
 			->item($ltpl['name'],Eleanor::$Template->LangEdit($ml['title_l'],null))
-			->item(Eleanor::$Language['main']['modules'],Eleanor::Items('modules',$mods,10,array('id'=>'modules')))
-			->item(array(static::$lang['file'],Eleanor::Edit('file',$values['file']),'tip'=>static::$lang['file_']))
+			->item(Eleanor::$Language['main']['modules'],Eleanor::Items('modules',$mods,array('id'=>'modules')))
+			->item(array(static::$lang['file'],Eleanor::Input('file',$values['file']),'tip'=>static::$lang['file_']))
 			->item(static::$lang['egzip'],Eleanor::Check('compress',$values['compress']))
 			->item(static::$lang['fullurl'],Eleanor::Check('fulllink',$values['fulllink']))
-			->item(static::$lang['per_run'],Eleanor::Control('per_time','number',$values['per_time'],array('min'=>10,'max'=>65000)))
+			->item(static::$lang['per_run'],Eleanor::Input('per_time',$values['per_time'],array('min'=>10,'max'=>65000,'type'=>'number')))
 			->item(static::$lang['status'],Eleanor::Check('status',$values['status']))
 			->item(static::$lang['sendservice'],Eleanor::Items('sendservice',$ss))
 			->item(static::$lang['runnow'],Eleanor::Check('_runnow',$values['_runnow']));
@@ -215,12 +215,12 @@ $(function(){
 		$ge=(string)$Lst->end();
 
 		$tt=(string)$Lst->begin()
-			->item(array(static::$lang['runyear'],Eleanor::Edit('run_year',$values['run_year']),'tip'=>static::$lang['runyear_']))
-			->item(array(static::$lang['runmonth'],Eleanor::Edit('run_month',$values['run_month']),'tip'=>static::$lang['runmonth_']))
-			->item(array(static::$lang['runday'],Eleanor::Edit('run_day',$values['run_day']),'tip'=>static::$lang['runday_']))
-			->item(array(static::$lang['runhour'],Eleanor::Edit('run_hour',$values['run_hour']),'tip'=>static::$lang['runhour_']))
-			->item(array(static::$lang['runminute'],Eleanor::Edit('run_minute',$values['run_minute']),'tip'=>static::$lang['runminute_']))
-			->item(array(static::$lang['runsecond'],Eleanor::Edit('run_second',$values['run_second']),'tip'=>static::$lang['runsecond_']))
+			->item(array(static::$lang['runyear'],Eleanor::Input('run_year',$values['run_year']),'tip'=>static::$lang['runyear_']))
+			->item(array(static::$lang['runmonth'],Eleanor::Input('run_month',$values['run_month']),'tip'=>static::$lang['runmonth_']))
+			->item(array(static::$lang['runday'],Eleanor::Input('run_day',$values['run_day']),'tip'=>static::$lang['runday_']))
+			->item(array(static::$lang['runhour'],Eleanor::Input('run_hour',$values['run_hour']),'tip'=>static::$lang['runhour_']))
+			->item(array(static::$lang['runminute'],Eleanor::Input('run_minute',$values['run_minute']),'tip'=>static::$lang['runminute_']))
+			->item(array(static::$lang['runsecond'],Eleanor::Input('run_second',$values['run_second']),'tip'=>static::$lang['runsecond_']))
 			->end();
 
 		$c=$Lst->form()
@@ -358,7 +358,7 @@ $(function(){	var msetts={},
 			title - название карты сайта
 		$back - URL возврата
 	*/
-	public static function Delete($t,$back)
+	public static function Delete($a,$back)
 	{
 		static::Menu();
 		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title'],$a['file']),$back));

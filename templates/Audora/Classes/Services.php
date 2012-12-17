@@ -86,7 +86,7 @@ class TPLServices
 				$Lst->head($v);
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst->button(
 			$back.Eleanor::Button()

@@ -137,13 +137,13 @@ class TPLModules
 				$flags='';
 				foreach(Eleanor::$langs as $k=>&$v)
 				{
-					$section.='<div id="'.$name.'-'.$k.'" class="langtabcont">'.Eleanor::Edit('sections['.$name.']['.$k.']',isset($data[$k]) ? $data[$k] : '').'</div>';
+					$section.='<div id="'.$name.'-'.$k.'" class="langtabcont">'.Eleanor::Input('sections['.$name.']['.$k.']',isset($data[$k]) ? $data[$k] : '').'</div>';
 					$flags.='<a href="#" data-rel="'.$name.'-'.$k.'"'.($k==Language::$main ? ' class="selected"' : '').' title="'.Eleanor::$langs[$k]['name'].'"><img src="images/lang_flags/'.$k.'.png" alt="'.Eleanor::$langs[$k]['name'].'" /></a>';
 				}
 				$section.='<div id="langs-'.$name.'" class="langtabs">'.$flags.'</div><script type="text/javascript">/*<![CDATA[*/$("#langs-'.$name.' a").Tabs();//]]></script>';
 			}
 			else
-				$section.=Eleanor::Edit('sections['.$name.']',Eleanor::FilterLangValues($data));
+				$section.=Eleanor::Input('sections['.$name.']',Eleanor::FilterLangValues($data));
 			$sections.='<li style="margin-top:5px">'.$section.'</li>';
 
 		}
@@ -154,13 +154,13 @@ class TPLModules
 			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
-				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
-				$ml['descr'][$k]=Eleanor::Edit('descr['.$k.']',Eleanor::FilterLangValues($values['descr'],$k),array('tabindex'=>3));
+				$ml['title'][$k]=Eleanor::Input('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
+				$ml['descr'][$k]=Eleanor::Input('descr['.$k.']',Eleanor::FilterLangValues($values['descr'],$k),array('tabindex'=>3));
 			}
 		}
 		else
 			$ml=array(
-				'title'=>Eleanor::Edit('title',Eleanor::FilterLangValues($values['title']),array('tabindex'=>1)),
+				'title'=>Eleanor::Input('title',Eleanor::FilterLangValues($values['title']),array('tabindex'=>1)),
 				'descr'=>Eleanor::Text('descr',Eleanor::FilterLangValues($values['descr']),array('tabindex'=>3)),
 			);
 
@@ -171,13 +171,13 @@ class TPLModules
 			if(!isset($values['files'][$k]))
 				$values['files'][$k]=$v['file'];
 			$services.=Eleanor::Option($k,$k,$act=in_array($k,$values['services']));
-			$files.='<li'.($act ? '' : ' style="display:none"').'><span style="font-weight:bold">'.$k.'</span>:<br />'.Eleanor::Edit('files['.$k.']',isset($values['files'][$k]) ? $values['files'][$k] : '',$act ? array() : array('disabled'=>true)).'</li>';
+			$files.='<li'.($act ? '' : ' style="display:none"').'><span style="font-weight:bold">'.$k.'</span>:<br />'.Eleanor::Input('files['.$k.']',isset($values['files'][$k]) ? $values['files'][$k] : '',$act ? array() : array('disabled'=>true)).'</li>';
 		}
 
 		$prevm=$values['image'] ? str_replace('*','small',$values['image']) : 'images/spacer.png';
 		$extra=$id && $values['protected'] ? array('disabled'=>true) : array();
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form()
@@ -185,14 +185,14 @@ class TPLModules
 			->item(array($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null),'imp'=>true))
 			->item(static::$lang['sections'].'<br /><a href="#" id="addsession">'.static::$lang['add'].'</a>',$sections)
 			->item(array($ltpl['descr'],Eleanor::$Template->LangEdit($ml['descr'],null),'tip'=>static::$lang['descr_']))
-			->item(array(static::$lang['m_folder'],Eleanor::Edit('path',$values['path'],$extra),'imp'=>true))
-			->item(array(static::$lang['access_in_s'],Eleanor::Items('services[]',$services,10,$extra),'imp'=>true))
+			->item(array(static::$lang['m_folder'],Eleanor::Input('path',$values['path'],$extra),'imp'=>true))
+			->item(array(static::$lang['access_in_s'],Eleanor::Items('services[]',$services,$extra),'imp'=>true))
 			->item(array(static::$lang['multi'],Eleanor::Check('multiservice',$values['multiservice'],$extra),'tip'=>static::$lang['multi_']))
-			->item(array(static::$lang['filename'],Eleanor::Edit('file',$values['file'],$extra),'tr'=>array('class'=>'multitrue')))
+			->item(array(static::$lang['filename'],Eleanor::Input('file',$values['file'],$extra),'tr'=>array('class'=>'multitrue')))
 			->item(array(static::$lang['files'],'<ul style="list-style-type:none;padding-left:0px" id="files">'.$files.'</ul>','tip'=>static::$lang['files_'],'tr'=>array('class'=>'multifalse')))
 			->item($ltpl['active'],Eleanor::Check('active',$values['active'],$extra))
-			->item(array(static::$lang['img'],Eleanor::Edit('image',$values['image'],array('id'=>'image')).' <img id="preview" src="'.$prevm.'" '.($values['image'] ? '' : ' style="display:none"').' />','tip'=>static::$lang['img_']))
-			->item('API',Eleanor::Edit('api',$values['api']))
+			->item(array(static::$lang['img'],Eleanor::Input('image',$values['image'],array('id'=>'image')).' <img id="preview" src="'.$prevm.'" '.($values['image'] ? '' : ' style="display:none"').' />','tip'=>static::$lang['img_']))
+			->item('API',Eleanor::Input('api',$values['api']))
 			->item(array(static::$lang['prot'],Eleanor::Check('protected',$values['protected'],$id ? array('disabled'=>true) : array()),'imp'=>static::$lang['prot_']))
 			->button($back.Eleanor::Button().($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
 			->end()

@@ -26,6 +26,9 @@ class Editor_Result extends BaseClass
 		$disabled=array('applet','meta','link','html','body','style','head','script','iframe','frame','frameset','base','!doctype'),#
 		$enabled=array();#Разрешенные теги! Все остальные будут вырезаны!
 
+	/**
+	 * Конструктор. Здесь определяются поддерживаемые редакторы и флаги визуальных редакторов
+	 */
 	public function __construct()#ToDo! To trait & editor
 	{
 		$this->editors=array(
@@ -46,11 +49,13 @@ class Editor_Result extends BaseClass
 		$this->antilink=Eleanor::$vars['antidirectlink'];
 	}
 
-	/*
-		Функция получения HTMLа после правки редактором.
-		$isv - флаг получения значения $_POST результата из переменной
-		$save - флаг включения сохранения результата, вместо вывода
-	*/
+	/**
+	 * Получение HTMLа после правки редактором
+	 *
+	 * @param string $name Имя редактора
+	 * @param bool $isv Флаг получения указывающий, что $name не имя редактора, а полученный из него контент для обработки
+	 * @param bool $save Флаг генерации результата для сохранения в БД, а не для вывода на экран. Разница в обработке ownbb кодов
+	 */
 	public function GetHTML($name,$isv=false,$save=true)
 	{
 		if(!$isv and !isset($_POST[$name]))
@@ -69,7 +74,10 @@ class Editor_Result extends BaseClass
 
 		$text=static::CensorFilter($text);
 		if($this->ownbb)
+		{
+			OwnBB::$opts['visual']=in_array($this->type,$this->visual);
 			$text=OwnBB::StoreNotParsed($text,$save ? OwnBB::SAVE : OwnBB::SHOW);
+		}
 		switch($this->type)
 		{
 			case'bb':#ББ редактор
@@ -99,9 +107,11 @@ class Editor_Result extends BaseClass
 		return$text;
 	}
 
-	/*
-		Функция должна попытаться обезопасть входящий HTML от XSS атак.
-	*/
+	/**
+	 * Преобразователь опасного HTML в безопасный (очищение HTML от XSS атак)
+	 *
+	 * @param string $s Строка опасного HTML
+	 */
 	public function SafeHtml($s)
 	{
 		$s=str_replace('<!-- NP2 ','<!-- ',$s);
@@ -140,7 +150,7 @@ class Editor_Result extends BaseClass
 				}
 				$s=substr_replace($s,$r,$cp,$l);
 				$np[]=array(
-					'f'=>$r,
+					'r'=>$r,
 					't'=>$tost,
 				);
 				$ocp=$cp;
@@ -331,7 +341,7 @@ class Editor_Result extends BaseClass
 							case'img':
 							case'image':
 								if(empty($opts['alt']))
-									$opts['alt']=$opts['title']=$this->imgalt;
+									$opts['title']=$opts['alt']=$this->imgalt;
 								if(!isset($opts['src']))
 								{
 									$rep='';
@@ -516,11 +526,16 @@ class Editor_Result extends BaseClass
 
 		if($np)
 			foreach($np as &$v)
-				$s=str_replace($v['f'],$v['t'],$s);
+				$s=str_replace($v['r'],$v['t'],$s);
 
 		return$s;
 	}
 
+	/**
+	 * Замена запрещенных слов в текст
+	 *
+	 * @param string $s Текст с запрещенными словами
+	 */
 	public static function CensorFilter($s)
 	{
 		if(Eleanor::$vars['bad_words'])
@@ -538,6 +553,9 @@ class Editor_Result extends BaseClass
 		return$s;
 	}
 
+	/**
+	 * Генератор дампа смайлов
+	 */
 	public static function GetSmiles()#ToDo! To trait & editor
 	{
 		$sm=Eleanor::$Cache->Get('smiles',false);

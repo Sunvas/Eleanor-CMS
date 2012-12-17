@@ -23,9 +23,11 @@ class Captcha extends BaseClass
 		$fluctuation=8,#Отклонение символов по вертикали
 		$wh_noise=0.14,#Густота "белого" шума
 		$bl_noise=0.14,#Густота "черного" шума
-		$disabled=false;#Капча выключена?
+		$disabled=false;#Флаг отключенной капчки
 
-
+	/**
+	 * Конструктор, самый обыкновенный, ничем не приметный конструктор
+	 */
 	public function __construct()
 	{
 		Eleanor::LoadOptions('captcha');
@@ -36,6 +38,13 @@ class Captcha extends BaseClass
 		$this->disabled=Eleanor::$Permissions->HideCaptcha();
 	}
 
+	/**
+	 * Подклчение HTML кода капчи, для вывода его на странице. Код определяется шаблонизатором, но обязательно включает в себя картинку и hidden поле
+	 * При этом поле для ввода капчи, вам необходимо предусмотреть самостоятельно.
+	 *
+	 * @param string $n Имя капчи, используется в случае, если на странице выводится две и более капчи: каждой необходимо задать свое уникальное имя
+	 * @param array|FALSE $post Массив с POST запросом, если указано false, используется суперглобальный массив $_POST. Полезно, в случае проверки капчи с использованием Ajax
+	 */
 	public function GetCode($n='captcha',$post=false)
 	{
 		if($this->disabled)
@@ -47,20 +56,15 @@ class Captcha extends BaseClass
 		return Eleanor::$Template->Captcha(array('name'=>$n,'w'=>$this->width,'h'=>$this->height,'s'=>session_id(),'src'=>Eleanor::$services['download']['file'].'?imageid='.session_id().'&amp;captcha='.$n));
 	}
 
-	public function Destroy($n='captcha')
-	{
-		if(isset($_SESSION))
-			unset($_SESSION[$n]);
-	}
-
-	/*
-		Проверка введенной капчи.
-		$value - значение полученое как-либо из POST запроса.
-		$n - имя сессии.
-		$post - массив, с POST данными, либо false для использования $_POST массива
-		$sess - ИД сессии. Если пустое - будет произведена попытка взять из POST запроса.
-	*/
-	public function Check($value,$n='captcha',$post=false,$sess='')
+	/**
+	 * Проверка корректности введенного значения капчи
+	 *
+	 * @param string $value Значение которое ввел пользователь
+	 * @param string $n Имя капчи, используется в случае, если на странице выводится две и более капчи: каждой необходимо задать свое уникальное имя
+	 * @param array|FALSE $post Массив с POST запросом, если указано false, используется суперглобальный массив $_POST. Полезно, в случае проверки капчи с использованием Ajax
+	 * @param string|FALSE $sess Идентификатор сессии. Каждый раз идентификатор сессии передается в hidden поле, если вы получаете идентификатор сессии другим способом - передайте его сюда
+	 */
+	public function Check($value,$n='captcha',$post=false,$sess=false)
 	{
 		if($this->disabled)
 			return true;
@@ -78,7 +82,25 @@ class Captcha extends BaseClass
 		return strcasecmp($_SESSION[$n],(string)$value)==0;
 	}
 
-	public function GetImage($sess='',$n='captcha')
+
+	/**
+	 * Разрушение капчи. Правило простое: после проверки корректности (не важно, успешно прошла или нет), капчу нужно разрушить, для исключения перебора возможных значений
+	 *
+	 * @param string $n Имя капчи, используется в случае, если на странице выводится две и более капчи: каждой необходимо задать свое уникальное имя
+	 */
+	public function Destroy($n='captcha')
+	{
+		if(isset($_SESSION))
+			unset($_SESSION[$n]);
+	}
+
+	/**
+	 * Непосредственный вывод картинки. Сразу после вызова метода настоятельно рекомедуется завершать выполнение скрипта die;
+	 *
+	 * @param string $sess Идентификатор сессии
+	 * @param string $n Имя капчи, используется в случае, если на странице выводится две и более капчи: каждой необходимо задать свое уникальное имя
+	 */
+	public function GetImage($sess,$n='captcha')
 	{
 		Eleanor::StartSession($sess,$n);
 		$s='';
@@ -252,6 +274,5 @@ class Captcha extends BaseClass
 			header('Content-Type: image/x-png');
 			imagepng($out_img,null,80);
 		}
-		die;
 	}
 }

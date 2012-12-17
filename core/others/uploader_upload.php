@@ -9,7 +9,9 @@
 	*Pseudonym
 */
 class Uploader_Upload extends Uploader
-{	public function Process()
+{	/**
+	 * Осуществление Upload запроса
+	 */	public function Process()
 	{		if(!isset($_POST['session']))
 			return false;
 		Eleanor::LoadOptions('site');
@@ -29,7 +31,7 @@ class Uploader_Upload extends Uploader
 			$cursize+=$_FILES[self::FILENAME]['size'];
 			if($this->max_size!==true and $cursize>$this->max_size or $this->max_files>0 and $this->max_files<++$cnt)
 				return false;		}
-		$path.=Eleanor::WinFiles($fname);
+		$path.=Files::Windows($fname);
 		if($this->types and !in_array($type,$this->types) or !move_uploaded_file($_FILES[self::FILENAME]['tmp_name'],$path))
 			return false;
 

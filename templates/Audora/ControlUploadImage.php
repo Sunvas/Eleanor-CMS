@@ -181,11 +181,11 @@ $(function(){
 	});' : '').'
 });//]]></script><div id="i'.$u.'">'
 	.($upload ? '<span id="i'.$u.'-upload"></span>' : '')
-	.($write ? '<a class="imagebtn enter" href="#">'.$lang['address'].'</a><div class="clr"></div><div class="enterhere">'.$lang['enter_address'].Eleanor::Edit('',$values['write'],array('style'=>'width:70%')).' '.Eleanor::Button('OK','button').'</div>' : '')
+	.($write ? '<a class="imagebtn enter" href="#">'.$lang['address'].'</a><div class="clr"></div><div class="enterhere">'.$lang['enter_address'].Eleanor::Input('',$values['write'],array('style'=>'width:70%')).' '.Eleanor::Button('OK','button').'</div>' : '')
 	.'<div style="padding:5px 0;">
 		<span style="width:'.($iw ? $iw : '180').'px;height:'.($ih ? $ih : '145').'px;text-decoration:none;max-height:100%;max-width:100%;display:none;" class="screenblock"><b>'.$lang['upload_image'].'</b><br /><span>'.sprintf('<b>%s</b> <small>x</small> <b>%s</b> <small>px</small>',$iw ? $iw : '&infin;',$ih ? $ih : '&infin;').'</span></span>
 		<a href="#" class="aimage" style="display:none;"><img style="border:1px solid #c9c7c3;max-width:'.($iw>0 ? $iw : '100%').';max-height:'.($ih>0 ? $ih : '100%').'" src="images/spacer.png" /></a>
 	</div>
 	<a class="imagebtn delete" style="display:none;" href="#">'.$lang['delete'].'</a>'
 	.($upload ? '<a class="imagebtn cancel" href="#" style="display:none;"></a>' : '')
-	.Eleanor::Control($name,'hidden',$sid).'</div>';
+	.Eleanor::Input($name,$sid,array('type'=>'hidden')).'</div>';

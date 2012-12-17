@@ -16,6 +16,13 @@ class CacheMachineHardDisk implements CacheMachineInterface
 			throw new EE('Folder /cache is write-protected!');
 	}
 
+	/**
+	 * Запись значения
+	 *
+	 * @param string $k Ключ. Обратите внимение, что ключи рекомендуется задавать в виде тег1_тег2 ...
+	 * @param mixed $value Значение
+	 * @param int $t Время жизни этой записи кэша в секундах
+	 */
 	public function Put($k,$v,$t=0)
 	{
 		if($t>0)
@@ -23,6 +30,11 @@ class CacheMachineHardDisk implements CacheMachineInterface
 		return file_put_contents(Eleanor::$root.'cache/'.$k.'.php','<?php $t='.(int)$t.';$v='.var_export($v,true).';');
 	}
 
+	/**
+	 * Получение записи из кэша
+	 *
+	 * @param string $k Ключ
+	 */
 	public function Get($k)
 	{
 		$v=false;
@@ -37,6 +49,11 @@ class CacheMachineHardDisk implements CacheMachineInterface
 		return$v;
 	}
 
+	/**
+	 * Удаление записи из кэша
+	 *
+	 * @param string $k Ключ
+	 */
 	public function Delete($k)
 	{
 		$r=Files::Delete(Eleanor::$root.'cache/'.$k.'.php');
@@ -44,10 +61,15 @@ class CacheMachineHardDisk implements CacheMachineInterface
 		return$r;
 	}
 
-	public function CleanByTag($t)
+	/**
+	 * Удаление записей по тегу. Если имя тега пустое - удаляется вешь кэш.
+	 *
+	 * @param string $t Тег
+	 */
+	public function DeleteByTag($t)
 	{
 		$t=str_replace('..','',$t);
-		if($t)
+		if($t!='')
 			$t.='*';
 		if($files=glob(Eleanor::$root.'cache/*'.$t.'.php'))
 			foreach($files as &$f)

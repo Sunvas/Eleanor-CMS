@@ -95,7 +95,7 @@ class AccountRegister
 					'pass'=>$values['p1'],
 					'link'=>PROTOCOL.Eleanor::$punycode.Eleanor::$site_path,
 				);
-				Eleanor::Mail(
+				Email::Simple(
 					$values['email'],
 					Eleanor::ExecBBLogic($l['reg_t'],$repl),
 					Eleanor::ExecBBLogic($l['reg_fin'],$repl)
@@ -125,7 +125,7 @@ class AccountRegister
 					'link'=>PROTOCOL.Eleanor::$punycode.Eleanor::$site_path,
 					'confirm'=>PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'activate','id'=>$actid,'md'=>$hash),true,''),
 				);
-				Eleanor::Mail(
+				Email::Simple(
 					$values['email'],
 					Eleanor::ExecBBLogic($l['reg_t'],$repl),
 					Eleanor::ExecBBLogic($l['reg_act'],$repl)

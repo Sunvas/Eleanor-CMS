@@ -15,7 +15,7 @@ require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::$service='admin';#ID сервиса
 Eleanor::LoadOptions(array('site','users-on-site'));
-Eleanor::LoadService();
+Eleanor::InitService();
 Eleanor::$Language->queue['main']='langs/admin-*.php';
 
 if(Eleanor::$vars['multilang'])
@@ -291,7 +291,7 @@ function Error($e='',$extra=array())
 			header('Content-Type: text/html; charset='.Eleanor::$charset,true,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503);
 		while(ob_get_contents()!==false)
 			ob_end_clean();
-		ob_start();ob_start();#Странный глюк PHP... Достаточно сделать Parse error в index.php темы и Core::FinishOutPut будет получать пустое значение
+		ob_start();ob_start();ob_start();#Странный глюк PHP... Достаточно сделать Parse error в index.php темы (или Template index was not found!) и Core::FinishOutPut будет получать пустое значение
 		echo$e;
 	}
 	else

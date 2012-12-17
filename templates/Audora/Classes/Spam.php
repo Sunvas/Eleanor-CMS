@@ -149,22 +149,22 @@ class TPLSpam
 	public static function AddEdit($id,$values,$runned,$uploader,$links,$errors,$bypost,$back)
 	{		static::Menu($id ? '' : 'add');		$ltpl=Eleanor::$Language['tpl'];
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		if(Eleanor::$vars['multilang'])
 		{
 			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
-				$ml['innertitle'][$k]=Eleanor::Edit('innertitle['.$k.']',Eleanor::FilterLangValues($values['innertitle'],$k),array('tabindex'=>17));
-				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>18));
+				$ml['innertitle'][$k]=Eleanor::Input('innertitle['.$k.']',Eleanor::FilterLangValues($values['innertitle'],$k),array('tabindex'=>17));
+				$ml['title'][$k]=Eleanor::Input('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>18));
 				$ml['text'][$k]=$GLOBALS['Eleanor']->Editor->Area('text['.$k.']',Eleanor::FilterLangValues($values['text'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>19)));
 			}
 		}
 		else
 			$ml=array(
-				'innertitle'=>Eleanor::Edit('innertitle',$values['innertitle'],array('tabindex'=>17)),
-				'title'=>Eleanor::Edit('title',$values['title'],array('tabindex'=>18)),
+				'innertitle'=>Eleanor::Input('innertitle',$values['innertitle'],array('tabindex'=>17)),
+				'title'=>Eleanor::Input('title',$values['title'],array('tabindex'=>18)),
 				'text'=>$GLOBALS['Eleanor']->Editor->Area('text',$values['text'],array('bypost'=>$bypost,'no'=>array('tabindex'=>19))),
 			);
 
@@ -172,16 +172,16 @@ class TPLSpam
 		$extra=$runned ? array('disabled'=>true) : array();
 
 		$uf=$Lst->begin()
-			->item(static::$lang['groups'],Eleanor::Items('figroup',UserManager::GroupsOpts($values['figroup']),10,$extra+array('tabindex'=>1))
+			->item(static::$lang['groups'],Eleanor::Items('figroup',UserManager::GroupsOpts($values['figroup']),$extra+array('tabindex'=>1))
 				.'<br /><label>'.Eleanor::Radio('figroupt','and',$values['figroupt']=='and',$extra+array('tabindex'=>2)).static::$lang['and'].'</label> <label>'.Eleanor::Radio('figroupt','or',$values['figroupt']=='or',$extra+array('tabindex'=>3)).static::$lang['or'].'</label>'
 			)
-			->item(static::$lang['username'],Eleanor::Select('finamet',Eleanor::Option(static::$lang['b'],'b','b'==$values['finamet']).Eleanor::Option(static::$lang['e'],'e','e'==$values['finamet']).Eleanor::Option(static::$lang['c'],'c','c'==$values['finamet']).Eleanor::Option(static::$lang['m'],'m','m'==$values['finamet']),$extra+array('tabindex'=>3,'style'=>'width:200px')).Eleanor::Edit('finame',$values['finame'],$extra+array('tabindex'=>5,'style'=>'width:50%')))
+			->item(static::$lang['username'],Eleanor::Select('finamet',Eleanor::Option(static::$lang['b'],'b','b'==$values['finamet']).Eleanor::Option(static::$lang['e'],'e','e'==$values['finamet']).Eleanor::Option(static::$lang['c'],'c','c'==$values['finamet']).Eleanor::Option(static::$lang['m'],'m','m'==$values['finamet']),$extra+array('tabindex'=>3,'style'=>'width:200px')).Eleanor::Input('finame',$values['finame'],$extra+array('tabindex'=>5,'style'=>'width:50%')))
 			->item(static::$lang['register'],Dates::Calendar('firegisterb',$values['firegisterb'],true,$extra+array('style'=>'width:40%','tabindex'=>4)).' &mdash; '.Dates::Calendar('firegistera',$values['firegistera'],true,$extra+array('style'=>'width:40%','tabindex'=>5)))
 			->item(static::$lang['last_visit'],Dates::Calendar('filastvisitb',$values['filastvisitb'],true,$extra+array('style'=>'width:40%','tabindex'=>6)).' &mdash; '.Dates::Calendar('filastvisita',$values['filastvisita'],true,$extra+array('style'=>'width:40%','tabindex'=>7)))
-			->item('IP',Eleanor::Edit('fiip',$values['fiip'],$extra+array('tabindex'=>8)))
+			->item('IP',Eleanor::Input('fiip',$values['fiip'],$extra+array('tabindex'=>8)))
 			->item(static::$lang['gender'],Eleanor::Select('figender',Eleanor::Option(static::$lang['ni'],-2,$values['figender']==-2).Eleanor::Option(static::$lang['ns'],-1,$values['figender']==-1).Eleanor::Option(static::$lang['female'],0,$values['figender']==0).Eleanor::Option(static::$lang['male'],1,$values['figender']==1),$extra+array('tabindex'=>9)))
-			->item('E-mail',Eleanor::Edit('fiemail',$values['fiemail'],$extra+array('tabindex'=>10)))
-			->item('IDs',Eleanor::Edit('fiids',$values['fiids'],$extra+array('tabindex'=>11)))
+			->item('E-mail',Eleanor::Input('fiemail',$values['fiemail'],$extra+array('tabindex'=>10)))
+			->item('IDs',Eleanor::Input('fiids',$values['fiids'],$extra+array('tabindex'=>11)))
 			->button(Eleanor::Button(static::$lang['ts'],'button',array('onclick'=>'TryUsers()','tabindex'=>12)).' '.Eleanor::Button(static::$lang['hideres'],'button',array('id'=>'hide','style'=>'display:none','tabindex'=>13,'id'=>'hideres')))
 			->end()
 			.'<div id="tryusers" style="display:none"></div><script type="text/javascript">//<![CDATA[
@@ -204,7 +204,7 @@ function TryUsers(page)
 $("#hide").click(function(){	$("#tryusers").empty().add("#hideres").hide();});//]]></script>';
 
 		$Lst->begin()
-			->item(array(static::$lang['per_run'],'descr'=>static::$lang['per_run_'],Eleanor::Edit('per_run',$values['per_run'],array('tabindex'=>14))))
+			->item(array(static::$lang['per_run'],'descr'=>static::$lang['per_run_'],Eleanor::Input('per_run',$values['per_run'],array('tabindex'=>14))))
 			->item(array(static::$lang['delspam'],'descr'=>static::$lang['delspam_'],Eleanor::Check('deleteondone',$values['deleteondone'],array('tabindex'=>15))))
 			->item(static::$lang['condition'],Eleanor::Select('status',Eleanor::Option(static::$lang['stopped'],'stopped',$values['status']=='stopped').Eleanor::Option(static::$lang['run'],'runned',$values['status']=='runned').Eleanor::Option(static::$lang['paused'],'paused',$values['status']=='paused').Eleanor::Option(static::$lang['finished'],'finished',$values['status']=='finished'),array('tabindex'=>16)))
 			->item(static::$lang['innertitle'],Eleanor::$Template->LangEdit($ml['innertitle'],null))

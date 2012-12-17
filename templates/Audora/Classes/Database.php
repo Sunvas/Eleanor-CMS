@@ -104,7 +104,7 @@ class TplDatabase
 		$ltpl=Eleanor::$Language['tpl'];
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst=Eleanor::LoadListTemplate('table-form');
 		$items=$fields=$fid=$fname='';
@@ -120,14 +120,14 @@ class TplDatabase
 				$fname=$values['names'][$k];
 				continue;
 			}
-			$fields.='<li><a href="#" class="tlistbtn"><img src="'.Eleanor::$Template->default['theme'].'images/minus_d.gif" alt="&minus;" title="&minus;" /></a><ul><li><span>'.static::$lang['fid'].'</span><div>'.Eleanor::Edit('ids[]',$v,array('style'=>'width:100%')).'</div></li><li><span>'.static::$lang['fname'].'</span><div>'.Eleanor::Edit('names[]',$values['names'][$k],array('style'=>'width:100%')).'</div></li></ul><div class="clr"></div></li>';
+			$fields.='<li><a href="#" class="tlistbtn"><img src="'.Eleanor::$Template->default['theme'].'images/minus_d.gif" alt="&minus;" title="&minus;" /></a><ul><li><span>'.static::$lang['fid'].'</span><div>'.Eleanor::Input('ids[]',$v,array('style'=>'width:100%')).'</div></li><li><span>'.static::$lang['fname'].'</span><div>'.Eleanor::Input('names[]',$values['names'][$k],array('style'=>'width:100%')).'</div></li></ul><div class="clr"></div></li>';
 		}
 
 		$Lst->form(array('id'=>'newtask','onsubmit'=>$runned ? 'return false;' : false))
 			->begin()
-			->item(static::$lang['tables'],Eleanor::Items('tables',$items,10,array('tabindex'=>1)))
-			->item(static::$lang['fields'].'<br /><a href="#" class="plus"><img align="right" src="'.Eleanor::$Template->default['theme'].'images/plus_d.gif" alt="+" title="+" /></a>','<ul class="reset tlist" id="fields"><li><a href="#" class="tlistbtn"><img src="'.Eleanor::$Template->default['theme'].'images/minus_d.gif" alt="&minus;" title="&minus;" /></a><ul><li><span>Поле ID пользователя</span><div>'.Eleanor::Edit('ids[]',$fid,array('style'=>'width:100%','tabindex'=>2)).'</div></li><li><span>Поле имени пользователя</span><div>'.Eleanor::Edit('names[]',$fname,array('style'=>'width:100%','tabindex'=>2)).'</div></li></ul><div class="clr"></div></li>'.$fields.'</ul>')
-			->item(static::$lang['per_load'],Eleanor::Control('per_load','number',$values['per_load'],array('min'=>1,'tabindex'=>3)))
+			->item(static::$lang['tables'],Eleanor::Items('tables',$items,array('tabindex'=>1)))
+			->item(static::$lang['fields'].'<br /><a href="#" class="plus"><img align="right" src="'.Eleanor::$Template->default['theme'].'images/plus_d.gif" alt="+" title="+" /></a>','<ul class="reset tlist" id="fields"><li><a href="#" class="tlistbtn"><img src="'.Eleanor::$Template->default['theme'].'images/minus_d.gif" alt="&minus;" title="&minus;" /></a><ul><li><span>Поле ID пользователя</span><div>'.Eleanor::Input('ids[]',$fid,array('style'=>'width:100%','tabindex'=>2)).'</div></li><li><span>Поле имени пользователя</span><div>'.Eleanor::Input('names[]',$fname,array('style'=>'width:100%','tabindex'=>2)).'</div></li></ul><div class="clr"></div></li>'.$fields.'</ul>')
+			->item(static::$lang['per_load'],Eleanor::Input('per_load',$values['per_load'],array('type'=>'number','min'=>1,'tabindex'=>3)))
 			->item(array($ltpl['activate'],Eleanor::Check('status',$values['status'],array('tabindex'=>4)),'tip'=>static::$lang['act_']))
 			->item(static::$lang['del'],Eleanor::Check('delete',$values['delete'],array('tabindex'=>5)))
 			->button($back.($runned ? '' : Eleanor::Button('OK','submit',array('tabindex'=>6))).($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>7,'onclick'=>'if(confirm(\''.$ltpl['are_you_sure'].'\'))window.location=\''.$links['delete'].'\'')) : ''))

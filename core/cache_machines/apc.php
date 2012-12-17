@@ -10,9 +10,14 @@
 */
 class CacheMachineApc implements CacheMachineInterface
 {	private
-		$u,
+		$u,#Уникализация кэш машины
 		$n=array(''=>true);#Массив имен того, что у нас есть в кеше.
 
+	/**
+	 * Конструктор кэш машины
+	 *
+	 * @param string $u Строка уникализации кэша (на одной кэш машине может быть запущено несколько копий Eleanor CMS)
+	 */
 	public function __construct($u='')
 	{
 		$this->u=$u;
@@ -26,6 +31,13 @@ class CacheMachineApc implements CacheMachineInterface
 		$this->Put('',$this->n);
 	}
 
+	/**
+	 * Запись значения
+	 *
+	 * @param string $k Ключ. Обратите внимение, что ключи рекомендуется задавать в виде тег1_тег2 ...
+	 * @param mixed $value Значение
+	 * @param int $t Время жизни этой записи кэша в секундах
+	 */
 	public function Put($k,$v,$t=0)
 	{
 		$r=apc_store($this->u.$k,$v,$t);
@@ -34,6 +46,11 @@ class CacheMachineApc implements CacheMachineInterface
 		return$r;
 	}
 
+	/**
+	 * Получение записи из кэша
+	 *
+	 * @param string $k Ключ
+	 */
 	public function Get($k)
 	{
 		if(!isset($this->n[$k]))
@@ -44,16 +61,26 @@ class CacheMachineApc implements CacheMachineInterface
 		return$r;
 	}
 
+	/**
+	 * Удаление записи из кэша
+	 *
+	 * @param string $k Ключ
+	 */
 	public function Delete($k)
 	{
 		unset($this->n[$k]);
 		return apc_delete($this->u.$k);
 	}
 
-	public function CleanByTag($t)
+	/**
+	 * Удаление записей по тегу. Если имя тега пустое - удаляется вешь кэш.
+	 *
+	 * @param string $t Тег
+	 */
+	public function DeleteByTag($t)
 	{
 		foreach($this->n as $k=>&$v)
-			if(!$t or strpos($k,$t)!==false)
+			if($t=='' or strpos($k,$t)!==false)
 				$this->Delete($k);
 	}
 }

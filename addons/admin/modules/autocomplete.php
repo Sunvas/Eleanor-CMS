@@ -53,7 +53,7 @@ switch($goal)
 			while($a=$R->fetch_assoc())
 				$items[$a['id']]=addcslashes($a['name'],"\n\r\t\"\\");
 		}
-		Start('');
+		Start();
 		echo'{query:"'.addcslashes($query,"\n\r\t\"\\").'",suggestions:['.($items ? '"'.join('","',$items).'"],data:["'.join('","',array_keys($items)).'"' : '').']}';
 	break;
 	default:		$filter=isset($_GET['filter']) ? (string)$_GET['filter'] : false;
@@ -81,6 +81,6 @@ switch($goal)
 				$items[$k]=$v;
 			}
 		}
-		Start('');
+		Start();
 		echo'{query:"'.addcslashes($query,"\n\r\t\"\\").'",suggestions:['.($items ? '"'.join('","',$items).'"' : '').']}';
 }

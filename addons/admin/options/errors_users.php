@@ -17,7 +17,7 @@ return array(
 		}
 
 		$u=uniqid();
-		return Eleanor::Edit($co['controlname'],$value,array('id'=>$u)).'<script type="text/javascript">//<![CDATA[
+		return Eleanor::Input($co['controlname'],$value,array('id'=>$u)).'<script type="text/javascript">//<![CDATA[
 $(function(){	$("#'.$u.'").autocomplete({
 		serviceUrl:CORE.ajax_file,
 		minChars:2,

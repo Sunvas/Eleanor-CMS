@@ -13,7 +13,7 @@ require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::$service='rss';#ID сервиса
 Eleanor::LoadOptions(array('site','rss','users-on-site'));
-Eleanor::LoadService();
+Eleanor::InitService();
 
 $Eleanor->error=$Eleanor->started=false;
 
@@ -311,22 +311,6 @@ function ExitPage($code=403,$r=301)
 	GoAway(PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>'errors','code'=>$code),false,true,Eleanor::$vars['furl']),$r);
 }
 
-function ApplyLang($l=false)
-{
-	if(Eleanor::$vars['multilang'])
-	{
-		if(($l or !Eleanor::$Login->IsUser() and $l=Eleanor::GetCookie('lang')) and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
-		{
-			Language::$main=$l;
-			Eleanor::$Language->Change($l);
-		}
-		foreach(Eleanor::$lvars as $k=>&$v)
-			Eleanor::$vars[$k]=Eleanor::FilterLangValues($v);
-	}
-	else
-		Eleanor::$lvars=array();
-}
-
 function ApplyLang($gl=false)
 {
 	if(Eleanor::$vars['multilang'])
@@ -350,11 +334,12 @@ function BeAs($n)
 		return;
 
 	Eleanor::$filename=Eleanor::$services[$n]['file'];
-
-	Eleanor::$service=$n;
 	Eleanor::$Language->queue['main'][]='langs/'.$n.'-*.php';
+
 	if(Eleanor::$services[$n]['login']!=Eleanor::$services[Eleanor::$service]['login'])
 		Eleanor::ApplyLogin(Eleanor::$services[$n]['login']);
+
+	Eleanor::$service=$n;
 	ApplyLang();
 
 	if($n=='user')

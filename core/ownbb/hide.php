@@ -11,6 +11,14 @@
 
 class OwnBbCode_hide extends OwnBbCode
 {
+	/**
+	 * Обработка информации перед показом на странице
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
 	public static function PreDisplay($t,$p,$c,$cu)
 	{
 		if(strpos($p,'noparse')!==false)

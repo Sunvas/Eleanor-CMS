@@ -16,7 +16,7 @@ return array(
 				{					$uses=rtrim($uses,', ');
 					$cl='Login'.ucfirst($v);
 					$r.='<li style="margin-top:5px"><b>'.$uses.'</b>'.($uses==$v ? '' : ' ('.$v.')').':<br />'
-						.Eleanor::Edit($co['controlname'].'['.$cl.']',isset($co['value'][$cl]) ? $co['value'][$cl] : 900).'</li>';
+						.Eleanor::Input($co['controlname'].'['.$cl.']',isset($co['value'][$cl]) ? $co['value'][$cl] : 900).'</li>';
 				}
 			}
 		return$r ? '<ul>'.$r.'</ul>' : '';

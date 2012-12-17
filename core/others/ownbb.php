@@ -8,24 +8,53 @@
 	=====
 	*Pseudonym
 */
+
 class OwnBbCode extends BaseClass
 {	const
 		SINGLE=false;
 
+	/**
+	 * Вывод заглушки, в случае когда использование тега запрещено ограничениями группы
+	 */
 	public static function RestrictDisplay()
 	{
 		return Eleanor::$Template->RestrictedSection(Eleanor::$Language['ownbb']['restrict']);
 	}
 
+	/**
+	 * Обработка информации перед показом на странице
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
 	public static function PreDisplay($t,$p,$c,$cu)
-	{		return __class__;	}
+	{		return$c;	}
 
-	public static function PreEdit($t,$p,$ct,$cu,$se=self::SINGLE)
+	/**
+	 * Обработка информации перед её правкой
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 * @param bool $e Флаг наличия закрывающего тега
+	 */
+	public static function PreEdit($t,$p,$c,$cu,$e=self::SINGLE)
 	{
-		return self::PreSave($t,$p,$ct,true,$se);
+		return self::PreSave($t,$p,$c,true,$e);
 	}
 
-	public static function PreSave($t,$p,$ct,$cu,$se=self::SINGLE)
+	/**
+	 * Обработка информации перед её сохранением
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
+	public static function PreSave($t,$p,$c,$cu,$e=self::SINGLE)
 	{
 		if(!is_array($p))
 			$p=Strings::ParseParams($p,$t);
@@ -58,44 +87,55 @@ class OwnBbCode extends BaseClass
 				$tp.=$k.'='.$q;
 			$tp.=' ';
 		}
-		return'['.$t.rtrim($tp).($cu ? '' : ' noparse').']'.$ct.($se ? '' : '[/'.$t.']');
+		return'['.$t.rtrim($tp).($cu ? '' : ' noparse').']'.$c.($e ? '' : '[/'.$t.']');
 	}
+
 	/*
-		Функции, которым для обработки необходимо передать весь массив текста
-		public static function TotalPreSave($s,$ts,$cu,$ps,$ct,$cp,$l,$se){return $s;}
-		public static function TotalPreEdit($s,$ts,$cu,$ps,$ct,$cp,$l,$se){return $s;}
-		public static function TotalPreDisplay($s,$ts,$cu,$ps,$ct,$cp,$l,$se){return $s;}
+		Функции, которым для обработки необходимо передать весь массив текста - каждый дочерний класс должен содержать следующие методы:
+		public static function TotalPreSave($s,$ts,$cu){ return$s; }
+		public static function TotalPreEdit($s,$ts,$cu){ return$s; }
+		public static function TotalPreDisplay($s,$ts,$cu){ return$s; }
+
+		@param string $s Весь текст
+		@param array $ts Массив тегов, которые необходимо обрабатывать
+		@param bool $cu Флаг возможности использования тега
 	*/
 }
 
 class OwnBB extends BaseClass
-{
-	const
-		DISPLAY=1,
-		SHOW=2,#Это когда мы результат обработки должны сразу показать на экран. Отличие от DISPLAY состсавляет в том, что мы используем разрешение не gr_see, а gr_use!
-		EDIT=3,
-		SAVE=4;
+{	const#Константы типа обрабоки
+		DISPLAY=1,#Обработка сохраненных данных перед показом
+		SHOW=2,#Обработка несохраненных данных перед показом: отличие от DISPLAY состоит в том, что используется разрешение не gr_see, а gr_use
+		EDIT=4,#Обработка сохраненных данных перед правкой
+		SAVE=8;#Обработка несохранных (полученных от пользователя) данных перед показом
 
 	public static
-		$replace=array(),#Массив замен классов обработчиков BB кодов.
-		$bbs=array(),
-		$opts=array(),
-		$visual=false,#Флаг определяющий, редактор визуальный или нет
-		$np;
+		$replace=array(),#Массив замен классов обработчиков BB кодов. Формат: имя класса => имя класса замены
+		$bbs=array(),#Массив с данными обрабатываемых ownbb кодов. Заполняется в конце этого файла
+		$opts=array(),#Массив с тонкими настройками для каждого класса. Например ключ alt отвечает за присвоение всем картинкам параметра alt по умолчанию, visual - флаг визуального редактора с которого получены данные
+		$np;#Массив, который используется в методах StoreNotParsed и ParseNotParsed
 
-	/*
-		Функция парсит свои ББ коды.
-		$s - текст с ББ кодами.
-		$type - тип (см. выше константы)
-		$codes - только эти ББ коды нужно парсить. Задаются через запятую. Неверный формат недопустим! Например b,i,u
-	*/
-	public static function Parse($s,$t=self::DISPLAY,$c=array())
+	/**
+	 * Грамотная обработка ownbb кодов
+	 *
+	 * @param string $s Текст для обработки, должен содержать ownbb коды
+	 * @param int $t Тип обработки (см. константы выше)
+	 * @param array $codes Исключительный массив только эти ББ коды нужно парсить
+	 */
+	public static function Parse($s,$t=self::DISPLAY,array$c=array())
 	{		$s=self::StoreNotParsed($s,$t);
 		$s=self::ParseBBCodes($s,$t,$c);
 		return self::ParseNotParsed($s,$t);
 	}
 
-	public static function ParseBBCodes($s,$type,$codes=array())
+	/**
+	 * Непосредственная обработка ownbb кодов. Отличие от Parse в том, именно этот метод обрабатывает ownbb коды, в то время как Parse всего лишь надстройка
+	 *
+	 * @param string $s Текст для обработки, должен содержать ownbb коды
+	 * @param int $type Тип обработки (см. константы выше)
+	 * @param array $codes Исключительный массив только эти ББ коды нужно парсить
+	 */
+	public static function ParseBBCodes($s,$type,array$codes=array())
 	{		switch($type)
 		{
 			case self::EDIT:
@@ -107,21 +147,26 @@ class OwnBB extends BaseClass
 			default:
 				$mth='PreDisplay';
 		}
-		if(!is_array($codes))
-			$codes=$codes ? explode(',',$codes) : array();
 		$groups=Eleanor::GetUserGroups();
 		foreach(self::$bbs as &$bb)
 		{
 			$ts=explode(',',$bb['tags']);
 			if($codes and count(array_intersect($codes,$ts))==0 or !$codes and $bb['special'])
 				continue;
+
 			$cu=true;
-			if($type==self::DISPLAY and $grs=$bb['gr_see'] or $type==self::SHOW and $grs=$bb['gr_use'] or  $type>self::SHOW and $grs=$bb['gr_use'])
-			{				$grs=explode(',',$grs);
-				$cu=count(array_intersect($grs,$groups))>0;
-			}
-			if($type==self::SHOW and !$cu)
-				continue;
+			if($type&self::SAVE)
+				$grs=$bb['gr_use'];
+			elseif($type&self::DISPLAY)
+				$grs=$bb['gr_see'];
+			elseif($type&self::SHOW)
+				$grs=array_merge($bb['gr_use'],$bb['gr_see']);
+			else
+				$grs=false;
+
+			if($grs)
+				$cu=(bool)array_intersect($grs,$groups);
+
 			$h=(false===$p=strrpos($bb['handler'],'.')) ? $bb['handler'] : substr($bb['handler'],0,$p);
 			if(isset(self::$replace[$h]))
 			{
@@ -149,6 +194,7 @@ class OwnBB extends BaseClass
 						++$cp;
 						continue;
 					}
+
 					$l=false;
 					do
 					{
@@ -159,12 +205,20 @@ class OwnBB extends BaseClass
 							continue 2;
 						}
 					}while($s{$l-1}=='\\');
-					$ps=substr($s,$cp+$tl+1,$l-$cp-$tl-1);
-					$ps=str_replace('\\]',']',trim($ps));
+
 					if($cch and !class_exists($c,false) and !include(Eleanor::$root.'core/ownbb/'.$bb['handler']))
 						continue 3;
-					$se=constant($c.'::SINGLE');
-					if($se or false===$clpos=stripos($s,'[/'.$t.']',$l+1))
+
+					if(method_exists($c,'Total'.$mth))
+					{
+						$s=call_user_func(array($c,'Total'.$mth),$s,$ts,$cu);
+						continue 3;
+					}
+
+					$ps=substr($s,$cp+$tl+1,$l-$cp-$tl-1);
+					$ps=str_replace('\\]',']',trim($ps));
+					$e=constant($c.'::SINGLE');
+					if($e or false===$clpos=stripos($s,'[/'.$t.']',$l+1))
 					{
 						$l-=$cp-1;#]
 						$ct='';
@@ -174,10 +228,7 @@ class OwnBB extends BaseClass
 						$ct=substr($s,$l+1,$clpos-$l-1);
 						$l=$clpos-$cp+$tl+3;#[/]
 					}
-					if(method_exists($c,'Total'.$mth))
-					{						$s=call_user_func(array($c,'Total'.$mth),$s,$ts,$cu,$ps,$ct,$cp,$l,$se);
-						continue 3;					}
-					$r=call_user_func(array($c,$mth),$t,$ps,$ct,$cu,$se);
+					$r=call_user_func(array($c,$mth),$t,$ps,$ct,$cu,$e);
 					$s=substr_replace($s,$r,$cp,$l);
 					$ocp=$cp;
 				}
@@ -186,6 +237,12 @@ class OwnBB extends BaseClass
 		return $s;
 	}
 
+	/**
+	 * Сохранение содержимого специальных ownbb кодов, в которых нельзя производить парсинг содержимого
+	 *
+	 * @param string $s Текст для обработки, должен содержать ownbb коды
+	 * @param int $type Тип обработки (см. константы выше)
+	 */
 	public static function StoreNotParsed($s,$type)
 	{
 		$s=str_replace('<!-- NP ','<!-- ',$s);
@@ -196,18 +253,20 @@ class OwnBB extends BaseClass
 		{
 			if(!$bb['no_parse'])
 				continue;
-			if($type==self::DISPLAY and $grs=$bb['gr_see'] or $type==self::SHOW and $grs=$bb['gr_use'] or $type>self::SHOW and $grs=$bb['gr_use'])
-			{
-				$grs=explode(',',$grs);
-				if(count(array_intersect($grs,$groups))==0)
-					continue;
-			}
-			if($grs=$bb['gr_use'])
-			{
-				$grs=explode(',',$grs);
-				if(count(array_intersect($grs,$groups))==0)
-					continue;
-			}
+
+			$cu=true;
+			if($type&self::SAVE)
+				$grs=$bb['gr_use'];
+			elseif($type&self::DISPLAY)
+				$grs=$bb['gr_see'];
+			elseif($type&self::SHOW)
+				$grs=array_merge($bb['gr_use'],$bb['gr_see']);
+			else
+				$grs=false;
+
+			if($grs and !(bool)array_intersect($grs,$groups))
+				continue;
+
 			$h=(false===$p=strrpos($bb['handler'],'.')) ? $bb['handler'] : substr($bb['handler'],0,$p);
 			if(isset(self::$replace[$h]))
 			{
@@ -237,8 +296,6 @@ class OwnBB extends BaseClass
 						++$cp;
 						continue;
 					}
-					if($cch and !class_exists($c,false) and !include(Eleanor::$root.'core/ownbb/'.$bb['handler']))
-						continue 3;
 
 					if(false!==$nop=strpos($s,'noparse]',$cp) and $nop<strpos($s,']',$cp))
 					{
@@ -246,8 +303,11 @@ class OwnBB extends BaseClass
 						continue;
 					}
 
-					$se=constant($c.'::SINGLE');
-					if($se or false===$l=strpos($s,'[/'.$t.']',$cp))
+					if($cch and !class_exists($c,false) and !include(Eleanor::$root.'core/ownbb/'.$bb['handler']))
+						continue 3;
+
+					$e=constant($c.'::SINGLE');
+					if($e or false===$l=strpos($s,'[/'.$t.']',$cp))
 					{
 						$l=strpos($s,']',$cp);
 						if($l===false)
@@ -262,9 +322,9 @@ class OwnBB extends BaseClass
 					$ct=substr($s,$cp,$l);
 					$s=substr_replace($s,$r,$cp,$l);
 					self::$np[]=array(
-						'f'=>$r,
+						'r'=>$r,
 						't'=>$ct,
-						'code'=>$bb['sp_tags'] ? $t.','.$bb['sp_tags'] : $t,
+						's'=>$bb['sp_tags'] ? $bb['sp_tags']+array(''=>$t) : array($t),
 					);
 					$ocp=$cp;
 				}
@@ -273,33 +333,42 @@ class OwnBB extends BaseClass
 		return$s;
 	}
 
-	/*
-		Если $type===false - ничего не парсим.
-	*/
+	/**
+	 * Обработка содержимого специальных ownbb кодов. Вызывается после их сохранения методом StoreNotParsed и обработки основных кодов методом ParseBBCodes
+	 *
+	 * @param string $s Текст для обработки, должен содержать ownbb коды
+	 * @param int $type Тип обработки (см. константы выше)
+	 */
 	public static function ParseNotParsed($s,$type)
 	{
 		if(self::$np)
 			if($type)
 				foreach(self::$np as &$v)
-					$s=str_replace($v['f'],self::ParseBBCodes($v['t'],$type,$v['code']),$s);
+					$s=str_replace($v['r'],self::ParseBBCodes($v['t'],$type,$v['s']),$s);
 			else
 				foreach(self::$np as &$v)
-					$s=str_replace($v['f'],$v['t'],$s);
+					$s=str_replace($v['r'],$v['t'],$s);
 		self::$np=array();
 		return$s;
 	}
 
-	public static function RecacheBB()
+	/**
+	 * Создание кэша ownbb кодов
+	 */
+	public static function Recache()
 	{
-		$bbs=array();
+		self::$bbs=array();
 		$R=Eleanor::$Db->Query('SELECT `handler`,`tags`,`no_parse`,`special`,`sp_tags`,`gr_use`,`gr_see`,`sb` FROM `'.P.'ownbb` WHERE `active`=1 ORDER BY `pos` ASC');
 		while($a=$R->fetch_assoc())
-			$bbs[]=$a;
-		Eleanor::$Cache->Put('ownbb',$bbs,0);
-		return$bbs;
+		{			$a['sp_tags']=$a['sp_tags'] ? explode(',',$a['sp_tags']) : array();
+			$a['gr_use']=$a['gr_use'] ? explode(',',$a['gr_use']) : array();
+			$a['gr_see']=$a['gr_see'] ? explode(',',$a['gr_see']) : array();
+			self::$bbs[]=$a;
+		}
+		Eleanor::$Cache->Put('ownbb',self::$bbs);
 	}
 }
 
 OwnBB::$bbs=Eleanor::$Cache->Get('ownbb');
 if(OwnBB::$bbs===false)
-	OwnBB::$bbs=OwnBB::RecacheBB();
+	OwnBB::Recache();

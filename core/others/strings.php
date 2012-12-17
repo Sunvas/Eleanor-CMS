@@ -9,9 +9,12 @@
 	*Pseudonym
 */
 class Strings extends BaseClass
-{	/*
-		$ep(empty pass) - валидизировать пустое значение?
-	*/
+{	/**
+	 * Проверка корректиности e-mail
+	 *
+	 * @param string $s Проверяемый e-mail
+	 * @param bool $ep Флаг интерпретации пустого значения, как корректного
+	 */
 	public static function CheckEmail($s,$ep=true)
 	{
 		$ab=constant(Language::$main.'::ALPHABET');
@@ -22,6 +25,11 @@ class Strings extends BaseClass
 		return true;
 	}
 
+	/**
+	 * Проверка корректности адреса ссылки
+	 *
+	 * @param string $s Проверямая ссылка
+	 */
 	public static function CheckUrl($s)
 	{
 		$s=trim($s);
@@ -31,13 +39,13 @@ class Strings extends BaseClass
 		return preg_match('~^([a-z]{3,10}://[\wa-z'.$ab.'0-9/\._\-:]+\.[\wa-z'.$ab.'\-]{2,}/)?(?:[^\s{}]*)?$~i',$s)>0;
 	}
 
-	/*
-		Эта функция нормально работает с UTF-8! Добавлять параметры mb_ в substr не нужно!!
-		Метод служит для того, чтобы распарсить строку параметров вида
-		param1="value1" param2=   value2 param3="v      arlue3"
-		$str - строка
-		$first_param служит для указания имени первого параметра, если $str начинается с =value
-	*/
+	/**
+	 * Преобразование текстовой строки параметров в массив. Корректно обрабатывает даже некорректные данные.
+	 * Метод корректно работает с UTF-8: lобавлять параметры mb_ в substr не нужно.
+	 *
+	 * @param string $s Строка параметров, формата param1="value1" param2=   value2 param3=  "value3"
+	 * @param string $first Имя первого параметра, в случае если $s начинается с "=" (в BB кодах такое возможно [url=http://eleanor-cms.ru]CMS[/url]
+	 */
 	public static function ParseParams($s,$first=0)
 	{
 		$a=array();
@@ -98,6 +106,13 @@ class Strings extends BaseClass
 		return$a;
 	}
 
+	/**
+	 * Корректная обрезка строки до N символов. Метод не ломает html мнемоники.
+	 *
+	 * @param string $s Строка, которую необходимо обрезать
+	 * @param int $n Число символов, до которых нужно обрезать строку, считая слева направо
+	 * @param string $e Замена обрезанных символов
+	 */
 	public static function CutStr($s,$n=30,$e='...')
 	{
 		if(mb_strlen($s)>$n)
@@ -108,6 +123,11 @@ class Strings extends BaseClass
 		return$s;
 	}
 
+	/**
+	 * Версия ucfirst функции, корректно работающая с utf-8
+	 *
+	 * @param string $s Воходящая строка
+	 */
 	public static function UcFirst($s)
 	{
 		if(!$s)
@@ -115,6 +135,13 @@ class Strings extends BaseClass
 		return mb_strtoupper(mb_substr($s,0,1)).mb_substr($s,1);
 	}
 
+	/**
+	 * Преобработка строки для последующего корректного преобразования в массив при помощи explode.
+	 * Удаляет дубли разделителей, убирает резделити в начале и в конце строки.
+	 *
+	 * @param string $s Входящая строка
+	 * @param string $d Разделитель для последующего explode
+	 */
 	public static function CleanForExplode($s,$d=',')
 	{
 		$dq=preg_quote($d,'/');
@@ -122,6 +149,14 @@ class Strings extends BaseClass
 		return preg_replace(array('/(?:'.$dq.')$/','/^(?:'.$dq.')/'),'',$s);
 	}
 
+	/**
+	 * Выделение слов в тексте определенным цветов. Метод корректно минут все теги.
+	 *
+	 * @param string|array $w Слово для выделения
+	 * @param string $s Текст в котором слово необходимо выделить
+	 * @param string $c Цвет текста в выделении
+	 * @param string $bc Цвет самого выделения
+	 */
 	public static function MarkWords($w,$s,$c='#FFFF00',$bc='#FF0000')
 	{
 		if(!$s or !$w)
@@ -133,14 +168,14 @@ class Strings extends BaseClass
 			if($v=='')
 				unset($w[$k]);
 		}
-		return preg_replace('#(?<=>|^)([^<]+)#e','self::DoMarkWords(\'\1\',$w,$c,$bc)',$s);
-	}
 
-	protected static function DoMarkWords($s,$w,$c,$b)
-	{
-		$s=stripslashes($s);
-		foreach($w as &$v)
-			$v=preg_quote($v,'#');
-		return preg_replace('#(?:\b)('.join('|',$w).')(?:\b)#i','<span style="background-color: '.$c.'; color: '.$b.';">\1</span>',$s);
+		$F=function($s)use($w,$c,$b)
+		{
+			$s=stripslashes($s);
+			foreach($w as &$v)
+				$v=preg_quote($v,'#');
+			return preg_replace('#(?:\b)('.join('|',$w).')(?:\b)#i','<span style="background-color: '.$c.'; color: '.$b.';">\1</span>',$s);
+		};
+		return preg_replace('#(?<=>|^)([^<]+)#e','$F(\'\1\')',$s);
 	}
 }

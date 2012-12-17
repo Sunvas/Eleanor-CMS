@@ -10,7 +10,9 @@
 */
 
 class Uploader_Ajax extends Uploader
-{
+{	/**
+	 * Осуществление Ajax запроса
+	 */
 	public function Process()
 	{
 		$uniq=isset($_POST['uniq']) ? (string)$_POST['uniq'] : '';
@@ -29,7 +31,7 @@ class Uploader_Ajax extends Uploader
 					return Error();
 				if(self::EF($folder))
 					return Error($lang['error_name']);
-				$path=$this->GetPath($path).Eleanor::WinFiles($folder);
+				$path=$this->GetPath($path).Files::Windows($folder);
 				if(!is_dir($path) and !Files::MkDir($path))
 					return Error($lang['error_folder']);
 				Result(true);
@@ -47,7 +49,7 @@ class Uploader_Ajax extends Uploader
 				$cnt=count($files);
 				foreach($files as $k=>&$v)
 				{
-					$v=Eleanor::WinFiles($v,true);
+					$v=Files::Windows($v,true);
 					if(substr($v,-1)==DIRECTORY_SEPARATOR)
 					{
 						$dirs[]=basename($v);
@@ -101,10 +103,10 @@ class Uploader_Ajax extends Uploader
 				}
 
 				$short=substr($path,strlen($this->allow_walk ? $this->pathlimit : $this->path));
-				$short=Eleanor::WinFiles(rtrim(str_replace(DIRECTORY_SEPARATOR,'/',$short),'/'),true);
+				$short=Files::Windows(rtrim(str_replace(DIRECTORY_SEPARATOR,'/',$short),'/'),true);
 
 				$fshort=substr($path,strlen(Eleanor::$root));
-				$fshort=Eleanor::WinFiles(str_replace(DIRECTORY_SEPARATOR,'/',$fshort),true);
+				$fshort=Files::Windows(str_replace(DIRECTORY_SEPARATOR,'/',$fshort),true);
 				if(!$this->allow_delete)
 					$this->buttons_item['folder_delete']=$this->buttons_item['folder_file']=false;
 				foreach($files as &$entry)
@@ -238,7 +240,7 @@ class Uploader_Ajax extends Uploader
 				}
 				if(self::EF(basename($what)))
 					return Error($what);
-				$path=$this->GetPath($path).Eleanor::WinFiles($what);
+				$path=$this->GetPath($path).Files::Windows($what);
 				$type=strpos($what,'.')===false ? '' : strtolower(pathinfo($what,PATHINFO_EXTENSION));
 				if(is_file($path) and in_array($type,$this->editable) and file_put_contents($path,$c)!==false)
 					return Result('ok');
@@ -259,7 +261,7 @@ class Uploader_Ajax extends Uploader
 					if($this->max_files<$cnt+1)
 						return Error();
 				}
-				$path=$this->GetPath($path).Eleanor::WinFiles($f);
+				$path=$this->GetPath($path).Files::Windows($f);
 				if(is_file($path))
 					return Error($lang['file_exists']);
 				if(false===file_put_contents($path,''))
@@ -272,11 +274,23 @@ class Uploader_Ajax extends Uploader
 		}
 	}
 
-	protected static function EF($f)#Error file
+	/**
+	 * Проверка корректности имени файла или каталога
+	 *
+	 * @param string $f Имя файла или каталога для проверки
+	 */
+	protected static function EF($f)
 	{
 		return preg_match('%[\s#"\'\\/:*\?<>|]+%',$f)>0;
 	}
 
+	/**
+	 * Генерация относительного путь для перехода из одного каталога в другой
+	 *
+	 * @param string $a Путь к первому каталогу
+	 * @param string $b Путь ко второму каталогу
+	 * @return string Например: ../../aa/bb/cc
+	 */
 	public static function ShortPathTo($a,$b)
 	{
 		$a=preg_split('#[/\\\\]+#',$a);

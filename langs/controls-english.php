@@ -3,18 +3,16 @@ if(!defined('CMS'))die;
 $m=Eleanor::$vars['multilang'] ? ' (%s)' : '';
 return array(
 	#For /core/others/controls_manager.php
-	'edit'=>'Single-line text field',
+	'input'=>'Input element',
 	'text'=>'Multiline textbox',
-	'select'=>'One-line single select',
-	'item'=>'Multiline single select',
-	'items'=>'Multi-line multiple select',
+	'select'=>'Single select',
+	'items'=>'Multiple select',
 	'check'=>'Flag',
 	'user'=>'Users',
 	'editor'=>'Text editor',
 	'uploadfile'=>'Upload file',
 	'uploadimage'=>'Upload image',
 	'checks'=>'Multiple select (flags)',
-	'input'=>'Form element',
 	'date'=>'Date select',
 
 	'type_not_found'=>'This type of control is not supported!',
@@ -27,6 +25,8 @@ return array(
 	'select_source'=>'Source values',
 	'editor_type'=>'Editor type',
 	'time_select'=>'Timing',
+	'type'=>'Type',
+	't_text'=>'Text field',
 	't_color'=>'Color selection',
 	't_date'=>'Calendar date',
 	't_datetime'=>'Date and time',

@@ -115,7 +115,7 @@ if(isset($_GET['do']))
 					if(isset($_POST['ok']))
 					{
 						if($a['voting'])
-							$Eleanor->Voting_Manager->Delete($a['voting']);
+							$Eleanor->VotingManager->Delete($a['voting']);
 						Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$mc['n'].DIRECTORY_SEPARATOR.$id);
 						RemoveTags($a['id']);
 						Eleanor::$Db->Delete(P.'comments','`module`='.$Eleanor->module['id'].' AND `contid`='.$a['id']);
@@ -123,7 +123,7 @@ if(isset($_GET['do']))
 						Eleanor::$Db->Delete($mc['tl'],'`id`='.$id);
 						if($uid)
 							Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-n'.$id.'\' LIMIT 1');
-						Eleanor::$Cache->Lib->CleanByTag($mc['n']);
+						Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 						$title[]=$lang['deleted'];
 						$c=Eleanor::$Template->DelSuccess($a,empty($_POST['back']) ? false : $_POST['back']);
 					}
@@ -146,7 +146,15 @@ if(isset($_GET['do']))
 				$md=(isset($_GET['']) and is_array($_GET[''])) ? reset($_GET['']) : false;
 			else
 				$md=isset($_GET['md']) ? (string)$_GET['md'] : false;
-			$values=array();
+			$values=array(
+				'text'=>'',
+				'where'=>'tat',
+				'tags'=>array(),
+				'categs'=>array(),
+				'sort'=>'date',
+				'c'=>'and',
+				't'=>'and',
+			);
 			$error='';
 			$data=$cnt=$page=false;
 			if($_SERVER['REQUEST_METHOD']=='POST')
@@ -232,17 +240,21 @@ if(isset($_GET['do']))
 
 					if($cnt==0)
 						break;
-					$T->Add('search','',true,Eleanor::$Permissions->SearchLimit());
-					$query.=$order;
-					Eleanor::StartSession($md);
-					$_SESSION[$mc['n']]=array(
-						'total'=>$cnt,
-						'query'=>$query,
-						'values'=>$values,
-						'seladd'=>$seladd,
-					);
-					$Eleanor->Url->ending='';
-					return GoAway(array('do'=>'search','md'=>session_id()));
+
+					if($cnt>Eleanor::$vars['publ_per_page'])
+					{
+						$T->Add('search','',true,Eleanor::$Permissions->SearchLimit());
+						$query.=$order;
+						Eleanor::StartSession($md);
+						$_SESSION[$mc['n']]=array(
+							'cnt'=>$cnt,
+							'query'=>$query,
+							'values'=>$values,
+							'seladd'=>$seladd,
+						);
+						$Eleanor->Url->ending='';
+						return GoAway(array('do'=>'search','md'=>session_id()));
+					}
 				}while(false);
 			elseif($md)
 				do
@@ -250,30 +262,21 @@ if(isset($_GET['do']))
 					Eleanor::StartSession($md);
 					if(!isset($_SESSION[$mc['n']]))
 						break;
-					$sess=$_SESSION[$mc['n']];
-					$cnt=$sess['total'];
-
-					$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
-					if($page<1)
-						$page=1;
-					$offset=abs(($page-1)*Eleanor::$vars['publ_per_page']);
-
-					if($cnt and $offset>=$cnt)
-						$offset=max(0,$cnt-Eleanor::$vars['publ_per_page']);
-					$values=$sess['values'];
-					$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting`'.$sess['seladd'].' FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND '.$sess['query'].' LIMIT '.$offset.', '.Eleanor::$vars['publ_per_page']);
-					$data=FormatList($R,false,$values['text'] ? array('hl'=>array('hl'=>$values['text'])) : array());
+					extract($_SESSION[$mc['n']],EXTR_OVERWRITE);
 				}while(false);
 
-			$values+=array(
-				'text'=>'',
-				'where'=>'tat',
-				'tags'=>array(),
-				'categs'=>array(),
-				'sort'=>'date',
-				'c'=>'and',
-				't'=>'and',
-			);
+			if($cnt>0)
+			{				$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
+				if($page<1)
+					$page=1;
+				$offset=abs(($page-1)*Eleanor::$vars['publ_per_page']);
+
+				if($cnt and $offset>=$cnt)
+					$offset=max(0,$cnt-Eleanor::$vars['publ_per_page']);
+
+				$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting`'.$seladd.' FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND '.$query.' LIMIT '.$offset.', '.Eleanor::$vars['publ_per_page']);
+				$data=FormatList($R,false,$values['text'] ? array('hl'=>array('hl'=>$values['text'])) : array());			}
+
 			$tags=array();
 			$R=Eleanor::$Db->Query('SELECT `id`,`name` FROM `'.$mc['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `cnt`>0 ORDER BY `name` ASC LIMIT 150');
 			while($a=$R->fetch_assoc())
@@ -419,12 +422,12 @@ elseif($id or $puri)
 	}
 	if($cid or $curls or $id and $a['uri'])
 	{
-		$category=$Eleanor->Categories->GetCategory($cid,$curls);
+		$category=$Eleanor->Categories->GetCategory($cid ? $cid : $curls);
 		if($category and $category['id']!=$a['_cat'])
 		{
 			$commu=$Eleanor->Comments->GET();
 			foreach($commu as $k=>$v)
-				$u[]=array($k=>$v);
+				$u[]=array($Eleanor->Comments->upref.$k=>$v);
 			return GoAway($u);
 		}
 		$category['_a']=$Eleanor->Url->Construct($Eleanor->Categories->GetUri($category['id']),true,false);
@@ -515,7 +518,7 @@ elseif($id or $puri)
 	echo$c;}
 elseif($cid or $curls)
 {
-	$category=$Eleanor->Categories->GetCategory($cid,$curls);
+	$category=$Eleanor->Categories->GetCategory($cid ? $cid : $curls);
 	if(!$category)
 		return ExitPage();
 	$Lst=Eleanor::LoadListTemplate('headfoot');

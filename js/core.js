@@ -248,7 +248,10 @@ var uagent=navigator.userAgent.toLowerCase(),
 		if($.isFunction(F))
 			CORE.history.push(F);
 		else
+		{
+			CORE.history.push(false);
 			F=false;
+		}
 		try
 		{
 			history.replaceState({f:F ? CORE.history.length-1 : false,data:data||false},"",window.location.href);
@@ -265,10 +268,15 @@ var uagent=navigator.userAgent.toLowerCase(),
 			window.attachEvent("onpopstat",OnPop);
 	},
 	HistoryPush:function(href,F,data)
-	{		if($.isFunction(F))
+	{
+		if(history.length<CORE.history.length);			CORE.history=CORE.history.slice(0,history.length);
+		if($.isFunction(F))
 			CORE.history.push(F);
 		else
+		{
+			CORE.history.push(false);
 			F=false;
+		}
 		try
 		{			history.pushState({f:F ? CORE.history.length-1 : false,data:data||false},"",href);
 			CORE.OB();

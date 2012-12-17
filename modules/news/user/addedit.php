@@ -166,7 +166,7 @@ function AddEdit($id,$errors=array(),$gn=array())
 			$values['status']=isset($_POST['status']) ? (int)$_POST['status'] : 0;
 		else
 			$values['author']=isset($_POST['author']) ? (string)$_POST['author'] : '';
-		$Eleanor->Voting_Manager->bypost=true;
+		$Eleanor->VotingManager->bypost=true;
 	}
 	else
 		$bypost=false;
@@ -174,7 +174,7 @@ function AddEdit($id,$errors=array(),$gn=array())
 	$Eleanor->Uploader->watermark=true;
 	$Eleanor->Uploader->buttons_top['create_folder']=false;
 
-	$Eleanor->Voting_Manager->noans=!Eleanor::$Permissions->IsAdmin();
+	$Eleanor->VotingManager->noans=!Eleanor::$Permissions->IsAdmin();
 
 	if(isset($_GET['noback']))
 		$back='';
@@ -186,7 +186,7 @@ function AddEdit($id,$errors=array(),$gn=array())
 		'draft'=>$isu ? $Eleanor->Url->Construct(array('do'=>'draft'),true,'') : false,
 	);
 
-	$c=Eleanor::$Template->AddEdit($id,$values,$errors,$Eleanor->Uploader->Show($id ? $Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id : false),$Eleanor->Voting_Manager->AddEdit($values['voting']),$bypost,$hasdraft,$back,$links,$Eleanor->Captcha->disabled ? $Eleanor->Captcha->GetCode() : false);
+	$c=Eleanor::$Template->AddEdit($id,$values,$errors,$Eleanor->Uploader->Show($id ? $Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id : false),$Eleanor->VotingManager->AddEdit($values['voting']),$bypost,$hasdraft,$back,$links,$Eleanor->Captcha->disabled ? $Eleanor->Captcha->GetCode() : false);
 	Start();
 	echo$c;
 }
@@ -263,10 +263,10 @@ function Save($id,$gn=array())
 	else
 		$langs=array('');
 
-	$Eleanor->Voting_Manager->noans=!Eleanor::$Permissions->IsAdmin();
+	$Eleanor->VotingManager->noans=!Eleanor::$Permissions->IsAdmin();
 
-	$Eleanor->Voting_Manager->langs=Eleanor::$vars['multilang'] ? $langs : array();
-	$voting=$Eleanor->Voting_Manager->Save($id ? $old['voting'] : false);
+	$Eleanor->VotingManager->langs=Eleanor::$vars['multilang'] ? $langs : array();
+	$voting=$Eleanor->VotingManager->Save($id ? $old['voting'] : false);
 	if(is_array($voting))
 		$errors+=$voting;
 
@@ -520,7 +520,7 @@ function Save($id,$gn=array())
 		Eleanor::$Db->Update($Eleanor->module['config']['tt'],array('!cnt'=>'`cnt`+1'),'`id`'.Eleanor::$Db->In($addt));
 	}
 
-	Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 	SetData($Eleanor->module['config']['usercorrecttpl']);
 	$u=array('u'=>array(Eleanor::FilterLangValues($lvalues['uri']),'nid'=>$id));
 	if($maincat and $Eleanor->Url->furl)

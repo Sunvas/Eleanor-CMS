@@ -1,6 +1,6 @@
 <?php
 return array(
-	#For /core/others/voting_manager.php
+	#For /core/others/votingmanager.php
 	'errorva'=>'An error occurred while receiving data from survey!',
 	'EMPTY_VARIANT'=>function($l){return'One of the answers are not filled'.($l ? ' (for '.$l.')' : '');},
 	'EMPTY_TITLE'=>function($l){return'Title of question was not filled'.($l ? ' (for '.$l.')' : '');},

@@ -11,28 +11,82 @@
 class Email
 {
 	public
-		$from,#От кого
-		$sender,#Отправитель. Т.е. тот, кто отправляет письмо, а не тот, от кого оно приходит.
-		$subject,#Тема сообщения
+		$from,#Непосредственный автор письма
+		$sender,#Отправитель, кто отправляет письмо, а не тот, кто его автор
+		$subject,#Тема письма
 		$pr,#Уровень важности от 1 (самый важный) до 5 (самый неважный)
-		#Остальное смотреть в метод Send
 
 		$reply,#Куда должен прийти ответ
 		$notice_on=false,#Требовать подтверждение о прочтении
-		$notice,#Мыло, куда будет отправляться подверждение
+		$notice,#E-mail, куда будет отправляться подверждение
 
-		$method='mail',
+		$method='mail',#Метод отправки smtp|mail
 		$smtp_port=25,
 		$smtp_host,
 		$smtp_user,
 		$smtp_pass,
 
-		$parts=array();
+		$parts=array();#Части письма
+
 	protected
 		$lang;
 
+	/**
+	 * Упрощенная отправка письма, практически идентичена стандартной функции mail().
+	 * Пример использования: Email::Simple('mail@example.com','Тема письма','Текст письма',array('files'=>array('имя файла'=>'Содержимое файла',0=>'path/to/files.txt')));
+	 *
+	 * @param string|array $to Получатель письма
+	 * @param string $subj Тема письма
+	 * @param string $mess Текст письма
+	 */
+	public static function Simple($to,$subj,$mess,array$a=array())
+	{
+		$a+=array(
+			'type'=>'text/html',
+			'files'=>array(),
+			'copy'=>array(),
+			'hidden'=>array(),
+		);
+
+		$Email=new self;
+		$Email->parts=array(
+			'multipart'=>'mixed',
+			array(
+				'content-type'=>$a['type'],
+				'charset'=>DISPLAY_CHARSET,
+				'content'=>$mess,
+			),
+		);
+		foreach($a['files'] as $k=>&$v)
+		{
+			if(is_int($k))
+			{
+				$name=basename($v);
+				$c=file_get_contents($v);
+			}
+			else
+			{
+				$name=basename($k);
+				$c=$v;
+			}
+			$Email->parts[]=array(
+				'content-type'=>Types::MimeTypeByExt($name),
+				'filename'=>$name,
+				'content'=>$c,
+			);
+		}
+		$Email->subject=$subj;
+		$Email->Send(array('to'=>$to,'cc'=>$a['copy'],'bcc'=>$a['hidden']));
+		/*$Email->subject='';
+		$Email->parts=array();*/
+	}
+
+	/**
+	 * Конструктор класса, здесь задаются значения по умолчанию, которые читаются из настроек системы
+	 */
 	public function __construct()
-	{		$vars=Eleanor::LoadOptions('mailer',true);
+	{
+		$vars=Eleanor::LoadOptions('mailer',true);
 		if($vars['mail_method']=='smtp')
 		{
 			$this->method='smtp';
@@ -48,7 +102,12 @@ class Email
 		$this->notice=$vars['mail_notice'];
 	}
 
-	public function Send(array $a=array())
+	/**
+	 * Непосредственная отправка письма
+	 *
+	 * @param array $a Параметры отправки письма
+	 */
+	public function Send(array$a=array())
 	{		if(empty($a['to']))
 			return;
 		$a+=array(			'bcc'=>array(),#Копия (может быть строкой или массивом)
@@ -136,7 +195,13 @@ class Email
 		return true;
 	}
 
-	protected static function DoHeaders($a,$def=array())
+	/**
+	 * Создание заголовков письма
+	 *
+	 * @param array $a Параметры письма
+	 * @param array $def Параметры по умолчанию
+	 */
+	protected static function DoHeaders($a,array$def=array())
 	{
 		$r='';
 		$d="\n";
@@ -159,7 +224,7 @@ class Email
 			if(isset($a['filename']))
 				$a['disposition']='';
 			if(isset($a['disposition']) or isset($def['multipart'],$a['content-type']) and $dtype=in_array($def['multipart'],array('mixed','related')) and strpos($a['content-type'],'text')!==0)
-				$r.='Content-Disposition: '.(($dtype and $def['multipart']=='related') ? 'inline' : 'attachment; filename="=?'.DISPLAY_CHARSET.'?B?'.base64_encode(isset($a['filename']) ? $a['filename'] : 'file').'?="').$d;
+				$r.='Content-Disposition: '.($dtype && $def['multipart']=='related' ? 'inline' : 'attachment; filename="=?'.DISPLAY_CHARSET.'?B?'.base64_encode(isset($a['filename']) ? $a['filename'] : 'file').'?="').$d;
 			$r.='Content-Transfer-Encoding: '.($encode ? 'base64' : $a['encoding']).$d.$d;
 			if($encode)
 				$r.=chunk_split(base64_encode((string)$a['content']),76,"\n");
@@ -179,6 +244,9 @@ class Email
 		return$r;
 	}
 
+	/**
+	 * Чение данных из сокета
+	 */
 	protected static function Parse($socket,$resp)
 	{
 		while($r=fgets($socket,128))

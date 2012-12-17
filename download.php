@@ -13,7 +13,7 @@ require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::LoadOptions(array('site','users-on-site','files'));
 Eleanor::$service='download';#ID сервиса
-Eleanor::LoadService();
+Eleanor::InitService();
 $Eleanor->started=false;
 
 if(Eleanor::$vars['site_closed'] and !Eleanor::$Permissions->ShowClosedSite() and !Eleanor::LoadLogin(Eleanor::$services['admin']['login'])->IsUser())
@@ -85,7 +85,7 @@ elseif(isset($_GET['download']))
 	}
 
 	$direct=preg_match('#\.(gif|png|jpe?g|bmp)$#i',$f)>0;
-	$f=Eleanor::WinFiles($f);
+	$f=Files::Windows($f);
 	if(!is_file($f))
 		return ExitPage();
 	if(Eleanor::$caching)
@@ -222,11 +222,12 @@ function BeAs($n)
 		return;
 
 	Eleanor::$filename=Eleanor::$services[$n]['file'];
-
-	Eleanor::$service=$n;
 	Eleanor::$Language->queue['main'][]='langs/'.$n.'-*.php';
+
 	if(Eleanor::$services[$n]['login']!=Eleanor::$services[Eleanor::$service]['login'])
 		Eleanor::ApplyLogin(Eleanor::$services[$n]['login']);
+
+	Eleanor::$service=$n;
 	ApplyLang();
 
 	if($n=='user')

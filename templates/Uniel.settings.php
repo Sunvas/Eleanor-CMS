@@ -65,7 +65,7 @@ LICENSE
 			'title'=>'—трока',
 			'descr'=>'описание строки',
 			'default'=>'значение по-умолчанию',
-			'type'=>'edit',
+			'type'=>'input',
 			'options'=>array(
 				'extra'=>array('tabindex'=>1)
 			),

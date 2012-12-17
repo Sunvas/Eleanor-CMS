@@ -49,7 +49,7 @@ class AccountChangeEmail
 						'hours'=>round(Eleanor::$vars['reg_act_time']/3600),
 						'confirm'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'changeemail','id'=>$a['id'],'md'=>$a['hash'],'secret'=>$a['data']['secret']),true,''),
 					);
-					Eleanor::Mail(
+					Email::Simple(
 						$a['data']['email'],
 						Eleanor::ExecBBLogic($l['newemail_t'],$repl),
 						Eleanor::ExecBBLogic($l['newemail_new'],$repl)
@@ -133,7 +133,7 @@ class AccountChangeEmail
 						'hours'=>round(Eleanor::$vars['reg_act_time']/3600),
 						'confirm'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'changeemail','id'=>$actid,'md'=>$hash),true,''),
 					);
-					Eleanor::Mail(
+					Email::Simple(
 						$data['email'],
 						Eleanor::ExecBBLogic($l['newemail_t'],$repl),
 						Eleanor::ExecBBLogic($l['newemail_old'],$repl)
@@ -163,7 +163,7 @@ class AccountChangeEmail
 						'hours'=>round(Eleanor::$vars['reg_act_time']/3600),
 						'confirm'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'changeemail','id'=>$actid,'md'=>$hash),true,''),
 					);
-					Eleanor::Mail(
+					Email::Simple(
 						$values['email'],
 						Eleanor::ExecBBLogic($l['newemail_t'],$repl),
 						Eleanor::ExecBBLogic($l['newemail_new'],$repl)

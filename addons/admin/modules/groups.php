@@ -26,7 +26,7 @@ $Eleanor->gp=array(
 		'descr'=>'',
 		'noinherit'=>true,
 		'field'=>'title',
-		'type'=>'edit',
+		'type'=>'input',
 		'load'=>'LLoad',
 		'save'=>'LSave',
 		'multilang'=>Eleanor::$vars['multilang'],#Ќе ствим true потому что LLoad сам обрабатывает значени€ в нужно виде :)
@@ -38,7 +38,7 @@ $Eleanor->gp=array(
 	'html_pref'=>array(
 		'title'=>$lang['html_pref'],
 		'descr'=>$lang['html_pref_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->gp_post,
 		'options'=>array(
 			'htmlsafe'=>true,#“олько дл€ текстовых данных
@@ -47,7 +47,7 @@ $Eleanor->gp=array(
 	'html_end'=>array(
 		'title'=>$lang['html_suf'],
 		'descr'=>$lang['html_suf_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->gp_post,
 		'options'=>array(
 			'htmlsafe'=>true,#“олько дл€ текстовых данных
@@ -101,20 +101,20 @@ $Eleanor->gp=array(
 		'descr'=>$lang['flood_limit_'],
 		'bypost'=>&$Eleanor->gp_post,
 		'save'=>'IntSave',
-		'type'=>'edit',
+		'type'=>'input',
 	),
 	'search_limit'=>array(
 		'title'=>$lang['search_limit'],
 		'descr'=>$lang['search_limit_'],
 		'bypost'=>&$Eleanor->gp_post,
 		'save'=>'IntSave',
-		'type'=>'edit',
+		'type'=>'input',
 	),
 	'max_upload'=>array(
 		'title'=>$lang['max_size'],
 		'descr'=>$lang['max_size_'],
 		'bypost'=>&$Eleanor->gp_post,
-		'type'=>'edit',
+		'type'=>'input',
 		'default'=>0,
 	),
 );
@@ -147,7 +147,7 @@ elseif(isset($_GET['delete']))
 	{
 		Eleanor::$Db->Delete(P.'groups','`id`='.$id.' LIMIT 1');
 		Eleanor::$Db->Delete(P.'groups','`parents` LIKE \''.$a['parents'].$id.',%\' LIMIT 1');
-		Eleanor::$Cache->Lib->CleanByTag('groups');
+		Eleanor::$Cache->Lib->DeleteByTag('groups');
 		return GoAway(empty($_POST['back']) ? true : $_POST['back']);
 	}
 	$title[]=$lang['delc'];
@@ -348,6 +348,6 @@ function Save($id)
 		Eleanor::$Db->Update(P.'groups',$values,'`id`='.$id.' LIMIT 1');
 	else
 		Eleanor::$Db->Insert(P.'groups',$values);
-	Eleanor::$Cache->Lib->CleanByTag('groups');
+	Eleanor::$Cache->Lib->DeleteByTag('groups');
 	GoAway(empty($_POST['back']) ? true : $_POST['back']);
 }

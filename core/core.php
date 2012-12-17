@@ -19,7 +19,11 @@ define('ELENT',defined('ENT_HTML5') ? ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE | 
 spl_autoload_register(array('Eleanor','Autoload'));
 
 abstract class BaseClass
-{
+{	/**
+	 * Получение местоположения ошибки в коде: файл + строка
+	 *
+	 * @param array $d Дамп стека вызова при помощи функции debug_backtrace
+	 */
 	private static function _BT($d)
 	{
 		foreach($d as &$v)
@@ -28,6 +32,16 @@ abstract class BaseClass
 		return array('file'=>'-','line'=>'-');
 	}
 
+	/**
+	 * Обработка ошибочных вызовов несуществующих статических методов
+	 *
+	 * Наличие этого метода может показаться странным: ведь если вызвать несуществующий статический метод, будет сгенерирован Fatal error,
+	 * который можно отловить и залогировать. Но удобство метода проявляется в классе наследнике с методом __callStatic который не может
+	 * выполнить все вызываемые методы.
+	 *
+	 * @param string $n Название несуществующего метода
+	 * @param array $p Массив входящих параметров вызываемого метода
+	 */
 	public static function __callStatic($n,$p)
 	{
 		$d=self::_BT(debug_backtrace());
@@ -37,6 +51,16 @@ abstract class BaseClass
 		$E->Log();
 	}
 
+	/**
+	 * Обработка ошибочных вызовов несуществующих методов
+	 *
+	 * Наличие этого метода может показаться странным: ведь если вызвать несуществующий метод объекта, будет сгенерирован Fatal error,
+	 * который можно отловить и залогировать. Но удобство метода проявляется в классе наследнике с методом __call который не может
+	 * выполнить все вызываемые методы.
+	 *
+	 * @param string $n Название несуществующего метода
+	 * @param array $p Массив входящих параметров вызываемого метода
+	 */
 	public function __call($n,$p)
 	{		if(property_exists($this,$n) and is_object($this->$n) and method_exists($this->$n,'__invoke'))
 			return call_user_func_array(array($this->$n,'__invoke'),$p);
@@ -47,29 +71,15 @@ abstract class BaseClass
 		$E->Log();
 	}
 
-	public function __toString()
-	{
-		$d=self::_BT(debug_backtrace());
-		$E=new EE('Trying to get string form class '.get_class(),EE::DEV,array('file'=>$d[0]['file'],'line'=>$d[0]['line']));
-		if(DEBUG)
-			throw$E;
-		$E->Log();
-	}
-
-	public function __invoke(){}#Для $class()
-
-	public static function __set_state($a)#Для var_export($class)
-	{
-		$O=new get_class();
-		foreach($a as $k=>&$v)
-			$O->$k=$v;
-		return$O;
-	}
-
-	/*
-		Может показаться, что данная функция абсурдна, поскольку, при попытке получить неопределенное свойство генерируется Notice.
-		Но все удобство функции проявлется при наличии в классе метода __get, который может вернуть не все запрашиваемые свойства.
-	*/
+	/**
+	 * Обработка получения несуществующих свойств
+	 *
+	 * Наличие этого метода может показаться странным: поскольку, при попытке получить неопределенное свойство генерируется Notice,
+	 * который можно отловить и залогировать. Но удобство метода проявляется в классе наследнике с методом __get, который может
+	 * вернуть не все запрашиваемые свойства.
+	 *
+	 * @param string $n Имя запрашиваемого свойства
+	 */
 	public function __get($n)
 	{
 		if(is_array($n))
@@ -87,77 +97,108 @@ abstract class BaseClass
 	}
 }
 
-final class FilterArrays implements ArrayAccess
+final class GlobalsWrapper implements ArrayAccess
 {
 	private
 		$vn;
 
+	/**
+	 * Создание оболочки глобальной переменной. Требование: глобальная переменная должна быть массивом
+	 *
+	 * @param string $vn Имя глобальной переменной, для которой создается оболочка
+	 */
 	public function __construct($vn)
 	{
 		$this->vn=$vn;
 	}
 
+	/**
+	 * Установка значения элемента глобальной переменной
+	 *
+	 * @param string $k Имя элемента, ключ массива
+	 * @param mixed $v Значение
+	 */
 	public function offsetSet($k,$v)
 	{
 		$GLOBALS[$this->vn][$k]=$v;
 	}
 
+	/**
+	 * Проверка существования определенного элемента
+	 *
+	 * @param string $k Имя элемента, ключ массива
+	 */
 	public function offsetExists($k)
 	{
 		return isset($GLOBALS[$this->vn][$k]);
 	}
 
+	/**
+	 * Удаление определенного элемента
+	 *
+	 * @param string $k Имя элемента, ключ массива
+	 */
 	public function offsetUnset($k)
 	{
 		unset($GLOBALS[$this->vn][$k]);
 	}
 
+	/**
+	 * Получение определенного элемента
+	 *
+	 * @param string $k Имя элемента, ключ массива
+	 */
 	public function offsetGet($k)
 	{
 		return isset($GLOBALS[$this->vn][$k]) ? self::Filter($GLOBALS[$this->vn][$k]) : null;
 	}
 
-	public static function Filter($n)
+	/**
+	 * Преобразование опасного HTML в безопасный (обертка над функцией htmlspecialchars)
+	 *
+	 * @param string|array $s Строка с опасным HTML
+	 */
+	public static function Filter($s)
 	{
-		if(is_array($n))
+		if(is_array($s))
 		{
-			foreach($n as &$v)
+			foreach($s as &$v)
 				$v=self::Filter($v);
 			unset($v);
-			return$n;
+			return$s;
 		}
-		return htmlspecialchars($n,ELENT,CHARSET,false);
+		return htmlspecialchars($s,ELENT,CHARSET,false);
 	}
 }
 
 final class Eleanor extends BaseClass
 {
 	public static
-		$uploads='uploads',#Папка, где хранятся загружаемые файлы
+		$uploads='uploads',#Каталог хранения загружаемых файлов
 
 		#Отладочная информация
-		$debug=array(),#Сюда складируются данные отладки
+		$debug=array(),#Массив, куда помещаются данные отладки, для дальнейшего их вывода
 
-		#Свойства генерируемой страницы.
-		$gzip=true,#Состояние GZIP сжатия.
+		#Свойства генерируемой страницы
+		$gzip=true,#Состояние GZIP сжатия
 		$charset,#Выводимый в заголовках charset
 		$caching,#Кешировать ли страницу и на сколько
 		$last_mod,#Последнее изменение TIMESTAMP страницы по скрипту
 		$modified,#Последнее изменение TIMESTAMP страницы по браузеру
-		$maxage=0,#Срок жизни кэша на стороне браузера, без дополнительных валидаций со стороны сервера. В этот заголовок писать дополнительные параметры через запяту, например: 0, public
+		$maxage=0,#Срок жизни кэша на стороне браузера, без дополнительных валидаций со стороны сервера. В этот заголовок можно писать дополнительные параметры через запятую, например: 0, public
 		$etag,#Etag страницы
 		$content_type='text/html',#Выводимый в заголовках content-type
 
 		#Свойства сайта
-		$domain,#Ч Домен, с которого мы загрузились.
-		$punycode,#Ч Punycode домена. Если домен нормальный - это ссылка на domain
-		$site_path,#Ч. Каталог сайта
-		$filename,#Ч. Название файла-сервиса, запускающего весь движок. Используется чаще всего для генерирования УРЛов
+		$domain,#Readonly. Домен запуска системы
+		$punycode,#Readonly. Punycode домена. Если домен нормальный - это ссылка на domain
+		$site_path,#Readonly. Каталог сайта относительно домена
+		$filename,#Readonly. Имя файла-сервиса, запускающего весь движок. Используется чаще всего для генерирования ссылок
 
 		#Свойства пользователя
-		$ip,#Адрес, откуда мы загрузились
-		$ips=array(),#Массив со всеми айпишниками, присланными нам от пользователя.
-		$our_query=true,#Признак того, что пользователь пришел на эту страницу со своим запросом (а не с чужой страницы путем эмуляции). Изменение этого параметра положено на сервисы.
+		$ip,#Адрес, откуда пришел запрос
+		$ips=array(),#Массив со всеми айпишниками, присланными нам от пользователя
+		$our_query=true,#Признак, что пользователь пришел на эту страницу со своим запросом (а не с чужой страницы путем эмуляции). Изменение этого параметра положено на сервисы.
 		$sessextra='',#Дополнительная строка, которая будет писаться в таблицу сессий. Полезно для создания фичи во встроенных форумах: эту тему читают N пользователей
 		$is_bot,#Посковый бот? Нет? - гость. Имя поискового бота
 
@@ -188,8 +229,8 @@ final class Eleanor extends BaseClass
 		$UsersDb,#База данных пользователей
 		$Cache,#Кэш
 		$Template,#Шаблон оформления
-		$Language,#Объект, при конвертации его в строку - вернет имя языка
-		$Login,#Объект главного логина
+		$Language,#Языковой объект, при конвертации его в строку - вернет имя языка
+		$Login,#Объект главного логина. Именно объект, а не строка (название класса), только ради удобства доступа к методам
 		$Permissions,#Разрешения главного логина
 		$POST,#Отфильтрованный POST запрос
 
@@ -198,16 +239,21 @@ final class Eleanor extends BaseClass
 		$root,#Корень сайта
 		$rootf,#Корень файла, с которого мы запустились
 		$service,#Сервиса
-		$nolog=false;#Не логировать ошибки
+		$nolog=false;#Флаг отключения логирования ошибок
 
 	private static
-		$Instance;
+		$Instance;#Единственный объект этого класса. Singleton
 
+	/**
+	 * Получение единственного объекта этого класса. При первом запросе - конструктор с единственным параметром:
+	 *
+	 * @param string $conf Путь файла с конфигурациями
+	 */
 	public static function getInstance($conf='config_general.php')
 	{
 		if(!isset(self::$Instance))
 		{
-			self::$Instance=new self();
+			self::$Instance=new self;
 			self::$root=dirname(dirname(__file__)).DIRECTORY_SEPARATOR;
 			self::$rootf=dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR;
 			self::$filename=basename($_SERVER['SCRIPT_FILENAME']);
@@ -222,11 +268,11 @@ final class Eleanor extends BaseClass
 			}
 			self::$ips=array_unique(self::$ips);
 			#Detect IP [E]
-			self::$domain=$_SERVER['HTTP_HOST'];
+			self::$domain=isset($_SERVER['HTTP_HOST']) && preg_match('#^[a-z0-9\-\.]+$#i',$_SERVER['HTTP_HOST'])>0 ? $_SERVER['HTTP_HOST'] : false;
 			self::$site_path=rtrim(dirname($_SERVER['PHP_SELF']),'/\\').'/';
 			if(self::$filename and false!==$t=strpos(self::$site_path,self::$filename))
 				self::$site_path=substr(self::$site_path,0,$t);
-			self::$POST=$_SERVER['REQUEST_METHOD']=='POST' ? new FilterArrays('_POST') : array();
+			self::$POST=$_SERVER['REQUEST_METHOD']=='POST' ? new GlobalsWrapper('_POST') : array();
 			self::$os=stripos(PHP_OS,'win')===0 ? 'w' : 'u';
 
 			$c=false;
@@ -318,7 +364,7 @@ final class Eleanor extends BaseClass
 				self::$gzip=self::$vars['gzip'];
 				if(self::$vars['cookie_domain'])
 					self::$vars['cookie_domain']=str_replace('*',preg_replace('#^www\.#i','',self::$domain),self::$vars['cookie_domain']);
-				if(self::$vars['parked_domains']=='redirect' and self::$vars['site_domain'])
+				if(self::$vars['parked_domains']=='redirect' and self::$vars['site_domain'] or !self::$domain)
 					self::$domain=self::$vars['site_domain'];
 				#Заплатка для браузеров FF & IE, когда они не хотят воспринимать куки с доменов первого уровня аля localhost
 				if(strpos(self::$domain,'.')===false)
@@ -357,9 +403,17 @@ final class Eleanor extends BaseClass
 		}
 		return self::$Instance;
 	}
-	#Защита идеологии Singleton
+
+	/**
+	 * Защита идеологии Singleton
+	 */
 	private function __construct(){}
 
+	/**
+	 * Метод быстрого создания объектов классов
+	 *
+	 * @param string $n Имя класса
+	 */
 	public function __get($n)
 	{
 		if(class_exists($n))
@@ -367,6 +421,14 @@ final class Eleanor extends BaseClass
 		return parent::__get(debug_backtrace(),$n);
 	}
 
+	/**
+	 * Обработчик всех возникающих ошибок
+	 *
+	 * @param int $num Номер ошибок
+	 * @param string $str Описание ошибки
+	 * @param string $f Файл, в котором возникла ошибка
+	 * @param string $l Строка в файле, на которой возникла ошибка
+	 */
 	public static function ErrorHandle($num,$str,$f,$l)
 	{		if(self::$nolog or $num&E_STRICT)
 			return;
@@ -376,7 +438,7 @@ final class Eleanor extends BaseClass
 			E_NOTICE=>'Notice',
 			E_PARSE=>'Parse error',
 		);
-		if(class_exists('EE'))#Заплатка в случае отключенного автолоадера
+		if(class_exists('EE'))#Заплатка на случай отключенного автолоадера
 		{
 			$E=new EE((isset($ae[$num]) ? $ae[$num].': ' : '').$str,EE::DEV,array('file'=>$f,'line'=>$l));
 			if(DEBUG and !E_PARSE&$num)
@@ -385,6 +447,11 @@ final class Eleanor extends BaseClass
 		}
 	}
 
+	/**
+	 * Обработчик неперехваченных исключений
+	 *
+	 * @param exception $E Объект неперехваченного исключения
+	 */
 	public static function ExceptionHandle($E)
 	{		$m=$E->getMessage();
 		if($E instanceof EE)
@@ -397,6 +464,11 @@ final class Eleanor extends BaseClass
 		Error($m,isset($E->extra) ? $E->extra : array());
 	}
 
+	/**
+	 * Автозагрузчик недостающих классов
+	 *
+	 * @param string $cl Имя класса, который нужно загрузить
+	 */
 	public static function Autoload($cl)
 	{
 		if(is_file($f=self::$root.'core/others/'.strtolower($cl).'.php'))
@@ -420,7 +492,10 @@ final class Eleanor extends BaseClass
 		}
 	}
 
-	public static function LoadService()
+	/**
+	 * Инициализация сервиса, с которого мы запустились. Сервис - это файл, с которого произведен запуск системы: index.php, admin.php, ajax.php и т.п.
+	 */
+	public static function InitService()
 	{
 		if(self::$service and isset(self::$services[self::$service]))
 			$a=self::$services[self::$service];
@@ -434,6 +509,13 @@ final class Eleanor extends BaseClass
 		self::ApplyLogin($a['login']);
 	}
 
+	/**
+	 * Загрузка настроек
+	 *
+	 * @param string|array $need Ключевое слово групп настроек, которые должны быть загружены
+	 * @param bool $r Флаг возврата полученных настроек. В случае паредачи FALSE, полученные настройки будут помещены в массив Eleanor::$vars
+	 * @param bool $cache Флаг включения кэширования настроек
+	 */
 	public static function LoadOptions($need,$r=false,$cache=true)
 	{
 		$need=(array)$need;
@@ -517,6 +599,13 @@ final class Eleanor extends BaseClass
 				self::$vars[$k]=$v;
 	}
 
+	/**
+	 * Ловушка вывода. Позволяет передать корректные заголовки клиенту
+	 *
+	 * @param callback|FALSE $cb Функция обработчик контента непосредственно перед выводом его пользователю. В случае передачи FALSE, содержимое $data будет немедленно выдано пользователю.
+	 * @param int $code HTTP код результата
+	 * @param mixed $data, данные которые будут переданы вторым аргументом функции $cb (первым будет передан полученный контент)
+	 */
 	public static function HookOutPut($cb='',$code=200,$data='')
 	{static $d=false;
 		if($d)
@@ -554,6 +643,14 @@ final class Eleanor extends BaseClass
 		}
 	}
 
+	/**
+	 * Метод непосредственного вывода контента клиенту
+	 *
+	 * @access protected Но из-за того, что register_shutdown_function может вызвать protected метод, в коде этот метод описан как public
+	 * @param bool $docb Флаг выполнения callback функции $cb
+	 * @param callback|string $cb В случае $docb==true, переменная содержит callback функцию, обработки полученного содержимого непосредственно перед выводов, в ином случае само содержимое на вывод
+	 * @param mixed $data Данные для передачи вторым аргументом в функцию $cb
+	 */
 	public static function FinishOutPut($docb,$cb,$data=null)
 	{
 		if($docb)
@@ -579,19 +676,29 @@ final class Eleanor extends BaseClass
 		echo$s;
 	}
 
-	/*
-		$path - путь, который не может быть полностью серверным. Если он начинается с / - это означает, что к нему нужно прибавить root.
-		$current_path - папка, которая может содержать либо полный серверный путь, либо быть пустой.
-	*/
+	/**
+	 * Форматирование пути: генерация полного пути к файлам по заданным параметрам
+	 *
+	 * @param string $p Путь, относительно корня сайта. Если он начинается с / , к слева будет прибавлен Eleanor::$root.
+	 * @param string $cp Каталог, относительно которого строиться путь $p. Либо это абсолютный путь, относительно корня файловой системы, либо относительный путь относительно корня сайта.
+	 */
 	public static function FormatPath($p,$cp='')
 	{
 		$p=preg_replace('#/|\\\\#',DIRECTORY_SEPARATOR,trim($p,'/\\'));
-		if(strpos($p,'/')===0 or !$cp)
+		if(strpos($p,'/')===0 or $cp=='')
 			return self::$root.$p;
 		$cp=preg_replace('#/|\\\\#',DIRECTORY_SEPARATOR,$cp);
 		return(self::$os=='u' && strpos($cp,'/')===0 || strpos($cp,':')==1 ? rtrim($cp,'/\\') : self::$root.trim($cp,'/\\')).($p ? DIRECTORY_SEPARATOR.$p : '');
 	}
 
+	/**
+	 * Установка куки с учетом домена и префиксов куки, взятых из настроек
+	 *
+	 * @param string $n Имя куки
+	 * @param string|FALSE $v Значение куки
+	 * @param int|FALSE Время жизни куки в формате \d+[tsmMhd]?, где t - точный TIMESTAMP умирания куки, s - секунды, m - минуты, h - часы, d (по умолчанию) - дни, M - месяцы
+	 * @param bool $safe Флаг доступности куки только через HTTP запросы, но не через Javascript (не обольщайтесь, браузеры дырявые)
+	 */
 	public static function SetCookie($n,$v='',$t=false,$safe=false)
 	{
 		if($t===false)
@@ -603,6 +710,9 @@ final class Eleanor extends BaseClass
 				{
 					case't':
 						$t=(int)$t;
+					break 2;
+					case'M':
+						$t=strtotime('+ '.(int)$t.' MONTH');
 					break 2;
 					case's':
 						$t=(int)$t;
@@ -621,56 +731,23 @@ final class Eleanor extends BaseClass
 		return setcookie(self::$vars['cookie_prefix'].$n,$v,$t,self::$site_path,self::$vars['cookie_domain'],false,$safe);
 	}
 
+	/**
+	 * Получение куки с учетом префикса куки, полученного из настроек
+	 *
+	 * @param string $n Имя куки
+	 */
 	public static function GetCookie($n)
 	{
 		$n=self::$vars['cookie_prefix'].$n;
 		return isset($_COOKIE[$n]) ? $_COOKIE[$n] : false;
 	}
 
-	/*
-		Пример:
-		Eleanor::Mail('mail@example.com','Тема письма','Текст письма',array('files'=>array('имя файла'=>'Содержимое файла',0=>'path/to/files.txt')));
-	*/
-	public static function Mail($to,$subj,$mess,array$a=array())
-	{
-		$a+=array(
-			'type'=>'text/html',
-			'files'=>array(),
-			'copy'=>array(),
-			'hidden'=>array(),
-		);
-		self::$Instance->Email->parts=array(
-			'multipart'=>'mixed',
-			array(
-				'content-type'=>$a['type'],
-				'charset'=>DISPLAY_CHARSET,
-				'content'=>$mess,
-			),
-		);
-		foreach($a['files'] as $k=>&$v)
-		{
-			if(is_int($k))
-			{
-				$name=basename($v);
-				$c=file_get_contents($v);
-			}
-			else
-			{
-				$name=basename($k);
-				$c=$v;
-			}
-			self::$Instance->Email->parts[]=array(
-				'content-type'=>Types::MimeTypeByExt($name),
-				'filename'=>$name,
-				'content'=>$c,
-			);
-		}
-		self::$Instance->Email->subject=$subj;
-		self::$Instance->Email->Send(array('to'=>$to,'cc'=>$a['copy'],'bcc'=>$a['hidden']));
-		self::$Instance->Email->subject='';
-		self::$Instance->Email->parts=array();
-	}
-
+	/**
+	 * Обертка для создания сессии
+	 *
+	 * @param string $id Идентификатор сессии, возможно, сессия будет создана наново
+	 * @param string $n Имя сессии
+	 */
 	public static function StartSession($id='',$n='')
 	{
 		if(isset($_SESSION))
@@ -688,6 +765,13 @@ final class Eleanor extends BaseClass
 		session_start();
 	}
 
+	/**
+	 * Получение языкового значения из массива со значениями для разных языков
+	 *
+	 * @param array $a Массив языковых значений должен содержать в качестве ключей названия языков и ключ пустую строку для универсального значения для всех языков
+	 * @param string|FALSE $l Название языка, если передано FALSE, будет использоваться системный язык
+	 * @param mixed $d Значение по умолчанию, которое будет возвращено методом в случае, если значение нужно языка отсутствует
+	 */
 	public static function FilterLangValues(array$a,$l=false,$d=null)
 	{
 		if(!$l)
@@ -699,23 +783,19 @@ final class Eleanor extends BaseClass
 		return isset($a[0]) ? $a[0] : $d;
 	}
 
-	public static function WinFiles($f,$inv=false)
-	{
-		if(self::$os=='w' and CHARSET=='utf-8')
-			$f=$inv ? mb_convert_encoding($f,CHARSET,'cp1251') : mb_convert_encoding($f,'cp1251');
-		return$f;
-	}
-
-	/*
-		Метод инициализации темы оформления
-	*/
+	/**
+	 * Инициализация шаблона
+	 *
+	 * @param string $tpl Название шаблона
+	 * @param string $path Путь к каталогу с шаблонами
+	 */
 	public static function InitTemplate($tpl,$path='templates/')
 	{
 		$f=self::$rootf.$path.$tpl;
 		if(!is_dir($f))
 			throw new EE('Template '.$tpl.' not found!',EE::ENV);
 
-		self::$Template=new MixedTemplate;
+		self::$Template=new Template_Mixed;
 		self::$Template->paths[__class__]=$f.'/';
 		self::$Template->default['theme']=$path.$tpl.'/';
 		$init=$f.'.init.php';
@@ -726,9 +806,12 @@ final class Eleanor extends BaseClass
 		self::$Template->queue[]='Index';
 	}
 
-	/*
-		Загрузка обычного PHP Файла темы оформления. Возвращает его содержимое с замененными переменными.
-	*/
+	/**
+	 * Загрузка PHP файла в качестве оформления. Возвращает его содержимое с замененными переменными.
+	 *
+	 * @param string $f Абсолютный путь к файлу
+	 * @param array $vars Массив переменных, передаваемых файлу
+	 */
 	public static function LoadFileTemplate($f,array$vars=array())
 	{
 		extract($vars,EXTR_PREFIX_INVALID,'v');
@@ -740,9 +823,11 @@ final class Eleanor extends BaseClass
 		return$r;
 	}
 
-	/*
-		Загрука файла шаблона списка.
-	*/
+	/**
+	 * Загрука файла шаблона списка
+	 *
+	 * @param string $n Название шаблона списка
+	 */
 	public static function LoadListTemplate($n)
 	{
 		$path=self::$rootf.self::$Template->default['theme'].'Lists/'.$n.'.php';
@@ -759,11 +844,19 @@ final class Eleanor extends BaseClass
 		$l=include$path;
 		if(!is_array($l))
 			throw new EE('Incorrect list template '.$n,EE::DEV);
-		$L=new ListTemplate($l);
+		$L=new Template_List($l);
 		$L->default=self::$Template->default;
 		return$L;
 	}
 
+	/**
+	 * Интерпретация bb логики в тексте
+	 *
+	 * Пример вывода переменной: Переменная var равна {var}
+	 * Пример условия: [var]Переменная var равна {var}[/var]
+	 * Пример условия с else: [var]Переменная var равна {var}[-var] Переменная var пуста[/var]
+	 * Пример подбора корректной формы слова, в зависимости от рядом стоящего числа: Возраст пользователя {var} [var=plural]год|года|лет[var]
+	 */
 	public static function ExecBBLogic($s,array$r)
 	{
 		foreach($r as $k=>&$v)
@@ -823,12 +916,14 @@ final class Eleanor extends BaseClass
 		return$s;
 	}
 
-	/*
-		Метод служит для вывода переменных в JavaScript. Полностью сохраняет структуру переменной.
-		$a - массив в виде имя переменной (ключ массива) => значение. Поддерживаются многомерные массивы.
-		$tag - признак обрамления результата в <script...>...</script>
-		$name - если результат требуется в виде массива, в эту переменную следует указать имя этого массива.
-	*/
+	/**
+	 * Вывод массиво в JSON и JavaScript переменные.
+	 *
+	 * @param array $a Для представления его в виде javascript переменных, либо JSON представления
+	 * @param bool $t Включение обрамления результата в <script...>...</script>
+	 * @param bool|string $n Переключатель формата вывода: false - набор переменных, true - JSON, string - в одноименную переменную помещается Object.
+	 * @param string $p Префикс переменной
+	 */
 	public static function JsVars($a,$t=true,$n=false,$p='var ')
 	{
 		if($n)
@@ -858,7 +953,7 @@ final class Eleanor extends BaseClass
 				$k=substr($k,1);
 			}
 			else
-				$rv=(is_int($v) or is_float($v)) ? $v : '"'.addcslashes($v,"\n\r\t\"\\").'"';
+				$rv=is_int($v) || is_float($v) ? $v : '"'.addcslashes($v,"\n\r\t\"\\").'"';
 			$r.=$p.$k.$s.$rv.$e;
 		}
 		if($n)
@@ -871,28 +966,35 @@ final class Eleanor extends BaseClass
 		return $t ? '<script type="text/javascript">/*<![CDATA[*/'.$r.'//]]></script>' : $r;
 	}
 
-	/*
-		Метод обработки входящей строки для показа ее в контроле.
-		$text - текст.
-		$mode:
-			0 - текст прогоняется через htmlspecialchars, таким образом мы правим строку в таком виде, в каком мы ее получили.
-			1 - текст прогняется сначала через htmlspecialchars_decode, а потом через htmlspecialchars. Таким образом мы правим HTML в таком виде, в котором его видит пользователь. Циферные задания символов как &#93; пользователь правит, а не видит.
-			2 - в тексте заменяются только < и > на &lt; и &gt; соответственно.
-			3 - Править ХТМЛ в таком виде, в котором его видит пользователь.
-	*/
-	public static function ControlValue($t,$m=1,$ch=CHARSET)
+	/**
+	 * Метод обработки входящей строки для применения в качестве значения элемента формы
+	 *
+	 * @param string $s Строка-значение
+	 * @param int $m Режим работы:
+	 * 0 Текст прогоняется через htmlspecialchars, таким образом мы правим строку в таком виде, в каком мы ее получили.
+	 * 1 Текст прогняется сначала через htmlspecialchars_decode, а потом через htmlspecialchars. Таким образом мы правим HTML в таком виде, в котором его видит пользователь. Циферные задания символов как &#93; пользователь правит, а не видит.
+	 * 2 В тексте заменяются только < и > на &lt; и &gt; соответственно.
+	 * 3 Править ХТМЛ в таком виде, в котором его видит пользователь.
+	 * @param string $ch Кодировка
+	 */
+	public static function ControlValue($s,$m=1,$ch=CHARSET)
 	{
 		if($m==1)
-			$t=htmlspecialchars_decode($t,ELENT);
+			$s=htmlspecialchars_decode($s,ELENT);
 
 		if($m==2)
-			return str_replace(array('<','>'),array('&lt;','&gt;'),$t);
-		elseif($t2=htmlspecialchars($t,ELENT,$ch,$m<3) or !$ch)
-			return$t2;
+			return str_replace(array('<','>'),array('&lt;','&gt;'),$s);
+		elseif($s2=htmlspecialchars($s,ELENT,$ch,$m<3) or !$ch)
+			return$s2;
 		#Заплатка глюка, когда на UTF версии мы пытаемся открыть 1251 Файл.
-		return self::ControlValue($t,$m,null);
+		return self::ControlValue($s,$m,null);
 	}
 
+	/**
+	 * Преобразование ассоциативного массива в параметры тега
+	 *
+	 * @param array $a Ассоциативный массив с параметрами название параметра=>значение параметра
+	 */
 	public static function TagParams(array$a)
 	{
 		$ad='';
@@ -903,106 +1005,163 @@ final class Eleanor extends BaseClass
 				else
 				{					$ad.=' '.$k;
 					if($v!==true)
-						$ad.='='.(strpos($v,'"')===false ? '"'.$v.'"' : '\''.$v.'\'');
+						$ad.='="'.str_replace('"','&quot;',$v).'"';
 				}
 		return$ad;
 	}
 
+	/**
+	 * Генерация <input type="checkbox" />
+	 *
+	 * Из-за особенностей работы данного элемента формы, метод не содержит отдельного аргумента для передачи значения, поскольку 99% чекбоксам
+	 * не важно, какое у них значение, важно, что они передались на сервер. Но значение чекбокса вы можете установить через массив $a.
+	 *
+	 * @param string $n Имя
+	 * @param bool $c Отмеченность
+	 * @param array $a Ассоциативных массив дополнительных параметров
+	 */
 	public static function Check($n,$c=false,array$a=array())
 	{
-		unset($a['checked']);
-		return'<input type="checkbox"'.($n ? ' name="'.$n.'"' : '').self::TagParams($a+array('value'=>1)).($c ? ' checked' : '').' />';
+		return'<input'.self::TagParams($a+array('type'=>'checkbox','value'=>1,'name'=>$n,'checked'=>(bool)$c)).' />';
 	}
 
+	/**
+	 * Генерация <input type="radio" />
+	 *
+	 * @param string $n Имя
+	 * @param string $v Значение
+	 * @param bool $c Отмеченность
+	 * @param array $a Ассоциативных массив дополнительных параметров
+	 * @param int $m Метод вывода значения, подробнее смотрите метод ControlValue
+	 */
+	public static function Radio($n,$v=1,$c=false,array$a=array(),$m=1)
+	{
+		return'<input'.self::TagParams($a+array('type'=>'radio','value'=>$v ? self::ControlValue($v,(int)$m) : $v,'name'=>$n,'checked'=>(bool)$c)).' />';
+	}
+
+	/**
+	 * Генерация <textarea>
+	 *
+	 * @param string $n Имя
+	 * @param string $v Значение
+	 * @param array $a Ассоциативных массив дополнительных параметров
+	 * @param int $m Метод вывода значения, подробнее смотрите метод ControlValue
+	 */
 	public static function Text($n,$v='',array$a=array(),$m=1)
 	{
-		return'<textarea'.($n ? ' name="'.$n.'"' : '').self::TagParams($a+array('rows'=>5,'cols'=>20)).'>'.self::ControlValue($v,(int)$m).'</textarea>';
+		return'<textarea'.self::TagParams($a+array('rows'=>5,'cols'=>20,'name'=>$n)).'>'.self::ControlValue($v,(int)$m).'</textarea>';
 	}
 
-	public static function Radio($n,$v=1,$checked=false,array$a=array(),$m=1)
+	/**
+	 * Генерация <input> type по умолчанию равно text
+	 *
+	 * @param string $n Имя
+	 * @param string $v Значение
+	 * @param array $a Ассоциативных массив дополнительных параметров
+	 * @param int $m Метод вывода значения, подробнее смотрите метод ControlValue
+	 */
+	public static function Input($n,$v=false,array$a=array(),$m=1)
 	{
-		unset($a['checked']);
-		return'<input type="radio" value="'.self::ControlValue($v,(int)$m).'"'.self::TagParams($a+array('name'=>$n)).' '.($checked ? 'checked' : '').' />';
+		return'<input'.self::TagParams($a+array('value'=>$v ? self::ControlValue($v,(int)$m) : $v,'type'=>'text','name'=>$n)).' />';
 	}
 
-	public static function Edit($n,$v='',array$a=array(),$m=1)
-	{
-		return'<input type="text" value="'.self::ControlValue($v,(int)$m).'"'.self::TagParams($a+array('name'=>$n)).' />';
-	}
-
+	/**
+	 * Генерация <input> преимущественно для кнопок
+	 *
+	 * @param string $v Надпись на кнопке
+	 * @param string $t Тип кнопки: submit, button, reset
+	 * @param array $a Ассоциативных массив дополнительных параметров
+	 * @param int $m Метод вывода значения, подробнее смотрите метод ControlValue
+	 */
 	public static function Button($v='OK',$t='submit',array$a=array(),$m=1)
 	{
-		return self::Control(isset($a['name']) ? $a['name'] : false,$t,$v,$a,(int)$m);
+		return self::Input(false,$v,$a+array('type'=>$t),$m);
 	}
 
-	public static function Control($n,$t,$v='',array$a=array(),$m=1)
-	{
-		unset($a['name'],$a['type'],$a['value']);
-		$v=(string)$v;
-		return'<input type="'.$t.'"'.self::TagParams($a+array('name'=>$n,'value'=>$v==='' ? false : self::ControlValue($v,(int)$m))).' />';
-	}
-
+	/**
+	 * Генерация <option> для Select
+	 *
+	 * @param string $t Выводимое значение
+	 * @param string $v Значение
+	 * @param bool $s Отмеченность
+	 * @param array $a Ассоциативных массив дополнительных параметров
+	 * @param int $m Метод вывода значения, подробнее смотрите метод ControlValue
+	 */
 	public static function Option($t,$v=false,$s=false,array$a=array(),$m=1)
 	{
-		if($v!==false)
-			$v=' value="'.trim(self::ControlValue($v,2)).'"';
-		return'<option'.$v.($s ? ' selected' : '').self::TagParams($a).'>'.self::ControlValue($t,(int)$m).'</option>';
+		return'<option'.self::TagParams($a+array('value'=>$v ? self::ControlValue($v,(int)$m) : $v,'selected'=>(bool)$s)).'>'.self::ControlValue($t,(int)$m).'</option>';
 	}
 
+	/**
+	 * Генерация <optgroup> для Select
+	 *
+	 * @param string $l Название группы
+	 * @param string $o Перечень option-ов
+	 * @param array $a Ассоциативных массив дополнительных параметров
+	 * @param int $m Метод вывода значения, подробнее смотрите метод ControlValue
+	 */
 	public static function Optgroup($l,$o,array$a=array(),$m=2)
 	{
-		unset($a['label']);
-		$l=' label="'.self::ControlValue($l,$m).'"';
-		return'<optgroup'.$l.self::TagParams($a).'>'.$o.'</optgroup>';
+		return'<optgroup'.self::TagParams($a+array('label'=>$l ? self::ControlValue($l,$m) : $l)).'>'.$o.'</optgroup>';
 	}
 
+	/**
+	 * Генерация <select> с одиночным выбором
+	 *
+	 * @param string $n Название select-а
+	 * @param string $o Перечень option-ов
+	 * @param array $a Ассоциативных массив дополнительных параметров
+	 */
 	public static function Select($n,$o='',array$a=array())
 	{
 		if(!$o)
 		{
-			$o=self::Option('',0);
-			$a['disabled']='disabled';
+			$o=self::Option('');
+			$a['disabled']=true;
 		}
-		unset($a['name']);
 		return'<select'.self::TagParams($a+array('name'=>$n,'size'=>1,'class'=>'select')).'>'.$o.'</select>';
 	}
 
-	public static function Item($n,$o='',$s=10,array$a=array())
+	/**
+	 * Генерация <select> с множественным выбором
+	 *
+	 * @param string $n Название select-а
+	 * @param string $o Перечень option-ов
+	 * @param array $a Ассоциативных массив дополнительных параметров
+	 */
+	public static function Items($n,$o='',array$a=array())
 	{
-		return self::Select($n,$o,$a+array('size'=>(int)$s));
-	}
-
-	public static function Items($n,$o='',$s=10,array$a=array())
-	{
-		if(substr($n,-2)!='[]')
-			$n.='[]';
-		return self::Select($n,$o,$a+array('size'=>(int)$s,'multiple'=>'multiple'));
+		return self::Select(substr($n,-2)=='[]' ? $n : $n.'[]',$o,$a+array('size'=>5,'multiple'=>true));
 	}
 #Конец методов оформления.
 
 #Методы пользовательского назначения
-	/*
-		Загрука класса авторизации. Классы авторизазции берутся из /core/login/*.php (значение * нужно указывать в $l)
-	*/
+	/**
+	 * Загрука класса авторизации
+	 *
+	 * @param string $l Название логина. По умолчанию классы загружаются из каталога core/login/*.php (значение * нужно указывать в $l)
+	 */
 	public static function LoadLogin($l)
 	{
-		if(!is_file(self::$root.'core/login/'.$l.'.php'))
-			throw new EE('Authorization '.$l.'.php not found!');
 		$c='Login'.$l;
 		if(!class_exists($c,false))
+		{
+			if(!is_file(self::$root.'core/login/'.$l.'.php'))
+				throw new EE('Login '.$l.' not found!');
 			require self::$root.'core/login/'.$l.'.php';
-		return$c::getInstance();
+		}
+		return new$c;
 	}
 
-	/*
-		Принимает на вход объект класса-логина. Применяет все пользовательские настройки + устанавливает этот логин в качестве главного Login
-	*/
-	public static function ApplyLogin($Obj)
+	/**
+	 * Применение логина, как главного в системе: установка системе пользовательских настроек (язык, часовой пояс)
+	 *
+	 * @param string|LoginClass $Login Логин
+	 */
+	public static function ApplyLogin($Login)
 	{
-		if(!is_object($Obj))
-			$Obj=self::LoadLogin($Obj);
-		self::$Login=&$Obj;
-		self::$Permissions=&$Obj->Permissions;
+		self::$Login=is_object($Login) ? $Login : self::LoadLogin($Login);
+		self::$Permissions=new Permissions(self::$Login);
 		if(self::$Login->IsUser())
 		{
 			if(self::$vars['multilang'] and $l=self::$Login->GetUserValue('language') and Language::$main!=$l and isset(self::$langs[$l]))
@@ -1021,11 +1180,13 @@ final class Eleanor extends BaseClass
 		}
 	}
 
-	/*
-		$g - ИДЫ групп
-		$p - параметр
-		$t - table
-	*/
+	/**
+	 * Непосредственное получение разрешений групп
+	 *
+	 * @param array $g ID групп
+	 * @param string $p Название параметра (столбец таблицы групп)
+	 * @param string|FALSE $t Название таблицы с разрешениями групп
+	 */
 	public static function Permissions(array$ids,$p,$t=false)
 	{
 		if(!$t)
@@ -1073,16 +1234,19 @@ final class Eleanor extends BaseClass
 		return$r;
 	}
 
-	/*
-		$p - Параметр
-		$l - Login
-		$t - table
-	*/
+	/**
+	 * Получение разрешений пользователя с учетом воможного членства в нескольких группах и перезагрузки настроек индивидуальными параметрами
+	 *
+	 * @param string $p Параметр группы, по которому необходимо получить разрешения. Выбор лучшего или худшего разрешения вы определяете самостоятельно.
+	 * @param string|Login_class $l Логин
+	 * @param string $t Название таблицы с разрешениями групп
+	 * @param string $go Название пользовательского параметра с массивом перегрузки параметров групп
+	 * @return array
+	 */
 	public static function GetPermission($p,$L=false,$t=false,$go='groups_overload')
-	{
-		if(!$L)
+	{		if(!$L)
 			$L=self::$Login;
-		if(!$over=$L->GetUserValue($go) or !isset($over['method'][$p],$over['value'][$p]) or $over['method'][$p]=='inherit')
+		if(!$over=$L::GetUserValue($go) or !isset($over['method'][$p],$over['value'][$p]) or $over['method'][$p]=='inherit')
 			return self::Permissions(self::GetUserGroups($L),$p,$t);
 		$res=($add=$over['method'][$p]=='replace') ? array($over['value'][$p]) : self::Permissions(self::GetUserGroups($L),$p,$t);
 		if(!$add)
@@ -1090,23 +1254,25 @@ final class Eleanor extends BaseClass
 		return$res;
 	}
 
-	/*
-		Эта функция возвращает только массивы
-		$L - Login
-	*/
+	/**
+	 * Получение массива всех групп, в которых состоит пользователь
+	 *
+	 * @param string|Login_class $l Логин
+	 * @return array
+	 */
 	public static function GetUserGroups($L=false)
 	{
 		if(!$L)
 			$L=self::$Login;
-		if($L ? $L->GetUserValue('id') : false)#Не ставить IsUser() - перестанет заходить в админку!
-			return$L->GetUserValue('groups');
+		if($L ? $L::GetUserValue('id') : false)#Не ставить IsUser() - перестанет заходить в админку!
+			return$L::GetUserValue('groups');
 		else
 			return self::$is_bot ? (array)self::$vars['bot_group'] : (array)self::$vars['guest_group'];
 	}
 
-	/*
-		Функция записывае пользовательскую сессию с данными в базу. Используется для списка "кто онлайн".
-	*/
+	/**
+	 * Запись пользовательской активности в таблицу сессии. Используется для списка "кто онлайн".
+	 */
 	public static function AddSession()
 	{
 		$uid=self::$Login->GetUserValue('id');
@@ -1149,6 +1315,15 @@ final class Eleanor extends BaseClass
 		);
 	}
 
+	/**
+	 * Проверка соответствия IP адреса заданной маске.
+	 *
+	 * Доступка поддержка IPv4 и IPv6, доступна поддержка диапазонов IP адресов и подсетей IP.
+	 * Например: IPMatchMask('192.168.100.100','192.168.100.x'), IPMatchMask('192.168.100.100','192.168.100.50-192.168.100.150'), IPMatchMask('192.168.100.100','192.168.100.0/16')
+	 *
+	 * @param string $ip IP адрес, который проверяется
+	 * @param string $m Маска, диапазон, диапазон с маской, подсеть
+	 */
 	public static function IPMatchMask($ip,$m)
 	{
 		$m=trim($m);
@@ -1245,11 +1420,18 @@ final class Eleanor extends BaseClass
 	}
 }
 
+# Нижерасположенные классы находятся в этом файле только по причине гарантированного их использования при генерации 99% страницы.
+# Вынесение этих классов в отдельные файлы лишь уменьшит скорость генерации страниц, ведь файлы придется инклудить - не самое быстрое действие
+
 abstract class Template
 {
 	public
-		$s='';
+		$s='',#Аккомулятор результатов
+		$cloned=false;#Флаг выполненной клонированости. Смысл состоит в том, что каждый fluent interface - отдельный независимый объект.
 
+	/**
+	 * Терминатор Fluent Interface, выдача результата
+	 */
 	public function __toString()
 	{
 		$s=$this->s;
@@ -1257,6 +1439,12 @@ abstract class Template
 		return$s;
 	}
 
+	/**
+	 * Единичное выполнение какого-нибудь шаблона, без изменения текущего буфера
+	 *
+	 * @param string Название шаблона
+	 * @params Переменные шаблона
+	 */
 	public function __invoke()
 	{
 		$n=func_num_args();
@@ -1267,8 +1455,24 @@ abstract class Template
 		}
 	}
 
-	public function __call($n,$p)
+	public function __clone()
 	{
+		$this->cloned=true;
+	}
+
+	/**
+	 * Реализация fluent interface шаблона
+	 *
+	 * @param string $n Название шаблона
+	 * @param array $p Параметры шаблона
+	 */
+	public function __call($n,$p)
+	{		if(!$this->cloned)
+		{
+			$O=clone$this;
+			return$O->__call($n,$p);
+		}
+
 		$r=$this->_($n,$p);
 		if($r===null or is_scalar($r) or is_object($r) and $r instanceof self)
 		{
@@ -1278,10 +1482,16 @@ abstract class Template
 		return$r;
 	}
 
+	/**
+	 * Источник шаблонов
+	 *
+	 * @param string $n Название шаблона
+	 * @param array $p Параметры шаблона
+	 */
 	abstract public function _($n,array$p);
 }
 
-class MixedTemplate extends Template
+class Template_Mixed extends Template
 {
 	public
 		$default=array(),#Переменные по-умолчанию, которые будут использоваться во всех темах. Ключ theme КРАЙНЕ НЕ рекомендуется трогать!
@@ -1291,27 +1501,12 @@ class MixedTemplate extends Template
 		$paths=array(),#Дополнительные пути
 		$files=array();#Дампы файлов
 
-	protected
-		$cloned=false;
-
-	public function __construct($noclone=false)
-	{
-		$this->cloned=$noclone;
-	}
-
-	public function __call($n,$p)
-	{
-		if($this->cloned)
-			return parent::__call($n,$p);
-		$O=clone$this;
-		return$O->__call($n,$p);
-	}
-
-	public function __clone()
-	{
-		$this->cloned=true;
-	}
-
+	/**
+	 * Источник шаблонов
+	 *
+	 * @param string $n Название шаблона
+	 * @param array $p Параметры шаблона
+	 */
 	public function _($n,array$p)
 	{
 		$c=end($this->classes);
@@ -1373,19 +1568,31 @@ class MixedTemplate extends Template
 	}
 }
 
-class ListTemplate extends Template
+class Template_List extends Template
 {
 	public
+		$cloned=true,
 		$default=array();
 
 	protected
 		$tpl;
 
-	public function __construct(array$n)
+	/**
+	 * Конструктор шаблонизатора списка
+	 *
+	 * @param array $a Список шаблонов
+	 */
+	public function __construct(array$a)
 	{
-		$this->tpl=$n;
+		$this->tpl=$a;
 	}
 
+	/**
+	 * Источник шаблонов
+	 *
+	 * @param string $n Название шаблона
+	 * @param array $p Параметры шаблона
+	 */
 	public function _($n,array$p)
 	{
 		if(!isset($this->tpl[$n]))
@@ -1395,10 +1602,11 @@ class ListTemplate extends Template
 		return Eleanor::ExecBBLogic($this->tpl[$n],(count($p)==1 && is_array($p[0]) ? $p[0] : $p)+$this->default);
 	}
 }
-
-class ClassTemplate extends Template
+/*
+class Template_Class extends Template
 {
 	public
+		$cloned=true,
 		$class;
 
 	public function __construct(string$cl)
@@ -1413,56 +1621,80 @@ class ClassTemplate extends Template
 		throw new EE('Template: '.$this->class.'::'.$n,EE::DEV);
 	}
 }
-
+*/
 ### Cache
 
 interface CacheMachineInterface #Интерфейс для создания кэшей
 {
-	/*
-		Метод для занесения параметров в кэш
-		$key - ключ.
-		$value - значение
-		$ttl - "Time to live" время жизни.
-	*/
+	/**
+	 * Запись значения
+	 *
+	 * @param string $k Ключ. Обратите внимение, что ключи рекомендуется задавать в виде тег1_тег2 ...
+	 * @param mixed $value Значение
+	 * @param int $t Время жизни этой записи кэша в секундах
+	 */
 	public function Put($k,$v,$ttl=0);
 
+	/**
+	 * Получение записи из кэша
+	 *
+	 * @param string $k Ключ
+	 */
 	public function Get($k);
 
+	/**
+	 * Удаление записи из кэша
+	 *
+	 * @param string $k Ключ
+	 */
 	public function Delete($k);
 
-	/*
-		Метод удаления кеша по тегам. Если имя тега пустое - удаляется вешь кэш.
-	*/
-	public function CleanByTag($tag);
+	/**
+	 * Удаление записей по тегу. Если имя тега пустое - удаляется вешь кэш.
+	 *
+	 * @param string $t Тег
+	 */
+	public function DeleteByTag($tag);
 }
 
 class Cache
 {
 	public
+		$table,#Таблица "вечного" кэша
 		$Lib;#Кэш-машина
 
-	public function __construct($cm=false,$u=false,$a=array())
+	/**
+	 * Конструктор кэширующего класса
+	 *
+	 * @param string|FALSE $u Уникализация кэш хранилища
+	 * @param string|FALSE $table Название таблицы для хранения "вечного" кэша
+	 * @param array $cm Массив доступных кэш машин. Формат: имя класса=>путь к файлу
+	 */
+	public function __construct($u=false,$table=false,array$cm=array())
 	{
-		if(!$u)
+		if($u===false)
 			$u=crc32(__file__);
-		if(function_exists('apc_store'))
-			$a['apc']=array('CacheMachineApc',Eleanor::$root.'core/cache_machines/apc.php');
-		if(function_exists('memcache_connect'))
-			$a['memcache']=array('CacheMachineMemCache',Eleanor::$root.'core/cache_machines/memcache.php');
-		if(class_exists('Memcached',false))
-			$a['memcache']=array('CacheMachineMemCached',Eleanor::$root.'core/cache_machines/memcached.php');
-		if(function_exists('output_cache_put'))
-			$a['zend']=array('CacheMachineZend',Eleanor::$root.'core/cache_machines/zend.php');
+		$this->table=$table===false && defined('P') ? P.'cache' : $table;
 
-		if($cm and isset($a[$cm]) and (class_exists($a[$cm][0],false) or is_file($a[$cm][1]) and include$a[$cm][1]))
-			$this->Lib=new $a[$cm][0]($u);
+		$a=array();
+		if(function_exists('apc_store'))
+			$a['CacheMachineApc']=Eleanor::$root.'core/cache_machines/apc.php';
+		if(function_exists('memcache_connect'))
+			$a['CacheMachineMemCache']=Eleanor::$root.'core/cache_machines/memcache.php';
+		if(class_exists('Memcached',false))
+			$a['CacheMachineMemCached']=Eleanor::$root.'core/cache_machines/memcached.php';
+		if(function_exists('output_cache_put'))
+			$a['CacheMachineZend']=Eleanor::$root.'core/cache_machines/zend.php';
+		$cm+=$a;
 
 		if(!isset($this->Lib))
-			foreach($a as &$v)
-				if(class_exists($v[0],false) or is_file($v[1]) and include$v[1])
+			foreach($cm as $k=>&$v)
+				if(class_exists($k,false) or is_file($v) and include$v)
 				{
-					$this->Lib=new $v[0]($u);
-					break;
+					try
+					{
+						$this->Lib=new $k($u);
+					}catch(Exception$E){}
 				}
 
 		if(!isset($this->Lib))
@@ -1474,9 +1706,15 @@ class Cache
 		}
 	}
 
-	/*
-		$insur - от "insurance" страховка для предотвращения dog-pile effect
-	*/
+	/**
+	 * Запись данных в кэш
+	 *
+	 * @param string $n Имя ячейки хранения кэша
+	 * @param mixed $v Хранимые данные
+	 * @param int $ttl Время хранения в секундах
+	 * @param bool $tdb Флаг записи в таблицу с целью "вечного" кэширования
+	 * @param int|FALSE Время безнадежного устаревания кэша. По умолчанию в два раза больше $ttl. Используется для предотвращения dog-pile effect
+	 */
 	public function Put($n,$v=false,$ttl=0,$tdb=false,$insur=false)
 	{
 		if(!is_array($n))
@@ -1499,11 +1737,17 @@ class Cache
 			if($del)
 				$this->Delete($del,true);
 		}
-		if($tdb)
-			Eleanor::$Db->Replace(P.'cache',array('key'=>array_keys($n),'value'=>array_values($n)));
+		if($tdb and $this->table)
+			Eleanor::$Db->Replace($this->table,array('key'=>array_keys($n),'value'=>array_values($n)));
 		return$r;
 	}
 
+	/**
+	 * Получение данных из кэша
+	 *
+	 * @param string $n Имя ячейки хранения кэша
+	 * @param bool $fdb Флаг для осуществления попытки добыть кэш из таблицы "вечного" хранения, в случае неудачи при добычи кэша из основного хранилища
+	 */
 	public function Get($n,$fdb=false)
 	{
 		if($a=is_array($n))
@@ -1524,11 +1768,11 @@ class Cache
 			}
 			return$r[0];
 		}
-		if(!$fdb or !$n)
+		if(!$fdb or !$n or !$this->table)
 			return$r;
 
 		$db=array();
-		$R=Eleanor::$Db->Query('SELECT `key`,`value` FROM `'.P.'cache` WHERE `key`'.Eleanor::$Db->In($n));
+		$R=Eleanor::$Db->Query('SELECT `key`,`value` FROM `'.$this->table.'` WHERE `key`'.Eleanor::$Db->In($n));
 		while($a=$R->fetch_assoc())
 			$db[$a['key']]=unserialize($a['value']);
 		if($db and !DEBUG)
@@ -1536,6 +1780,12 @@ class Cache
 		return$a ? $db+$r : reset($db);
 	}
 
+	/**
+	 * Удаление данных из кэша
+	 *
+	 * @param string $n Имя ячейки хранения кэша
+	 * @param bool $fdb Флаг удаления кэша из таблицы "вечного" хранения
+	 */
 	public function Delete($n,$fdb=false)
 	{
 		if(is_array($n))
@@ -1543,10 +1793,16 @@ class Cache
 				$this->Lib->Delete($v);
 		else
 			$this->Lib->Delete($n);
-		if($fdb)
-			Eleanor::$Db->Delete(P.'cache','`key`'.Eleanor::$Db->In($n));
+		if($fdb and $this->table)
+			Eleanor::$Db->Delete($this->table,'`key`'.Eleanor::$Db->In($n));
 	}
 
+	/**
+	 * Пометка кэша устаревшим для его перегенерации. В отличии от метода Delete, использование этого метода не влечет за собой возможность появления dog-pile effect
+	 *
+	 * @param string $n Имя ячейки хранения кэша
+	 * @param bool $fdb Флаг удаления кэша из таблицы "вечного" хранения
+	 */
 	public function Obsolete($n,$fdb=false)
 	{
 		if(false!==$r=$this->Lib->Get($n))
@@ -1564,18 +1820,21 @@ class Cache
 class Db extends BaseClass
 {
 	public
-		$Driver,
-		$Result,
+		$Driver,#Объект MySQLi
+		$Result,#Объект результата MySQLi
 		$db,#Имя базы данных
 		$queries=0;#Счетчик запросов
 
-	/*
-		Соединение с БД
-		['host'] - сервер БД.
-		['user'] - пользователь БД
-		['pass'] - пароль пользоваетля
-		['db'] - база данных
-	*/
+	/**
+	 * Соединение с БД
+	 *
+	 * @param array $p Параметры соединения с БД. Ключи массива:
+	 * host Сервер БД.
+	 * user Пользователь БД
+	 * pass Пароль пользоваетля
+	 * db Название базы данных
+	 * @throws EE_SQL
+	 */
 	public function __construct(array$p)
 	{
 		if(!isset($p['host'],$p['user'],$p['pass'],$p['db']))
@@ -1592,6 +1851,12 @@ class Db extends BaseClass
 		$this->db=$p['db'];
 	}
 
+	/**
+	 * Обертка для упрощенного доступа к методам объектов MySQLi и результата MySQLi
+	 *
+	 * @param string $n Имя вызываемого метода
+	 * @param array $p Параметры вызова
+	 */
 	public function __call($n,$p)
 	{
 		if(method_exists($this->Driver,$n))
@@ -1601,6 +1866,9 @@ class Db extends BaseClass
 		return parent::__call($n,$p);
 	}
 
+	/**
+	 * Синхронизация времени БД со временем PHP (применение часового пояса). Синхронизируются только поля типа TIMESTAMP.
+	 */
 	public function SyncTimeZone()
 	{
 		$t=date_offset_get(date_create());
@@ -1610,25 +1878,37 @@ class Db extends BaseClass
 		$this->Driver->query('SET TIME_ZONE=\''.$s.'\'');
 	}
 
-	#Работа с транзакциями
+	/**
+	 * Старт транзакции
+	 */
 	public function Transaction()
 	{
 		$this->Driver->autocommit(false);
 	}
 
+	/**
+	 * Подтверждение транзакции
+	 */
 	public function Commit()
 	{
 		$this->Driver->commit();
 		$this->Driver->autocommit(true);
 	}
 
+	/**
+	 * Откат транзакции
+	 */
 	public function RollBack()
 	{
 		$this->Driver->rollback();
 		$this->Driver->autocommit(true);
 	}
-	#[E]Работа с транзакциями
 
+	/**
+	 * Выполнение SQL запроса в базу
+	 *
+	 * @param string $q SQL запрос
+	 */
 	public function Query($q)
 	{
 		++$this->queries;
@@ -1673,19 +1953,45 @@ class Db extends BaseClass
 		return$this->Result;
 	}
 
-	public function Insert($t,$a,$add='IGNORE')
+	/**
+	 * Обертка для удобного осуществления INSERT запросов
+	 *
+	 * @param string $t Имя таблицы, куда необходимо вставить данные
+	 * @param array $a Массив данных. Все данные автоматически экранируются. Если экранирование не нужно, перед именем поля поставьте !.
+	 * Поддерживаются 3 формата вставки:
+	 * 1. Вставка одной строки: array('field1'=>'value1','field2'=>2,'field3'=>NULL,'!field4'=>'NOW()')
+	 * 2. Вставка многих строк вариант 1: array('field1'=>array('value1','value11'),'field2'=>(2,3),'field3'=>array(null,null),'!field4'=>array('NOW()','NOW() + INTERVAL 1 DAY'))
+	 * 3. Вставка многих строк вариант 2: array( array('field1'=>'value1','field2'=>2,'field3'=>NULL,'!field4'=>'NOW()'), array('field1'=>'value11','field2'=>3,'field3'=>NULL,'!field4'=>'NOW() + INTERVAL 1 DAY') )
+	 * Исходя из особенностей INSERT запросов в MySQL, при использовании 3го формата, ключи внутренних массивов должны быть ИДЕНТИЧНЫМИ.
+	 * @param string $add Тип INSERT запроса
+	 * @return int Insert ID
+	 */
+	public function Insert($t,array$a,$add='IGNORE')
 	{
 		$this->Query('INSERT '.$add.' INTO `'.$t.'`'.$this->GenerateInsert($a));
 		return$this->Driver->insert_id;
 	}
 
-	public function Replace($t,$a,$add='')
+	/**
+	 * Обертка для удобного осуществления REPLACE запросов
+	 *
+	 * @param string $t Имя таблицы, куда необходимо вставить данные
+	 * @param array $a Массив данных. Идентично методу Insert
+	 * @param string $add Тип REPLACE запроса
+	 * @return int Affected rows
+	 */
+	public function Replace($t,array$a,$add='')
 	{
 		$this->Query('REPLACE '.$add.' INTO `'.$t.'` '.$this->GenerateInsert($a));
 		return$this->Driver->affected_rows;
 	}
 
-	public function GenerateInsert($a)
+	/**
+	 * Генерация INSERT запроса из данных в массиве
+	 *
+	 * @param array $a Массив даных из метода Insert или Replace
+	 */
+	public function GenerateInsert(array$a)
 	{
 		$rk=$rv='';#result key & result value
 		$k=key($a);
@@ -1748,7 +2054,16 @@ class Db extends BaseClass
 		return'('.rtrim($rk,',').') VALUES '.$rv;
 	}
 
-	public function Update($t,$a,$w='',$add='IGNORE')
+	/**
+	 * Обертка для удобного осуществления UPDATE запросов
+	 *
+	 * @param string $t Имя таблицы, где необходимо обновить данные
+	 * @param array $a Массив изменямых данных. Все данные автоматически экранируются. Если экранирование не нужно, перед именем поля поставьте !.
+	 * Например: array('field1'=>'value1','field2'=>2,'field3'=>NULL,'!field5'=>'NOW()')
+	 * @param string Условие обновления. Секция WHERE, без ключевого слова WHERE
+	 * @return int Affected rows
+	 */
+	public function Update($t,array$a,$w='',$add='IGNORE')
 	{
 		$q='UPDATE '.$add.' `'.$t.'` SET ';
 		foreach($a as $k=>&$v)
@@ -1760,22 +2075,40 @@ class Db extends BaseClass
 		return$this->Driver->affected_rows;
 	}
 
+	/**
+	 * Обертка для удобного осуществления DELETE запросов
+	 *
+	 * @param string $t Имя таблицы, откуда необходимо удалить данные
+	 * @param string Условие удаления. Секция WHERE, без ключевого слова WHERE. Если этот параметр не заполнить, выполнится не DELETE, а TRUNCATE запрос.
+	 * @return int Affected rows
+	 */
 	public function Delete($t,$w='')
 	{
 		$this->Query($w ? 'DELETE FROM `'.$t.'` WHERE '.$w : 'TRUNCATE TABLE `'.$t.'`');
 		return$this->Driver->affected_rows;
 	}
 
-#Дополнительные функции
-	public function In($v,$not=false)
+	/**
+	 * Преобразование массива в последовательность для конструкции IN(). Данные автоматически экранируются
+	 *
+	 * @param mixed $a Данные для конструкции IN
+	 * @param bool $not Включение конструкции NOT IN. Для оптимизации запросов, конструкция IN не всегда включается, иногда используется просто =
+	 */
+	public function In($a,$not=false)
 	{
-		if(is_array($v) and count($v)==1)
-			$v=reset($v);
-		if(is_array($v))
-			return ($not ? ' NOT' : '').' IN ('.join(',',$this->Escape($v)).')';
-		return ($not ? '!' : '').'='.$this->Escape($v);
+		if(is_array($a) and count($a)==1)
+			$a=reset($a);
+		if(is_array($a))
+			return($not ? ' NOT' : '').' IN ('.join(',',$this->Escape($a)).')';
+		return($not ? '!' : '').'='.$this->Escape($a);
 	}
 
+	/**
+	 * Экранирование опасных символов в строках
+	 *
+	 * @param string $s Строка для экранирования
+	 * @param bool $qs Флаг включения одинарных кавычек в начало и в конец результата
+	 */
 	public function Escape($s,$qs=true)
 	{
 		if($s===null)
@@ -1791,61 +2124,81 @@ class Db extends BaseClass
 		if(is_bool($s))
 			return(int)$s;
 		$s=$this->Driver->real_escape_string($s);
-		return $qs ? '\''.$s.'\'' : $s;
+		return$qs ? '\''.$s.'\'' : $s;
 	}
 }
 #Функция для обработки результатов запросов
 
-interface LoginClass //Интерфейс для создания медов авторизации
-{
-	#Singleton
-	public static function getInstance();
+interface LoginClass#Интерфейс для создания медов авторизации
+{	/**
+	 * Аутентификация по определенным входящим параметрам, например, по логину и паролю
+	 *
+	 * @param array $data Массив с данными
+	 * @throws EE
+	 */
+	public static function Login(array$data);
 
-	/*
-		Функция для авторизации по имени пользователя и паролю. В случае, если вход невозможен - выбрасывает исключение EE::UNIT
-	*/
-	public function Login(array $data);
+	/**
+	 * Аутентификация только по ID пользователя
+	 *
+	 * @param int $id ID пользователя
+	 * @throws EE
+	 */
+	public static function Auth($id);
 
-	/*
-		Функция для авторизации только по ID, без ввода логина и пароля
-	*/
-	public function Auth($id);
+	/**
+	 * Авторизация пользователя: проверка является ли пользователь пользователем
+	 *
+	 * @param bool $hard Метод кэширует результат, для сброса кэша передайте true
+	 * @return bool
+	 */
+	public static function IsUser($hard=false);
 
-	/*
-		Функция выполняет "автовход" пользователя. Фукнция кэширует результат, если $hard==false. Возвращает истину или ложь.
-	*/
-	public function IsUser($hard=false);
+	/**
+	 * Применение логина, как главного в системе: подстройка системы под пользователя, настройка часового пояса, проверка забаненности и т.п.
+	 *
+	 * @throws EE
+	 */
+	public static function ApplyCheck();
 
-	/*
-		Функция, которая вызывается после применения логина, как главного в системе. Может выкинуть, например, сообщение о забаненности пользователя.
-	*/
-	public function ApplyCheck();
+	/**
+	 * Выход пользователя из учетной записи
+	 */
+	public static function Logout();
 
-	/*
-		Выход пользователя. Тут можно предусмотреть не только вытирание куков, но и переход на
-		главную страницу сайта.
-	*/
-	public function Logout();
+	/**
+	 * Формирование ссылки на учётную запись пользователя
+	 *
+	 * @param string $name Имя пользователя
+	 * @param string $id ID пользователя
+	 * @return string|FALSE
+	 */
+	public static function UserLink($name,$id=0);
 
-	/*
-		Функция, которая должна возвращать ссылку на страницу о пользователей, либо false в случае, если пользователь не существует
-	*/
-	public function UserLink($name,$id=0);
+	/**
+	 * Получение значения пользовательского параметра
+	 *
+	 * @param array|string $key Один или несколько параметров, значения которых нужно получить
+	 * @return array|string В зависимости от типа переданной переменной
+	 */
+	public static function GetUserValue($value);
 
-	/*
-		Получить значение пользовательской переменной.
-	*/
-	public function GetUserValue($value,$safe=true);
-
+	/**
+	 * Установка значения пользовательского параметра. Метод не должен обновлять данны пользователя в БД! Только на время работы скрипта
+	 *
+	 * @param array|string $key Имя параметра, либо массив в виде $key=>$value
+	 * @param mixed $value Значения
+	 */
+	public static function SetUserValue($key,$value=null);
 }
 
 class Language extends BaseClass implements ArrayAccess
 {
 	public static
-		$main=LANGUAGE;#Глобальный язык
+		$main=LANGUAGE;#Переменная определяющая системный язык
 
 	public
-		$loadfrom='langs',#Каталог по-умолчанию, откуда будут загружаться неинициализированные файлы
+		$loadfrom='langs',#Каталог по умолчанию, откуда будут загружаться неинициализированные файлы
 		$queue=array();#Очередь файлов для загрузки имя группы => файл
 
 	protected
@@ -1854,6 +2207,12 @@ class Language extends BaseClass implements ArrayAccess
 		$db,#Данные всех языков
 		$files=array();#Включенные файлы
 
+	/**
+	 * Конструктор языкового объекта
+	 *
+	 * @param bool|string $f Путь до файла с языковыми переменным. В случае передачии true, включается группировка значений по секциям, false - создается "пустой" объект
+	 * @param string $s В случае передачи в $f файла с языковыми переменными, эта переменная указывает на секцию, в которую необходимо поместить результат
+	 */
 	public function __construct($f=false,$s='')
 	{
 		if($f===true)
@@ -1863,11 +2222,20 @@ class Language extends BaseClass implements ArrayAccess
 		$this->l=self::$main;
 	}
 
+	/**
+	 * Возвращение текущего языка объекта
+	 */
 	public function __toString()
 	{
 		return$this->l;
 	}
 
+	/**
+	 * Выполнение универсальных методов языковых классов. Название языкового класса совпадает с названием языка: Russian, English...
+	 *
+	 * @param string $n Название метода
+	 * @param array $p Параметры метода
+	 */
 	public function __call($n,$p)
 	{
 		if(method_exists($this->l,$n))
@@ -1878,17 +2246,19 @@ class Language extends BaseClass implements ArrayAccess
 		return parent::__call($n,$p);
 	}
 
-	/*
-		Структура языкового файла:
-		<?php
-		return array(
-			'param1'=>'value1',
-			...
-		);
-
-		$f - имя файла, в котором вместо * система подставит языковое значение.
-		$s - имя секции
-	*/
+	/**
+	 * Загрузка языкового файла в объект
+	 *
+	 * Структура языкового файла должна быть такой:
+	 * <?php
+	 * return array(
+	 *     'param1'=>'value1',
+	 *     ...
+	 *     );
+	 *
+	 * @param string $f Имя файла, в котором вместо * будет подставлено название текущего языка
+	 * @param string $s Название секции, в которую будет помещен языковой массив из файла
+	 */
 	public function Load($f,$s='')
 	{
 		if(is_array($f))
@@ -1918,6 +2288,11 @@ class Language extends BaseClass implements ArrayAccess
 		return$this->db[$s]=isset($this->db[$s]) ? $l+$this->db[$s] : $l;
 	}
 
+	/**
+	 * Изменение языка объекта. В этом случае все языковые файлы будут перезагружены
+	 *
+	 * @param string|FALSe $l Название нового языка. В случае передачи FALSE, будет установлен системный язык
+	 */
 	public function Change($l=false)
 	{
 		if(!$l)
@@ -1941,6 +2316,12 @@ class Language extends BaseClass implements ArrayAccess
 		$this->l=$l;
 	}
 
+	/**
+	 * Установка языковой переменной
+	 *
+	 * @param string $k Имя переменной
+	 * @param mixed $v Языковое значение
+	 */
 	public function offsetSet($k,$v)
 	{
 		if($this->gr)
@@ -1949,11 +2330,21 @@ class Language extends BaseClass implements ArrayAccess
 			$this->db[''][$k]=$v;
 	}
 
+	/**
+	 * Проверка существования языковой переменной
+	 *
+	 * @param string $k Имя переменной
+	 */
 	public function offsetExists($k)
 	{
-		return $this->gr ? isset($this->db[$k]) : isset($this->db[''][$k]);
+		return$this->gr ? isset($this->db[$k]) : isset($this->db[''][$k]);
 	}
 
+	/**
+	 * Удаление языковой переменной
+	 *
+	 * @param string $k Имя переменной
+	 */
 	public function offsetUnset($k)
 	{
 		if($this->gr)
@@ -1962,6 +2353,11 @@ class Language extends BaseClass implements ArrayAccess
 			unset($this->db[''][$k]);
 	}
 
+	/**
+	 * Получение языковой переменной
+	 *
+	 * @param string $k Имя переменной
+	 */
 	public function offsetGet($k)
 	{
 		if($this->gr)

@@ -53,7 +53,7 @@ $Eleanor->ta=array(
 	'title_l'=>array(
 		'title'=>$lang['name'],
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'load'=>function($a)
 		{
 			$ret=$a['value'] ? unserialize($a['value']) : array();
@@ -72,55 +72,55 @@ $Eleanor->ta=array(
 	'run_year'=>array(
 		'title'=>$lang['runyear'],
 		'descr'=>$lang['runyear_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'default'=>'*',
 		'bypost'=>&$Eleanor->ta_post,
 	),
 	'run_month'=>array(
 		'title'=>$lang['runmonth'],
 		'descr'=>$lang['runmonth_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'default'=>'*',
 		'bypost'=>&$Eleanor->ta_post,
 	),
 	'run_day'=>array(
 		'title'=>$lang['runday'],
 		'descr'=>$lang['runday_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'default'=>'*',
 		'bypost'=>&$Eleanor->ta_post,
 	),
 	'run_hour'=>array(
 		'title'=>$lang['runhour'],
 		'descr'=>$lang['runhour_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'default'=>'1',
 		'bypost'=>&$Eleanor->ta_post,
 	),
 	'run_minute'=>array(
 		'title'=>$lang['runminute'],
 		'descr'=>$lang['runminute_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'default'=>'*',
 		'bypost'=>&$Eleanor->ta_post,
 	),
 	'run_second'=>array(
 		'title'=>$lang['runsecond'],
 		'descr'=>$lang['runsecond_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'default'=>'*',
 		'bypost'=>&$Eleanor->ta_post,
 	),
 	'maxrun'=>array(
 		'title'=>$lang['maxrun'],
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->ta_post,
 	),
 	'alreadyrun'=>array(
 		'title'=>$lang['alreadyrun'],
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->ta_post,
 	),
 	'ondone'=>array(

@@ -17,17 +17,20 @@ class LoginAdmin extends LoginBase implements LoginClass
 		MAX_SESSIONS=1,#Максимальное число сессий
 		UNIQUE='admin';
 
-	protected static
-		$Instance;
-
-	public function Login(array$data,array$extra=array())
+	/**
+	 * Аутентификация по определенным входящим параметрам, например, по логину и паролю
+	 *
+	 * @param array $data Массив с данными
+	 * @throws EE
+	 */
+	public static function Login(array$data,array$extra=array())
 	{
 		if(!isset($data['name'],$data['password']))
 			throw new EE('EMPTY_DATA',EE::UNIT);
-		$this->AuthByName($data['name'],$data['password'],$extra);
-		if(!$this->CheckPermission())
+		static::AuthByName($data['name'],$data['password'],$extra);
+		if(!static::CheckPermission())
 		{
-			$this->Logout();
+			static::Logout();
 			throw new EE('ACCESS_DENIED',EE::UNIT);
 		}
 
@@ -36,40 +39,59 @@ class LoginAdmin extends LoginBase implements LoginClass
 			new Settings;
 
 		$data+=array('rememberme'=>true);
-		Eleanor::SetCookie(self::UNIQUE,base64_encode((isset($this->user['login_key']) ? $this->user['login_key'] : '').'|'.$this->user['id']),$data['rememberme'] ? false : 0,true);
-		$this->login=true;
+		Eleanor::SetCookie(self::UNIQUE,base64_encode((isset(static::$user['login_key']) ? static::$user['login_key'] : '').'|'.static::$user['id']),$data['rememberme'] ? false : 0,true);
+		static::$login=true;
 	}
 
-	public function IsUser($hard=false)
-	{		if(isset($this->login) and !$hard)
-			return$this->login;
+	/**
+	 * Авторизация пользователя: проверка является ли пользователь пользователем
+	 *
+	 * @param bool $hard Метод кэширует результат, для сброса кэша передайте true
+	 * @return bool
+	 */
+	public static function IsUser($hard=false)
+	{		if(isset(static::$login) and !$hard)
+			return static::$login;
 
 		if(!$cookie=Eleanor::GetCookie(self::UNIQUE))
-			return$this->login=false;
+			return static::$login=false;
 
 		list($k,$id)=explode('|',base64_decode($cookie),2);
 
-		if(!$k or !$id or !$this->AuthByKey($id,$k))
-			return$this->login=false;
+		if(!$k or !$id or !static::AuthByKey($id,$k))
+			return static::$login=false;
 
-		if(!$this->CheckPermission())
-		{			$this->Logout();
-			return$this->login=false;
+		if(!static::CheckPermission())
+		{			static::Logout();
+			return static::$login=false;
 		}
-		return$this->login=true;
+		return static::$login=true;
 	}
 
-	public function UserLink($username,$uid=0)
+	/**
+	 * Формирование ссылки на учётную запись пользователя
+	 *
+	 * @param string $name Имя пользователя
+	 * @param string $id ID пользователя
+	 * @return string|FALSE
+	 */
+	public static function UserLink($username,$uid=0)
 	{
-		if(!$this->IsUser())
+		if(!static::IsUser())
 			return false;
 		return$uid ? Eleanor::$services['admin']['file'].'?'.Eleanor::getInstance()->Url->Construct(array('section'=>'management','module'=>'users','edit'=>$uid),false,false,false) : '';
 	}
 
-	public function ApplyCheck(){}
+	/**
+	 * Применение логина, как главного в системе: подстройка системы под пользователя, настройка часового пояса, проверка забаненности и т.п.
+	 */
+	public static function ApplyCheck(){}
 
-	private function CheckPermission()
+	/**
+	 * Проверка наличия у пользователя права входить в панель администратора
+	 */
+	private static function CheckPermission()
 	{
-		return in_array(1,Eleanor::GetPermission('access_cp',$this));
+		return in_array(1,Eleanor::GetPermission('access_cp',__class__));
 	}
 }

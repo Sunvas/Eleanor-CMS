@@ -119,7 +119,7 @@ class TPLAdminStatic
 <table class="tabstyle tabform" id="ftable">
 	<tr class="infolabel"><td><a href="#">'.$ltpl['filters'].'</a></td></tr>
 	<tr>
-		<td><b>'.$ltpl['title'].'</b><br />'.Eleanor::Edit('fi[title]',$qs['']['fi']['title']).' '.Eleanor::Button($ltpl['apply']).'</td>
+		<td><b>'.$ltpl['title'].'</b><br />'.Eleanor::Input('fi[title]',$qs['']['fi']['title']).' '.Eleanor::Button($ltpl['apply']).'</td>
 	</tr>
 </table>
 <script type="text/javascript">//<![CDATA[
@@ -163,7 +163,7 @@ $(function(){
 				$Lst->head($v);
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		if(Eleanor::$vars['multilang'])
 			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,9));
@@ -173,7 +173,7 @@ $(function(){
 		$Lst->button(
 			$back.Eleanor::Button('OK','submit',array('tabindex'=>10))
 			.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>11,'onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
-			.Eleanor::Control('_draft','hidden',$id)
+			.Eleanor::Input('_draft',$id,array('type'=>'hidden'))
 			.Eleanor::$Template->DraftButton($links['draft'],1)
 			.($hasdraft ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
 		)->end()->endform();

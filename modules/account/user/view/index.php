@@ -49,6 +49,8 @@ class AccountIndex
 			$user['vk']=OwnBbCode_url::PreDisplay('',false,'http://vk.com/'.$user['vk'],true);
 		if($user['twitter'])
 			$user['twitter']=OwnBbCode_url::PreDisplay('',false,'http://twitter.com/'.$user['twitter'],true);
+		if($user['facebook'])
+			$user['facebook']=OwnBbCode_url::PreDisplay('',false,'http://facebook.com/'.$user['facebook'],true);
 
 		$GLOBALS['title'][]=$GLOBALS['Eleanor']->module['user']['full_name'];
 		return Eleanor::$Template->AcUserInfo($groups);

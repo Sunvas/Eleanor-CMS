@@ -42,13 +42,18 @@ class Editor extends BaseClass
 			$this->type=Eleanor::$vars['editor_type'];
 	}
 
-	/*
-		Функция просто возвращает содержимое для редактора, без самого редактора!
-	*/
+	/**
+	 * Получение содержимого редактора
+	 *
+	 * Метод преобразует смайлы в текстовое предтавление, конвертирует HTML => BB, в случае использования BB редактора и т.п.
+	 *
+	 * @param string $text Редактируемый HTML текст
+	 * @return string Содержимое необходимо использовать непосредственно как значение для редактора
+	 */
 	public function GetEdit($text)
 	{
 		if($this->ownbb)
-		{
+		{			OwnBB::$opts['visual']=in_array($this->type,$this->visual);
 			$text=OwnBB::Parse($text,OwnBB::EDIT);
 			$text=OwnBB::StoreNotParsed($text,OwnBB::SAVE);
 		}
@@ -69,22 +74,28 @@ class Editor extends BaseClass
 		return$text;
 	}
 
-	/*
-		Функция, которая покажет наше текстовое поле в зависимости от настроек
-		$extra['bypost']=true означает, что текст в редактор возвращается из-за возникшей ошибки в пришедшей от пользователя инфе
-	*/
-	public function Area($name,$text='',$extra=array(),$tpl='Editor')
+	/**
+	 * Получение кода редактора, поместив полученный код на странице получается готовый редактор.
+	 *
+	 * @param string $name Имя элемента формы редактора
+	 * @param string $value HTML содержимое редактора
+	 * @param array $extra Дополнительные параметры редактора
+	 * Например, ключ bypost=>true указывает редактору, что переданное ему значение взято из POST запроса, и не является корректным сохраненным HTML форматом.
+	 * Ключи bb, no, ckeditor и т.п. с переданным значением в виде массива определяют дополнительные параметры тега textarea при помощи которого создается редактор.
+	 * @param string $tpl Определяет шаблон, который будет применен к редактору
+	 */
+	public function Area($name,$value='',$extra=array(),$tpl='Editor')
 	{
 		if(empty($extra['bypost']))
-			$text=$this->GetEdit($text);
+			$value=$this->GetEdit($value);
 		$id=preg_replace('#\W+#','',$name);
 		$GLOBALS['jscripts'][]='js/dropdown.js';
 		if($this->ownbb)
 		{
-			$text=OwnBB::StoreNotParsed($text,OwnBB::SHOW);
+			$value=OwnBB::StoreNotParsed($value,OwnBB::SHOW);
 			foreach(OwnBB::$np as &$v)
 				$v['t']=htmlspecialchars($v['t'],ELENT,CHARSET);
-			$text=OwnBB::ParseNotParsed($text,false);
+			$value=OwnBB::ParseNotParsed($value,false);
 		}
 		switch($this->type)
 		{
@@ -93,7 +104,7 @@ class Editor extends BaseClass
 				$html=Eleanor::$Template->{isset($extra['bbtpl']) ? $extra['bbtpl'] : 'BBeditor'}(array(
 					'id'=>$id,
 					'name'=>$name,
-					'value'=>$text,
+					'value'=>$value,
 					'extra'=>isset($extra['bb']) ? $extra['bb'] : (isset($extra['no']) ? $extra['no'] : array()),
 					'smiles'=>$this->smiles,
 					'ownbb'=>$this->ownbb,
@@ -101,7 +112,7 @@ class Editor extends BaseClass
 			break;
 			case'ckeditor':
 				array_push($GLOBALS['jscripts'],'addons/ckeditor/ckeditor.js');
-				$html=Eleanor::Text($name,$text,(isset($extra['ckeditor']) ? $extra['ckeditor'] : array())+array('id'=>$id)).'<script type="text/javascript">//<![CDATA[
+				$html=Eleanor::Text($name,$value,(isset($extra['ckeditor']) ? $extra['ckeditor'] : array())+array('id'=>$id)).'<script type="text/javascript">//<![CDATA[
 $(function(){
 	if(typeof CKEDITOR.instances.'.$id.'!="undefined")
 		CKEDITOR.instances.'.$id.'.destroy();
@@ -131,7 +142,7 @@ if(CORE.in_ajax.length)
 else
 	EDITOR.tinymce_ready();//]]></script>';
 				$tinyalr=false;
-				$html=Eleanor::Text($name,$text,array('id'=>$id,'class'=>'tiny_mce_editor'));
+				$html=Eleanor::Text($name,$value,array('id'=>$id,'class'=>'tiny_mce_editor'));
 			break;
 			case'codemirror':
 				$GLOBALS['jscripts'][]='addons/codemirror/lib/codemirror.js';
@@ -154,7 +165,7 @@ else
 					array_push($GLOBALS['jscripts'],'addons/codemirror/mode/htmlmixed/eleanor.js','addons/codemirror/mode/htmlmixed/htmlmixed.js');
 					$mode='text/html';
 				}
-				$html=Eleanor::Text($name,$text,array('id'=>$id,'style'=>'width:100%;height:100%')).'<script type="text/javascript">//<![CDATA[
+				$html=Eleanor::Text($name,$value,array('id'=>$id,'style'=>'width:100%;height:100%')).'<script type="text/javascript">//<![CDATA[
 $(function(){
 	setTimeout(function(){
 		var editor=CodeMirror.fromTextArea(
@@ -190,7 +201,7 @@ $(function(){
 			break;
 			default:#Без редактора
 				$GLOBALS['jscripts'][]='js/eleanor_bb.js';
-				$html=Eleanor::Text($name,$text,(isset($extra['no']) ? $extra['no'] : array())+array('id'=>$id,'rows'=>10,'cols'=>50)).'<script type="text/javascript">/*<![CDATA[*/EDITOR.New("'.$id.'",
+				$html=Eleanor::Text($name,$value,(isset($extra['no']) ? $extra['no'] : array())+array('id'=>$id,'rows'=>10,'cols'=>50)).'<script type="text/javascript">/*<![CDATA[*/EDITOR.New("'.$id.'",
 				{
 					Embed:function(type,data)
 					{
@@ -211,7 +222,7 @@ $(function(){
 			$lang=Eleanor::$Language['editor'];
 			$ug=Eleanor::GetUserGroups();
 			foreach(OwnBB::$bbs as &$bb)
-				if($bb['sb'] and (!$bb['gr_use'] or count(array_intersect(explode(',',$bb['gr_use']),$ug))>0))
+				if($bb['sb'] and (!$bb['gr_use'] or count(array_intersect($bb['gr_use'],$ug))>0))
 				{
 					if(false!==$p=strpos($bb['tags'],','))
 						$bb['tags']=substr($bb['tags'],0,$p);
@@ -228,6 +239,9 @@ $(function(){
 		return Eleanor::$Template->$tpl($id,$html,$this->smiles ? static::GetSmiles() : array(),$ownbb);
 	}
 
+	/**
+	 * Получение дампа всех смайлов
+	 */
 	public static function GetSmiles()#ToDo! To trait & editor_result
 	{
 		$sm=Eleanor::$Cache->Get('smiles',false);

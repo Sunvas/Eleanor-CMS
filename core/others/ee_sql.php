@@ -13,16 +13,24 @@ class EE_SQL extends EE
 	public#private - #PHP 5.4, заменить после того, как уберется костыль $THIS ниже
 		$type;
 
+	/**
+	 * Конструктор исключений, связанных с базой данных
+	 *
+	 * @param string $type Тип исключения: connect - ошибка при подключении, query - ошибка при запросе
+	 * @param array $extra Дополнительные данные исключения
+	 * @param exception $PO Предыдущее перехваченное исключение, что послужило "родителем" для текущего
+	 */
 	public function __construct($type,$extra=array(),$PO=null)
 	{
 		$lang=Eleanor::$Language->Load('langs/db-*.php',false);
 		$extra+=array('query'=>false,'no'=>false,'error'=>false);
-		$d=debug_backtrace();
+		$db=debug_backtrace();
 
-		if(isset($d[1],$d[2],$d[0]['class'],$d[1]['class']) and $d[0]['class']=='EE_SQL' and $d[1]['class']=='Db')
-			$d=isset($d[1]['function']) && $d[1]['function']=='Query' ? $d[1] : $d[2];
-		else
-			$d=isset($d[1]) ? $d[1] : $d[0];
+		$d=end($db);
+		foreach($db as $v)
+		{			if(isset($v['class']) and $v['class']=='Db')
+				$d=$v;
+		}
 
 		$this->file=$d['file'];
 		$this->line=$d['line'];
@@ -45,6 +53,9 @@ class EE_SQL extends EE
 		parent::__construct($mess,$code,$extra,$PO);
 	}
 
+	/**
+	 * Команда залогировать исключение
+	 */
 	public function Log()
 	{		$THIS=$this;#PHP 5.4 убрать рудмиент
 		$this->LogWriter(

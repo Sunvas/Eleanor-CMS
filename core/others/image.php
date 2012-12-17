@@ -11,14 +11,22 @@
 
 class Image extends BaseClass
 {
-	/*
-		Функция используються для определения "среднего" цвета.
-	*/
+	/**
+	 * Вычисление среднего цвета
+	 * @param int $a Значение 1 либо R либо G либо B
+	 * @param int $a Значение 2 либо R либо G либо B
+	 * @param float Прозрачность от 0 до 1 (от $a до $b)
+	 */
 	public static function GetAverage($a,$b,$alpha)
 	{
 		return round($a*(1-$alpha)+$b*$alpha);
 	}
 
+	/**
+	 * Создание ресурса изображения из файла исходя из его внутренней структуры и типа
+	 * @param string $p Путь к файлу
+	 * @param string|FALSE $t Тип файла
+	 */
 	public static function CreateImage($p,$t=false)
 	{
 		if(function_exists('exif_imagetype') and (!$t or is_int($t)))
@@ -49,6 +57,13 @@ class Image extends BaseClass
 		return false;
 	}
 
+	/**
+	 * Сохранение картинки в виде файла определенного формата
+	 *
+	 * @param resource $im Ресурс картинки
+	 * @param string $p Путь для сохранения картинки
+	 * @param string|FALSE Тип картинки
+	 */
 	public static function SaveImage($im,$p,$t=false)
 	{
 		switch($t ? $t : strtolower(pathinfo($p,PATHINFO_EXTENSION)))
@@ -67,11 +82,12 @@ class Image extends BaseClass
 				imagepng($im,$p,0,PNG_ALL_FILTERS);
 		}
 	}
-	/*
-		Метод, создающий превьюшку из картинки.
-		$path - путь до картинки.
-		$o - смотри ниже
-	*/
+	/**
+	 * Создание превьюшки (preview, thumbnail) картинки
+	 *
+	 * @param string $path Путь к файлу картинки
+	 * @param array $o Опции, описание доступно внутри самого метода
+	 */
 	public static function Preview($path,array$o=array())
 	{
 		if(!is_file($path))
@@ -79,15 +95,15 @@ class Image extends BaseClass
 		if(!list($w,$h)=getimagesize($path))
 			throw new EE('Image failed!',EE::ENV);
 		$o+=array(
-			'width'=>$w>$h ? 100 : 0,#Ширина будущей превьюшки; Целое число: 0 - без изменений.
-			'height'=>$h>$w ? 100 : 0,#Высота будущем превьюшки; Целое число: 0 - без изменений.
+			'width'=>$w>$h ? 100 : 0,#Ширина будущей превьюшки; целое число: 0 - без изменений
+			'height'=>$h>$w ? 100 : 0,#Высота будущем превьюшки; целое число: 0 - без изменений
 			'cut_first'=>false,#Если true - превьюшка будет не ужиматься, а тупо обрезаться
-			'cut_last'=>false,#Если true - превьюешка будет уменьшена по одной стороне, а по второй - тупо обрезана
-			'first'=>'b',#Что будет уменьшаться первое: высота или ширина. w,h . Автоматически: b - по наибольше стороне, s - по наименьше стороне.
+			'cut_last'=>false,#Если true - превьюшка будет уменьшена по одной стороне, а по другой - обрезана
+			'first'=>'b',#Что будет уменьшаться первое: высота или ширина. w,h . Автоматически: b - по наибольшей стороне, s - по наименьшей стороне
 
 			#Параметры нового имени
 			'newname'=>false,
-			'suffix'=>'_preview',#Суфикс для файла
+			'suffix'=>'_preview',#Суффикс для имени файла
 		);
 		$newpath=$o['newname'] ? (preg_match('#[/\\\]#',$o['newname'])>0 ? '' : dirname($path).'/').$o['newname'] : substr_replace($path,$o['suffix'],strrpos($path,'.'),0);
 		if(!is_writable($dn=dirname($newpath)))#Нам нужно проверить, сможем ли записать не только в каталог файла, но и в сам файл.
@@ -147,36 +163,37 @@ class Image extends BaseClass
 		return$newpath;
 	}
 
-	/*
-		Функция, которая ставит ватермарк
-		$path - путь к картинке
-		$o - массив настроек. См. Ниже
-	*/
+	/**
+	 * Установка водяного знака (watermark) на картинку
+	 *
+	 * @param string $path Путь к файлу картинки
+	 * @param array $o Опции, описание доступно внутри самого метода
+	 */
 	public static function WaterMark($path,$o=array())
 	{
 		if(!is_file($path))
 			throw new EE('File not found!',EE::DEV);
 		$o+=array(
 			'types'=>array('bmp','png','jpg'),#Типы файлов для которых разршен ватермарк
-			'alpha'=>0,#Прозрачность ватермарка в процентах от 0 до 100%
-			'top'=>50,#Положение в процентах от 0 до 100% по высоте (сверх вниз)
-			'left'=>50,#Положение в процентах от 0 до 100% по ширине (слева направо)
+			'alpha'=>0,#Прозрачность ватермарка в процентах от 0 до 100
+			'top'=>50,#Положение в процентах от 0 до 100 по высоте (сверх вниз)
+			'left'=>50,#Положение в процентах от 0 до 100 по ширине (слева вправо)
 
 			#Низкий приоритет. Для жесткости
 			'ptop'=>0,#Положение в пикселях по высоте (сверх вниз)
-			'pleft'=>0,#Положение в пикселях по ширине (слева направо)
+			'pleft'=>0,#Положение в пикселях по ширине (слева вправо)
 
-			#Если задана картинка - нарисуем картинку
-			'image'=>'',
+			#Если в качестве ватермарка задана картинка - нарисуем картинку
+			'image'=>'',#Путь к файлу картинки-ватермарка
 
-			#Если картинка - false, наприсуем текст
-			'text'=>'Eleanor CMS',
-			'font'=>Eleanor::$root.'addons/fonts/arial.ttf',
-			'size'=>15,
-			'angle'=>0,
-			'r'=>1,
-			'g'=>1,
-			'b'=>1,
+			#Если картинка в качестве ватермарка картинка не задана, наприсуем текст
+			'text'=>'Eleanor CMS',#Текст ватермарка
+			'font'=>Eleanor::$root.'addons/fonts/arial.ttf',#Путь к файлу-шрифту ватермарка
+			'size'=>15,#Размер кегля шрифта
+			'angle'=>0,#Угол наклон шрифта
+			'r'=>1,#Цевет шрифта, R
+			'g'=>1,#Цевет шрифта, G
+			'b'=>1,#Цевет шрифта, B
 		);
 		$o['types']=$o['types'] ? array_intersect(array('jpeg','jpg','png','gif','bmp'),$o['types']) : array();
 		$o['alpha']=(100-$o['alpha'])/100;

@@ -125,7 +125,7 @@ class TplCategoriesManager
 					$Lst->head($v);
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		if(Eleanor::$vars['multilang'])
 			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,9));
@@ -133,7 +133,7 @@ class TplCategoriesManager
 		$Lst->button(
 			$back.Eleanor::Button('OK','submit',array('tabindex'=>10))
 			.($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>11,'onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
-			.Eleanor::Control('_draft','hidden',$id)
+			.Eleanor::Input('_draft',$id,array('type'=>'hidden'))
 			.Eleanor::$Template->DraftButton($links['draft'],1)
 			.($links['nodraft'] ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
 		)->end()->endform();

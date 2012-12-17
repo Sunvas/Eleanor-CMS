@@ -84,7 +84,7 @@ class TPLTasks
 			foreach($items as $k=>&$v)
 				$Lst->item(
 					array($v['title'],'href'=>$v['_aedit']),
-					array($v['free'] ? Eleanor::$Language->Date($v['nextrun']) : $lang['now'],'center'),
+					array($v['free'] ? Eleanor::$Language->Date($v['nextrun']) : static::$lang['now'],'center'),
 					array($v['run_year'],'center'),
 					array($v['run_month'],'center'),
 					array($v['run_day'],'center'),
@@ -128,7 +128,7 @@ class TPLTasks
 				$Lst->head($v);
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst->button(
 			$back.Eleanor::Button()

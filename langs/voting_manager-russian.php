@@ -1,6 +1,6 @@
 <?php
 return array(
-	#Для /core/others/voting_manager.php
+	#Для /core/others/votingmanager.php
 	'errorva'=>'Произошла ошибка при получении данных опроса!',
 	'EMPTY_VARIANT'=>function($l){return'Один из вариантов ответа не заполнен'.($l ? ' (для '.$l.')' : '');},
 	'EMPTY_TITLE'=>function($l=''){return'Название вопроса не задано'.($l ? ' (для '.$l.')' : '');},

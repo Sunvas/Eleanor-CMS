@@ -101,7 +101,7 @@ class AccountLostPass
 						'pass'=>$pass,
 						'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 					);
-					Eleanor::Mail(
+					Email::Simple(
 						$user['email'],
 						Eleanor::ExecBBLogic($l['passremfin_t'],$repl),
 						Eleanor::ExecBBLogic($l['passremfin'],$repl)
@@ -161,7 +161,7 @@ class AccountLostPass
 					'confirm'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'lostpass','id'=>$actid,'md'=>$hash),true,''),
 					'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 				);
-				Eleanor::Mail(
+				Email::Simple(
 					$a['email'],
 					Eleanor::ExecBBLogic($l['passrem_t'],$repl),
 					Eleanor::ExecBBLogic($l['passrem'],$repl)

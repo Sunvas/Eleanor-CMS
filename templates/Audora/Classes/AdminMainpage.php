@@ -121,13 +121,13 @@ class TPLAdminMainpage
 			$mops.=Eleanor::Option($v,$k,$k==$values['id']);
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form()
 			->begin()
 			->item(static::$lang['module'],Eleanor::Select('id',$mops,array('tabindex'=>1)))
-			->item(array(static::$lang['pos'],'tip'=>static::$lang['pos_'],Eleanor::Control('pos','number',$values['pos'],array('tabindex'=>2,'min'=>1))))
+			->item(array(static::$lang['pos'],'tip'=>static::$lang['pos_'],Eleanor::Input('pos',$values['pos'],array('type'=>'number','tabindex'=>2,'min'=>1))))
 			->button($back.Eleanor::Button('OK','submit',array('tabindex'=>10)).($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>3,'onclick'=>'if(confirm(\''.$ltpl['are_you_sure'].'\'))window.location=\''.$links['delete'].'\'')) : ''))
 			->end()
 			->endform();

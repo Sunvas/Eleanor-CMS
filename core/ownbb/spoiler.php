@@ -10,7 +10,14 @@
 */
 
 class OwnBbCode_spoiler extends OwnBbCode
-{
+{	/**
+	 * Обработка информации перед показом на странице
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
 	public static function PreDisplay($t,$p,$c,$cu)
 	{		$p=$p ? Strings::ParseParams($p,'t') : array();		if(isset($p['noparse']))
 			return'['.$t.']'.$c.'[/'.$t.']';
@@ -18,7 +25,7 @@ class OwnBbCode_spoiler extends OwnBbCode
 			return static::RestrictDisplay($t,$p,$c);
 		$ex=isset($p['ex']);
 		$GLOBALS['head']['spoiler']='<script type="text/javascript">//<![CDATA[
-$(function(){	$(document).on("click",".spoiler .top",function(e){		e.preventDefault();		var th=$(this).toggleClass("sp-expanded sp-contracted");
+$(function(){	$(this).on("click",".spoiler .top",function(e){		e.preventDefault();		var th=$(this).toggleClass("sp-expanded sp-contracted");
 		if(th.is(".sp-expanded"))
 			th.next().fadeIn("fast");
 		else
@@ -29,6 +36,14 @@ $(function(){	$(document).on("click",".spoiler .top",function(e){		e.preventDe
 </div>';
 	}
 
+	/**
+	 * Обработка информации перед её сохранением
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
 	public static function PreSave($t,$p,$c,$cu)
 	{
 		$c=preg_replace("#^(\r?\n?<br />\r?\n?)+#i",'<br />',$c);

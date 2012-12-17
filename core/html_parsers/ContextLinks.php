@@ -10,7 +10,13 @@
 */
 class HtmlParserContextLinks
 {	protected static
-		$cl=array();	public static function Parse($s)
+		$cl=array();
+
+	/**
+	 * Ќепосредственна€ обработка контекстных слов в тексте в ссылки
+	 *
+	 * @param string $s ќбрабатываемый текст
+	 */	public static function Parse($s)
 	{		self::$cl=Eleanor::$Cache->Get('cl_'.Language::$main);
 		if(self::$cl===false)
 		{			$last=86400;

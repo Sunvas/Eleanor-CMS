@@ -17,7 +17,7 @@ do
 		break;
 	global$Eleanor;
 	$rp=$Eleanor->module['path'].'DIRECT'.DIRECTORY_SEPARATOR;
-	$path=realpath($rp.Eleanor::WinFiles(trim((string)$_GET['f'],'/\\')));
+	$path=realpath($rp.Files::Windows(trim((string)$_GET['f'],'/\\')));
 	if(!$path or strncmp($path,$rp,strlen($rp))!=0 or !is_file($path))
 		break;	return Files::OutputStream(array('file'=>$path));
 }while(false);

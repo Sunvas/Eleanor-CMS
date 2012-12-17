@@ -184,7 +184,7 @@ class TPLSmiles
 				$Lst->head($v);
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst->button(
 			$back.Eleanor::Button()
@@ -216,7 +216,7 @@ class TPLSmiles
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin()
-			->item(static::$lang['selcat'],Eleanor::Edit('folder',$values['folder']).' '.Eleanor::Button('Ok'))
+			->item(static::$lang['selcat'],Eleanor::Input('folder',$values['folder']).' '.Eleanor::Button('Ok'))
 			->end()->endform();
 
 		$c=$Lst.'<script type="text/javascript">//<![CDATA[
@@ -247,11 +247,11 @@ $(function(){
 				$Lst->item(
 					$bn,
 					array('<img src="'.$v['f'].'" alt="" />','style'=>'text-align:center;width:10px;'),
-					Eleanor::Edit('smiles['.$k.'][e]',$v['e']),
+					Eleanor::Input('smiles['.$k.'][e]',$v['e']),
 					array(Eleanor::Check('smiles['.$k.'][s]',$v['s']),'center'),
 					array(Eleanor::Check('smiles['.$k.'][f]',$v['ch'],array('value'=>$v['v'])),'center')
 				);
-			$c.=$Lst->end().'<div class="submitline">'.Eleanor::Control('folder','hidden',$values['folder']).Eleanor::Button(static::$lang['addsels']).'</div></form>
+			$c.=$Lst->end().'<div class="submitline">'.Eleanor::Input('folder',$values['folder'],array('type'=>'hidden')).Eleanor::Button(static::$lang['addsels']).'</div></form>
 			<script type="text/javascript">/*<![CDATA[*/$(function(){One2AllCheckboxes("#checks-form","#mass-check","[name$=\"[f]\"]",true)});//]]></script>';		}
 		return Eleanor::$Template->Cover($c,$values['error'],'error');	}
 

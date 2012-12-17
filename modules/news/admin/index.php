@@ -21,7 +21,7 @@ list($cnt)=$R->fetch_row();
 
 $Eleanor->Categories=new Categories_manager;
 $Eleanor->Categories->table=$mc['c'];
-$Eleanor->Categories->deletecb='DelCategories';
+$Eleanor->Categories->ondelete='DelCategories';
 
 $Eleanor->module['links']=array(
 	'list'=>$Eleanor->Url->Prefix(),
@@ -63,7 +63,7 @@ $Eleanor->sc=array(
 	'name'=>array(
 		'title'=>$lang['tname'],
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'options'=>array(
 			'htmlsafe'=>true,
@@ -254,7 +254,7 @@ elseif(isset($_GET['delete']))
 	if(isset($_POST['ok']))
 	{
 		if($a['voting'])
-			$Eleanor->Voting_Manager->Delete($a['voting']);
+			$Eleanor->VotingManager->Delete($a['voting']);
 		Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$mc['n'].DIRECTORY_SEPARATOR.$id);
 		$R=Eleanor::$Db->Query('SELECT `tag`,COUNT(`id`) `cnt` FROM `'.$mc['rt'].'` WHERE `id`='.$id.' GROUP BY `tag`');
 		$tids=array();
@@ -274,7 +274,7 @@ elseif(isset($_GET['delete']))
 		Eleanor::$Db->Delete($mc['tl'],'`id`='.$id);
 		Eleanor::$Db->Delete($mc['rt'],'`id`='.$id);
 		Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-n'.$id.'\' LIMIT 1');
-		Eleanor::$Cache->Lib->CleanByTag($mc['n']);
+		Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 		return GoAway(empty($_POST['back']) ? true : $_POST['back']);
 	}
 	$title=$lang['delc'];
@@ -314,7 +314,7 @@ elseif(isset($_GET['swap']))
 			}
 		}
 		$R=Eleanor::$Db->Query('UPDATE `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) SET `lstatus`=`status` WHERE `id`='.$id);
-		Eleanor::$Cache->Lib->CleanByTag($mc['n']);
+		Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 	}
 	$back=getenv('HTTP_REFERER');
 	GoAway($back ? $back.'#it'.$id : true);
@@ -514,18 +514,18 @@ function ShowList()
 					while($a=$R->fetch_assoc())
 						$vots[]=$a['voting'];
 					if($vots)
-						$Eleanor->Voting_Manager->Delete($vots);
+						$Eleanor->VotingManager->Delete($vots);
 					foreach($_POST['mass'] as &$v)
 						Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.(int)$v);
 					RemoveTags($_POST['mass']);
 					Eleanor::$Db->Delete(P.'comments','`module`='.$Eleanor->module['id'].' AND `contid`'.Eleanor::$Db->In($_POST['mass']));
 					Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`'.$in);
 					Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$in);
-					Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+					Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 				break 2;
 			}
 			$R2=Eleanor::$Db->Query('UPDATE `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) SET `lstatus`=`status` WHERE `id`'.Eleanor::$Db->In($_POST['mass']));
-			Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+			Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 		}while(false);
 
 	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\')'.$where);
@@ -754,7 +754,7 @@ function AddEdit($id,$errors=array())
 		$values['show_detail']=isset($_POST['show_detail']);
 		$values['show_sokr']=isset($_POST['show_sokr']);
 		$values['_ping']=isset($_POST['_ping']) && $values['status']==1;
-		$Eleanor->Voting_Manager->bypost=true;
+		$Eleanor->VotingManager->bypost=true;
 	}
 	else
 		$bypost=false;
@@ -769,7 +769,7 @@ function AddEdit($id,$errors=array())
 		'nodraft'=>$Eleanor->Url->Construct(array('do'=>$id ? false : 'add','edit'=>$id ? $id : false,'nodraft'=>1)),
 		'draft'=>$Eleanor->Url->Construct(array('do'=>'draft')),
 	);
-	$c=Eleanor::$Template->AddEdit($id,$values,$errors,$Eleanor->Uploader->Show($id ? $Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id : false),$Eleanor->Voting_Manager->AddEdit($values['voting']),$bypost,$hasdraft,$back,$links);
+	$c=Eleanor::$Template->AddEdit($id,$values,$errors,$Eleanor->Uploader->Show($id ? $Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id : false),$Eleanor->VotingManager->AddEdit($values['voting']),$bypost,$hasdraft,$back,$links);
 	Start();
 	echo$c;
 }
@@ -927,8 +927,8 @@ function Save($id)
 	else
 		$voting=false;
 
-	$Eleanor->Voting_Manager->langs=Eleanor::$vars['multilang'] ? $langs : array();
-	$values['voting']=$Eleanor->Voting_Manager->Save($voting);
+	$Eleanor->VotingManager->langs=Eleanor::$vars['multilang'] ? $langs : array();
+	$values['voting']=$Eleanor->VotingManager->Save($voting);
 	if(is_array($values['voting']))
 		$errors+=$values['voting'];
 
@@ -1080,7 +1080,7 @@ function Save($id)
 		Eleanor::$Db->Update($Eleanor->module['config']['tt'],array('!cnt'=>'`cnt`+1'),'`id`'.Eleanor::$Db->In($addt));
 	}
 	Eleanor::$Cache->Obsolete($Eleanor->module['config']['n'].'_nextrun');
-	Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 	if($ping and Eleanor::$vars['publ_ping'])
 	{
 		$Eleanor->Url->furl=Eleanor::$vars['furl'];
@@ -1101,5 +1101,5 @@ function DelCategories($ids)
 		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!cats'=>'REPLACE(`cats`,\','.$v.',\',\'\')'));
 		Eleanor::$Db->Update($Eleanor->module['config']['tl'],array('!lcats'=>'REPLACE(`lcats`,\','.$v.',\',\'\')'));
 	}
-	Eleanor::$Cache->Lib->CleanByTag($Eleanor->module['config']['n']);
+	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 }

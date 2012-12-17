@@ -21,14 +21,25 @@ $Eleanor->module['links']=array(
 	'letters'=>$Eleanor->Url->Construct(array('do'=>'letters')),
 );
 
+$imgalt='';
 $Eleanor->sc_post=false;
 $Eleanor->sc=array(
 	'title'=>array(
 		'title'=>$lang['name'],
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
+		'load'=>function($co)use(&$imgalt)
+		{
+			$imgalt=$co['value'];
+			return array();
+		},
+		'save'=>function($co)use(&$imgalt)
+		{
+			$imgalt=$co['value'];
+			return$co['value'];
+		},
 		'options'=>array(
 			'htmlsafe'=>true,
 		),
@@ -36,7 +47,7 @@ $Eleanor->sc=array(
 	'uri'=>array(
 		'title'=>'URI',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
@@ -51,7 +62,7 @@ $Eleanor->sc=array(
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
 			'htmlsafe'=>true,
-			'4alt'=>'title',
+			'imgalt'=>&$imgalt,
 		),
 	),
 	'image'=>array(
@@ -86,7 +97,7 @@ $Eleanor->sc=array(
 	'http_code'=>array(
 		'title'=>$lang['http_status'],
 		'descr'=>$lang['http_status_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'load'=>function($a)
 		{
@@ -103,7 +114,7 @@ $Eleanor->sc=array(
 	'mail'=>array(
 		'title'=>'E-mail',
 		'descr'=>$lang['mail_'],
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'save'=>function($a,$Obj)
 		{
@@ -125,7 +136,7 @@ $Eleanor->sc=array(
 	'meta_title'=>array(
 		'title'=>'Window title',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
@@ -135,7 +146,7 @@ $Eleanor->sc=array(
 	'meta_descr'=>array(
 		'title'=>'Meta description',
 		'descr'=>'',
-		'type'=>'edit',
+		'type'=>'input',
 		'bypost'=>&$Eleanor->sc_post,
 		'multilang'=>Eleanor::$vars['multilang'],
 		'options'=>array(
@@ -160,7 +171,7 @@ if(isset($_GET['do']))
 				'error_t'=>array(
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_error_'],
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>true,
 					'bypost'=>&$post,
 					'options'=>array(

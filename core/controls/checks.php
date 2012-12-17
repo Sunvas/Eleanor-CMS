@@ -10,12 +10,22 @@
 */
 
 class ControlChecks extends BaseClass implements ControlsBase
-{
+{	/**
+	 * Получение настроек контрола
+	 *
+	 * @param ControlsManager $Obj
+	 */
 	public static function GetSettings($Obj)
 	{
 		return$Obj->GetSettings('items');
 	}
 
+	/**
+	 * Получение контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Control($a,$Obj)
 	{
 		$a['options']+=array('extra'=>array(),'options'=>array(),'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);
@@ -55,6 +65,12 @@ class ControlChecks extends BaseClass implements ControlsBase
 		return Eleanor::$Template->ControlChecks($html,null);
 	}
 
+	/**
+	 * Сохранение контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Save($a,$Obj)
 	{
 		$a+=array('default'=>array());
@@ -64,6 +80,12 @@ class ControlChecks extends BaseClass implements ControlsBase
 		return$res;
 	}
 
+	/**
+	 * Получение результата контрола
+	 *
+	 * @param array $a Опции контрола
+	 * @param ControlsManager $Obj
+	 */
 	public static function Result($a,$Obj,$controls)
 	{
 		$a['options']+=array('retvalue'=>false,'callback'=>'','eval'=>'','type'=>null/*options|callback|eval*/);

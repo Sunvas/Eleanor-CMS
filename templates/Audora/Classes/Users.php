@@ -131,11 +131,11 @@ class TplUsers
 			<table class="tabstyle tabform" id="ftable">
 				<tr class="infolabel"><td colspan="2"><a href="#">'.$ltpl['filters'].'</a></td></tr>
 				<tr>
-					<td><b>'.static::$lang['name'].'</b><br />'.Eleanor::Select('fi[namet]',$finamet,array('style'=>'width:30%')).Eleanor::Edit('fi[name]',$qs['']['fi']['name'],array('style'=>'width:68%')).'</td>
-					<td><b>'.static::$lang['fullname'].'</b><br />'.Eleanor::Select('fi[snamet]',$finamet,array('style'=>'width:30%')).Eleanor::Edit('fi[sname]',$qs['']['fi']['sname'],array('style'=>'width:68%')).'</td>
+					<td><b>'.static::$lang['name'].'</b><br />'.Eleanor::Select('fi[namet]',$finamet,array('style'=>'width:30%')).Eleanor::Input('fi[name]',$qs['']['fi']['name'],array('style'=>'width:68%')).'</td>
+					<td><b>'.static::$lang['fullname'].'</b><br />'.Eleanor::Select('fi[snamet]',$finamet,array('style'=>'width:30%')).Eleanor::Input('fi[sname]',$qs['']['fi']['sname'],array('style'=>'width:68%')).'</td>
 				</tr>
 				<tr>
-					<td><b>IDs</b><br />'.Eleanor::Edit('fi[id]',$qs['']['fi']['id']).'</td>
+					<td><b>IDs</b><br />'.Eleanor::Input('fi[id]',$qs['']['fi']['id']).'</td>
 					<td><b>'.static::$lang['group'].'</b><br />'.Eleanor::Select('fi[group]',Eleanor::Option(static::$lang['not_imp'],0).UserManager::GroupsOpts($qs['']['fi']['group'])).'</td>
 				</tr>
 				<tr>
@@ -143,8 +143,8 @@ class TplUsers
 					<td><b>'.static::$lang['register'].'</b> '.static::$lang['from-to'].'<br />'.Dates::Calendar('fi[regfrom]',$qs['']['fi']['regfrom'],true,array('style'=>'width:35%')).' - '.Dates::Calendar('fi[regto]',$qs['']['fi']['regto'],true,array('style'=>'width:35%')).'</td>
 				</tr>
 				<tr>
-					<td><b>E-mail</b><br />'.Eleanor::Edit('fi[email]',$qs['']['fi']['email']).'</td>
-					<td><b>IP</b><br />'.Eleanor::Edit('fi[ip]',$qs['']['fi']['ip']).'</td>
+					<td><b>E-mail</b><br />'.Eleanor::Input('fi[email]',$qs['']['fi']['email']).'</td>
+					<td><b>IP</b><br />'.Eleanor::Input('fi[ip]',$qs['']['fi']['ip']).'</td>
 				</tr>
 				<tr>
 					<td style="text-align:center;vertical-align:middle" colspan="2">'.Eleanor::Button($ltpl['apply']).'</td>
@@ -227,14 +227,14 @@ $(function(){
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->begin()
 			->head(static::$lang['lap'])
-			->item(static::$lang['name'],Eleanor::Edit('name',$values['name'],array('id'=>'name','tabindex'=>1)))
-			->item(static::$lang['fullname'],Eleanor::Edit('full_name',$values['full_name'],array('id'=>'full-name','tabindex'=>2)));
+			->item(static::$lang['name'],Eleanor::Input('name',$values['name'],array('id'=>'name','tabindex'=>1)))
+			->item(static::$lang['fullname'],Eleanor::Input('full_name',$values['full_name'],array('id'=>'full-name','tabindex'=>2)));
 
 		if($id)
 			$Lst->item(array(static::$lang['slname'],Eleanor::Check('_slname',$values['_slname'],array('tabindex'=>3,'id'=>'slname')),'tip'=>static::$lang['slname_']));
 
-		$Lst->item(array(static::$lang['pass'],Eleanor::Control('pass','password',$values['pass'],array('id'=>'pass','tabindex'=>4)),'tip'=>static::$lang['pass_']))
-			->item(static::$lang['passc'],Eleanor::Control('pass2','password',$values['pass2'],array('id'=>'pass2','tabindex'=>5)));
+		$Lst->item(array(static::$lang['pass'],Eleanor::Input('pass',$values['pass'],array('type'=>'password','id'=>'pass','tabindex'=>4)),'tip'=>static::$lang['pass_']))
+			->item(static::$lang['passc'],Eleanor::Input('pass2',$values['pass2'],array('type'=>'password','id'=>'pass2','tabindex'=>5)));
 
 		if($id)
 			$Lst->item(array(static::$lang['slpass'],Eleanor::Check('_slpass',$values['_slpass'],array('tabindex'=>6,'id'=>'slpass')),'tip'=>static::$lang['slpass_']));
@@ -242,9 +242,9 @@ $(function(){
 			$Lst->item(array(static::$lang['slnew'],Eleanor::Check('_slnew',$values['_slnew'],array('tabindex'=>6)),'tip'=>static::$lang['slnew_']));
 
 		$Lst->head(static::$lang['account'])
-			->item('E-mail',Eleanor::Edit('email',$values['email'],array('tabindex'=>7)))
+			->item('E-mail',Eleanor::Input('email',$values['email'],array('tabindex'=>7)))
 			->item(static::$lang['group'],Eleanor::Select('_group',UserManager::GroupsOpts($values['_group']),array('tabindex'=>8)))
-			->item(static::$lang['agroups'],Eleanor::Items('groups',UserManager::GroupsOpts($values['groups']),10,array('tabindex'=>9)))
+			->item(static::$lang['agroups'],Eleanor::Items('groups',UserManager::GroupsOpts($values['groups']),array('tabindex'=>9)))
 			->item(static::$lang['lang'],Eleanor::Select('language',$langs,array('tabindex'=>10)))
 			->item(static::$lang['timezone'],Eleanor::Select('timezone',Eleanor::Option($lang['by_default'],'',!$values['timezone']).Types::TimeZonesOptions($values['timezone']),array('tabindex'=>11)))
 			->item(array(static::$lang['staticip'],Eleanor::Check('staticip',$values['staticip'],array('tabindex'=>12)),'tip'=>static::$lang['staticip_']))
@@ -260,7 +260,7 @@ $(function(){
 			)
 			->item(
 				static::$lang['amanage'],
-				Eleanor::Control('avatar_location','hidden',$values['avatar_location'],array('id'=>'avatar-input'))
+				Eleanor::Input('avatar_location',$values['avatar_location'],array('id'=>'avatar-input','type'=>'hidden'))
 				.'<div id="avatar-local">
 					<div id="avatar-select"></div>
 					<div id="avatar-view">
@@ -409,7 +409,7 @@ $(function(){
 		}
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst->form(array('id'=>'form','data-pmm'=>static::$lang['PASSWORD_MISMATCH']))
 			->tabs(
@@ -649,7 +649,7 @@ $(function(){	$("table a").click(function(){		window.opener.AuthorSelected($(t
 	<td><ul><li>'.implode('</li><li>',array_splice($users,0,10)).'</li></ul></td>
 	<td><ul><li>'.implode('</li><li>',array_splice($users,0,10)).'</li></ul></td>
 	<td><ul><li>'.implode('</li><li>',$users).'</li></ul></td>
-	</tr>').'<tr><td colspan="3">'.Eleanor::$Template->Pages($total,$pp,$page,array($links['pages'],$links['first_page'])).'<div class="clr"></div><hr /><form method="post">'.Eleanor::Edit('name',$values['name'],array('tabindex'=>1)).Eleanor::Button(static::$lang['find'],'submit',array('tabindex'=>2)).'</form></td></tr></table></body></html>';	}
+	</tr>').'<tr><td colspan="3">'.Eleanor::$Template->Pages($total,$pp,$page,array($links['pages'],$links['first_page'])).'<div class="clr"></div><hr /><form method="post">'.Eleanor::Input('name',$values['name'],array('tabindex'=>1)).Eleanor::Button(static::$lang['find'],'submit',array('tabindex'=>2)).'</form></td></tr></table></body></html>';	}
 
 	/*
 		Шаблон страницы с редактированием форматов писем

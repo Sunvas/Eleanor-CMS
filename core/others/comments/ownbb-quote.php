@@ -11,8 +11,16 @@
 
 class CommentsQoute extends OwnBbCode
 {	public static
-		$findlink;#Объект UrlFunc
-	public static function PreDisplay($t,$p,$c,$cu)
+		$findlink;#Callback функция генерации ссылки на цитируемый комментарий
+
+	/**
+	 * Обработка информации перед показом на странице
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */	public static function PreDisplay($t,$p,$c,$cu)
 	{
 		$p=$p ? Strings::ParseParams($p) : array();
 		if(isset($p['noparse']))
@@ -29,11 +37,19 @@ class CommentsQoute extends OwnBbCode
 			'date'=>isset($p['date']) ? Eleanor::$Language->Date($p['date'],'fdt') : false,
 			'name'=>isset($p['name']) ? $p['name'] : false,
 			'id'=>$id,
-			'find'=>$id && is_object($fl) ? $fl($id) : false,
+			'find'=>$id ? $fl($id) : false,
 			'text'=>$c,
 		));
 	}
 
+	/**
+	 * Обработка информации перед её сохранением
+	 *
+	 * @param string $t Тег, который обрабатывается
+	 * @param string $p Параметры тега
+	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
+	 * @param bool $cu Флаг возможности использования тега
+	 */
 	public static function PreSave($t,$p,$c,$cu)
 	{		$c=preg_replace("#^(\r?\n?<br />\r?\n?)+#i",'',$c);
 		$c=preg_replace("#(\r?\n?<br />\r?\n?)+$#i",'',$c);

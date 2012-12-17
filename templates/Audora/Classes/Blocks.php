@@ -116,11 +116,11 @@ class TPLBlocks
 		{
 			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
-				$ml['title'][$k]=Eleanor::Edit('title['.$k.']');
+				$ml['title'][$k]=Eleanor::Input('title['.$k.']');
 		}
 		else
 			$ml=array(
-				'title'=>Eleanor::Edit('title'),
+				'title'=>Eleanor::Input('title'),
 			);
 
 		foreach($group['places'] as $k=>&$v)
@@ -131,18 +131,18 @@ class TPLBlocks
 						$plblocks.='<div class="block"><span class="caption">'.$blocks[$bv]['title'].'</span><div class="buttons">
 								<a href="#" title="'.static::$lang['delb'].'" class="deleteblock"><img src="'.$images.'delete.png" /></a>
 								<a href="#" title="'.static::$lang['edb'].'" class="editblock"><img src="'.$images.'edit.png" /></a>
-							</div>'.Eleanor::Control('block['.$k.'][]','hidden',$bv).'</div>';
+							</div>'.Eleanor::Input('block['.$k.'][]',$bv,array('type'=>'hidden')).'</div>';
 
 			if(Eleanor::$vars['multilang'])
 				foreach(Eleanor::$langs as $l=>&$lv)
-					$langs.=Eleanor::Control('place['.$k.']['.$l.']','hidden',isset($v['title']) ? Eleanor::FilterLangValues($v['title'],$l) : '');
+					$langs.=Eleanor::Input('place['.$k.']['.$l.']',isset($v['title']) ? Eleanor::FilterLangValues($v['title'],$l) : '',array('type'=>'hidden'));
 			else
-				$langs.=Eleanor::Control('place['.$k.']','hidden',isset($v['title']) ? Eleanor::FilterLangValues($v['title']) : '');
+				$langs.=Eleanor::Input('place['.$k.']',isset($v['title']) ? Eleanor::FilterLangValues($v['title']) : '',array('type'=>'hidden'));
 			$places.='<div class="place">
 				<div class="title"><span class="caption"></span><span class="buttons"><a href="#" title="'.static::$lang['delp'].'" class="deleteplace"><img src="'.$images.'delete.png" /></a> <a href="#" title="'.static::$lang['edp'].'" class="editplace"><img src="'.$images.'edit.png" /></a></span></div>
 				<div class="bcontainer">'.$plblocks.'</div>
 				<div class="resize"></div>'.$langs
-				.Eleanor::Control('placeinfo['.$k.']','hidden',isset($v['info']) ? $v['info'] : '').'</div>';		}
+				.Eleanor::Input('placeinfo['.$k.']',isset($v['info']) ? $v['info'] : '',array('type'=>'hidden')).'</div>';		}
 
 		$group['extra']+=array('verhor'=>'');
 
@@ -153,13 +153,13 @@ class TPLBlocks
 		return Eleanor::$Template->Cover(
 	$Lst->begin(array('id'=>'aep'))
 		->head('')
-		->item(static::$lang['name'],Eleanor::Edit('name'))
+		->item(static::$lang['name'],Eleanor::Input('name'))
 		->item($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null))
 		->button(Eleanor::Button('Ok','button').' '.Eleanor::Button(static::$lang['cancel'],'button'))
 		->end()
 	.($saved ? '<div id="saved">'.Eleanor::$Template->Message(static::$lang['gsaved'],'info').'</div><script type="text/javascript">/*<![CDATA[*/$(function(){ setTimeout(function(){ $("#saved").fadeOut("slow").remove() },10000) });//]]></script>' : '')
 	.'<div class="blocks"><form method="post">
-		<div style="padding:5px">'.static::$lang['curg'].Eleanor::Control('similar','hidden','').Eleanor::Select('group',$gopts).'<div style="float:right;text-align:right;"><a href="#" id="addp" style="font-weight:bold">'.static::$lang['addp'].'</a>'.($links['del_group'] ? ' | <a href="'.$links['del_group'].'" onclicl="return confirm(\''.static::$lang['aysdg'].'\')">'.static::$lang['delg'].'</a>' : '' ).'</div></div>
+		<div style="padding:5px">'.static::$lang['curg'].Eleanor::Input('similar','',array('type'=>'hidden')).Eleanor::Select('group',$gopts).'<div style="float:right;text-align:right;"><a href="#" id="addp" style="font-weight:bold">'.static::$lang['addp'].'</a>'.($links['del_group'] ? ' | <a href="'.$links['del_group'].'" onclicl="return confirm(\''.static::$lang['aysdg'].'\')">'.static::$lang['delg'].'</a>' : '' ).'</div></div>
 		<div class="all"><div class="available">
 				<b>'.static::$lang['avg'].'</b>'
 				.($avblocks ? '<ul>'.$avblocks.'</ul>' : '')
@@ -168,9 +168,9 @@ class TPLBlocks
 			</div>
 		</div>
 		<div class="hor"></div>
-		<div class="submitline">'.Eleanor::Control('extra[verhor]','hidden',$group['extra']['verhor'],array('id'=>'verhor'))
+		<div class="submitline">'.Eleanor::Input('extra[verhor]',$group['extra']['verhor'],array('id'=>'verhor','type'=>'hidden'))
 		.Eleanor::Button(static::$lang['save'])
-		.Eleanor::Control('_draft','hidden','g'.$gid)
+		.Eleanor::Input('_draft','g'.$gid,array('type'=>'hidden'))
 		.Eleanor::$Template->DraftButton($links['draft'],1)
 		.($hasdraft ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
 		.'</div>
@@ -433,7 +433,7 @@ $(window).load(function(){
 			<table class="tabstyle tabform" id="ftable">
 				<tr class="infolabel"><td colspan="2"><a href="#">'.$ltpl['filters'].'</a></td></tr>
 				<tr>
-					<td><b>'.$ltpl['title'].'</b><br />'.Eleanor::Edit('fi[title]',$qs['']['fi']['title']).'</td>
+					<td><b>'.$ltpl['title'].'</b><br />'.Eleanor::Input('fi[title]',$qs['']['fi']['title']).'</td>
 					<td><b>'.static::$lang['status'].'</b><br />'.Eleanor::Select('fi[status]',$statuses).'</td>
 				</tr>
 				<tr>
@@ -503,13 +503,13 @@ $(function(){
 			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
-				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
+				$ml['title'][$k]=Eleanor::Input('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
 				$ml['text'][$k]=$GLOBALS['Eleanor']->Editor->Area('text['.$k.']',Eleanor::FilterLangValues($values['text'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>4)));
 			}
 		}
 		else
 			$ml=array(
-				'title'=>Eleanor::Edit('title',$GLOBALS['Eleanor']->Editor->imgalt=$values['title'],array('tabindex'=>1,'id'=>'title')),
+				'title'=>Eleanor::Input('title',$GLOBALS['Eleanor']->Editor->imgalt=$values['title'],array('tabindex'=>1,'id'=>'title')),
 				'text'=>$GLOBALS['Eleanor']->Editor->Area('text',$values['text'],array('bypost'=>$bypost,'no'=>array('tabindex'=>4))),
 			);
 
@@ -517,7 +517,7 @@ $(function(){
 			->begin(array('id'=>'block'))
 			->item($ltpl['title'],Eleanor::$Template->LangEdit($ml['title'],null))
 			->item(static::$lang['source'],Eleanor::Select('ctype',Eleanor::Option(static::$lang['text'],'text',$values['ctype']=='text').Eleanor::Option(static::$lang['file'],'file',$values['ctype']=='file'),array('tabindex'=>2)))
-			->item(array(static::$lang['fileb'],Eleanor::Edit('file',$values['file'],array('tabindex'=>3)),'tr'=>array('class'=>'trfile')))
+			->item(array(static::$lang['fileb'],Eleanor::Input('file',$values['file'],array('tabindex'=>3)),'tr'=>array('class'=>'trfile')))
 			->item(array(static::$lang['tfile'],Eleanor::Check('textfile',$values['textfile'],array('tabindex'=>4)),'tr'=>array('class'=>'trfile preconf')))
 			->item(array(static::$lang['text'],Eleanor::$Template->LangEdit($ml['text'],null),'tr'=>array('class'=>'trtext')));
 
@@ -534,11 +534,11 @@ $(function(){
 		$cont=(string)$Lst->end();
 
 		$view=(string)$Lst->begin()
-			->item(array(static::$lang['afg'],Eleanor::Items('user_groups',UserManager::GroupsOpts($values['user_groups']),10,array('tabindex'=>6)),'tip'=>static::$lang['afg_']))
+			->item(array(static::$lang['afg'],Eleanor::Items('user_groups',UserManager::GroupsOpts($values['user_groups']),array('tabindex'=>6)),'tip'=>static::$lang['afg_']))
 			->item(static::$lang['ab'],Dates::Calendar('showfrom',$values['showfrom'],true,array('tabindex'=>7)))
 			->item(static::$lang['af'],Dates::Calendar('showto',$values['showto'],true,array('tabindex'=>8)))
 			->item(static::$lang['nt'],Eleanor::Check('notemplate',$values['notemplate'],array('tabindex'=>9)))
-			->item(array(static::$lang['tfb'],Eleanor::Edit('template',$values['template'],array('tabindex'=>10)),'tip'=>static::$lang['tfb_']))
+			->item(array(static::$lang['tfb'],Eleanor::Input('template',$values['template'],array('tabindex'=>10)),'tip'=>static::$lang['tfb_']))
 			->item($ltpl['activate'],Eleanor::Check('status',$values['status']==1,array('value'=>1,'tabindex'=>11)))
 			->end();
 
@@ -551,19 +551,19 @@ $(function(){
 		if($values['vars'])
 			foreach($values['vars'] as $k=>&$v)
 				$LLst->item(
-					array(Eleanor::Edit('vn[]',$k,array('style'=>'width:100%')),'trextra'=>array('style'=>'vertical-align:top')),
+					array(Eleanor::Input('vn[]',$k,array('style'=>'width:100%')),'trextra'=>array('style'=>'vertical-align:top')),
 					Eleanor::Text('vv[]',(string)$v,array('rows'=>2,'style'=>'width:100%')),
 					array(Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus'),2),'center')
 				);
 		else
 			$LLst->item(
-				array(Eleanor::Edit('vn[]','',array('style'=>'width:100%')),'trextra'=>array('style'=>'vertical-align:top')),
+				array(Eleanor::Input('vn[]','',array('style'=>'width:100%')),'trextra'=>array('style'=>'vertical-align:top')),
 				Eleanor::Text('vv[]','',array('rows'=>2,'style'=>'width:100%')),
 				array(Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus'),2),'center')
 			);
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$c=$Lst->form()
 			->tabs(
@@ -576,7 +576,7 @@ $(function(){
 				$back
 				.Eleanor::Button('Ok','submit',array('tabindex'=>20))
 				.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
-				.Eleanor::Control('_draft','hidden','b'.$id)
+				.Eleanor::Input('_draft','b'.$id,array('type'=>'hidden'))
 				.Eleanor::$Template->DraftButton($links['draft'],1)
 				.($hasdraft ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
 			)
@@ -616,17 +616,17 @@ $(function(){
 		{
 			$title=array();
 			foreach(Eleanor::$langs as $k=>&$v)
-				$title[$k]=Eleanor::Edit('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
+				$title[$k]=Eleanor::Input('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
 		}
 		else
-			$title=Eleanor::Edit('title',Eleanor::FilterLangValues($values['title']),array('tabindex'=>1,'id'=>'title'));
+			$title=Eleanor::Input('title',Eleanor::FilterLangValues($values['title']),array('tabindex'=>1,'id'=>'title'));
 
 		$ss='';
 		foreach(Eleanor::$services as $k=>&$v)
 			$ss.=Eleanor::Option($k,false,$values['service']==$k);
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form()
@@ -639,7 +639,7 @@ $(function(){
 				$back
 				.Eleanor::Button('Ok','submit',array('tabindex'=>20))
 				.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
-				.Eleanor::Control('_draft','hidden','i'.$id)
+				.Eleanor::Input('_draft','i'.$id,array('type'=>'hidden'))
 				.Eleanor::$Template->DraftButton($links['draft'],1)
 				.($hasdraft ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
 			)

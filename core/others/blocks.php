@@ -15,7 +15,12 @@ class Blocks
 
 	protected static
 		$dump;
-	public static function Get($place)
+
+	/**
+	 * ѕолучение блоков определенного места. ћетод, выполн€€ все блоки, возвращает готовый HTML дл€ непосредственной его вставке на странице.
+	 *
+	 * @param string $place Ќазвание места, например: left, right, top, bottom
+	 */	public static function Get($place)
 	{		if(!isset(self::$blocks))
 		{			self::$dump=false;
 			$order=$blocks=array();			$R=Eleanor::$Db->Query('SELECT `id`,`code`,`blocks` FROM `'.P.'blocks_ids` INNER JOIN `'.P.'blocks_groups` USING(`id`) WHERE `service`=\''.Eleanor::$service.'\'');
@@ -99,8 +104,10 @@ class Blocks
 		return$s;
 	}
 
-	/*
-		‘ункци€-обертка eval, чтобы тот не порол нам доступные переменные
-	*/
-	protected static function QuietEval($c)
-	{		return eval($c);	}}
+	/**
+	 * ќЄбертка дл€ eval, чтобы тот не испортил нам доступные переменные
+	 *
+	 * @param string Ќе€вна€ переменна€, код, который должен быть исполнен
+	 */
+	protected static function QuietEval()
+	{		return eval(func_get_arg(0));	}}

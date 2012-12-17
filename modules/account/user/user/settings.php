@@ -61,7 +61,7 @@ class AccountSettings
 			'full_name'=>array(
 				'title'=>$lang['full_name'],
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$post,
 				'options'=>array(
 					'htmlsafe'=>true,
@@ -152,7 +152,7 @@ class AccountSettings
 			'location'=>array(
 				'title'=>$lang['location'],
 				'descr'=>$lang['location_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$post,
 				'options'=>array(
 					'htmlsafe'=>true,
@@ -185,7 +185,7 @@ class AccountSettings
 			'jabber'=>array(
 				'title'=>'Jabber',
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$post,
 				'options'=>array(
 					'htmlsafe'=>true,
@@ -194,7 +194,7 @@ class AccountSettings
 			'skype'=>array(
 				'title'=>'Skype',
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$post,
 				'options'=>array(
 					'htmlsafe'=>true,
@@ -203,7 +203,7 @@ class AccountSettings
 			'icq'=>array(
 				'title'=>'ICQ',
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'save'=>function($a,$Obj)
 				{
 					$v=preg_replace('#[^0-9]+#','',$a['value']);
@@ -219,7 +219,7 @@ class AccountSettings
 			'vk'=>array(
 				'title'=>$lang['vk'],
 				'descr'=>$lang['vk_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'save'=>array(__class__,'SaveVK'),
 				'bypost'=>&$post,
 				'options'=>array(
@@ -229,7 +229,7 @@ class AccountSettings
 			'facebook'=>array(
 				'title'=>'Facebook',
 				'descr'=>'',
-				'type'=>'edit',
+				'type'=>'input',
 				'save'=>array(__class__,'SaveVK'),
 				'bypost'=>&$post,
 				'options'=>array(
@@ -239,7 +239,7 @@ class AccountSettings
 			'twitter'=>array(
 				'title'=>'Twitter',
 				'descr'=>$lang['twitter_'],
-				'type'=>'edit',
+				'type'=>'input',
 				'bypost'=>&$post,
 				'options'=>array(
 					'htmlsafe'=>true,
@@ -274,7 +274,7 @@ class AccountSettings
 
 			if($C->errors)
 			{				$post=true;
-				return static::Edit($controls,$avatar,$C->errors);
+				return static::Input($controls,$avatar,$C->errors);
 			}
 
 			UserManager::Update($values);
@@ -286,12 +286,14 @@ class AccountSettings
 				if($oldavatar['avatar_type']=='upload' and $oldavatar['avatar_location'] and $oldavatar['avatar_location']!=$av)
 					Files::Delete(Eleanor::$root.Eleanor::$uploads.'/avatars/'.$oldavatar['avatar_location']);
 				UserManager::Update(array('avatar_location'=>$av,'avatar_type'=>$atype));
-				Eleanor::$Login->user['avatar_location']=$av;
-				Eleanor::$Login->user['avatar_type']=$atype;
+				Eleanor::$Login->SetUserValue(array(
+					'avatar_location'=>$av,
+					'avatar_type'=>$atype,
+				));
 			}
 			$saved=true;
 		}
-		return static::Edit($controls,$avatar,array(),$saved);
+		return static::Input($controls,$avatar,array(),$saved);
 	}
 
 	public static function SaveVK($a)

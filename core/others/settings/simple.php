@@ -7,47 +7,40 @@
 	Interface: Rumin Sergey
 	=====
 	*Pseudonym
-*/
 
-/*
 	Внимание! Это урезанный файл, который не позволяет создавать / редактировать опции.
 	Для получения возможность создания и редактирования опций, пожалуйста. Воспользуйтесь файлом full.php
 */
 class Settings extends BaseClass
 {
 	public
-		$pp,#Префикс параметров
-		$sort_cb,#Функция сортировки опций
-		$passed=true,#Признак того, что пройдена внутренняя проверка того, что пользователь действительно пришел со своим (а не с эмулированным запросом)
-		$a_grs=array(),#Разрешенные группы для изменения настроек. Если равно false - группы редактировать запрещено
-		$a_opts=array(),#Разрешенные настройки для изменения. Весьма редкая опция
-		$only_opts=true,#Разрешить изменение только опций, относящихся к категориям выше.
-		$g_mod=false,#Разрешить создание, редактирование и удаление групп.
-		$opts_mod=false,#Разрешить создание, редактирование и удаление настроек.
+		$pp,#Префикс ключей GET параметров
+		$sort_cb,#Callback функция сортировки опций
+		$a_grs=array(),#Разрешенные группы для изменения настроек. Если false - группы редактировать запрещено
+		$a_opts=array(),#Разрешенные настройки для изменения
+		$only_opts=true,#Разрешить изменение только опций, относящихся к категориям выше
+		$g_mod=false,#Разрешить создание, редактирование и удаление групп
+		$opts_mod=false,#Разрешить создание, редактирование и удаление настроек
 		$a_move=true,#Разрешить перемещение групп и настроек
 		$a_search=false,#Разрешить поиск
 		$opts_wg=false,#Показывать опции без групп (для админа)
 		$a_import=false,#Разрешить импорт настроек
 		$a_export=false;#Разрешить экспорт настроек
 
-	public static function AddTabs($text,$tabs=1)
-	{
-		$s=str_repeat("\t",$tabs);
-		return$s.str_replace("\n","\n".$s,trim($text));
-	}
-
 	final public function __construct()
 	{
 		Eleanor::$Template->queue[]='Settings';
 	}
 
-	/*
-		Основная функция
-		Допустимые значения $param :
-			full - отобразить весь интерфейс настроек для админа (без ограничений)
-			groups - отобразить интерфейс групп с учетом настроек ограничений выше
-			group - отобразить настройки определенной группы при этом в $value следует передать идентификатор этой группы
-	*/
+	/**
+	 * Получение интерфейса настроек
+	 *
+	 * @param string $param Тип интерфейса, который необходимо получить. Допустимые значения:
+	 * full - отобразить весь интерфейс настроек для админа (без ограничений)
+	 * groups - отобразить интерфейс групп с учетом настроек ограничений выше
+	 * group - отобразить настройки определенной группы при этом в $value следует передать идентификатор этой группы
+	 * @param string $value Идентификатор интерфейса, который необходимо получить
+	 */
 	public function GetInterface($param,$value='')
 	{
 		if($param=='full')
@@ -771,6 +764,11 @@ class Settings extends BaseClass
 		}
 	}
 
+	/**
+	 * Запись ссылок навигации в массив$Eleanor->module['links_settings']
+	 *
+	 * @param string $gid ID группы настроек
+	 */
 	protected function DoNavigation($gid=false)
 	{		$El=Eleanor::getInstance();
 		$El->module['links_settings']=array(
@@ -783,11 +781,11 @@ class Settings extends BaseClass
 		);
 	}
 
-	/*
-		Показать настройки из группы
-		Если $id - числов - это ИД группы, нет - имя.
-		Если задать $id=-1, то будут браться настройки из $allowed_opts
-	*/
+	/**
+	 * Получение настроек группы
+	 *
+	 * @param int|string $id Идентификатор группы. Если $id число - это ID группы, нет - имя. Если равно -1, то настройки будут браться из $allowed_opts
+	 */
 	public function ShowGroup($id=0)
 	{		$lang=Eleanor::$Language['settings'];
 		$show_grs=false;
@@ -825,6 +823,13 @@ class Settings extends BaseClass
 		return$this->ShowListOptions($a,$show_grs,$id);
 	}
 
+	/**
+	 * Преварительная обработка контролов настроек
+	 *
+	 * @param array $a Ссылка на массив с результатом работы
+	 * @param array $temp Дамп контрола из БД
+	 * @param bool $bypost Признак того, что значение контрола нужно брать из POST запроса
+	 */
 	protected function PreControls(&$a,$temp,$bypost=false)
 	{
 		$temp['multilang']&=Eleanor::$vars['multilang'];
@@ -867,6 +872,14 @@ class Settings extends BaseClass
 		Eleanor::$nolog=false;
 	}
 
+	/**
+	 * Получение интерфейса списка настроек
+	 *
+	 * @param array $a Массив контролов настроек
+	 * @param bool $gshow Флаг отображения подгрупп опций
+	 * @param int $group ID группы
+	 * @param string $error Ошибка
+	 */
 	protected function ShowListOptions(array$a,$gshow=true,$group=0,$error='')
 	{
 		$controls=$langs=$errors=$values=array();
@@ -926,6 +939,11 @@ class Settings extends BaseClass
 		return Eleanor::$Template->SettOptionsList($controls,$values,$controls ? $C->errors : array(),$errors,$links,$word,$gshow,$error);
 	}
 
+	/**
+	 * Оптимизация групп
+	 *
+	 * @param bool $redirect Флаг выполнения перехода в корень по завершению работы метода
+	 */
 	protected function OptimizeGroups($redirect=true)
 	{
 		if(!Eleanor::$our_query)
@@ -938,6 +956,12 @@ class Settings extends BaseClass
 			GoAway(true);
 	}
 
+	/**
+	 * Оптимизация настроек группы
+	 *
+	 * @param int $group ID группы
+	 * @param bool $redirect Флаг выполнения перехода в корень по завершению работы метода
+	 */
 	protected function OptimizeOptions($group,$redirect=true)
 	{
 		if(!Eleanor::$our_query)
@@ -950,6 +974,9 @@ class Settings extends BaseClass
 			GoAway(array('sg'=>$group));
 	}
 
+	/**
+	 * Интерфейс экспорта настроек
+	 */
 	protected function Export()
 	{
 		if(!$this->a_export)
@@ -970,58 +997,12 @@ class Settings extends BaseClass
 		return Eleanor::$Template->SettExport($grs,$groups,$options);
 	}
 
-	/*
-<?xml version="1.0" encoding="cp1251"?>
-<eleanoroptions version="1">
-<group name="gname" protected="1" keyword="keywords" onexists="ignore" pos="1">
-	<title>
-		<english>Title</english>
-		<russian>Заголовок</russian>
-	</title>
-	<descr>
-		<english>Descr</english>
-		<russian>Описание</russian>
-	</descr>
-</group>
-<option name="opname" protected="1" group="grname" type="checkbox" cache="1" multilang="1" onexists="ignore" pos="1">
-	<title>
-		<english>Title</english>
-		<russian>Заголовок</russian>
-	</title>
-	<descr>
-		<english>Descr</english>
-		<russian>Описание</russian>
-	</descr>
-	<value>
-		<english>Value</english>
-		<russian>Значение</russian>
-	</value>
-	<serialized>
-		<english>1</english>
-		<russian>1</russian>
-	</serialized>
-	<default>
-		<english>Default</english>
-		<russian>По умолчанию</russian>
-	</default>
-	<extra>
-		<english>Extra</english>
-		<russian>Экстра</russian>
-	</extra>
-	<extra>
-		<english>Startgroup</english>
-		<russian>Новая группа</russian>
-	</extra>
-	<evalsave>
-	11111111111111111111111
-	</evalsave>
-	<evalload>
-	222222222222222
-	</evalload>
-</option>
-</eleanoroptions>
-	*/
-
+	/**
+	 * Интерфейс импорта настроек
+	 *
+	 * @param string $message Сообщения импорта
+	 * @param string $error Ошибка импорта
+	 */
 	protected function Import($message='',$error='')
 	{
 		if(!$this->a_import)
@@ -1031,6 +1012,11 @@ class Settings extends BaseClass
 		return Eleanor::$Template->SettImport($message,$error);
 	}
 
+	/**
+	 * Непосредственное осуществление импорта
+	 *
+	 * @param string $text Содержимое xml файла импорта
+	 */
 	public function ProcessImport($text)
 	{		$lang=Eleanor::$Language['settings'];
 		try
@@ -1123,7 +1109,7 @@ class Settings extends BaseClass
 					'protected'=>0,
 					'onexists'=>'ignore',
 					'group'=>'',
-					'type'=>'edit',
+					'type'=>'input',
 					'multilang'=>0,
 					'eval_save'=>isset($O->evalsave) ? (string)$O->evalsave : '',
 					'eval_load'=>isset($O->evalload) ? (string)$O->evalload : '',

@@ -102,8 +102,7 @@ class ApiNews extends BaseClass
 			{
 				Language::$main=$lang;
 				Eleanor::$Language->Change();
-				$Categs=new Categories;
-				$Categs->Init($this->config['c']);
+				$Categs=new Categories($this->config['c']);
 				$a['_cat']=$a['lcats'] ? (int)ltrim($a['lcats'],',') : false;
 				if($a['_cat'] and $El->Url->furl)
 				{
@@ -116,9 +115,8 @@ class ApiNews extends BaseClass
 		}
 		elseif($cid or $curls)
 		{
-			$Categs=new Categories;
-			$Categs->Init($this->config['c']);
-			$category=$Categs->GetCategory($cid,$curls);
+			$Categs=new Categories($this->config['c']);
+			$category=$Categs->GetCategory($cid ? $cid : $curls);
 			if($El->Url->furl)
 			{
 				Language::$main=$lang;
@@ -304,8 +302,7 @@ class ApiNews extends BaseClass
 				}
 
 				Language::$main=$lang;
-				$Categs=new Categories;
-				$Categs->Init($this->config['c'],true);
+				$Categs=new Categories($this->config['c'],true);
 				if(!$data[$lang]['cats'])
 				{
 					$Url->ending=$Url->delimiter;

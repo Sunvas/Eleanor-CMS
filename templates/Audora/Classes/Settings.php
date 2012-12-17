@@ -223,7 +223,7 @@ class TPLSettings
 
 		return($error ? Eleanor::$Template->Message($error,'error') : '')
 			.'<form method="post" enctype="multipart/form-data" action="'.$links['form'].'">'
-			.$c.'</table>'.Eleanor::Control('ids','hidden',join(',',$ids))
+			.$c.'</table>'.Eleanor::Input('ids',join(',',$ids),array('type'=>'hidden'))
 			.'<div class="submitline">'.Eleanor::Button().'</div>'
 			.Eleanor::$Template->CloseTable().'</form>'
 			.($tip ? '<script type="text/javascript">//<![CDATA[
@@ -287,7 +287,7 @@ $(function(){
 	{		static::Menu('import');
 		return Eleanor::$Template->Cover('<form method="post" enctype="multipart/form-data">'
 			.($mess ? Eleanor::$Template->Message(nl2br($mess),'info') : '')
-			.'<table class="tabstyle tabform"><tr class="tabletrline1"><td class="label">'.static::$lang['select_file_im'].'</td><td>'.Eleanor::Control('import','file','',array('tabindex'=>1)).'</td></tr></table><div class="submitline">'.Eleanor::Button(static::$lang['do_import'],'submit',array('tabindex'=>2)).'</div></form>',$error);
+			.'<table class="tabstyle tabform"><tr class="tabletrline1"><td class="label">'.static::$lang['select_file_im'].'</td><td>'.Eleanor::Input('import',false,array('tabindex'=>1,'type'=>'file')).'</td></tr></table><div class="submitline">'.Eleanor::Button(static::$lang['do_import'],'submit',array('tabindex'=>2)).'</div></form>',$error);
 	}
 
 	/*
@@ -342,13 +342,13 @@ $(function(){
 		{			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
-				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
+				$ml['title'][$k]=Eleanor::Input('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
 				$ml['descr'][$k]=Eleanor::Text('descr['.$k.']',Eleanor::FilterLangValues($values['descr'],$k),array('tabindex'=>2));
 			}
 		}
 		else
 			$ml=array(
-				'title'=>Eleanor::Edit('title',$values['title'],array('tabindex'=>1)),
+				'title'=>Eleanor::Input('title',$values['title'],array('tabindex'=>1)),
 				'descr'=>Eleanor::Text('descr',$values['descr'],array('tabindex'=>2)),
 			);
 		$extra=$id && $values['protected'] ? array('disabled'=>true) : array();
@@ -357,16 +357,16 @@ $(function(){
 			->begin()
 			->item(array($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null),'imp'=>true))
 			->item($ltpl['descr'],Eleanor::$Template->LangEdit($ml['descr'],null))
-			->item(array(static::$lang['pos'],Eleanor::Edit('pos',$values['pos'],array('tabindex'=>3)),'tip'=>static::$lang['pos_']))
-			->item(array(static::$lang['keyw_g'],Eleanor::Edit('keyword',$values['keyword'],array('tabindex'=>4)+$extra),'imp'=>true))
-			->item(array(static::$lang['priv_name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>5)+$extra),'imp'=>true))
+			->item(array(static::$lang['pos'],Eleanor::Input('pos',$values['pos'],array('tabindex'=>3)),'tip'=>static::$lang['pos_']))
+			->item(array(static::$lang['keyw_g'],Eleanor::Input('keyword',$values['keyword'],array('tabindex'=>4)+$extra),'imp'=>true))
+			->item(array(static::$lang['priv_name'],Eleanor::Input('name',$values['name'],array('tabindex'=>5)+$extra),'imp'=>true))
 			->item(static::$lang['prot_g'],Eleanor::Check('protected',$values['protected'],array('tabindex'=>6)+$extra));
 
 		if(Eleanor::$vars['multilang'])
 			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,4));
 
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 		$Lst->end()->submitline(
 			$back
 			.Eleanor::Button('Ok','submit',array('tabindex'=>7))
@@ -412,22 +412,22 @@ $(function(){
 			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
-				$ml['title'][$k]=Eleanor::Edit('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
+				$ml['title'][$k]=Eleanor::Input('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
 				$ml['descr'][$k]=Eleanor::Text('descr['.$k.']',Eleanor::FilterLangValues($values['descr'],$k),array('tabindex'=>2));
-				$ml['startgroup'][$k]=Eleanor::Edit('startgroup['.$k.']',Eleanor::FilterLangValues($values['startgroup'],$k),array('tabindex'=>4));
+				$ml['startgroup'][$k]=Eleanor::Input('startgroup['.$k.']',Eleanor::FilterLangValues($values['startgroup'],$k),array('tabindex'=>4));
 			}
 		}
 		else
 			$ml=array(
-				'title'=>Eleanor::Edit('title',$values['title'],array('tabindex'=>1)),
+				'title'=>Eleanor::Input('title',$values['title'],array('tabindex'=>1)),
 				'descr'=>Eleanor::Text('descr',$values['descr'],array('tabindex'=>2)),
-				'startgroup'=>Eleanor::Edit('startgroup',$values['startgroup'],array('tabindex'=>4)),
+				'startgroup'=>Eleanor::Input('startgroup',$values['startgroup'],array('tabindex'=>4)),
 			);
 
 		$ltpl=Eleanor::$Language['tpl'];
 		$extra=$id && $values['protected'] ? array('disabled'=>true) : array();
 		if($back)
-			$back=Eleanor::Control('back','hidden',$back);
+			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 		$langs=array();
 		foreach(Eleanor::$langs as $k=>&$v)
 			$langs[]='"'.$k.'"';
@@ -442,8 +442,8 @@ $(function(){
 			->item($ltpl['descr'],Eleanor::$Template->LangEdit($ml['descr'],null))
 			->item(array(static::$lang['group'],Eleanor::Select('group',$grs,array('tabindex'=>3)+$extra),'imp'=>true))
 			->item(static::$lang['beg_subg'],Eleanor::$Template->LangEdit($ml['startgroup'],null))
-			->item(array(static::$lang['pos'],Eleanor::Edit('pos',$values['pos'],array('tabindex'=>5)),'tip'=>static::$lang['pos_']))
-			->item(static::$lang['priv_name'],Eleanor::Edit('name',$values['name'],array('tabindex'=>6)+$extra))
+			->item(array(static::$lang['pos'],Eleanor::Input('pos',$values['pos'],array('tabindex'=>5)),'tip'=>static::$lang['pos_']))
+			->item(static::$lang['priv_name'],Eleanor::Input('name',$values['name'],array('tabindex'=>6)+$extra))
 			->item(static::$lang['prot_o'],Eleanor::Check('protected',$values['protected'],array('tabindex'=>7)+$extra));
 
 		if(Eleanor::$vars['multilang'])

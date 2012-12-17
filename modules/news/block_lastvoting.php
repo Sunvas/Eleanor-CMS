@@ -37,9 +37,8 @@ if($narr)
 	if($mid==$Eleanor->module['id'])
 		$C=$Eleanor->Categories;
 	else
-	{		$C=new Categories;
-		$C->Init($conf['c']);
-	}
+		$C=new Categories($conf['c']);
+
 	if(isset($Eleanor->Voting))
 		$V=$Eleanor->Voting;
 	else

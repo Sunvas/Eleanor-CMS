@@ -16,7 +16,7 @@ $Eleanor=Eleanor::getInstance();
 Eleanor::$service='user';#ID сервиса
 Eleanor::$Language->queue['main']='langs/user-*.php';
 Eleanor::LoadOptions(array('site','users-on-site'));
-Eleanor::LoadService();
+Eleanor::InitService();
 $Eleanor->Url->furl=Eleanor::$vars['furl'];
 $Eleanor->Url->delimiter=Eleanor::$vars['url_static_delimiter'];
 $Eleanor->Url->defis=Eleanor::$vars['url_static_defis'];
@@ -382,7 +382,7 @@ function Error($e=false,$extra=array())
 			header('Content-Type: text/html; charset='.Eleanor::$charset,true,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503);
 		while(ob_get_contents()!==false)
 			ob_end_clean();
-		ob_start();ob_start();#Странный глюк PHP... Достаточно сделать Parse error в index.php темы и Core::FinishOutPut будет получать пустое значение
+		ob_start();ob_start();ob_start();#Странный глюк PHP... Достаточно сделать Parse error в index.php темы (или Template index was not found!) и Core::FinishOutPut будет получать пустое значение
 		echo$e;
 	}
 	else
@@ -481,7 +481,7 @@ function LangNewUrl($url,$l)
 {global$Eleanor;
 	$our=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
 	if(strpos($url,$our)!==0 or $our==$url or !$url=preg_replace('#^'.preg_quote($our,'#').'('.preg_quote(Eleanor::$filename,'#').'\??)?#i','',$url))
-		return $l==LANGUAGE ? $our : $our.$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[$l]['uri']),true,Eleanor::$vars['url_static_delimiter']);
+		return $l==LANGUAGE ? $our : $our.$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[$l]['uri']),true,false).$url;
 
 	$Eleanor->Url->__construct($url);
 
@@ -499,7 +499,7 @@ function LangNewUrl($url,$l)
 				$olds=$Eleanor->Url->string;
 				$m=$Eleanor->Url->ParseToValue('module',true);
 				if(!$m)
-					return LangNewUrl('',$l);
+					return LangNewUrl($olds,$l);
 				break;
 			}
 		$q=true;
@@ -514,7 +514,7 @@ function LangNewUrl($url,$l)
 		$m=isset($q['module']) ? $q['module'] : 0;
 		unset($q['module'],$q['lang']);#Смотри в Static api. Для избежания конфликтов с $Url->prefix
 		if(!$m and !$q)
-			return LangNewUrl('',$l);
+			return LangNewUrl($olds,$l);
 	}
 	if($lang!=Language::$main)
 		Language::$main=$lang;
@@ -537,7 +537,7 @@ function LangNewUrl($url,$l)
 
 	$R=Eleanor::$Db->Query('SELECT `sections`,`path`,`api` FROM `'.P.'modules` WHERE `id`='.$mid.' AND `active`=1 LIMIT 1');
 	if(!$a=$R->fetch_assoc())
-		return LangNewUrl('',$l);
+		return LangNewUrl($olds,$l);
 
 	$path=Eleanor::FormatPath($a['path']).DIRECTORY_SEPARATOR;
 	$a['sections']=unserialize($a['sections']);

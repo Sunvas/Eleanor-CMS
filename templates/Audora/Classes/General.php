@@ -155,7 +155,7 @@ $(function(){
 			$c.=Eleanor::$Template->Message(static::$lang['cache_deleted'],'info');
 
 		return$c.Eleanor::$Template->OpenTable().'<div class="blockcache">
-		<div class="colomn"><div class="pad">'.static::$lang['cache_'].'<div class="submitline"><form method="post">'.Eleanor::Control('kill_cache','hidden','1').Eleanor::Button(static::$lang['cachedel'],'submit',array('style'=>'button')).'</form></div></div></div>
+		<div class="colomn"><div class="pad">'.static::$lang['cache_'].'<div class="submitline"><form method="post">'.Eleanor::Input('kill_cache','1',array('type'=>'hidden')).Eleanor::Button(static::$lang['cachedel'],'submit',array('style'=>'button')).'</form></div></div></div>
 			<div class="clr"></div></div>'.Eleanor::$Template->CloseTable();
 	}
 
@@ -189,7 +189,7 @@ $(function(){
 			->item('Memory limit',$values['ml'])
 			->item('Max execution time',$values['met'])
 			->item('Max int',PHP_INT_MAX)
-			->item(static::$lang['get_value'],'<form method="post">'.Eleanor::Edit('ini_get',$values['ini_get']).Eleanor::Button('?').'</form>');
+			->item(static::$lang['get_value'],'<form method="post">'.Eleanor::Input('ini_get',$values['ini_get']).Eleanor::Button('?').'</form>');
 		if($values['ini_get_v'] or $values['ini_get'])
 			$Lst->item(htmlspecialchars($values['ini_get'],ELENT,CHARSET),$values['ini_get_v'] ? htmlspecialchars($values['ini_get_v'],ELENT,CHARSET) : '&mdash;');
 		return Eleanor::$Template->Cover(

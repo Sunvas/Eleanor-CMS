@@ -61,7 +61,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 			break;
 
 		$subject=Eleanor::FilterLangValues($config['subject']);
-		Eleanor::Mail($whom[$values['whom']],Eleanor::ExecBBLogic($subject,array('s'=>$values['subject'])),$values['message'],array('files'=>$files));
+		Email::Simple($whom[$values['whom']],Eleanor::ExecBBLogic($subject,array('s'=>$values['subject'])),$values['message'],array('files'=>$files));
 		$_SESSION['can']=false;
 
 		$title[]=$lang['st'];

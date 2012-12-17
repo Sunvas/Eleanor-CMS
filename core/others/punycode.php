@@ -11,10 +11,13 @@
 
 class Punycode
 {
-	/*
-		Преобразование домена.
-		$encode: true - кодировать, false - декодировать
-	*/
+	/**
+	 * Кодирование и декозирование домена в Punycode и из Punycode.
+	 * Метод сам определяет, представлен ли домен в нужной форме и, если нет - выполняет преобразования.
+	 *
+	 * @param string $domain Доменное имя
+	 * @param bool $encode Флаг кодирования в Punycode
+	 */
 	public static function Domain($domain,$encode=true)
 	{
 		if(!Strings::CheckUrl($domain))
@@ -41,9 +44,11 @@ class Punycode
 		return$domain;
 	}
 
-	/*
-		Из punycode в utf-8
-	*/
+	/**
+	 * Кодирование Punycode в utf-8 строку
+	 *
+	 * @param string $s Домен в Punycode
+	 */
 	public static function Decode($s)
 	{
 		if(strpos($s,'xn--')!==0)
@@ -107,9 +112,11 @@ class Punycode
 		return$s;
 	}
 
-	/*
-		Из utf-8 в punycode
-	*/
+	/**
+	 * Декодирование utf-8 строки в Punycode
+	 *
+	 * @param string $s Домен
+	 */
 	public static function Encode($s)
 	{
 		$values=$unicode=array();
@@ -213,6 +220,11 @@ class Punycode
 			return'xn--'.$ex;
 	}
 
+	/**
+	 * Внутренний метод
+	 *
+	 * @param int $d
+	 */
 	protected static function EncodeDigit($d)
 	{
 		return chr($d+22+75*($d<26));

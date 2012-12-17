@@ -293,7 +293,8 @@ CREATE TABLE `{$prefix}modules` (
 `image` varchar(50) NOT NULL,
 `active` tinyint NOT NULL default '0',
 `api` varchar(50) NOT NULL,
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX (`active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=".DB_CHARSET;
 
 $tables[]="DROP TABLE IF EXISTS `{$prefix}multisite_jump`";

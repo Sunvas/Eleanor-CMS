@@ -9,25 +9,28 @@
 	*Pseudonym
 */
 
-class Voting_Manager extends BaseClass
+class VotingManager extends BaseClass
 {
 	public
-		$tpl='VotingManager',#Шаблон оформления
-		$name=array('voting'),
-		$langs=array(),#Языки. Пустое - не мультиязычно, '' - передалось мультиязычно, но нужно сохранить только Language::$main, массив - сохраняем только нужное
-
-		$noans=false,#Запретить смену количества проголосовавших
-
+		$tpl='VotingManager',#Имя класса шаблона оформления
+		$name=array('voting'),#Массив вложенности имен контролов, в данном случае имена будут иметь вид votin[c1], votin[c2] и т.п.
+		$langs=array(),#Языки. Пустое - не мультиязычно, '' - передалось мультиязычно, но нужно сохранить только Language::$main, массив - сохраняем только нужные языки
+		$noans=false,#Запретить изменения количества проголосовавших
 		$Language,#Языковые переменные
-
 		$ti=1,#Tab Index
 		$bypost=false,#By post
 		$POST,#Откуда брать значения POST запроса. Если null - из $_POST-a, если нет - то из этого массива
 		$controls=false;#Контролы
 
 	protected
-		$table;#Начальная таблица с опросами. Остальные определяются автоматически путем добавления суффиксов
+		$table;#Основная таблица. Остальные определяются автоматически путем добавления суффиксов
 
+	/**
+	 * Конструктор редактора опроса
+	 *
+	 * @param string|FALSE $t Имя основной таблицы
+	 * @param string $l Путь к языковому файлу
+	 */
 	public function __construct($t=false,$l='voting_manager-*.php')
 	{
 		$this->table=$t ? $t : P.'voting';
@@ -38,6 +41,11 @@ class Voting_Manager extends BaseClass
 		$this->Language->queue[]=$l;
 	}
 
+	/**
+	 * Вывод интерфейса правки опроса
+	 *
+	 * @param int|FALSE Идентификатор редактируемого опроса
+	 */
 	public function AddEdit($id=false)
 	{
 		if(!$this->controls)
@@ -142,6 +150,11 @@ class Voting_Manager extends BaseClass
 		return$c;
 	}
 
+	/**
+	 * Сохранение опроса в БД
+	 *
+	 * @param int|FALSE Идентификатор сохраняемого опроса
+	 */
 	public function Save($id=false)
 	{
 		$C=new Controls;
@@ -378,6 +391,11 @@ class Voting_Manager extends BaseClass
 		return$id;
 	}
 
+	/**
+	 * Удаление опроса
+	 *
+	 * @param int|array Идентификатор удаляемого опроса
+	 */
 	public function Delete($ids)
 	{
 		$ids=Eleanor::$Db->In($ids);
@@ -388,6 +406,9 @@ class Voting_Manager extends BaseClass
 		Eleanor::$Db->Delete($this->table.'_q_results','`id`'.$ids);
 	}
 
+	/**
+	 * Получение контролов опроса по умолчанию
+	 */
 	public function Controls()
 	{		$THIS=$this;#ToDo! PHP 5.4 убрать этот костыль (смотри ниже) use ($THIS)
 		$ans=array();
@@ -536,7 +557,7 @@ class Voting_Manager extends BaseClass
 					'title'=>array(
 						'title'=>$this->Language['question'],
 						'descr'=>'',
-						'type'=>'edit',
+						'type'=>'input',
 						'check'=>function($value,$langs) use ($THIS)
 						{							$errors=array();
 							if($THIS->langs)

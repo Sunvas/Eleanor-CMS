@@ -116,7 +116,7 @@ elseif(isset($_GET['settpl'],$_GET['to']))
 		if(isset($_POST['submit']))
 		{
 			Eleanor::$Db->Update(P.'services',array('theme'=>$theme),'`name`='.Eleanor::$Db->Escape($name).' LIMIT 1');
-			Eleanor::$Cache->Lib->CleanByTag('');
+			Eleanor::$Cache->Lib->DeleteByTag('');
 		}
 		elseif(isset($_POST['refuse']))
 		{

@@ -179,7 +179,7 @@ switch(isset($_GET['do']) ? $_GET['do'] : '')
 		$ck=false;
 		if(isset($_POST['kill_cache']))
 		{
-			Eleanor::$Cache->Lib->CleanByTag('');
+			Eleanor::$Cache->Lib->DeleteByTag('');
 			$ck=true;
 		}
 		$c=Eleanor::$Template->General($nums,$comments,$users,$groups,$mynotes ? OwnBB::Parse($mynotes) : '',$conotes ? OwnBB::Parse($conotes) : '',$ck);

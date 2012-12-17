@@ -64,13 +64,13 @@ if($errors)
 												<div class="wbpad enterform">
 														<p>
 															<span><?php echo$ltpl['login']?></span>
-															<?php echo Eleanor::Edit('login[name]',$login,array('size'=>10,'tabindex'=>1))?>
+															<?php echo Eleanor::Input('login[name]',$login,array('size'=>10,'tabindex'=>1))?>
 														</p>
 														<p>
 															<span><?php echo$ltpl['pass'],'</span>',
-																		Eleanor::Control('login[password]','password',$password,array('size'=>10,'tabindex'=>2)),
+																		Eleanor::Input('login[password]',$password,array('type'=>'password','size'=>10,'tabindex'=>2)),
 																		'</p>',
-																		$captcha ? '<p><span title="'.$lang['captcha_'].'">'.$lang['captcha'].'</span>'.Eleanor::Edit('check','',array('tabindex'=>3)).'<br />'.$captcha.'</p>' : ''?>
+																		$captcha ? '<p><span title="'.$lang['captcha_'].'">'.$lang['captcha'].'</span>'.Eleanor::Input('check','',array('tabindex'=>3)).'<br />'.$captcha.'</p>' : ''?>
 												</div>
 											</div>
 											<div class="wpbtm"><b><span>&nbsp;</span></b></div>
@@ -109,8 +109,7 @@ CORE.MSQueue.done(function(qw){	var al=$(".submitline");
 			<div class="elfoot">
 				<span class="copyright">
 					<?php
-#Âíèìàíèå! ÑÀÌÎÂÎËÜÍÎÅ ÓÁÈÐÀÍÈÅ ÊÎÏÈÐÀÉÒÎÂ ×ÐÅÂÀÒÎ ÁËÎÊÈÐÎÂÊÎÉ ÍÀ ÎÔÈÖÈÀËÜÍÎÌ ÑÀÉÒÅ ÑÈÑÒÅÌÛ È ÏÐÅÑËÅÄÓÅÒÑß ÏÎ ÇÀÊÎÍÓ!
-#ÊÎÏÈÐÀÉÒÛ ÌÅÍßÒÜ/ÏÐÀÂÈÒÜ ÍÅËÜÇß! ÑÎÂÑÅÌ!! ÎÍÈ ÄÎËÆÍÛ ÎÑÒÀÂÀÒÜÑß ÍÅÈÇÌÅÍÍÛÌÈ ÄÎ ÁÈÒÀ! Òàêæå íåäîïóñòèìî è èõ ñêðûòèå!
+#Ïîæàëóéñòà, íå óäàëÿéòå è íå èçìåíÿéòå íàøè êîïèðàéòû, åñëè, êîíå÷íî, ó âàñ åñòü õîòü íåìíîãî óâàæåíèÿ ê ðàçðàáîò÷èêàì.
 echo 'Powered by '.ELEANOR_COPYRIGHT?>
 				</span>
 				<span class="siteurl">

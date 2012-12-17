@@ -50,7 +50,7 @@ LICENSE
 			'title'=>'Цвет фона',
 			'descr'=>'По умолчанию: #2d2f30',
 			'default'=>'#2d2f30',
-			'type'=>'edit',
+			'type'=>'input',
 			'options'=>array(
 				'tabindex'=>2,
 			),
@@ -59,7 +59,7 @@ LICENSE
 			'title'=>'Фоновое изображение',
 			'descr'=>'По умолчанию: templates/Audora/images/pagebg.png',
 			'default'=>'templates/Audora/images/pagebg.png',
-			'type'=>'edit',
+			'type'=>'input',
 			'options'=>array(
 				'tabindex'=>3,
 			),
@@ -68,7 +68,7 @@ LICENSE
 			'title'=>'Позиция фонового изображения',
 			'descr'=>'В формате X Y, где X - позиция по оси x, Y - позиция по оси y. Например: 50% 5px. По умолчанию: 0 0.',
 			'default'=>'0 0',
-			'type'=>'edit',
+			'type'=>'input',
 			'options'=>array(
 				'tabindex'=>4,
 			),

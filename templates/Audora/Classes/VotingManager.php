@@ -8,8 +8,8 @@
 	=====
 	*Pseudonym
 
-	Шаблоны управления опросом. Внутрь каждого метода подается ссылка на объект класса Voting_Manager, из которого необходимо брать контролы,
-	переменные языка и прочее. Описание методов этого класса можно узнать, открыв файл core/others/voting_manager.php
+	Шаблоны управления опросом. Внутрь каждого метода подается ссылка на объект класса VotingManager, из которого необходимо брать контролы,
+	переменные языка и прочее. Описание методов этого класса можно узнать, открыв файл core/others/votingmanager.php
 */
 class TplVotingManager
 {	public static
@@ -95,7 +95,7 @@ class TplVotingManager
 					$n2=$k;
 				break;
 				default:
-					$Lst->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Edit($vn.'['.$k.']',$va,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$k)),$noans ? false : Eleanor::Control($an.'['.$k.']','number',$ans,array('min'=>0,'tabindex'=>$ti,'style'=>'width:50px','class'=>'number'.$k,'data-class'=>'number'.$k,'title'=>isset($real[$k]) ? static::$lang['rvoters']($real[$k]) : static::$lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2));
+					$Lst->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Input($vn.'['.$k.']',$va,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$k)),$noans ? false : Eleanor::Input($an.'['.$k.']',$ans,array('type'=>'number','min'=>0,'tabindex'=>$ti,'style'=>'width:50px','class'=>'number'.$k,'data-class'=>'number'.$k,'title'=>isset($real[$k]) ? static::$lang['rvoters']($real[$k]) : static::$lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2));
 			}
 		}
 		$c=(string)$Lst->end();
@@ -104,8 +104,8 @@ class TplVotingManager
 				$noans ? false : static::$lang['votes'],
 				'&nbsp;'
 			)
-			->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Edit($vn.'['.$n1.']',$v1,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$n1)),$noans ? false : Eleanor::Control($an.'['.$n1.']','number',$a1,array('min'=>0,'style'=>'width:50px','tabindex'=>$ti,'class'=>'number'.$n1,'title'=>isset($real[$n1]) ? sprintf(static::$lang['rvoters'],$real[$n1]) : static::$lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2))
-			->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Edit($vn.'['.$n2.']',$v2,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$n2)),$noans ? false : Eleanor::Control($an.'['.$n2.']','number',$a2,array('min'=>0,'style'=>'width:50px','tabindex'=>$ti,'class'=>'number'.$n2,'title'=>isset($real[$n2]) ? sprintf(static::$lang['rvoters'],$real[$n2]) : static::$lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2))
+			->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Input($vn.'['.$n1.']',$v1,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$n1)),$noans ? false : Eleanor::Input($an.'['.$n1.']',$a1,array('type'=>'number','min'=>0,'style'=>'width:50px','tabindex'=>$ti,'class'=>'number'.$n1,'title'=>isset($real[$n1]) ? sprintf(static::$lang['rvoters'],$real[$n1]) : static::$lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2))
+			->item(array('<img src="'.Eleanor::$Template->default['theme'].'images/updown.png" class="updown" />','style'=>'width:1px'),Eleanor::Input($vn.'['.$n2.']',$v2,array('style'=>'width:100%','tabindex'=>$ti,'class'=>'variant'.$n2)),$noans ? false : Eleanor::Input($an.'['.$n2.']',$a2,array('type'=>'number','min'=>0,'style'=>'width:50px','tabindex'=>$ti,'class'=>'number'.$n2,'title'=>isset($real[$n2]) ? sprintf(static::$lang['rvoters'],$real[$n2]) : static::$lang['norv'])),Eleanor::Button('+','button',array('class'=>'sb-plus')).' '.Eleanor::Button('&minus;','button',array('class'=>'sb-minus','title'=>$ltpl['delete']),2))
 			.$c;
 	}
 }

@@ -68,6 +68,7 @@ class UserManager extends BaseClass
 			$todb['temp']=1;
 
 		$id=Eleanor::$UsersDb->Insert(USERS_TABLE,$todb);
+		Eleanor::$UsersDb->Replace(USERS_TABLE.'_updated',array('id'=>$id,'!date'=>'NOW()'));
 		$tosite['id']=$toextra['id']=$id;
 		foreach($user as $k=>&$v)
 			if(!array_key_exists($k,$tosite) and !array_key_exists($k,$todb) and $k[0]!='_')
@@ -172,7 +173,13 @@ class UserManager extends BaseClass
 		if(isset($toextra['avatar_location']) and !$toextra['avatar_location'])
 			$toextra['avatar_type']='';
 		if($todb)
-			Eleanor::$UsersDb->Update(USERS_TABLE,$todb+array('!updated'=>'NOW()'),'`id`'.$in);
+		{
+			$num=Eleanor::$UsersDb->Update(USERS_TABLE,$todb,'`id`'.$in);
+			if($num>0)
+			{				$ids=(array)$ids;
+				Eleanor::$UsersDb->Replace(USERS_TABLE.'_updated',array('id'=>$ids,'!date'=>array_fill(0,count($ids),'NOW()')));			}
+		}
+
 		if($tosite)
 			Eleanor::$Db->Update(P.'users_site',$tosite,'`id`'.$in);
 		if($toextra)
@@ -220,15 +227,12 @@ class UserManager extends BaseClass
 		$R=Eleanor::$UsersDb->Query('SELECT `id` FROM `'.USERS_TABLE.'` WHERE `id`'.$in);
 		while($a=$R->fetch_assoc())
 			$del[]=$a['id'];
-		Eleanor::$UsersDb->Delete(USERS_TABLE,'`id`'.$in);
+
 		if($del)
-		{			$lastid=Eleanor::$Cache->Get('deleted-users',true);
-			$R2=Eleanor::$UsersDb->Query('SELECT `id` FROM `'.USERS_TABLE.'_deleted` WHERE `id`>'.(int)$lastid.' ORDER BY `id` ASC LIMIT 1');
-			$upd=$R2->num_rows==0;
-			$lastid=Eleanor::$UsersDb->Insert(USERS_TABLE.'_deleted',array('uid'=>$del));
-			if($upd)
-			{				$lastid+=count($del);
-				Eleanor::$Cache->Put('deleted-users',$lastid,true);			}
+		{
+			$numdel=Eleanor::$UsersDb->Delete(USERS_TABLE,'`id`'.$in);
+			if($numdel>0)
+				Eleanor::$UsersDb->Replace(USERS_TABLE.'_deleted',array('id'=>$del,'!date'=>array_fill(0,count($del),'NOW()')));
 		}
 
 		Integration::Delete($ids);

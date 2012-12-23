@@ -666,12 +666,13 @@ UNIQUE KEY `name` (`name`),
 KEY `updated` (`updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=".DB_CHARSET;
 
-$tables[]="DROP TABLE IF EXISTS `{$prefix}users_deleted`";
-$tables['users_deleted']="
-CREATE TABLE `{$prefix}users_deleted` (
-`id` mediumint NOT NULL auto_increment,
-`uid` mediumint NOT NULL,
-PRIMARY KEY  (`id`)
+$tables[]="DROP TABLE IF EXISTS `{$prefix}users_updated`";
+$tables['users_updated']="
+CREATE TABLE `{$prefix}users_updated` (
+`id` mediumint(9) unsigned NOT NULL,
+`date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+PRIMARY KEY (`id`),
+KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=".DB_CHARSET;
 
 $tables[]="DROP TABLE IF EXISTS `{$prefix}users_external_auth`";

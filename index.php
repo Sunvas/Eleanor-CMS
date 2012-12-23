@@ -33,7 +33,6 @@ if(isset($_GET['newtpl']) and Eleanor::$vars['templates'] and in_array($_GET['ne
 $Eleanor->Url->special=$Eleanor->Url->furl ? '' : Eleanor::$filename.'?';
 $Eleanor->started=$Eleanor->error=false;
 
-$e=$Eleanor->Url->is_static ? $Eleanor->Url->GetEnding(array($Eleanor->Url->delimiter,$Eleanor->Url->ending),false) : '';
 $m=false;
 if(Eleanor::$vars['multilang'])
 {
@@ -43,7 +42,7 @@ if(Eleanor::$vars['multilang'])
 		if($isu)
 			UserManager::Update(array('language'=>$_GET['language']));
 		else
-			Eleanor::SetCookie(Eleanor::$service.'_lang',$_GET['language']);
+			Eleanor::SetCookie('lang',$_GET['language']);
 		return GoAway(html_entity_decode(LangNewUrl(getenv('HTTP_REFERER'),$_GET['language'])));
 	}
 	if(!$isu and $l=Eleanor::GetCookie('lang') and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
@@ -98,7 +97,7 @@ if(Eleanor::$vars['multilang'])
 			if($isu)
 				UserManager::Update(array('language'=>$chl));
 			else
-				Eleanor::SetCookie(Eleanor::$service.'_lang',$chl);
+				Eleanor::SetCookie('lang',$chl);
 			Language::$main=$chl;
 			Eleanor::$Language->Change($chl);
 		}
@@ -150,10 +149,10 @@ if(!$m)
 
 if($m)
 {	if(!isset($Eleanor->modules['ids'][$m]))
-		return MainPage($m,$e);
+		return MainPage($m);
 	$R=Eleanor::$Db->Query('SELECT `id`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files` FROM `'.P.'modules` WHERE `id`='.(int)$Eleanor->modules['ids'][$m].' AND `active`=1 LIMIT 1');
 	if(!$a=$R->fetch_assoc())
-		return MainPage($m,$e);
+		return MainPage($m);
 	if(!$a['multiservice'])
 	{
 		$files=unserialize($a['files']);
@@ -425,7 +424,7 @@ function ExitPage($code=404)
 	die;
 }
 
-function MainPage($tm=false,$ending='')
+function MainPage($tm=false)
 {global$Eleanor;
 	do
 	{
@@ -461,9 +460,8 @@ function MainPage($tm=false,$ending='')
 			'id'=>$a['id'],
 			'sections'=>$a['sections'],
 		);
-		if($Eleanor->Url->furl or $Eleanor->Url->is_static)
-			$Eleanor->Url->string=$tm.($Eleanor->Url->string ? $Eleanor->Url->delimiter.$Eleanor->Url->string : $ending);
 
+		$Eleanor->Url->string=$tm.$Eleanor->Url->delimiter.$Eleanor->Url->string;
 		if(Eleanor::$vars['multilang'] and Language::$main!=LANGUAGE)
 			$Eleanor->Url->SetPrefix(array('lang'=>Eleanor::$langs[Language::$main]['uri']));
 
@@ -479,42 +477,61 @@ function MainPage($tm=false,$ending='')
 
 function LangNewUrl($url,$l)
 {global$Eleanor;
-	$our=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
-	if(strpos($url,$our)!==0 or $our==$url or !$url=preg_replace('#^'.preg_quote($our,'#').'('.preg_quote(Eleanor::$filename,'#').'\??)?#i','',$url))
-		return $l==LANGUAGE ? $our : $our.$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[$l]['uri']),true,false).$url;
+	#Определим отправную точку, куда мы в любом случае отправим клиента
+	$base=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
 
-	$Eleanor->Url->__construct($url);
+	#Если запрос пришел с чужого домена - считаем такой запрос некорректным
+	if(strpos($url,'://')!==false and strpos($url,$base)!==0)
+		$url='';
+	$url=preg_replace('#^'.preg_quote($base,'#').'('.preg_quote(Eleanor::$filename,'#').')?#i','',$url);
+
+	if(rtrim($url,'?')=='')
+		return$l!=LANGUAGE ? $base : $Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[$l]['uri']),true,!$Eleanor->Url->furl);
+
+	if(0!==$p=strpos($url,'?'))
+		$Eleanor->Url->__construct('!'.($p===false ? $url.'!&' : str_replace('?','!&',$url)));
+	else
+	{		$url=ltrim($url,'?');
+		$Eleanor->Url->is_static=false;
+	}
+	$Eleanor->Url->furl=$Eleanor->Url->is_static;
+
+	if($l!=LANGUAGE)
+		$special=$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[$l]['uri']),true,false);
+	elseif(!$Eleanor->Url->furl)
+		$special=Eleanor::$filename.'?';
+	else
+		$special='';
 
 	$lang=LANGUAGE;
-	if($Eleanor->Url->is_static)
-	{
-		$Eleanor->Url->ending=$Eleanor->Url->GetEnding(array(Eleanor::$vars['url_static_delimiter'],Eleanor::$vars['url_static_ending']));
-		$Eleanor->Url->furl=true;
+	if($Eleanor->Url->furl)
+	{		$Eleanor->Url->ending=$Eleanor->Url->GetEnding(array($Eleanor->Url->delimiter,$Eleanor->Url->ending));
 		$olds=$Eleanor->Url->string;
-		$m=$Eleanor->Url->ParseToValue('module',true);
+		$m=$Eleanor->Url->ParseToValue('lang');
 		foreach(Eleanor::$langs as $k=>&$v)
 			if($v['uri']==$m)
 			{
 				$lang=$k;
 				$olds=$Eleanor->Url->string;
-				$m=$Eleanor->Url->ParseToValue('module',true);
-				if(!$m)
-					return LangNewUrl($olds,$l);
+				$m=$Eleanor->Url->ParseToValue('module');
+				if($m=='')
+					return$base.$special;
 				break;
 			}
 		$q=true;
 	}
 	else
 	{
-		parse_str($Eleanor->Url->string,$q);
-		if(isset($q['uri']))
+		parse_str($url,$q);
+		if(isset($q['lang']))
 			foreach(Eleanor::$langs as $k=>&$v)
-				if($v['uri']==$q['uri'])
+				if($v['uri']==$q['lang'])
 					$lang=$k;
-		$m=isset($q['module']) ? $q['module'] : 0;
+
+		$m=isset($q['module']) ? $q['module'] : false;
 		unset($q['module'],$q['lang']);#Смотри в Static api. Для избежания конфликтов с $Url->prefix
 		if(!$m and !$q)
-			return LangNewUrl($olds,$l);
+			return$base.$special;
 	}
 	if($lang!=Language::$main)
 		Language::$main=$lang;
@@ -527,19 +544,22 @@ function LangNewUrl($url,$l)
 	}
 	else
 	{
-		$mid=2;#ID статических страниц
+		$mid=(int)Eleanor::$vars['prefix_free_module'];
 		$s=array_keys($Eleanor->modules['ids'],$mid);
 		$s=reset($s);
 		$m=false;
-		if($Eleanor->Url->is_static)
+		if($Eleanor->Url->furl)
 			$Eleanor->Url->string=$olds;
 	}
 
 	$R=Eleanor::$Db->Query('SELECT `sections`,`path`,`api` FROM `'.P.'modules` WHERE `id`='.$mid.' AND `active`=1 LIMIT 1');
 	if(!$a=$R->fetch_assoc())
-		return LangNewUrl($olds,$l);
+		return$base.$special.$url;
 
 	$path=Eleanor::FormatPath($a['path']).DIRECTORY_SEPARATOR;
+	if(!$a['api'] or !is_file($path.$a['api']))
+		return$base.$special.$url;
+
 	$a['sections']=unserialize($a['sections']);
 	foreach($a['sections'] as &$v)
 		if(Eleanor::$vars['multilang'] and isset($v[$l]))
@@ -552,15 +572,14 @@ function LangNewUrl($url,$l)
 		$m=array_keys($Eleanor->modules['ids'],$mid);
 		$m=reset($m);
 	}
-	$Eleanor->Url->SetPrefix($l==LANGUAGE ? array('module'=>$m) : array('lang'=>Eleanor::$langs[$l]['uri'],'module'=>$m));
-	$p=htmlspecialchars_decode($Eleanor->Url->Prefix($m && !$Eleanor->Url->string ? true : $Eleanor->Url->delimiter),ELENT);
-	if($Eleanor->Url->is_static and $Eleanor->Url->string)
-		$p.=$Eleanor->Url->string.$Eleanor->Url->ending;
-	if(!$Eleanor->Url->string or !$a['api'] or !is_file($path.$a['api']))
-		return$our.$p;
+
 	$c='Api'.basename($a['path']);
 	if(!class_exists($c,false))
 		include$path.$a['api'];
+
+	$Eleanor->Url->SetPrefix($special);
+	if($m)
+		$Eleanor->Url->SetPrefix(array('module'=>$m),true);
 	$Plug=new$c;
 	$Plug->module=array(
 		'sections'=>$a['sections'],
@@ -569,8 +588,8 @@ function LangNewUrl($url,$l)
 		'section'=>$s,
 		'id'=>$mid,
 	);
+
 	if(method_exists($Plug,'LangUrl') and $r=$Plug->LangUrl($q,$l))
-		return$our.$r;
-	else
-		return$our.$p;
+		return$base.$r;
+	return$base.$special.$url;
 }

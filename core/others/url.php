@@ -246,21 +246,19 @@ class Url extends BaseClass
 			$this->furl=$f;
 		}
 		elseif($this->furl)
-		{			$p=preg_replace('#('.preg_quote($this->delimiter,'#').'|'.preg_quote($this->ending,'#').')+$#','',$p).$this->delimiter;
+		{			$p=preg_replace('#('.preg_quote($this->delimiter,'#').'|'.preg_quote($this->ending,'#').')+$#','',$p);
+			if($p)
+				$p.=$this->delimiter;
 			$this->sp=$a ? $this->sp.$p : $p;
 		}
 		else
 		{
-			if(!$p and !$a)
-				$p='?';
-			else
-			{
-				$p=preg_replace('#(&amp;)+$#','',$p);
-				if(false!==$qp=strpos($p,'?'))
-					$p=substr($p,$qp);
+			$p=preg_replace('#(&amp;)+$#','',$p);
+			if(false!==$qp=strpos($p,'?'))
+				$p=substr($p,$a ? $qp+1 : $qp);
+			if($p)
 				$p.='&amp;';
-			}
-			$this->dp=$a ? $this->dp.$p : $p;
+			$this->dp=$a ? $this->dp.$p : '?'.$p;
 		}
 	}
 

@@ -84,10 +84,11 @@ class TPLBlocks
 			g - группа идентификатора (0, если идентификатору группа не присвоена)
 		$group - массив текущей группы, ключи:
 			blocks - массив блоков, формат: id места=>array(), где каждый элемент - идентификатор блока
-			places - массив мест, формат: id=>array(), ключи:
-				title - название места
-				info - данные о положении места в визуальном редакторе положение блоков
+			places - массив мест, формат: id=>данные о положении места в визуальном редакторе положение блоков, ключи:
 			extra - данные о внешнем виде визуального редактора положений блоков
+		$tpls - массив доступных тем оформления для данной группы блоков (зависит от сервиса), формат название темы=>массив, ключи
+			a - ссылка на группу блоков для этой темы либо false (текущая группа)
+			title - название
 		$errors - массив ошибок
 		$hasdraft - флаг наличия черновика
 		$saved - флаг сохраненности результата
@@ -96,7 +97,7 @@ class TPLBlocks
 			nodraft - ссылка на изменение положений в визульном редакторе без использования черновика, либо false
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
-	public static function BlocksGroup($gid,$blocks,$ids,$group,$errors,$hasdraft,$saved,$links)
+	public static function BlocksGroup($gid,$blocks,$ids,$group,$tpls,$errors,$hasdraft,$saved,$links)
 	{		static::Menu('main');
 		$GLOBALS['jscripts'][]='js/admin_blocks.js';
 		$ltpl=Eleanor::$Language['tpl'];
@@ -124,7 +125,7 @@ class TPLBlocks
 			);
 
 		foreach($group['places'] as $k=>&$v)
-		{			$plblocks=$langs='';
+		{			$plblocks='';
 			if(isset($group['blocks'][$k]))
 				foreach($group['blocks'][$k] as &$bv)
 					if(isset($blocks[$bv]))
@@ -133,34 +134,25 @@ class TPLBlocks
 								<a href="#" title="'.static::$lang['edb'].'" class="editblock"><img src="'.$images.'edit.png" /></a>
 							</div>'.Eleanor::Input('block['.$k.'][]',$bv,array('type'=>'hidden')).'</div>';
 
-			if(Eleanor::$vars['multilang'])
-				foreach(Eleanor::$langs as $l=>&$lv)
-					$langs.=Eleanor::Input('place['.$k.']['.$l.']',isset($v['title']) ? Eleanor::FilterLangValues($v['title'],$l) : '',array('type'=>'hidden'));
-			else
-				$langs.=Eleanor::Input('place['.$k.']',isset($v['title']) ? Eleanor::FilterLangValues($v['title']) : '',array('type'=>'hidden'));
-			$places.='<div class="place">
-				<div class="title"><span class="caption"></span><span class="buttons"><a href="#" title="'.static::$lang['delp'].'" class="deleteplace"><img src="'.$images.'delete.png" /></a> <a href="#" title="'.static::$lang['edp'].'" class="editplace"><img src="'.$images.'edit.png" /></a></span></div>
+			$places.='<div class="place">
+				<div class="title">'.$v['title'].'</div>
 				<div class="bcontainer">'.$plblocks.'</div>
-				<div class="resize"></div>'.$langs
-				.Eleanor::Input('placeinfo['.$k.']',isset($v['info']) ? $v['info'] : '',array('type'=>'hidden')).'</div>';		}
+				<div class="resize"></div>'
+				.Eleanor::Input('place['.$k.']',isset($v['extra']) ? $v['extra'] : '',array('type'=>'hidden')).'</div>';		}
 
-		$group['extra']+=array('verhor'=>'');
+		$themes=' ';
+		foreach($tpls as &$v)
+			$themes.=$v['a'] ? '<a href="'.$v['a'].'">'.$v['title'].'</a> | ' : $v['title'].' | ';
 
 		if($errors)
 			foreach($errors as $k=>&$v)
 				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
 		return Eleanor::$Template->Cover(
-	$Lst->begin(array('id'=>'aep'))
-		->head('')
-		->item(static::$lang['name'],Eleanor::Input('name'))
-		->item($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null))
-		->button(Eleanor::Button('Ok','button').' '.Eleanor::Button(static::$lang['cancel'],'button'))
-		->end()
-	.($saved ? '<div id="saved">'.Eleanor::$Template->Message(static::$lang['gsaved'],'info').'</div><script type="text/javascript">/*<![CDATA[*/$(function(){ setTimeout(function(){ $("#saved").fadeOut("slow").remove() },10000) });//]]></script>' : '')
-	.'<div class="blocks"><form method="post">
-		<div style="padding:5px">'.static::$lang['curg'].Eleanor::Input('similar','',array('type'=>'hidden')).Eleanor::Select('group',$gopts).'<div style="float:right;text-align:right;"><a href="#" id="addp" style="font-weight:bold">'.static::$lang['addp'].'</a>'.($links['del_group'] ? ' | <a href="'.$links['del_group'].'" onclicl="return confirm(\''.static::$lang['aysdg'].'\')">'.static::$lang['delg'].'</a>' : '' ).'</div></div>
-		<div class="all"><div class="available">
+		($saved ? '<div id="saved">'.Eleanor::$Template->Message(static::$lang['gsaved'],'info').'</div><script type="text/javascript">/*<![CDATA[*/$(function(){ setTimeout(function(){ $("#saved").fadeOut("slow").remove() },10000) });//]]></script>' : '')
+		.'<div class="blocks"><form method="post">
+		<div style="padding:5px">'.static::$lang['curg'].Eleanor::Input('similar','',array('type'=>'hidden')).Eleanor::Select('group',$gopts).rtrim($themes,'| ').($links['del_group'] ? '<div style="float:right;text-align:right;"><a href="'.$links['del_group'].'" onclicl="return confirm(\''.static::$lang['aysdg'].'\')">'.static::$lang['delg'].'</a></div>' : '').'</div>
+		<div class="all" style="height:495px"><div class="available">
 				<b>'.static::$lang['avg'].'</b>'
 				.($avblocks ? '<ul>'.$avblocks.'</ul>' : '')
 				.'</div><div class="ver"></div><div class="site-c"><!-- Внимание! Между этими дивами нельзя ставить пробелы! -->
@@ -168,7 +160,7 @@ class TPLBlocks
 			</div>
 		</div>
 		<div class="hor"></div>
-		<div class="submitline">'.Eleanor::Input('extra[verhor]',$group['extra']['verhor'],array('id'=>'verhor','type'=>'hidden'))
+		<div class="submitline">'.Eleanor::Input('extra',$group['extra'],array('id'=>'verhor','type'=>'hidden'))
 		.Eleanor::Button(static::$lang['save'])
 		.Eleanor::Input('_draft','g'.$gid,array('type'=>'hidden'))
 		.Eleanor::$Template->DraftButton($links['draft'],1)
@@ -188,60 +180,20 @@ $(window).load(function(){
 
 	$(".blocks .site").EleanorVisualBlocks({		dragimg:"'.Eleanor::$Template->default['theme'].'images/catmanag.png",
 		distribblock:$("<div>").addClass("block").html("<span class=\"caption\"></span><div class=\"buttons\"><a href=\"#\" title=\"'.static::$lang['delb'].'\" class=\"deleteblock\"><img src=\"'.$images.'delete.png\" /></a><a href=\"#\" title=\"'.static::$lang['edb'].'\" class=\"editblock\"><img src=\"'.$images.'edit.png\" /></a></div><input type=\"hidden\"/>"),
-		distribplace:$("<div>").addClass("place").html("<div class=\"title\"><span class=\"caption\"></span><span class=\"buttons\"><a href=\"#\" title=\"'.static::$lang['delp'].'\" class=\"deleteplace\"><img src=\"'.$images.'delete.png\" /></a> <a href=\"#\" title=\"'.static::$lang['edp'].'\" class=\"editplace\"><img src=\"'.$images.'edit.png\" /></a></span></div><div class=\"bcontainer\"></div><div class=\"resize\"></div><input type=\"hidden\" name=\"place[][english]\" /><input type=\"hidden\" name=\"place[][russian]\" /><input type=\"hidden\" name=\"place[][ukrainian]\" /><input type=\"hidden\" />"),
 		Recount:function(a){
 			$(".blocks .available li b").text("");
 			$.each(a,function(k,v){
 				$("#bl-"+k+" b").text(v);
 			});
 		},
-		EditPlace:function(name,title,Save){
-			$("#aep :button").off("click");
-			$(".blocks").hide();
-			var aep=$("#aep").show()
-				.on("keypress",function(e){					if(e.keyCode==13)
-						$("input[type=button]:first",this).click();				})
-				.find("tr:first td").text("'.static::$lang['editingp'].'").end()
-				.find("input[name=name]").val(name).end()
-				.find("input[type=button]:first").click(function(){
-					var form=$(this).closest("table"),
-						title='.(Eleanor::$vars['multilang'] ? '[];
-
-					form.find("input[name^=\"title[\"]").each(function(){
-						var l=$(this).prop("name").match(/\[([^\]]+)\]$/)[1];
-						title[l]=$(this).val();
-					});' : 'form.find("input[name=title]").val();').'
-
-					Save(form.find("input[name=name]").val(),title);
-					Change.fire();
-					$(this).next().click();
-				}).next().click(function(){
-					$("#aep, .blocks").toggle();
-				}).end().end();
-
-			if(typeof title=="string")
-				aep.find("input[name=title]").val(title);
-			else
-				aep.find("input[name^=\"title[\"]").each(function(){
-					var l=$(this).prop("name").match(/\[([^\]]+)\]$/)[1];
-					$(this).val(title[l]);
-				})
-		},
 		Change:Change
-	}).on("click",".deleteplace",function(){
-		var pl=$(this).closest(".place");
-		if(confirm("'.static::$lang['jsdelp'].'".replace("{0}",pl.find(".caption:first").text())))
-			pl.trigger("delete");
-		return false;
 	}).on("click",".deleteblock",function(){
 		var bl=$(this).closest(".block");
 		if(confirm("'.static::$lang['jsdelb'].'".replace("{0}",bl.find(".caption:first").text())))
 			bl.trigger("delete");
 		return false;
-	}).on("click",".editplace",function(){
-		$(this).closest(".place").trigger("edit");
-		return false;
 	})
+
 	$(".blocks .available").on("dragstart","li",function(e){
 		if($(e.target).is("a,:input"))
 			return;
@@ -254,30 +206,6 @@ $(window).load(function(){
 	}).on("dragend","li",function(e){
 		$(this).removeClass("hover");
 	});
-
-	$("#addp").click(function(){
-		$("#aep :button").off("click");
-		$(".blocks").hide();
-		$("#aep").show()
-		.find("tr:first td").text("'.static::$lang['addingp'].'").end()
-		.find("input[type=text]").val("").end()
-		.find("input[type=button]:first").click(function(){
-			var form=$(this).closest("table"),
-				title='.(Eleanor::$vars['multilang'] ? '[];
-
-			form.find("input[name^=\"title[\"]").each(function(){
-				var l=$(this).prop("name").match(/\[([^\]]+)\]$/)[1];
-				title[l]=$(this).val();
-			});' : 'form.find("input[name=title]").val();').'
-
-			$(".blocks .site").trigger("add",[form.find("input[name=name]").val(),title]);
-			$(this).next().click();
-		}).next().click(function(){
-			$("#aep, .blocks").toggle();
-		});
-		return false;
-	});
-
 
 	var drafts=typeof CORE.drafts!="undefined";
 	if(drafts)

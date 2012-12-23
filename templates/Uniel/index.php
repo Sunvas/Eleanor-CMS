@@ -55,23 +55,22 @@ if(Eleanor::$vars['multilang'])
 <div class="container">
 	<div class="mainbox">
 <?php
-$br=Blocks::Get('right');
-$bl=Blocks::Get('left');
-echo'<div id="maincol',$br ? 'R' : '','">
+$blocks=Blocks::Get(array('right','left','center_up','center_down'));
+echo'<div id="maincol',$blocks['right'] ? 'R' : '','">
 			<div class="baseblock"><div class="dtop"><div class="dbottom">
 				<div class="dcont">',
-				Blocks::Get('center_up'),
+				$blocks['center_up'],
 				'<!-- CONTEXT LINKS -->{module}<!-- /CONTEXT LINKS -->',
-				Blocks::Get('center_down'),
+				$blocks['center_down'],
 				'</div>
 			</div></div></div>
-		</div>',$br ? '<div id="rightcol">'.$br.'</div>' : '';
+		</div>',$blocks['right'] ? '<div id="rightcol">'.$blocks['right'].'</div>' : '';
 ?>
 	</div>
 	<div id="leftcol">
 <?php
 	include Eleanor::$root.$theme.'Static/login.php';
-	echo$bl;
+	echo$blocks['left'];
 ?>
 	</div>
 

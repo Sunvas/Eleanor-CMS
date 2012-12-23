@@ -402,12 +402,7 @@ user-select: none;
 .blocks .place { background-color:lightgray; border:1px black dotted; position: absolute; box-shadow: inset 0 0 3px #000; overflow:auto; min-width:160px; min-height:90px; }
 .blocks .place .bcontainer { position:relative; width:100%; }
 .blocks .place .resize { border-bottom:medium solid #000; border-right:medium solid #000; position:absolute; right:0px; bottom:0px; width:8px; height:8px; cursor:se-resize; }
-.blocks .place .block .buttons { position:absolute; bottom:0; right:3px; display:none; }
-.blocks .place .block:hover .buttons { display:block; }
 .blocks .place .title { height:18px; vertical-align:top; font-weight:bold; text-align:left; border-bottom:1px black solid; padding:5px 0 0 5px; cursor: move; }
-.blocks .place .title .buttons { margin-left:10px; display:none; }
-.blocks .place .title .buttons a { margin: 0 2px 0; }
-.blocks .place .title:hover span { display:inline; }
 
 .dragenter { border:1px green solid !important; }
 

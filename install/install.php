@@ -164,7 +164,7 @@ else
 							'avatar_type'=>'upload',
 						));
 					}
-					catch(EE $E)
+					catch(EE$E)
 					{
 						$mess=$E->getMessage();
 						switch($mess)

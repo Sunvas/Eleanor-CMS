@@ -796,7 +796,7 @@ final class Eleanor extends BaseClass
 			throw new EE('Template '.$tpl.' not found!',EE::ENV);
 
 		self::$Template=new Template_Mixed;
-		self::$Template->paths[__class__]=$f.'/';
+		self::$Template->paths[$tpl]=$f.'/';
 		self::$Template->default['theme']=$path.$tpl.'/';
 		$init=$f.'.init.php';
 		if(is_file($init))

@@ -177,7 +177,7 @@ class Comments extends BaseClass
 		$pspol=$this->CalcOffsetPage($q,$cnt);#list($pages,$page,$offset,$limit)
 
 		$actcnt=$st[0]+$st[1];
-		$pagpq=$this->GetPAGPQ($where,$st,$pspol[2],$this->reverse ? $pspol[3] : $actcnt,$this->reverse ? $actcnt-max(0,$pspol[2]-$st[-1]) : $pspol[2],$parent,$uid,$parent ? array($parent['id']) : false);
+		$pagpq=$this->GetPAGPQ($where,$st,$pspol[2],$this->reverse ? $pspol[3] : $actcnt,$this->reverse ? $actcnt-max(0,$pspol[2]-$st[-1]) : $pspol[2],$parent,$uid,$parent ? array($parent['id']) : array());
 
 		$THIS=$this;#PHP 5.4
 		$links=array(

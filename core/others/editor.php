@@ -89,7 +89,6 @@ class Editor extends BaseClass
 		if(empty($extra['bypost']))
 			$value=$this->GetEdit($value);
 		$id=preg_replace('#\W+#','',$name);
-		$GLOBALS['jscripts'][]='js/dropdown.js';
 		if($this->ownbb)
 		{
 			$value=OwnBB::StoreNotParsed($value,OwnBB::SHOW);
@@ -113,9 +112,9 @@ class Editor extends BaseClass
 			case'ckeditor':
 				array_push($GLOBALS['jscripts'],'addons/ckeditor/ckeditor.js');
 				$html=Eleanor::Text($name,$value,(isset($extra['ckeditor']) ? $extra['ckeditor'] : array())+array('id'=>$id)).'<script type="text/javascript">//<![CDATA[
-$(function(){
+//$(function(){
 	if(typeof CKEDITOR.instances.'.$id.'!="undefined")
-		CKEDITOR.instances.'.$id.'.destroy();
+		try{ CKEDITOR.instances.'.$id.'.destroy(); }catch(e){};
 	var editor=CKEDITOR.replace("'.$id.'",{language:"'.substr(Language::$main,0,2).'"});
 	EDITOR.New(
 		editor.name,
@@ -130,7 +129,7 @@ $(function(){
 			Selection:function(){ return editor.getSelection().getSelectedText(); }		}
 	);
 	editor.on("focus",function(){EDITOR.Active(this.name)});
-});//]]></script>';
+//});//]]></script>';
 			break;
 			case'tinymce':#Tiny MCE
 				array_push($GLOBALS['jscripts'],'addons/tiny_mce/jquery.tinymce.js','addons/tiny_mce/tiny_config.js');

@@ -96,8 +96,8 @@ class TplUsersOnline
 
 			foreach($data['info'] as $k=>&$v)
 				if($v)
-				{
-					$v=htmlspecialchars($v,ELENT,CHARSET);
+				{					if($k!='ips')
+						$v=htmlspecialchars($v,ELENT,CHARSET);
 					$c.='<li><b>'.static::$lang[$k].'</b> ';
 					switch($k)
 					{

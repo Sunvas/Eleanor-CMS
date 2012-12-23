@@ -89,51 +89,28 @@ QUERY;
 $ser=array(
 	'admin'=>serialize(array(
 		'places'=>array(
-			'right'=>array(
-				'title'=>array(
-					'russian'=>'Правые блоки',
-					'english'=>'Right blocks',
-					'ukrainian'=>'Праві блоки',
-				),
-				'info'=>'276,10,160,229,0',
-			),
+			'right'=>array(''=>'276,10,160,229,0'),
 		),
 		'blocks'=>array(
 			'right'=>array(1),
 		),
-		'extra'=>array('verhor'=>''),
 	)),
 	'user'=>serialize(array(
 		'places'=>array(
-			'left'=>array(
-				'title'=>array(
-					'russian'=>'Левые блоки',
-					'english'=>'Left blocks',
-					'ukrainian'=>'Ліві блоки',
-				),
-				'info'=>'50,30,184,242,1',
-			),
-			'right'=>array(
-				'title'=>array(
-					'russian'=>'Правые блоки',
-					'english'=>'Right blocks',
-					'ukrainian'=>'Праві блоки',
-				),
-				'info'=>'415,19,182,260,2',
-			),
+			'left'=>array(''=>'50,30,184,242,1'),
+			'right'=>array(''=>'415,19,182,260,2'),
 		),
 		'blocks'=>array(
 			'left'=>array(5,7,1),
 			'right'=>array(6,3,2,4),
 		),
-		'extra'=>array('verhor'=>''),
 	)),
 );
 
 $insert['cache']=<<<QUERY
 INSERT INTO `{$prefix}cache` (`key`,`value`) VALUES
-('blocks_defgr-admin', '{$ser['admin']}'),
-('blocks_defgr-user', '{$ser['user']}')
+('blocks-admin', '{$ser['admin']}'),
+('blocks-user', '{$ser['user']}')
 QUERY;
 
 $ser=array(

@@ -31,7 +31,7 @@ LICENSE
 				'english'=>'Right blocks',
 				'ukrainian'=>'Праві блоки',
 			),
-			'info'=>'276,10,160,229,0',
+			'extra'=>'276,10,160,229,0',
 		),
 	),
 

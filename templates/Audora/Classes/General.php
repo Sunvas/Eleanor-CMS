@@ -142,7 +142,7 @@ $(function(){
 				direct:"admin",
 				file:"notes",
 				event:p+(s ? "" : "load"),
-				text:s ? EDITOR.Get("e"+p) : "",
+				text:s ? EDITOR.Get("e"+p)||"" : "",
 			},
 			function(r)
 			{

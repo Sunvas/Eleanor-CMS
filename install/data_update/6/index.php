@@ -614,6 +614,13 @@ SQL
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'blocks_groups` CHANGE `addon` `extra` TEXT NOT NULL');
 		Eleanor::$Db->Query('ALTER TABLE `'.P.'sessions` CHANGE `addon` `extra` VARCHAR(100) NOT NULL');
 
+		Eleanor::$Db->Query('UPDATE `'.P.'cache` SET `key`=\'blocks-admin\' WHERE `key`=\'blocks_defgr-admin\'');
+		Eleanor::$Db->Query('UPDATE `'.P.'cache` SET `key`=\'blocks-user\' WHERE `key`=\'blocks_defgr-user\'');
+
+		Eleanor::$Db->Query('RENAME TABLE  `'.P.'users_deleted` TO `'.P.'users_updated`');
+		Eleanor::$Db->Query('ALTER TABLE `'.P.'users_updated` DROP `id`, CHANGE `uid` `id` MEDIUMINT UNSIGNED NOT NULL, ADD `date` TIMESTAMP NOT NULL DEFAULT \'0000-00-00 00:00:00\', ADD INDEX (`date`), ADD PRIMARY KEY (`id`)');
+		Eleanor::$Db->Query('ALTER TABLE  `'.P.'users` DROP `updated`');
+
 		Eleanor::$Db->Insert(
 			P.'tasks',
 			array(

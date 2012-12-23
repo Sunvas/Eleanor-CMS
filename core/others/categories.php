@@ -84,16 +84,15 @@ class Categories extends BaseClass
 	public function GetCategory($id)
 	{
 		if(is_array($id))
-		{			$tr=(array)$tr;
-			$cnt=count($tr)-1;
+		{			$cnt=count($id)-1;
 			$parent=0;
-			$curr=array_shift($tr);
+			$curr=array_shift($id);
 			foreach($this->dump as &$v)
 				if($v['parent']==$parent and strcasecmp($v['uri'],$curr)==0)
 				{
 					if($cnt--==0)
 						return $v;
-					$curr=array_shift($tr);
+					$curr=array_shift($id);
 					$parent=$v['id'];
 				}
 		}

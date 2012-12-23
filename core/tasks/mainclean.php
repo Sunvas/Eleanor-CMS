@@ -38,35 +38,35 @@ class TaskMainClean extends BaseClass implements Task
 		self::RemoveTempFiles(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.'temp',time()-86400);
 		Eleanor::$nolog=false;
 
-		#Удаляем всех удаленных пользователей (если используется синхронизация)
-		$lastid=Eleanor::$Cache->Get('deleted-users',true);
-		$ids=array();
-		$R2=Eleanor::$UsersDb->Query('SELECT `id`,`uid` FROM `'.USERS_TABLE.'_deleted` WHERE `id`>'.(int)$lastid.' ORDER BY `id` ASC LIMIT 50');
-		while($a=$R2->fetch_assoc())
-			$ids[]=$a['uid'];
-		if($ids)
-		{
-			UserManager::Delete($ids);
-			Eleanor::$Cache->Put('deleted-users',end($ids),true);
-		}
-
-		#Синхронизация обновленных пользователей
+		#Синхронизация обновленных и удаленных пользователей. Добавление здесь не делается, оно происходит в момент входа пользователя
 		if(Eleanor::$UsersDb!==Eleanor::$Db or USERS_TABLE!=P.'users')
 		{
-			$lastd=Eleanor::$Cache->Get('updated-users',true);
-			if(!$lastd)
+			$lastdate=Eleanor::$Cache->Get('date-users-sync',true);
+			if(!$lastdate)
 			{
-				$R3=Eleanor::$UsersDb->Query('SELECT MIN(`updated`) FROM `'.USERS_TABLE.'` LIMIT 1');
-				list($lastd)=$R3->fetch_row();
+				$R=Eleanor::$UsersDb->Query('SELECT MIN(`date`) FROM `'.USERS_TABLE.'_updated`');
+				list($lastdate)=$R->fetch_row();
 			}
-			$ids=array();
-			$R4=Eleanor::$UsersDb->Query('SELECT `id`,`updated` FROM `'.USERS_TABLE.'` WHERE `updated`>\''.$lastd.'\' ORDER BY `updated` ASC LIMIT 50');
-			while($a=$R4->fetch_assoc())
+			if($lastdate)
 			{
-				$ids[]=$a['id'];
-				$lastd=$a['updated'];
+				$del=$ids=array();
+				$n=1;
+				$R=Eleanor::$UsersDb->Query('(SELECT `id`,`date` FROM `'.USERS_TABLE.'_updated` WHERE `date`=\''.$lastdate.'\')UNION ALL(SELECT `id` FROM `'.USERS_TABLE.'_updated` WHERE `date`>\''.$lastdate.'\' ORDER BY `date` ASC LIMIT 50)');
+				while($a=$R->fetch_assoc())
+				{					if($n++!=$R->num_rows or $lastdate==$a['date'])
+						$ids[]=$a['id'];
+					$lastdate=$a['date'];
+				}
+
+				$R=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`language`,`timezone` FROM `'.USERS_TABLE.'` WHERE `id`'.Eleanor::$Db->In($ids).' AND `temp`=0');
+				while($a=$R->fetch_assoc())
+				{					$del[]=$a['id'];					Eleanor::$Db->Update(P.'users_site',array_slice($a,1),'`id`='.$a['id'].' LIMIT 1');				}
+
+				$del=array_diff($ids,$del);
+				if($del)
+					UserManager::Delete($del);
+				Eleanor::$Cache->Put('date-users-sync',$lastdate,true);
 			}
-			Eleanor::$Cache->Put('updated-users',$lastd,true);
 		}
 	}
 

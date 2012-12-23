@@ -791,7 +791,7 @@ function Save($id)
 
 	if(Eleanor::$vars['multilang'] and !isset($_POST['_onelang']))
 	{
-		$langs=empty($_POST['lang']) || !is_array($_POST['lang']) ? array() : $_POST['lang'];
+		$langs=empty($_POST['_langs']) || !is_array($_POST['_langs']) ? array() : $_POST['_langs'];
 		$langs=array_intersect(array_keys(Eleanor::$langs),$langs);
 		if(!$langs)
 			$langs=array(Language::$main);

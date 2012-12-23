@@ -302,44 +302,136 @@ elseif(isset($_GET['swap']))
 elseif(isset($_GET['deleteg']))
 {
 	$id=(int)$_GET['deleteg'];
-	Eleanor::$Db->Delete(P.'blocks_groups','`id`='.$id);
+	$tpl=isset($_GET['tpl']) ? (string)$_GET['tpl'] : false;
+	if($tpl and preg_match('#^[a-z0-9_\-]+$#i')>0)
+	{		$f=Eleanor::$root.'templates/'.$tpl.'.settings.php';		$sett=is_file($f) ? (array)include$f : array();
+		if(isset($sett['places']))
+		{			$places=array_keys($sett['places']);			$R=Eleanor::$Db->Query('SELECT `id`,`blocks`,`places`,`extra` FROM `'.P.'blocks_groups` WHERE `id`='.$id.' LIMIT 1');
+			if($a=$R->fetch_assoc())
+			{				$a['blocks']=$a['blocks'] ? (array)unserialize($a['blocks']) : array();
+				$a['places']=$a['places'] ? (array)unserialize($a['places']) : array();
+				$a['extra']=$a['extra'] ? (array)unserialize($a['extra']) : array();
+				foreach($places as $v)
+					unset($a['blocks'][$v]);
+				unset($a['places'][$tpl],$a['extra'][$tpl]);
+
+				$a['blocks']=$a['blocks'] ? serialize($a['blocks']) : '';
+				$a['places']=$a['places'] ? serialize($a['places']) : '';
+				$a['extra']=$a['extra'] ? serialize($a['extra']) : '';
+
+				if($a['extra'] or $a['places'] or $a['blocks'])
+					Eleanor::$Db->Replace(P.'blocks_groups',$a);
+				else
+					Eleanor::$Db->Delete(P.'blocks_groups','`id`='.$id);			}
+		}
+	}
+	else
+		Eleanor::$Db->Delete(P.'blocks_groups','`id`='.$id);
 	Eleanor::$Db->Delete(P.'drafts','`key`=\'_blocks-'.Eleanor::$Login->GetUserValue('id').'-g'.$id.'\'');
  	Eleanor::$Cache->Obsolete('blocks');
-	GoAway();
+
+	$R=Eleanor::$Db->Query('SELECT `service` FROM `'.P.'blocks_ids` WHERE `id`='.$id.' LIMIT 1');
+	if($R->num_rows>0)
+		list($service)=$R->fetch_row();
+	else
+		$service=false;
+
+	GoAway(array('group'=>$service=='user' ? false : $service));
 }
 else
 {
 	$gid=isset($_GET['group']) ? (string)$_GET['group'] : 'user';
+	$tpl=isset($_GET['tpl']) ? (string)$_GET['tpl'] : '';
+
 	if(!isset(Eleanor::$services[$gid]))
 		$gid=(int)$gid;
+
 	$saved=false;
 	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 	{
 		$values=SaveGroupValues();
+		$values['places']=array($tpl=>$values['places']);
+		$values['extra']=array($tpl=>$values['extra']);
 		if(is_int($gid))
 		{
-			$R=Eleanor::$Db->Query('SELECT `id` FROM `'.P.'blocks_ids` WHERE `id`='.$gid.' LIMIT 1');
-			if($R->num_rows==0)
-				return ShowGroup($gid,array('UNCREATABLE'));
+			$R=Eleanor::$Db->Query('SELECT `id`,`blocks`,`places`,`extra`,`service` FROM `'.P.'blocks_groups` INNER JOIN `'.P.'blocks_ids` USING(`id`) WHERE `id`='.$gid.' LIMIT 1');
+			if(!$old=$R->fetch_assoc())
+				return ShowGroup($gid,$tpl,array('UNCREATABLE'));
+
+			$tpls=GetTemplates($old['service']);
 			$values['id']=$gid;
-			$values['blocks']=$values['blocks'] ? serialize($values['blocks']) : '';
+
+			if($old['blocks'])
+				$values['blocks']+=(array)unserialize($old['blocks']);
+
+			if($old['places'])
+				$values['places']+=(array)unserialize($old['places']);
+			#Удаляем возможно удаленные темы
+			foreach($values['places'] as $k=>&$v)
+				if($k!='' and !in_array($k,$tpls))
+					unset($values['places'][$k]);
 			$values['places']=$values['places'] ? serialize($values['places']) : '';
-			$values['extra']=$values['extra'] ? serialize($values['extra']) : '';
+
+			if($old['extra'])
+				$values['extra']+=(array)unserialize($old['extra']);
+			else
+				#Удаляем возможно удаленные темы
+				foreach($values['extra'] as $k=>&$v)
+					if($k!='' and !in_array($k,$tpls))
+						unset($values['extra'][$k]);
+			$values['extra']=$values['extra'] && (count($values['extra'])!=1 or $values['extra'][$tpl]) ? serialize($values['extra']) : '';
+
 			Eleanor::$Db->Replace(P.'blocks_groups',$values);
 		}
-		elseif(isset(Eleanor::$services[$gid]))
-			Eleanor::$Cache->Put('blocks_defgr-'.$gid,$values,0,true);
 		else
-			return ShowGroup($gid,array('UNCREATABLE'));
+		{			$old=Eleanor::$Cache->Get('blocks-'.$gid,true);
+			$tpls=GetTemplates($gid);
+
+			if($old['blocks'])
+				$values['blocks']+=(array)$old['blocks'];
+
+			if($old['places'])
+				$values['places']+=(array)$old['places'];
+			#Удаляем возможно удаленные темы
+			foreach($values['places'] as $k=>&$v)
+				if($k!='' and !in_array($k,$tpls))
+					unset($values['places'][$k]);
+
+			if(isset($old['extra']))
+				$values['extra']+=(array)$old['extra'];
+			if(count($values['extra'])==1 and !$values['extra'][$tpl])
+				unset($values['extra']);
+			else
+				#Удаляем возможно удаленные темы
+				foreach($values['extra'] as $k=>&$v)
+					if($k!='' and !in_array($k,$tpls))
+						unset($values['extra'][$k]);
+
+			Eleanor::$Cache->Put('blocks-'.$gid,$values,0,true);
+		}
+
 		Eleanor::$Cache->Obsolete('blocks');
 		if(isset($_POST['group']) and $_POST['group']!=$gid)
 			return GoAway(array('group'=>$_POST['group'])+(empty($_POST['similar']) ? array() : array('similar'=>$_POST['similar'])));
 		$saved=true;
 	}
-	ShowGroup($gid,array(),$saved);
+	ShowGroup($gid,$tpl,array(),$saved);
 }
 
-function ShowGroup($gid,$errors=array(),$saved=false)
+function GetTemplates($service)
+{	$res=array();	$files=glob(Eleanor::$root.'templates/*.settings.php');
+	if($files)
+		foreach($files as $f)
+		{
+			$a=include$f;
+			if(!is_array($a))
+				continue;
+			if(in_array($service,(array)$a['service']) and preg_match('#/(.+)\.settings\.php$#',$f,$m)>0)
+				$res[]=$m[1];
+		}
+	return$res;}
+
+function ShowGroup($gid,$tpl='',$errors=array(),$saved=false)
 {global$Eleanor,$title;
 	$lang=Eleanor::$Language['blocks'];
 	$title[]=$lang['bpos'];
@@ -369,14 +461,10 @@ function ShowGroup($gid,$errors=array(),$saved=false)
 		{
 			$R=Eleanor::$Db->Query('SELECT `blocks`,`places`,`extra` FROM `'.P.'blocks_groups` WHERE `id`='.$gid.' LIMIT 1');
 			if($group=$R->fetch_assoc())
-			{
 				$group['blocks']=$group['blocks'] ? (array)unserialize($group['blocks']) : array();
-				$group['places']=$group['places'] ? (array)unserialize($group['places']) : array();
-				$group['extra']=$group['extra'] ? (array)unserialize($group['extra']) : array();
-			}
 		}
 		else
-			$group=Eleanor::$Cache->Get('blocks_defgr-'.$gid,true);
+			$group=Eleanor::$Cache->Get('blocks-'.$gid,true);
 
 		do
 		{
@@ -389,16 +477,14 @@ function ShowGroup($gid,$errors=array(),$saved=false)
 			if($similar)
 				if(is_int($similar))
 				{
-					$R=Eleanor::$Db->Query('SELECT `places`,`extra` FROM `'.P.'blocks_groups` WHERE `id`='.$similar.' LIMIT 1');
+					$R=Eleanor::$Db->Query('SELECT `blocks`,`places`,`extra` FROM `'.P.'blocks_groups` WHERE `id`='.$similar.' LIMIT 1');
 					if($group=$R->fetch_assoc())
 					{
 						$group['blocks']=$group['blocks'] ? (array)unserialize($group['blocks']) : array();
-						$group['places']=$group['places'] ? (array)unserialize($group['places']) : array();
-						$group['extra']=$group['extra'] ? (array)unserialize($group['extra']) : array();
 						break;
 					}
 				}
-				elseif($group=Eleanor::$Cache->Get('blocks_defgr-'.$similar,true))
+				elseif($group=Eleanor::$Cache->Get('blocks-'.$similar,true))
 					break;
 
 			if($isi)
@@ -415,6 +501,8 @@ function ShowGroup($gid,$errors=array(),$saved=false)
 			else
 				return FatalError('UNCREATABLE');
 		}while(false);
+		$group['places']=$group['places'] ? Eleanor::FilterLangValues(is_array($group['places']) ? $group['places'] : (array)unserialize($group['places']),$tpl,array()) : array();
+		$group['extra']=empty($group['extra']) ? '' : Eleanor::FilterLangValues(is_array($group['extra']) ? $group['extra'] : (array)unserialize($group['extra']),$tpl,'');
 	}
 
 	$group+=array('blocks'=>array(),'places'=>array(),'extra'=>array(),);
@@ -432,10 +520,14 @@ function ShowGroup($gid,$errors=array(),$saved=false)
 		'user'=>array('user'=>array('t'=>$lang['bydef'],'g'=>true)),#t - название идентификатора, g - признак наличия группы у идентификатора
 		'admin'=>array('admin'=>array('t'=>$lang['bydef'],'g'=>true)),
 	);
+	$service=is_string($gid) ? $gid : false;
 	$R=Eleanor::$Db->Query('SELECT `i`.`id`,`i`.`service`,`i`.`title_l` `title`,`g`.`id` `gid` FROM `'.P.'blocks_ids` `i` LEFT JOIN `'.P.'blocks_groups` `g` USING(`id`)');
 	while($a=$R->fetch_assoc())
-	{
-		$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
+	{		$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
+
+		if(!$service and $a['id']==$gid)
+			$service=$a['service'];
+
 		$preids[]=$a;
 		$tosort[]=$a['title'];
 	}
@@ -444,12 +536,38 @@ function ShowGroup($gid,$errors=array(),$saved=false)
 		$ids[$preids[$k]['service']][$preids[$k]['id']]=array('t'=>$preids[$k]['title'],'g'=>(bool)$preids[$k]['gid']);
 	unset($tosort,$preids);
 
+	$tpls=$places=array();
+	$deftheme=Eleanor::$services[ $service ]['theme'];
+	$files=glob(Eleanor::$root.'templates/*.settings.php');
+	if($files)
+		foreach($files as $f)
+		{			$a=include$f;
+			if(!is_array($a))
+				continue;
+			if(in_array($service,(array)$a['service']) and preg_match('#/(.+)\.settings\.php$#',$f,$m)>0)
+			{				$isour=($m[1]==$tpl or $tpl=='' and $deftheme==$m[1]);
+				if($isour and isset($a['places']))
+					foreach($a['places'] as $k=>&$v)
+						$places[$k]=array(
+							'title'=>is_array($v['title']) ? Eleanor::FilterLangValues($v['title']) : $v['title'],
+							'extra'=>isset($group['places'][$k]) ? $group['places'][$k] : $v['extra'],
+						);
+				$tpls[ $m[1] ]=array(
+					'a'=>$isour ? false : $Eleanor->Url->Construct(array('group'=>$gid=='user' ? false : $gid,'tpl'=>$deftheme==$m[1] ? false : $m[1])),
+					'title'=>is_array($a['name']) ? Eleanor::FilterLangValues($a['name']) : $a['name'],
+				);
+			}
+		}
+	$group['places']=$places ? $places : array();
+	if(count($tpls)==1)
+		$tpls=array();
+
 	$links=array(
 		'del_group'=>$isi ? $Eleanor->Url->Construct(array('deleteg'=>$gid)) : false,
 		'nodraft'=>$hasdraft ? $Eleanor->Url->Construct(array('group'=>$gid=='user' ? false : $gid,'nodraft'=>1)) : false,
 		'draft'=>$Eleanor->Url->Construct(array('do'=>'draft')),
 	);
-	$c=Eleanor::$Template->BlocksGroup($gid,$blocks,$ids,$group,$errors,$hasdraft,$saved,$links);
+	$c=Eleanor::$Template->BlocksGroup($gid,$blocks,$ids,$group,$tpls,$errors,$hasdraft,$saved,$links);
 	Start();
 	echo$c;
 }
@@ -465,31 +583,18 @@ function SaveGroupValues()
 {
 	$group=array();
 	if(isset($_POST['place']) and is_array($_POST['place']))
-		if(Eleanor::$vars['multilang'])
-			foreach($_POST['place'] as $k=>&$v)
-			{
-				$group['blocks'][$k]=$group['places'][$k]['title']=array();
-				foreach(Eleanor::$langs as $l=>&$_)
-					$group['places'][$k]['title'][$l]=Eleanor::FilterLangValues((array)$v,$l);
-			}
-		else
-			foreach($_POST['place'] as $k=>&$v)
-			{
-				$group['blocks'][$k]=array();
-				$group['places'][$k]['title']=array(''=>Eleanor::FilterLangValues((array)$v));
-			}
-
-	if(isset($_POST['placeinfo']) and is_array($_POST['placeinfo']))
-		foreach($_POST['placeinfo'] as $k=>&$v)
-			if(isset($group['places'][$k]))
-				$group['places'][$k]['info']=(string)$v;
+		foreach($_POST['place'] as $k=>&$v)
+		{
+			$group['blocks'][$k]=array();
+			$group['places'][$k]=(string)$v;
+		}
 
 	if(isset($_POST['block']) and is_array($_POST['block']))
 		foreach($_POST['block'] as $k=>&$v)
 			if(isset($group['blocks'][$k]))
 				$group['blocks'][$k]=(array)$v;
 
-	$group['extra']=isset($_POST['extra']) && is_array($_POST['extra']) ? $_POST['extra'] : array();
+	$group['extra']=isset($_POST['extra']) ? (string)$_POST['extra'] : '';
 	return$group;
 }
 
@@ -537,7 +642,7 @@ function AddEdit($id,$errors=array())
 			{
 				if(!isset($values['_onelang']))
 					$values['_onelang']=false;
-				$values['_langs']=isset($values['title']['value']) ? array_keys($values['title']['value']) : array();
+				$values['_langs']=isset($values['title']) ? array_keys($values['title']) : array();
 			}
 		}
 		$title[]=$lang['editing'];
@@ -673,7 +778,7 @@ function Save($id)
 	$lang=Eleanor::$Language['blocks'];
 	if(Eleanor::$vars['multilang'] and !isset($_POST['_onelang']))
 	{
-		$langs=empty($_POST['lang']) || !is_array($_POST['lang']) ? array() : $_POST['lang'];
+		$langs=empty($_POST['_langs']) || !is_array($_POST['_langs']) ? array() : $_POST['_langs'];
 		$langs=array_intersect(array_keys(Eleanor::$langs),$langs);
 		if(!$langs)
 			$langs=array(Language::$main);

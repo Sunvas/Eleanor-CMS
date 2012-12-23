@@ -25,7 +25,7 @@ if(Eleanor::$vars['multilang'])
 		if(Eleanor::$Login->IsUser())
 			UserManager::Update(array('language'=>$_GET['language']));
 		else
-			Eleanor::SetCookie(Eleanor::$service.'_lang',$_GET['language']);
+			Eleanor::SetCookie('lang',$_GET['language']);
 		return GoAway(html_entity_decode(LangNewUrl(getenv('HTTP_REFERER'),$_GET['language'])));
 	}
 	if(!Eleanor::$Login->IsUser() and $l=Eleanor::GetCookie('lang') and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
@@ -304,28 +304,36 @@ function Error($e='',$extra=array())
 
 function LangNewUrl($url,$l)
 {global$Eleanor;
-	$our=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
-	if(strpos($url,$our)!==0 or $our==$url or !$url=preg_replace('#^'.preg_quote($our,'#').'('.preg_quote(Eleanor::$filename,'#').'\??)?#i','',$url))
-		return$our.$Eleanor->Url->Construct(array(),true);
+	#Определим отправную точку, куда мы в любом случае отправим клиента
+	$base=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
 
-	$old=$our.Eleanor::$filename.'?'.$url;
-	$Eleanor->Url->__construct($url);
-	parse_str($Eleanor->Url->string,$q);
+	#Если запрос пришел с чужого домена - считаем такой запрос некорректным
+	if(strpos($url,'://')!==false and strpos($url,$base)!==0)
+		$url='';
+	$url=preg_replace('#^'.preg_quote($base,'#').'('.preg_quote(Eleanor::$filename,'#').'\??)?#i','',$url);
+
+	if($url=='')
+		return$base.$Eleanor->Url->Construct(array(),true);
+
+	$special=Eleanor::$filename.'?';
+	parse_str($url,$q);
 	if(!isset($q['section'],$q['module']) or $q['section']!='modules')
-		return$old;
+		return$base.$special.$url;
 
 	$modules=Modules::GetCache();
-	if(isset($modules['ids'][$q['module']]))
-	{
-		$mid=(int)$modules['ids'][$q['module']];
-		$s=$modules['sections'][$q['module']];
-	}
-	else
-		return$old;
+	if(!isset($modules['ids'][$q['module']]))
+		return$base.$special.$url;
+
+	$mid=(int)$modules['ids'][$q['module']];
+	$s=$modules['sections'][$q['module']];
 
 	$R=Eleanor::$Db->Query('SELECT `sections`,`path`,`api` FROM `'.P.'modules` WHERE `id`='.$mid.' AND `active`=1 LIMIT 1');
 	if(!$a=$R->fetch_assoc())
-		return$old;
+		return$base.$special.$url;
+
+	$path=Eleanor::FormatPath($a['path']).DIRECTORY_SEPARATOR;
+	if(!$a['api'] or !is_file($path.$a['api']))
+		return$base.$special.$url;
 
 	$sections=unserialize($a['sections']);
 	foreach($sections as &$v)
@@ -335,14 +343,8 @@ function LangNewUrl($url,$l)
 			$v=isset($v[LANGUAGE]) ? reset($v[LANGUAGE]) : reset($v['']);
 	$modules=Modules::GetCache(false,$l);
 	$m=array_keys($modules['ids'],$mid);
-	$m=reset($m);
+	$q['module']=reset($m);
 
-	$Eleanor->Url->SetPrefix(array('section'=>'modules','module'=>$m));
-	$p=htmlspecialchars_decode($Eleanor->Url->Prefix(),ELENT);
-	unset($q['module'],$q['section'],$q['key']);
-	$path=Eleanor::FormatPath($a['path']).DIRECTORY_SEPARATOR;
-	if(!$a['api'] or !is_file($path.$a['api']))
-		return$our.$p;
 	$c='Api'.basename($a['path']);
 	if(!class_exists($c,false))
 		include$path.$a['api'];
@@ -355,7 +357,6 @@ function LangNewUrl($url,$l)
 		'id'=>$mid,
 	);
 	if(method_exists($Plug,'LangUrl') and $r=$Plug->LangUrl($q,$l))
-		return$our.$r;
-	else
-		return$our.$p;
+		return$base.$r;
+	return$base.$special.$url;
 }

@@ -31,7 +31,7 @@ LICENSE
 				'english'=>'Left blocks',
 				'ukrainian'=>'Ліві блоки',
 			),
-			'info'=>'50,108,184,270,1',
+			'extra'=>'50,108,184,270,1',
 		),
 		'right'=>array(
 			'title'=>array(
@@ -39,7 +39,7 @@ LICENSE
 				'english'=>'Right blocks',
 				'ukrainian'=>'Праві блоки',
 			),
-			'info'=>'416,107,182,270,2',
+			'extra'=>'416,107,182,270,2',
 		),
 		'center_up'=>array(
 			'title'=>array(
@@ -47,7 +47,7 @@ LICENSE
 				'english'=>'Up central',
 				'ukrainian'=>'Верхні центральні',
 			),
-			'info'=>'50,0,548,101,3',
+			'extra'=>'50,0,548,101,3',
 		),
 		'center_down'=>array(
 			'title'=>array(
@@ -55,7 +55,7 @@ LICENSE
 				'english'=>'Down central',
 				'ukrainian'=>'Нижні центральні',
 			),
-			'info'=>'50,393,548,101,4',
+			'extra'=>'50,393,548,101,4',
 		),
 	),
 

@@ -28,7 +28,7 @@ class ApiNews extends BaseClass
 		$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.$this->config['t'].'` INNER JOIN `'.$this->config['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id`'.Eleanor::$Db->In(array_keys($ids)));
 		while($a=$R->fetch_assoc())
 			foreach($ids[$a['id']] as &$v)
-				$r[$v]=array($a['title'],Eleanor::$services['user']['file'].'?'.Url::Query(array('lang'=>Language::$main==LANGUAGE ? false : Language::$main,'module'=>$mn,'nid'=>$a['id'],'cfind'=>$v)));
+				$r[$v]=array($a['title'],Eleanor::$services['user']['file'].'?'.Url::Query(array('lang'=>Language::$main==LANGUAGE ? false : Language::$main,'module'=>$mn,'id'=>$a['id'],'cfind'=>$v)));
 		return$r;
 	}
 
@@ -76,14 +76,14 @@ class ApiNews extends BaseClass
 			$q=$El->Url->Parse($El->Url->ending ? array() : array('do'),true);
 			if($El->Url->ending)
 			{
-				$curls=(isset($q['']) and is_array($q[''])) ? $q[''] : array();
+				$curls=isset($q['']) && is_array($q['']) ? $q[''] : array();
 				if(Eleanor::$vars['url_static_ending']==$El->Url->ending)
 					$puri=array_pop($curls);
 			}
 		}
-		if(Eleanor::$service!='user' or isset($q['do']))
-			return$El->Url->Construct($q);
 
+		if(Eleanor::$service!='user' or !$q)
+			return$El->Url->Construct($q);
 		$cid=isset($q['cid']) ? (int)$q['cid'] : 0;
 		$nid=isset($q['nid']) ? (int)$q['nid'] : 0;
 

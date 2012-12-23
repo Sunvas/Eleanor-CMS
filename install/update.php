@@ -198,7 +198,7 @@ switch($step)
 				$title=$navi=$lang['vcf'];
 				$text='<div class="wpbox wpbwhite"><div class="wptop"><b>&nbsp;</b></div>
 				<div class="wpmid"><div class="wpcont">
-				<form method="post">
+				<form method="post" action="update.php?step=2&amp;s='.session_id().'">
 				<h3 class="subhead">'.$lang['vcf'].'</h3>
 				<ul class="reset formfield">
 				<li class="ffield"><span class="label">'.$lang['db_host'].'</span><div class="ffdd"><h4>'.(string)$_POST['host'].'</h4></div></li>
@@ -208,7 +208,7 @@ switch($step)
 				<li class="ffield"><span class="label">'.$lang['db_pref'].'</span><div class="ffdd"><h4>'.htmlspecialchars((string)$_POST['pref'],ELENT,CHARSET).'</h4></div></li>
 				<li class="ffield"><span class="label">'.$lang['addl'].'</span><div class="ffdd"><h4>'.($langs ? implode(', ',$langs) : $lang['no']).'</h4></div></li>
 				</ul>
-				<div class="submitline">'.Eleanor::Input('s',session_id(),array('type'=>'hidden'))
+				<div class="submitline">'
 				.Eleanor::Button($lang['back'],'button',array('class'=>'button','onclick'=>'history.go(-1)','tabindex'=>2),2)
 				.Eleanor::Button($lang['next'],'submit',array('class'=>'button','tabindex'=>1),2).'</div></form>
 				</div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';

@@ -178,17 +178,14 @@ $.fn.EleanorVisualBlocks=function(opts)
 			placemove:".place .title",//Селектор контрола для перемещения места
 
 			//selector к place
-			placetitleinput:"input[name^=\"place[\"]",//Селектор для языковых заголовков места
 			placeinput:"input:last",//Селектор для определения контрола, где скрипт будет размещать параметры left,top,width,height,z-index
-			placecaption:".caption:first",
 
 			//selector к block
 			blockinput:"input:first",
 			blockcaption:".caption:first",
 
-			//Дистрибутивы блоков и мест
+			//Дистрибутивы блоков
 			distribblock:false,
-			distribplace:false,
 
 			//Разное
 			dragimg:"",//Иконка под мышкой при перемещении блоков
@@ -197,7 +194,6 @@ $.fn.EleanorVisualBlocks=function(opts)
 
 			//Callbacks
 			Recount:function(){},//Пересчет элементов. Параметр 1: id=>cnt
-			EditPlace:function(){},//Редактирование места. Параметры: имя, названи(е|я), функция сохранения
 			Change:$.Callbacks("unique")//Функция вызывается когда что-то изменилось.
 		},
 		opts
@@ -243,59 +239,7 @@ $.fn.EleanorVisualBlocks=function(opts)
 				e.stopPropagation();
 				Recount();			};
 
-		site.on("add",function(e,name,title){//Событие добавления места
-			var newpl=opts.distribplace.clone(),
-				titles=newpl.find(opts.placetitleinput).val("").prop("name",function(i,ov){					return ov.replace("[]","["+name+"]");				}),
-				pltit;
-			newpl.find(opts.placeinput).prop("name","placeinfo["+name+"]");
-			if(typeof title=="string")
-			{				pltit=title;
-				titles.val(title).filter(":gt(1)").prop("disabled",true);
-			}
-			else
-				titles.each(function(){
-					var l=$(this).prop("name");
-					l=l.indexOf("][")==-1 ? CORE.language : l.match(/\[([^\]]+)\]$/)[1];
-					$(this).val(title[l]);
-					if(l==CORE.language)
-						pltit=title[l];
-				})
-			newpl.appendTo(this).find(opts.placecaption).text(pltit && pltit!=name ? pltit+" ("+name+")" : name);
-			PlaceParams(newpl,"z-index",zindex);
-			Recount();
-		})
-		.on("edit",opts.place,function(e){//Событие редактирования места
-			var title=[],
-				pl=$(this),
-				titles=$(opts.placetitleinput,this).each(function(){					var l=$(this).prop("name");					if(l.indexOf("][")==-1)
-					{						title=$(this).val();
-						return false;					}
-					l=l.match(/\[([^\]]+)\]$/)[1];
-					title[l]=$(this).val();
-				}),
-				inp=$(opts.placeinput,this),
-				oldname=inp.prop("name").match(/\[([^\]]+)\]$/)[1];
-			opts.EditPlace(oldname,title,function(name,title){				var pltit;				if(typeof title=="string")
-				{
-					pltit=title;
-					titles.val(title).filter(":gt(1)").prop("disabled",true);
-				}
-				else
-					titles.each(function(){
-						var l=$(this).prop("name");
-						l=l.indexOf("][")==-1 ? CORE.language : l.match(/\[([^\]]+)\]$/)[1];
-						$(this).val(title[l]);
-						if(l==CORE.language)
-							pltit=title[l];
-					})
-				pl.find(opts.placecaption).text(pltit && pltit!=name ? pltit+" ("+name+")" : name);
-				if(oldname!=name)
-					pl.find(opts.block).find(opts.blockinput)
-					.add(pl.find(opts.placeinput))
-					.add(pl.find(opts.placetitleinput))
-					.prop("name",function(i,ov){						return ov ? ov.replace("["+oldname+"]","["+name+"]") : "block["+name+"][]";					});			});
-		})
-		.on("delete",opts.place,Delete)//Событие удаления места
+		site
 		.on("delete",opts.block,Delete)//Событие удаление блока
 		.on("focus click",opts.place,Activate)
 
@@ -417,16 +361,6 @@ $.fn.EleanorVisualBlocks=function(opts)
 					inp=pl.find(opts.placeinput),
 					val=inp.val().split(","),
 					z=false;
-
-				$(this).find(opts.placetitleinput).each(function(){
-					var name=$(this).prop("name"),
-						v=$(this).val();
-					if(name.indexOf("][")==-1 || name.match(/\[([^\]]+)\]$/)[1]==CORE.language)
-					{						name=inp.prop("name").match(/\[([^\]]+)\]$/)[1];
-						pl.find(opts.placecaption).text(v ? v+" ("+name+")" : name);
-						return false;
-					}
-				});
 
 				if(val.length==5)
 				{					pl.css({left:val[0]+"px",top:val[1]+"px"}).width(val[2]+"px").height(val[3]+"px");

@@ -274,7 +274,7 @@ class AccountSettings
 
 			if($C->errors)
 			{				$post=true;
-				return static::Input($controls,$avatar,$C->errors);
+				return static::Edit($controls,$avatar,$C->errors);
 			}
 
 			UserManager::Update($values);
@@ -293,7 +293,7 @@ class AccountSettings
 			}
 			$saved=true;
 		}
-		return static::Input($controls,$avatar,array(),$saved);
+		return static::Edit($controls,$avatar,array(),$saved);
 	}
 
 	public static function SaveVK($a)

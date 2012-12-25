@@ -16,29 +16,9 @@ Eleanor::$Template->queue[]=$mc['admintpl'];
 $lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php',$mc['n']);
 Eleanor::LoadOptions($mc['opts'],false);
 
-$R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$mc['t'].'` WHERE `status`=-1');
-list($cnt)=$R->fetch_row();
-
 $Eleanor->Categories=new Categories_manager;
 $Eleanor->Categories->table=$mc['c'];
 $Eleanor->Categories->ondelete='DelCategories';
-
-$Eleanor->module['links']=array(
-	'list'=>$Eleanor->Url->Prefix(),
-	'newlist'=>$cnt>0
-		? array(
-			#'act'=>isset($_GET['fi'],$_GET['fi']['status']) and $_GET['fi']['status']==-1,
-			'link'=>$Eleanor->Url->Construct(array(''=>array('fi'=>array('status'=>-1)))),
-			'cnt'=>$cnt,
-		)
-		: false,
-	'add'=>$Eleanor->Url->Construct(array('do'=>'add')),
-	'tags'=>$Eleanor->Url->Construct(array('do'=>'tags')),
-	'addt'=>$Eleanor->Url->Construct(array('do'=>'addt')),
-	'options'=>$Eleanor->Url->Construct(array('do'=>'options')),
-	'categories'=>$Eleanor->Url->Construct(array('do'=>'categories')),
-	//'addf'=>$Eleanor->Url->Construct(array('do'=>'addf'),
-);
 
 $Eleanor->sc_post=false;
 $Eleanor->sc=array(
@@ -180,7 +160,7 @@ if(isset($_GET['do']))
 				'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 			);
 			$c=Eleanor::$Template->TagsList($items,$cnt,$pp,$qs,$page,$links);
-			Start();
+			MStart();
 			echo$c;
 		break;
 		case'addt':
@@ -201,7 +181,7 @@ if(isset($_GET['do']))
 			if($c)
 			{
 				$c=Eleanor::$Template->Categories($c);
-				Start();
+				MStart();
 				echo$c;
 			}
 		break;
@@ -211,7 +191,7 @@ if(isset($_GET['do']))
 			if($c)
 			{
 				$c=Eleanor::$Template->Options($c);
-				Start();
+				MStart();
 				echo$c;
 			}
 		break;
@@ -223,13 +203,13 @@ if(isset($_GET['do']))
 				Eleanor::$Db->Replace(P.'drafts',array('key'=>$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$t,'value'=>serialize($_POST)));
 			}
 			Eleanor::$content_type='text/plain';
-			Start('');
+			MStart('');
 			echo'ok';
 		break;
 		//case'addf':
 		//	$title='Дополнительные поля';
 		//	#ToDo!
-		//	Start();
+		//	MStart();
 		//	echo 'В разработке...';
 		//break;
 		default:
@@ -283,7 +263,7 @@ elseif(isset($_GET['delete']))
 	else
 		$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
 	$c=Eleanor::$Template->Delete($a,$back);
-	Start();
+	MStart();
 	echo$c;
 }
 elseif(isset($_GET['swap']))
@@ -346,7 +326,7 @@ elseif(isset($_GET['deletet']))
 	else
 		$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
 	$c=Eleanor::$Template->DeleteTag(sprintf($lang['deletingt'],$a['title']),$back);
-	Start();
+	MStart();
 	echo$c;
 }
 else
@@ -402,7 +382,7 @@ function AddEditTag($id,$errors=array())
 		'draft'=>$Eleanor->Url->Construct(array('do'=>'draft')),
 	);
 	$c=Eleanor::$Template->AddEditTag($id,$Eleanor->sc,$values,$errors,$back,$hasdraft,$links);
-	Start();
+	MStart();
 	echo$c;
 }
 
@@ -582,7 +562,7 @@ function ShowList()
 		'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 	);
 	$c=Eleanor::$Template->ShowList($items,$Eleanor->Categories->dump,$cnt,$pp,$qs,$page,$links);
-	Start();
+	MStart();
 	echo$c;
 }
 
@@ -770,7 +750,7 @@ function AddEdit($id,$errors=array())
 		'draft'=>$Eleanor->Url->Construct(array('do'=>'draft')),
 	);
 	$c=Eleanor::$Template->AddEdit($id,$values,$errors,$Eleanor->Uploader->Show($id ? $Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id : false),$Eleanor->VotingManager->AddEdit($values['voting']),$bypost,$hasdraft,$back,$links);
-	Start();
+	MStart();
 	echo$c;
 }
 
@@ -1103,3 +1083,24 @@ function DelCategories($ids)
 	}
 	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 }
+
+function MStart()
+{global$Eleanor;	$R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$Eleanor->module['config']['t'].'` WHERE `status`=-1');
+	list($cnt)=$R->fetch_row();
+	$Eleanor->module['links']=array(
+		'list'=>$Eleanor->Url->Prefix(),
+		'newlist'=>$cnt>0
+			? array(
+				#'act'=>isset($_GET['fi'],$_GET['fi']['status']) and $_GET['fi']['status']==-1,
+				'link'=>$Eleanor->Url->Construct(array(''=>array('fi'=>array('status'=>-1)))),
+				'cnt'=>$cnt,
+			)
+			: false,
+		'add'=>$Eleanor->Url->Construct(array('do'=>'add')),
+		'tags'=>$Eleanor->Url->Construct(array('do'=>'tags')),
+		'addt'=>$Eleanor->Url->Construct(array('do'=>'addt')),
+		'options'=>$Eleanor->Url->Construct(array('do'=>'options')),
+		'categories'=>$Eleanor->Url->Construct(array('do'=>'categories')),
+		//'addf'=>$Eleanor->Url->Construct(array('do'=>'addf'),
+	);
+	Start();}

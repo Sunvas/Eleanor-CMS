@@ -105,9 +105,9 @@ LICENSE
 			'default'=>2,
 			'options'=>array(
 				'options'=>array(1,2,3,4,5),
-				'extra'=>array('tabindex'=>5),
+				'extra'=>array('tabindex'=>5,'size'=>10),
 			),
-			'type'=>'item',
+			'type'=>'select',
 		),
 		'param6'=>array(
 			'title'=>'Множественный выбор',

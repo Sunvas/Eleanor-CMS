@@ -544,7 +544,7 @@ function ShowGroup($gid,$tpl='',$errors=array(),$saved=false)
 		{			$a=include$f;
 			if(!is_array($a))
 				continue;
-			if(in_array($service,(array)$a['service']) and preg_match('#/(.+)\.settings\.php$#',$f,$m)>0)
+			if(in_array($service,(array)$a['service']) and preg_match('#/([A-Za-z0-9\-_\.]+)\.settings\.php$#',$f,$m)>0)
 			{				$isour=($m[1]==$tpl or $tpl=='' and $deftheme==$m[1]);
 				if($isour and isset($a['places']))
 					foreach($a['places'] as $k=>&$v)

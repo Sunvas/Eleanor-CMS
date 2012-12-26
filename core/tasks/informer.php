@@ -119,7 +119,7 @@ class TaskInformer extends BaseClass implements Task
 				if(strtotime($v['d']['d'])>$data['t'])
 				{
 					$repl['cnt']++;
-					$repl['errors'][]=$v['d']['e'].'('.$v['d']['n'].'): '.($v['d']['p'] ? $v['d']['p'] : '/').PHP_EOL.'Date: '.$v['d']['d'].PHP_EOL.'IP: '.$v['d']['ip'].PHP_EOL.($uinfo ? 'User: '.$v['d']['u'].PHP_EOL : '').'Browser: '.$v['d']['b'].PHP_EOL.'Referrers: '.join(', ',$v['d']['r']);
+					$repl['errors'][]=$v['d']['e'].'('.$v['d']['n'].'): '.($v['d']['p'] ? $v['d']['p'] : '/').PHP_EOL.'Date: '.$v['d']['d'].PHP_EOL.'IP: '.$v['d']['ip'].PHP_EOL.($v['d']['u'] ? 'User: '.$v['d']['u'].PHP_EOL : '').'Browser: '.$v['d']['b'].PHP_EOL.'Referrers: '.join(', ',$v['d']['r']);
 				}
 
 			if($repl['cnt']>0)

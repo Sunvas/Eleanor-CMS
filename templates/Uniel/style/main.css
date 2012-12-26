@@ -1010,28 +1010,21 @@ a.button:hover	{ background: #ffb800 url("../images/buttons_type1.png") no-repea
 
 
 /*ОШИБКИ*/
-.warning {
-	padding: 6px;
-	text-align: left;
-	color: #7e7e7e;
-	margin: auto;
-	margin-bottom: 16px;
-	line-height: 140%;
+.warning { padding: 8px; text-align: left; margin: auto; margin-bottom: 5px;
+	-o-border-radius:4px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border-radius:4px;
+	border: 1px solid #d3d3d3;
 	background-color: #fafafa;
-	border: 1px solid #e7e7e7;
-	font-family: Tahoma, Helvetica, sans-serif;
 }
 
-.warning h4 {
-	font-size: 17px;
-	color: #4e4e4e;
-	font-weight: normal;
-	margin-top: 0;
-	margin-bottom: 2px;
-	font-family: Tahoma, Helvetica, sans-serif;
-}
+.warning div { margin-left: 56px; }
+.warning div div { margin: 0; }
+.warning h4 { margin-top: 0; }
+.warning .info  { float: left; }
+.warning .repair { font-weight:bold; text-align:right; border-top:1px gray dashed; }
 
-.warning img { margin-right: 13px; }
 
 /*Галерея аватаров*/
 .galleryavatars { text-align:center; }

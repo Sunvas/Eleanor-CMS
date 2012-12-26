@@ -232,7 +232,7 @@ class UserManager extends BaseClass
 		{
 			$numdel=Eleanor::$UsersDb->Delete(USERS_TABLE,'`id`'.$in);
 			if($numdel>0)
-				Eleanor::$UsersDb->Replace(USERS_TABLE.'_deleted',array('id'=>$del,'!date'=>array_fill(0,count($del),'NOW()')));
+				Eleanor::$UsersDb->Replace(USERS_TABLE.'_updated',array('id'=>$del,'!date'=>array_fill(0,count($del),'NOW()')));
 		}
 
 		Integration::Delete($ids);

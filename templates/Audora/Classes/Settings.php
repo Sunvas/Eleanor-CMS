@@ -280,13 +280,13 @@ $(function(){
 	/*
 		Шаблон страницы импорта настроек
 
-		$mess - текстовое сообщение об успешном импорте (без <br />)
+		$info - массив статуса об успешном импорте (без <br />) либо false (если импорт не производился)
 		$error - сообщение об ошибке
 	*/
-	public static function SettImport($mess,$error)
-	{		static::Menu('import');
+	public static function SettImport($info,$error)
+	{		$rilang=static::$lang['import_result'];		static::Menu('import');
 		return Eleanor::$Template->Cover('<form method="post" enctype="multipart/form-data">'
-			.($mess ? Eleanor::$Template->Message(nl2br($mess),'info') : '')
+			.($info===false || $error ? '' : Eleanor::$Template->Message($info ? $rilang(count($info['gdel']),count($info['odel']),count($info['groups_ins']),count($info['groups_upd']),count($info['options_ins']),count($info['options_upd'])) : $rilang(),'info'))
 			.'<table class="tabstyle tabform"><tr class="tabletrline1"><td class="label">'.static::$lang['select_file_im'].'</td><td>'.Eleanor::Input('import',false,array('tabindex'=>1,'type'=>'file')).'</td></tr></table><div class="submitline">'.Eleanor::Button(static::$lang['do_import'],'submit',array('tabindex'=>2)).'</div></form>',$error);
 	}
 
@@ -299,7 +299,7 @@ $(function(){
 	public static function SettGroupDelete($a,$back)
 	{
 		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['settings']['deleting_g'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting_g'],$a['title']),$back));
 	}
 
 	/*
@@ -308,10 +308,10 @@ $(function(){
 			title - название настройки
 		$back - URL возврата
 	*/
-	public static function SettDelete($t,$back)
+	public static function SettDelete($a,$back)
 	{
 		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['settings']['deleting_o'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting_o'],$a['title']),$back));
 	}
 
 	/*
@@ -447,7 +447,7 @@ $(function(){
 			->item(static::$lang['prot_o'],Eleanor::Check('protected',$values['protected'],array('tabindex'=>7)+$extra));
 
 		if(Eleanor::$vars['multilang'])
-			$Lst->item(array(static::$lang['multilang'],Eleanor::Check('multilang',$values['multilang'],array('onclick'=>'ChangeMultilang()','id'=>'multilang','tabindex'=>7)),'descr'=>static::$lang['multilang_']))
+			$Lst->item(array(static::$lang['multilang'],Eleanor::Check('multilang',$values['multilang'],array('tabindex'=>7)),'descr'=>static::$lang['multilang_']))
 				->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],'Multilangs',9));
 
 		$general=(string)$Lst->end();
@@ -496,37 +496,22 @@ return $a[\'value\'];',array('style'=>'width:100%','readonly'=>'readonly')).'</d
 				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
 		return Eleanor::$Template->Cover($c,$errors).'<script type="text/javascript">//<![CDATA[
-function ChangeMultilang(onlyprev)
-{
-	if(typeof Multilangs=="undefined")
-		return;
-	var m=$("#multilang");
-	if(onlyprev)
-	{
-		var old=Multilangs.opts.where;
-		Multilangs.opts.where="#edit-control-preview";
-		if(m.prop("checked"))
-			Multilangs.Click();
-		else
-			Multilangs.opts.Switch(["'.Language::$main.'"],['.join(',',$langs).'],"#edit-control-preview");
-		Multilangs.opts.where=old;
-		return;
-	}
-	if(m.prop("checked"))
-	{
-		Multilangs.opts.where=document;
-		Multilangs.Click();
-	}
-	else
-	{
-		Multilangs.opts.where=$("#tab1");//.add($("#tab2 tr.temp").slice(1));
-		Multilangs.opts.Switch(["'.Language::$main.'"],['.join(',',$langs).'],$("#edit-control-preview").add($("#tab2 tr.temp").slice()));
-	}
-}
 $(function(){
 	$(".linetabs a").Tabs();
-	Multilangs.OnChange=ChangeMultilang;
-	ChangeMultilang();
+	$("[name=multilang]:first").click(function(){
+		if(typeof Multilangs=="undefined")
+			return;
+		var th=$(this);
+		if(th.prop("checked"))
+		{
+			Multilangs.opts.where=document;
+			Multilangs.Click();
+		}
+		else
+		{			Multilangs.opts.where=$("#tab0");//.add($("#tab2 tr.temp").slice(1));
+			Multilangs.opts.Switch(["'.Language::$main.'"],['.join(',',$langs).'],$("#edit-control-preview").add($("#tab2 tr.temp").slice()));
+		}
+	}).triggerHandler("click");
 });//]]></script>';
 	}
 }

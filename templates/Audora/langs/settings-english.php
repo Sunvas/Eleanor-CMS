@@ -44,4 +44,14 @@ return array(
 	'edit_control'=>'Control management',
 	'evals'=>'Processing values',
 	'error'=>'Error',
+	'import_result'=>function($gd=0,$od=0,$ag=0,$ug=0,$ao=0,$uo=0)
+	{
+		$s=rtrim(($gd>0 ? $gd.($gd>1 ? ' groups' : ' group').' deleted, ' : '')
+			.($od>0 ? $od.($od>1 ? ' options' : ' option').' deleted, ' : '')
+			.($ag>0 ? $ag.($ag>1 ? ' groups' : ' group').' added, ' : '')
+			.($ug>0 ? $ug.($ug>1 ? ' groups' : ' group').' updated, ' : '')
+			.($ao>0 ? $ao.($ao>1 ? ' options' : ' option').' added, ' : '')
+			.($uo>0 ? $uo.($uo>1 ? ' options' : ' option').' updated' : ''),', ');
+		return $s ? $s : 'Nothing was imported';
+	},
 );

@@ -549,7 +549,7 @@ class Settings extends BaseClass
 						if($_SERVER['REQUEST_METHOD']!='POST')
 							return$this->Import();
 						if(!isset($_FILES['import']) or !is_uploaded_file($_FILES['import']['tmp_name']))
-							return$this->Import('',$lang['f_not_load']);
+							return$this->Import(false,$lang['f_not_load']);
 						$f=file_get_contents($_FILES['import']['tmp_name']);
 						$error='';
 						try
@@ -561,7 +561,7 @@ class Settings extends BaseClass
 							$error=$E->getMessage();
 							$a=array();
 						}
-						return$this->Import($a ? $lang['import_result'](count($a['gdel']),count($a['odel']),count($a['groups_ins']),count($a['groups_upd']),count($a['options_ins']),count($a['options_upd'])) : '',$error);
+						return$this->Import($a,$error);
 					}
 					return$this->Import();
 				break;
@@ -907,7 +907,7 @@ class Settings extends BaseClass
 				'_areset'=>$reset ? $El->Url->Construct(array($this->pp.'oreset'=>$v['id'])) : false,
 				'_adefault'=>$reset && $this->opts_mod ? $El->Url->Construct(array($this->pp.'odefault'=>$v['id'])) : false,
 				'_aedit'=>$this->opts_mod ? $El->Url->Construct(array($this->pp.'oedit'=>$v['id'])) : false,
-				'_adelete'=>!$v['protected'] && $this->opts_mod ? $El->Url->Construct(array($this->pp.'oedit'=>$v['id'])) : false,
+				'_adelete'=>!$v['protected'] && $this->opts_mod ? $El->Url->Construct(array($this->pp.'adelete'=>$v['id'])) : false,
 				'_agroup'=>isset($v['gtitle']) ? $El->Url->Construct(array($this->pp.'sg'=>$v['group'])) : false,
 			);
 			if(isset($v['error']))
@@ -1000,16 +1000,16 @@ class Settings extends BaseClass
 	/**
 	 * Интерфейс импорта настроек
 	 *
-	 * @param string $message Сообщения импорта
+	 * @param array|false $info Статус импорта, либо false, если импорт не произошел
 	 * @param string $error Ошибка импорта
 	 */
-	protected function Import($message='',$error='')
+	protected function Import($info=false,$error='')
 	{
 		if(!$this->a_import)
 			return '';
 		$GLOBALS['title'][]=Eleanor::$Language['settings']['import'];
 		$this->DoNavigation();
-		return Eleanor::$Template->SettImport($message,$error);
+		return Eleanor::$Template->SettImport($info,$error);
 	}
 
 	/**
@@ -1216,6 +1216,7 @@ class Settings extends BaseClass
 		}
 		foreach($groups as &$v)
 		{
+			$isat=is_array($v['title']);
 			if(isset($exgrs[$v['name']]))
 			{
 				switch($v['onexists'])
@@ -1225,15 +1226,15 @@ class Settings extends BaseClass
 							Eleanor::$Db->Update(P.'config_groups',array('protected'=>$v['protected'],'keyword'=>$v['keyword']),'`id`='.$exgrs[$v['name']][0].' LIMIT 1');
 						foreach(Eleanor::$langs as $lng=>&$_)
 						{
-							if(Eleanor::$vars['multilang'] and is_array($v['title']) and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
+							if(Eleanor::$vars['multilang'] and $isat and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
 								continue;
 							Eleanor::$Db->Update(P.
 								'config_groups_l',
 								array(
-									'title'=>is_array($v['title']) ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
+									'title'=>$isat ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
 									'descr'=>is_array($v['descr']) ? Eleanor::FilterLangValues($v['descr'],$lng) : $v['descr'],
 								),
-								'`id`='.$exgrs[$v['name']][0].(Eleanor::$vars['multilang'] ? ' AND `language`=\''.$lng.'\'' : '')
+								'`id`='.$exgrs[$v['name']][0].(Eleanor::$vars['multilang'] && $isat ? ' AND `language`=\''.$lng.'\'' : '')
 							);
 						}
 						$res['groups_upd'][]=$v;
@@ -1242,15 +1243,15 @@ class Settings extends BaseClass
 						Eleanor::$Db->Update(P.'config_groups',array('protected'=>$v['protected'],'keyword'=>$v['keyword']),'`id`='.$exgrs[$v['name']][0].' LIMIT 1');
 						foreach(Eleanor::$langs as $lng=>&$_)
 						{
-							if(Eleanor::$vars['multilang'] and is_array($v['title']) and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
+							if(Eleanor::$vars['multilang'] and $isat and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
 								continue;
 							Eleanor::$Db->Update(P.
 								'config_groups_l',
 								array(
-									'title'=>is_array($v['title']) ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
+									'title'=>$isat ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
 									'descr'=>is_array($v['descr']) ? Eleanor::FilterLangValues($v['descr'],$lng) : $v['descr'],
 								),
-								'`id`='.$exgrs[$v['name']][0].(Eleanor::$vars['multilang'] ? ' AND `language`=\''.$lng.'\'' : '')
+								'`id`='.$exgrs[$v['name']][0].(Eleanor::$vars['multilang'] && $isat ? ' AND `language`=\''.$lng.'\'' : '')
 							);
 							if(Eleanor::$vars['multilang'])
 								break;
@@ -1270,14 +1271,14 @@ class Settings extends BaseClass
 					$grspos[$v['name']]=$ins['pos'];
 					foreach(Eleanor::$langs as $lng=>&$_)
 					{
-						if(Eleanor::$vars['multilang'] and is_array($v['title']) and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
+						if(Eleanor::$vars['multilang'] and $isat and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
 							continue;
 						Eleanor::$Db->Insert(P.
 							'config_groups_l',
 							array(
 								'id'=>$id,
-								'language'=>Eleanor::$vars['multilang'] ? $lng : '',
-								'title'=>is_array($v['title']) ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
+								'language'=>Eleanor::$vars['multilang'] && $isat ? $lng : '',
+								'title'=>$isat ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
 								'descr'=>is_array($v['descr']) ? Eleanor::FilterLangValues($v['descr'],$lng) : $v['descr'],
 							)
 						);
@@ -1314,7 +1315,7 @@ class Settings extends BaseClass
 		}
 		foreach($options as $grn=>&$gr)
 			foreach($gr as &$v)
-			{
+			{				$isat=is_array($v['title']);
 				if(isset($exopts[$grn][$v['name']]))
 				{
 					switch($v['onexists'])
@@ -1324,11 +1325,11 @@ class Settings extends BaseClass
 								Eleanor::$Db->Update(P.'config',array('type'=>$v['type'],'protected'=>$v['protected'],'eval_load'=>$v['eval_load'],'eval_save'=>$v['eval_save']),'`id`='.$exopts[$grn][$v['name']][0].' LIMIT 1');
 							foreach(Eleanor::$langs as $lng=>&$_)
 							{
-								if(Eleanor::$vars['multilang'] and is_array($v['title']) and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
+								if(Eleanor::$vars['multilang'] and $isat and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
 									continue;
 								$ser=is_array($v['serialized']) ? Eleanor::FilterLangValues($v['serialized'],$lng) : $v['serialized'];
 								$upd=array(
-									'title'=>is_array($v['title']) ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
+									'title'=>$isat ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
 									'descr'=>is_array($v['descr']) ? Eleanor::FilterLangValues($v['descr'],$lng) : $v['descr'],
 									'default'=>is_array($v['default']) ? Eleanor::FilterLangValues($v['default'],$lng) : $v['default'],
 									'extra'=>is_array($v['extra']) ? Eleanor::FilterLangValues($v['extra'],$lng) : $v['extra'],
@@ -1336,7 +1337,7 @@ class Settings extends BaseClass
 								);
 								if($ser)
 									$upd['default']=serialize(eval('return '.$upd['default'].';'));
-								Eleanor::$Db->Update(P.'config_l',$upd,'`id`='.$exopts[$grn][$v['name']][0].(Eleanor::$vars['multilang'] ? ' AND `language`=\''.$lng.'\'' : ''));
+								Eleanor::$Db->Update(P.'config_l',$upd,'`id`='.$exopts[$grn][$v['name']][0].(Eleanor::$vars['multilang'] && $isat ? ' AND `language`=\''.$lng.'\'' : ''));
 								if(Eleanor::$vars['multilang'])
 									break;
 							}
@@ -1346,10 +1347,10 @@ class Settings extends BaseClass
 							Eleanor::$Db->Update(P.'config',array('type'=>$v['type'],'protected'=>$v['protected'],'eval_load'=>$v['eval_load'],'eval_save'=>$v['eval_save']),'`id`='.$exopts[$grn][$v['name']][0].' LIMIT 1');
 							foreach(Eleanor::$langs as $lng=>&$_)
 							{
-								if(Eleanor::$vars['multilang'] and is_array($v['title']) and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
+								if(Eleanor::$vars['multilang'] and $isat and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
 									continue;
 								$upd=array(
-									'title'=>is_array($v['title']) ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
+									'title'=>$isat ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
 									'descr'=>is_array($v['descr']) ? Eleanor::FilterLangValues($v['descr'],$lng) : $v['descr'],
 									'value'=>is_array($v['value']) ? Eleanor::FilterLangValues($v['value'],$lng) : $v['value'],
 									'serialized'=>is_array($v['serialized']) ? Eleanor::FilterLangValues($v['serialized'],$lng) : $v['serialized'],
@@ -1362,7 +1363,7 @@ class Settings extends BaseClass
 									$upd['value']=serialize(eval('return '.$upd['value'].';'));
 									$upd['default']=serialize(eval('return '.$upd['default'].';'));
 								}
-								Eleanor::$Db->Update(P.'config_l',$upd,'`id`='.$exopts[$grn][$v['name']][0].(Eleanor::$vars['multilang'] ? ' AND `language`=\''.$lng.'\'' : ''));
+								Eleanor::$Db->Update(P.'config_l',$upd,'`id`='.$exopts[$grn][$v['name']][0].(Eleanor::$vars['multilang'] && $isat ? ' AND `language`=\''.$lng.'\'' : ''));
 								if(Eleanor::$vars['multilang'])
 									break;
 							}
@@ -1376,17 +1377,19 @@ class Settings extends BaseClass
 				}
 				else
 				{
-					$id=Eleanor::$Db->Insert(P.'config',$ins=array('name'=>$v['name'],'group'=>isset($exgrs[$v['group']]) ? $exgrs[$v['group']][0] : 0,'type'=>$v['type'],'protected'=>$v['protected'],'pos'=>(isset($grspos[$v['group']]) ? ++$grspos[$v['group']] : 1),'multilang'=>$v['multilang'],'eval_load'=>$v['eval_load'],'eval_save'=>$v['eval_save']));
+					if(!isset($grspos[$v['group']]))
+						$grspos[$v['group']]=1;
+					$id=Eleanor::$Db->Insert(P.'config',$ins=array('name'=>$v['name'],'group'=>isset($exgrs[$v['group']]) ? $exgrs[$v['group']][0] : 0,'type'=>$v['type'],'protected'=>$v['protected'],'pos'=>$grspos[$v['group']]++,'multilang'=>$v['multilang'],'eval_load'=>$v['eval_load'],'eval_save'=>$v['eval_save']));
 					if($id)
 					{
 						foreach(Eleanor::$langs as $lng=>&$_)
 						{
-							if(Eleanor::$vars['multilang'] and is_array($v['title']) and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
+							if(Eleanor::$vars['multilang'] and $isat and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
 								continue;
 							$upd=array(
 								'id'=>$id,
-								'language'=>Eleanor::$vars['multilang'] ? $lng : '',
-								'title'=>is_array($v['title']) ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
+								'language'=>Eleanor::$vars['multilang'] && $isat ? $lng : '',
+								'title'=>$isat ? Eleanor::FilterLangValues($v['title'],$lng) : $v['title'],
 								'descr'=>is_array($v['descr']) ? Eleanor::FilterLangValues($v['descr'],$lng) : $v['descr'],
 								'value'=>is_array($v['value']) ? Eleanor::FilterLangValues($v['value'],$lng) : $v['value'],
 								'serialized'=>is_array($v['serialized']) ? Eleanor::FilterLangValues($v['serialized'],$lng) : $v['serialized'],

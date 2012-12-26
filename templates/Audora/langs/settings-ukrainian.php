@@ -44,4 +44,14 @@ return array(
 	'edit_control'=>'Управлінняе контролом',
 	'evals'=>'Обробка значень',
 	'error'=>'Помилка',
+	'import_result'=>function($gd=0,$od=0,$ag=0,$ug=0,$ao=0,$uo=0)
+	{
+		$s=rtrim(($gd>0 ? $gd.Ukrainian::Plural($gd,array(' групу',' групи',' груп')).' видалено, ' : '')
+			.($od>0 ? $od.Ukrainian::Plural($od,array(' налаштування',' налаштування',' налаштувань')).' видалено, ' : '')
+			.($ag>0 ? $ag.Ukrainian::Plural($ag,array(' групу',' групи',' груп')).' дадано, ' : '')
+			.($ug>0 ? $ug.Ukrainian::Plural($ug,array(' групу',' групи',' груп')).' оновлено, ' : '')
+			.($ao>0 ? $ao.Ukrainian::Plural($ao,array(' налаштування',' налаштування',' налаштувань')).' дадано, ' : '')
+			.($uo>0 ? $uo.Ukrainian::Plural($uo,array(' налаштування',' налаштування',' налаштувань')).' оновлено' : ''),', ');
+		return$s ? $s : 'Нічого не імпортовано';
+	},
 );

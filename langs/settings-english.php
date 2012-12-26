@@ -7,15 +7,6 @@ return array(
 	'ops_not_found'=>'For query &quot;%s&quot; settings was not found',
 	'cnt_seaop'=>'Search settings (found %s)',
 	'f_not_load'=>'File not loaded',
-	'import_result'=>function($gd,$od,$ag,$ug,$ao,$uo)
-	{
-		return rtrim(($gd>0 ? $gd.($gd>1 ? ' groups' : ' group').' deleted, ' : '')
-			.($od>0 ? $od.($od>1 ? ' options' : ' option').' deleted, ' : '')
-			.($ag>0 ? $ag.($ag>1 ? ' groups' : ' group').' added, ' : '')
-			.($ug>0 ? $ug.($ug>1 ? ' groups' : ' group').' updated, ' : '')
-			.($ao>0 ? $ao.($ao>1 ? ' options' : ' option').' added, ' : '')
-			.($uo>0 ? $uo.($uo>1 ? ' options' : ' option').' updated' : ''),', ');
-	},
 	'error_in_code'=>'Error in code',
 	'op_errors'=>'There are an errors',
 	'grlist'=>'List of setting\'s groups',

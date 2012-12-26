@@ -125,7 +125,7 @@ if(isset($_GET['do']))
 							Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-n'.$id.'\' LIMIT 1');
 						Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 						$title[]=$lang['deleted'];
-						SetData();
+						SetData($Eleanor->module['config']['usercorrecttpl']);
 						$c=Eleanor::$Template->DelSuccess($a,empty($_POST['back']) ? false : $_POST['back']);
 					}
 					else
@@ -135,7 +135,7 @@ if(isset($_GET['do']))
 							$back='';
 						else
 							$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
-						SetData();
+						SetData($Eleanor->module['config']['usercorrecttpl']);
 						$c=Eleanor::$Template->Delete($a,$back);
 					}
 					Start();

@@ -193,7 +193,7 @@ class TPLModules
 			->item($ltpl['active'],Eleanor::Check('active',$values['active'],$extra))
 			->item(array(static::$lang['img'],Eleanor::Input('image',$values['image'],array('id'=>'image')).' <img id="preview" src="'.$prevm.'" '.($values['image'] ? '' : ' style="display:none"').' />','tip'=>static::$lang['img_']))
 			->item('API',Eleanor::Input('api',$values['api']))
-			->item(array(static::$lang['prot'],Eleanor::Check('protected',$values['protected'],$id ? array('disabled'=>true) : array()),'imp'=>static::$lang['prot_']))
+			//->item(array(static::$lang['prot'],Eleanor::Check('protected',$values['protected'],$id ? array('disabled'=>true) : array()),'imp'=>static::$lang['prot_']))
 			->button($back.Eleanor::Button().($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
 			->end()
 			->endform();

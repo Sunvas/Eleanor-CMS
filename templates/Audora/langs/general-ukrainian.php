@@ -1,8 +1,8 @@
 <?php
 return array(
 	#Для Classes/General.php
-	'thanks'=>'Дякуємо вам за вибір Eleanor CMS!',
-	'thanks_'=>'Сподіваємось, що за допомогою CMS Eleanor ви зможете розробити успішний сайт. Можливості системи необмежені! В цьому ви зможете переконатися, відвідавши наш <a href="http://eleanor-cms.ru/store/">магазин</a>. За допомогою ви можете звернутися на <a href="http://eleanor-cms.ru/forum/">форум</a>. Про виявлені помилки повідомляйте в <a href="http://eleanor-cms.ru/bugtracker/">багтрекері</a> проекту. Останню версію Eleanor CMS ви завжди можете завантажити з <a href="http://eleanor-cms.ru/">офіційного сайту</a> в розділі <a href="http://eleanor-cms.ru/download/">завантажити</a>.Також ви можете <a href="http://eleanor-cms.ru/donate/" target="_blank">підтримати проект Eleanor CMS</a>.<br /><br />З повагою, команда розробників Eleanor CMS.',
+	'thanks'=>'Дякуємо вам!',
+	'thanks_'=>'Сподіваємося, що з допомогою Eleanor CMS ви зможете створити успішний сайт. Якщо виникнуть труднощі, за допомогою звертайтесь на <a href="http://eleanor-cms.ru/forum/" target="_blank">форум</a>, про виявлені помилки повідомляйте в <a href="http://eleanor-cms.ru/bugtracker/" target="_blank">багтрекер</a>, приєднуйтесь до нас в <a href="http://eleanor-cms.ru/social/" target="_blank">соціальних мережах</a>, поповнюйте <a href="http://eleanor-cms.ru/wiki/" target="_blank">wiki</a>, а свіжу версію системи <a href="http://eleanor-cms.ru/download/" target="_blank">завантажуйте</a> з <a href="http://eleanor-cms.ru/" target="_blank">офіційного сайту</a>. Для зв\'язку з розробниками, скористайтеся <a href="http://eleanor-cms.ru/contacts/" target="_blank">формою зворотного зв\'язку</a>. Будь ласка, <a href="http://eleanor-cms.ru/donate/" target="_blank">підтримайте</a> проект Eleanor CMS, адже тримається він тільки на нашому ентузіазмі.<br /><br />З повагою, розробники Eleanor CMS.',
 	'install_nd'=>'Папку install до цих пір не видалено! З міркувань безпеки, рекомендується видалити її якомога швидше.',
 	'name'=>'Ім\'я користувача',
 	'group'=>'Група',

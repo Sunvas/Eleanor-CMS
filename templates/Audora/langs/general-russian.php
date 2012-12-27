@@ -1,8 +1,8 @@
 <?php
 return array(
 	#Для classes/General.php
-	'thanks'=>'Благодарим вас за выбор Eleanor CMS!',
-	'thanks_'=>'Надеемся, что с помощью CMS Eleanor вы сможете создать успешный сайт. Возможности системы не ограничены! В этом вы можете убедиться, посетив наш <a href="http://eleanor-cms.ru/store/" target="_blank">магазин</a>. За помощью вы можете обратиться на <a href="http://eleanor-cms.ru/forum/" target="_blank">форум</a>. О выявленных ошибках сообщайте в <a href="http://eleanor-cms.ru/bugtracker/" target="_blank">багтрекере</a> проекта. Последнюю версию Eleanor CMS вы всегда можете скачать с <a href="http://eleanor-cms.ru/" target="_blank">официального сайта</a> в разделе <a href="http://eleanor-cms.ru/download/" target="_blank">скачать</a>.<br />Также вы можете <a href="http://eleanor-cms.ru/donate/" target="_blank">поддержать проект Eleanor CMS</a>.<br /><br />С уважением, разработчики Eleanor CMS.',
+	'thanks'=>'Благодарим вас!',
+	'thanks_'=>'Надеемся, что с помощью Eleanor CMS вы сможете создать успешный сайт. Если возникнут трудности, за помощью обращайтесь на <a href="http://eleanor-cms.ru/forum/" target="_blank">форум</a>, о выявленных ошибках сообщайте в <a href="http://eleanor-cms.ru/bugtracker/" target="_blank">багтрекер</a>, присоединяйтесь к нам в <a href="http://eleanor-cms.ru/social/" target="_blank">социальных сетях</a>, наполняйте <a href="http://eleanor-cms.ru/wiki/" target="_blank">wiki</a>, а свежую версию системы <a href="http://eleanor-cms.ru/download/" target="_blank">скачивайте</a> с <a href="http://eleanor-cms.ru/" target="_blank">официального сайта</a>. Для связи с разработчиками, воспользуйтесь <a href="http://eleanor-cms.ru/contacts/" target="_blank">формой обратной связи</a>. Пожалуйста, <a href="http://eleanor-cms.ru/donate/" target="_blank">поддержите</a> проект Eleanor CMS, ведь держится он только на нашем энтузиазме.<br /><br />С уважением, разработчики Eleanor CMS.',
 	'install_nd'=>'Папка install до сих пор не удалена! Из соображений безопасности, рекомендуется удалить её как можно быстрее.',
 	'name'=>'Имя пользователя',
 	'group'=>'Группа',

@@ -1,9 +1,9 @@
 <?php
 return array(
 	#For classes/General.php
+	'thanks'=>'Thank you!',
+	'thanks_'=>'We hope that with the help of Eleanor CMS you can create a successful website. If you have any difficulties, please visit <a href="http://eleanor-cms.ru/forum/" target="_blank">forum</a> for get help, on revealed errors report to the <a href="http://eleanor-cms.ru/bugtracker/" target="_blank">bug tracker</a>, join us on <a href="http://eleanor-cms.ru/social/" target="_blank">social networks</a>, fill the <a href="http://eleanor-cms.ru/wiki/" target="_blank">wiki/a>, and <a href="http://eleanor-cms.ru/download/" target="_blank">download</a> the latest version of the <a href="http://eleanor-cms.ru/" target="_blank">official site</a>. To contact developers, please use the <a href="http://eleanor-cms.ru/contacts/" target="_blank">feedback form</a>. Please <a href="http://eleanor-cms.ru/donate/" target="_blank">donate</a> the project Eleanor CMS, because it just kept on our enthusiasm.<br /><br />Sincerely, developers Eleanor CMS.',
 	'install_nd'=>'Install folder is still not deleted! For security reasons, it should be removed as soon as possible.',
-	'thanks'=>'Thank you for choosing Eleanor CMS!',
-	'thanks_'=>'We hope that with the help of CMS Eleanor, you can create a successful website. System capabilities are not limited! In this you can see by visiting our <a href="http://eleanor-cms.ru/store/" target="_blank">shop</a>. For help you can visit the <a href="http://eleanor-cms.ru/forum/" target="_blank">forum</a>. About the identified error is reported in the <a href="http://eleanor-cms.ru/bugtracker/" target="_blank">bugtracker</a> project. The latest version of Eleanor CMS you can always download from <a href="http://eleanor-cms.ru/" target="_blank">official site</a> in section <a href="http://eleanor-cms.ru/download/" target="_blank">download</a>.<br />You can also <a href="http://eleanor-cms.ru/donate/" target="_blank">donate Eleanor CMS project</a>.<br /><br />Sincerely, developers Eleanor CMS.',
 	'name'=>'Username',
 	'group'=>'Group',
 	'lastw'=>'Last visit',

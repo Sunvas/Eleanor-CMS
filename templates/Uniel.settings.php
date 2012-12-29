@@ -43,7 +43,7 @@ LICENSE
 		),
 		'center_up'=>array(
 			'title'=>array(
-				'russian'=>'Верхние центрельные',
+				'russian'=>'Верхние центральные',
 				'english'=>'Up central',
 				'ukrainian'=>'Верхні центральні',
 			),
@@ -51,7 +51,7 @@ LICENSE
 		),
 		'center_down'=>array(
 			'title'=>array(
-				'russian'=>'Нижние центрельные',
+				'russian'=>'Нижние центральные',
 				'english'=>'Down central',
 				'ukrainian'=>'Нижні центральні',
 			),

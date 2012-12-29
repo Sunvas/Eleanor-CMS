@@ -171,6 +171,16 @@ final class GlobalsWrapper implements ArrayAccess
 	}
 }
 
+/**
+ * @property Db $Db Основной объект базы данных
+ * @property Db $UsersDb Объект базы данных, для доступа к таблице пользователей (при включенной синхронизации), при выключенной - ссылка на $Db
+ * @property Cache $Cache Основной объект кэша системы
+ * @property TemplateMixed $Template Шаблонизатор системы
+ * @property Language $Language Языковой объект, при конвертации его в строку - вернет имя языка
+ * @property LoginClass $Login Объект главного логина. Именно объект, а не строка (название класса), только ради удобства доступа к методам
+ * @property Permissions $Permissions Объект разрешений главного логина
+ * @property GlobalWrapper $POST,#Отфильтрованный POST запрос
+ */
 final class Eleanor extends BaseClass
 {
 	public static
@@ -225,8 +235,8 @@ final class Eleanor extends BaseClass
 		$perms=array(),#Данные разрешений. [таблица] => [ID] => [опция] => значение
 
 		#Объекты
-		$Db,#База данных
-		$UsersDb,#База данных пользователей
+		$Db,#Объект базы данных
+		$UsersDb,#Объект базы данных, для доступа к таблице пользователей (при включенной синхронизации), при выключенной - ссылка на $Db
 		$Cache,#Кэш
 		$Template,#Шаблон оформления
 		$Language,#Языковой объект, при конвертации его в строку - вернет имя языка

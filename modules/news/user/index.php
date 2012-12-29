@@ -425,14 +425,16 @@ elseif($id or $puri)
 	if($cid or $curls or $id and $a['uri'])
 	{
 		$category=$Eleanor->Categories->GetCategory($cid ? $cid : $curls);
-		if($category and $category['id']!=$a['_cat'])
-		{
-			$commu=$Eleanor->Comments->GET();
-			foreach($commu as $k=>$v)
-				$u[]=array($Eleanor->Comments->upref.$k=>$v);
-			return GoAway($u);
+		if($category)
+		{			$category['_a']=$Eleanor->Url->Construct($Eleanor->Categories->GetUri($category['id']),true,false);
+			if($category['id']!=$a['_cat'])
+			{
+				$commu=$Eleanor->Comments->GET();
+				foreach($commu as $k=>$v)
+					$u[]=array($Eleanor->Comments->upref.$k=>$v);
+				return GoAway($u);
+			}
 		}
-		$category['_a']=$Eleanor->Url->Construct($Eleanor->Categories->GetUri($category['id']),true,false);
 	}
 	else
 		$category=false;

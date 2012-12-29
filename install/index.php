@@ -40,28 +40,11 @@ switch($step)
 			$can=true;
 			$text='<div class="wpbox wpbwhite"><div class="wptop"><b>&nbsp;</b></div><div class="wpmid"><form method="post" action="index.php?s='.session_id().'&amp;step=5"><table class="tablespec"><tr class="tshead"><th>'.$lang['parametr'].'</th><th>'.$lang['value'].'</th><th>'.$lang['status'].'</th></tr><tr class="tsline"><td class="label">'.$lang['php_version'].'</td><td class="sense">'.PHP_VERSION.'</td>';
 
-			if(version_compare(PHP_VERSION,'5.2.1','<'))
+			if(version_compare(PHP_VERSION,'5.3.0','<'))
 			{				$text.='<td><img src="'.Eleanor::$Template->default['theme'].'/images/warn.png" alt="'.$lang['error'].'" /></td>';
 				$can=false;			}
 			else
 				$text.='<td><img src="'.Eleanor::$Template->default['theme'].'/images/ok.png" alt="OK" /></td>';
-
-			#ToDo! PHP 5.4 удалить!
-			$text.='</tr><tr class="tsline"><td class="label">'.$lang['en_magic_q'].'</td>';
-			if(get_magic_quotes_runtime() or get_magic_quotes_gpc())
-			{
-				$text.='<td class="sense">On</td><td><img src="'.Eleanor::$Template->default['theme'].'/images/warn.png" alt="'.$lang['error'].'" /></td>';
-				$can=false;
-			}
-			else
-				$text.='<td class="sense">Off</td><td><img src="'.Eleanor::$Template->default['theme'].'/images/ok.png" alt="OK" /></td>';
-
-			$text.='</tr><tr class="tsline"><td class="label">'.$lang['php_mbstring'].'</td>';
-			if(function_exists('mb_detect_encoding'))
-				$text.='<td class="sense">+</td><td><img src="'.Eleanor::$Template->default['theme'].'/images/ok.png" alt="OK" /></td>';
-			else
-			{				$text.='<td class="sense">&minus;</td><td><img src="'.Eleanor::$Template->default['theme'].'/images/warn.png" alt="'.$lang['error'].'" /></td>';
-				$can=false;			}
 
 			$text.='</tr><tr class="tsline"><td class="label">'.$lang['php_gd'].'</td>';
 			if(function_exists('imagefttext'))

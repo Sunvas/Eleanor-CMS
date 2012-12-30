@@ -315,7 +315,7 @@ $(function(){	$(".logs a[href=#]").click(function(){		var div=$(this).closest(
 		else
 			$logs=Eleanor::Text('text',$data,array('style'=>'width:100%;','readonly'=>'readonly','rows'=>30));
 
-		return Eleanor::$Template->Cover('<p class="function"><a href="'.$links['adown'].'" title="'.static::$lang['download_log'].'"><img src="'.Eleanor::$Template->default['theme'].'images/downloadfile.png" alt="" /></a><a href="'.$links['adel'].'" title="'.static::$lang['delete_log'].'" onclick="return confirm(\''.$ltpl['are_you_sure'].'\')"><img src="'.Eleanor::$Template->default['theme'].'images/delete.png" alt="" /></a></p><div style="margin:15px;">'.$log.'</div><div class="submitline">'.Eleanor::Button($ltpl['goback'],'button',array('onclick'=>'window.location=\''.$GLOBALS['Eleanor']->Url->Prefix().'\'')).'</div>');	}
+		return Eleanor::$Template->Cover('<p class="function"><a href="'.$links['adown'].'" title="'.static::$lang['download_log'].'"><img src="'.Eleanor::$Template->default['theme'].'images/downloadfile.png" alt="" /></a><a href="'.$links['adel'].'" title="'.static::$lang['delete_log'].'" onclick="return confirm(\''.$ltpl['are_you_sure'].'\')"><img src="'.Eleanor::$Template->default['theme'].'images/delete.png" alt="" /></a></p><div style="margin:15px;max-width:807px;">'.$log.'</div><div class="submitline">'.Eleanor::Button($ltpl['goback'],'button',array('onclick'=>'window.location=\''.$GLOBALS['Eleanor']->Url->Prefix().'\'')).'</div>');	}
 
 	/*
 		Элемент шаблона: блокнот. Вызывается и из AJAX

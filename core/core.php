@@ -355,7 +355,7 @@ final class Eleanor extends BaseClass
 				$task='';
 				if(isset(self::$services['cron']))
 				{
-					$task=self::$Cache->Get('nextrun',true);
+					$task=DEBUG ? false : self::$Cache->Get('nextrun',true);
 					$t=time();
 					$task=$task===false || $task<=$t ? '<img src="'.self::$services['cron']['file'].'?rand='.$t.'" style="width:1px;height1px;" />' : '';
 				}
@@ -1747,8 +1747,13 @@ class Cache
 			if($del)
 				$this->Delete($del,true);
 		}
+
 		if($tdb and $this->table)
+		{			if(DEBUG)
+				foreach($n as &$v)
+					$v=serialize($v);
 			Eleanor::$Db->Replace($this->table,array('key'=>array_keys($n),'value'=>array_values($n)));
+		}
 		return$r;
 	}
 

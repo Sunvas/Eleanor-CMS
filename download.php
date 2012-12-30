@@ -205,7 +205,7 @@ function ApplyLang($gl=false)
 	{
 		if(!Eleanor::$Login->IsUser() and ($gl or $gl=Eleanor::GetCookie('lang')) and isset(Eleanor::$langs[$gl]) and $gl!=LANGUAGE)
 		{
-			Language::$main=$l;
+			Language::$main=$gl;
 			Eleanor::$Language->Change($l);
 		}
 		foreach(Eleanor::$lvars as $k=>&$v)

@@ -1015,7 +1015,7 @@ final class Eleanor extends BaseClass
 				else
 				{					$ad.=' '.$k;
 					if($v!==true)
-						$ad.='="'.str_replace('"','&quot;',$v).'"';
+						$ad.='="'.str_replace('"','&quot;',(string)$v).'"';
 				}
 		return$ad;
 	}

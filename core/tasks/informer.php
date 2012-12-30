@@ -14,7 +14,9 @@ class TaskInformer extends BaseClass implements Task
 		$data=array();
 
 	public function Run($data)
-	{		if(!is_array($data))
+	{		if(DEBUG)
+			return;
+		if(!is_array($data))
 			$data=array();
 		if(!isset($data['t']))
 			$data['t']=time()-86400;

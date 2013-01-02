@@ -217,10 +217,9 @@ class Comments_Ajax extends Comments
 				$parents=$parent && $parent['parents'] ? explode(',',rtrim($parent['parents'],',')) : array();
 				if($parent and $rparent==$parent['id'])
 					$qpinch=$parents+array('l'=>$parent['id']);
-				elseif(in_array($rparent,$parents))
-					$qpinch=$parents;
 				else
-					$qpinch=false;
+					$qpinch=in_array($rparent,$parents) ? $parents : array();
+
 				$pagpq=$this->GetPAGPQ($where,$st,0,$this->pp,$this->reverse ? $nextn+min($this->pp,$st[1]+$st[0]) : $nextn,false,$uid,$qpinch);
 				if(!$pagpq[0])
 				{

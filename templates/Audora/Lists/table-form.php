@@ -72,6 +72,7 @@ return array(
 				$c.='<div id="'.$id.'" class="tabcontent">'.$tab[1].'</div>';
 				$first=false;
 			}
-		return'<ul class="linetabs">'.$top.'</ul>'.$c.'<script type="text/javascript">/*<![CDATA[*/$(function(){$(".linetabs a").Tabs();});//]]></script>';
+		$u=uniqid();
+		return'<ul id="'.$u.'" class="linetabs">'.$top.'</ul>'.$c.'<script type="text/javascript">/*<![CDATA[*/$(function(){$("#'.$u.' a").Tabs();});//]]></script>';
 	},
 );

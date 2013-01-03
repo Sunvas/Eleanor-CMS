@@ -25,8 +25,9 @@ class TplUserContacts
 			sess - идентификатор сессии
 		$bypost - флаг загрузки содержимого из POST запроса
 		$errors - массив ошибок
+		$isu - флаг пользователя (не гостя)
 		$captcha - captcha при отправке сообщения
-	*/	public static function Contacts($canupload,$info,$whom,$values,$bypost,$errors,$captcha)
+	*/	public static function Contacts($canupload,$info,$whom,$values,$bypost,$errors,$isu,$captcha)
 	{		$content=Eleanor::$Template->Menu(array(
 			'title'=>$GLOBALS['Eleanor']->module['title'],
 		));
@@ -50,19 +51,21 @@ class TplUserContacts
 					$wh.=Eleanor::Option($v,$k,$k==$values['whom']);
 
 			$Lst=Eleanor::LoadListTemplate('table-form')->form($canupload ? array('enctype'=>'multipart/form-data') : array())->begin();
+			if(!$isu)
+				$Lst->item(array(static::$lang['email'],Eleanor::Input('from',$values['from'],array('type'=>'email','tabindex'=>1)),'tip'=>static::$lang['email_']));
 			if($wh)
-				$Lst->item(static::$lang['whom'],Eleanor::Select('whom',$wh,array('tabindex'=>1)));
+				$Lst->item(static::$lang['whom'],Eleanor::Select('whom',$wh,array('tabindex'=>2)));
 			$Lst
-				->item(static::$lang['subject'],Eleanor::Input('subject',$values['subject'],array('tabindex'=>2)))
-				->item(static::$lang['message'],$GLOBALS['Eleanor']->Editor->Area('message',$values['message'],array('bypost'=>$bypost,'no'=>array('tabindex'=>3))));
+				->item(static::$lang['subject'],Eleanor::Input('subject',$values['subject'],array('tabindex'=>3)))
+				->item(static::$lang['message'],$GLOBALS['Eleanor']->Editor->Area('message',$values['message'],array('bypost'=>$bypost,'no'=>array('tabindex'=>4))));
 
 			if($canupload)
 				$Lst->item(array(static::$lang['file'],Eleanor::Input('file',false,array('type'=>'file')),'descr'=>$canupload===true ? '' : sprintf(static::$lang['maxfs'],Files::BytesToSize($canupload))));
 
 			if($captcha)
-				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>4)),'descr'=>static::$lang['captcha_']));
+				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>5)),'descr'=>static::$lang['captcha_']));
 
-			$content.=$Lst->end()->submitline(Eleanor::Input('sess',$values['sess'],array('type'=>'hidden')).Eleanor::Button('OK','submit',array('tabindex'=>5)))->endform();
+			$content.=$Lst->end()->submitline(Eleanor::Input('sess',$values['sess'],array('type'=>'hidden')).Eleanor::Button('OK','submit',array('tabindex'=>6)))->endform();
 		}
 		return$content;
 	}

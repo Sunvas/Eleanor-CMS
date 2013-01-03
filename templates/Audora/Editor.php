@@ -11,6 +11,7 @@ $id=&$v_0;
 $html=&$v_1;
 $smiles=&$v_2;
 $ownbb=&$v_3;
+$GLOBALS['jscripts'][]='js/dropdown.js';
 
 foreach($smiles as $k=>&$v)
 	if($v['show'])

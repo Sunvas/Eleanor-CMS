@@ -96,7 +96,7 @@ if($a['log'] and $back and strpos($back,PROTOCOL.Eleanor::$domain.Eleanor::$site
 $a['text']=OwnBB::Parse($a['text']);
 if($a['mail'])
 	$Eleanor->Editor->ownbb=false;
-$s=Eleanor::$Template->ShowError($a,$sent,$values,$errors,$back,$Eleanor->Captcha->disabled ? $Eleanor->Captcha->GetCode() : false);
+$s=Eleanor::$Template->ShowError($a,$sent,$values,$errors,$back,$Eleanor->Captcha->disabled ? false : $Eleanor->Captcha->GetCode());
 
 if($a['http_code'])
 {

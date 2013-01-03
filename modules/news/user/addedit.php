@@ -186,7 +186,7 @@ function AddEdit($id,$errors=array(),$gn=array())
 		'draft'=>$isu ? $Eleanor->Url->Construct(array('do'=>'draft'),true,'') : false,
 	);
 
-	$c=Eleanor::$Template->AddEdit($id,$values,$errors,$Eleanor->Uploader->Show($id ? $Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id : false),$Eleanor->VotingManager->AddEdit($values['voting']),$bypost,$hasdraft,$back,$links,$Eleanor->Captcha->disabled ? $Eleanor->Captcha->GetCode() : false);
+	$c=Eleanor::$Template->AddEdit($id,$values,$errors,$Eleanor->Uploader->Show($id ? $Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id : false),$Eleanor->VotingManager->AddEdit($values['voting']),$bypost,$hasdraft,$back,$links,$Eleanor->Captcha->disabled ? false : $Eleanor->Captcha->GetCode());
 	Start();
 	echo$c;
 }

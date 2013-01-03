@@ -75,10 +75,11 @@ class Email
 				'content'=>$c,
 			);
 		}
+		foreach($a as $k=>&$v)
+			if(!in_array($k,array('type','files','copy','hidden')) and $v!==false)
+				$Email->$k=$v;
 		$Email->subject=$subj;
 		$Email->Send(array('to'=>$to,'cc'=>$a['copy'],'bcc'=>$a['hidden']));
-		/*$Email->subject='';
-		$Email->parts=array();*/
 	}
 
 	/**

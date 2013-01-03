@@ -13,7 +13,6 @@
 */
 if(!defined('CMS'))die;
 $GLOBALS['head']['bbeditor']='<link rel="stylesheet" type="text/css" href="templates/Audora/style/bbeditor.css" media="screen" />';
-$GLOBALS['jscripts'][]='js/dropdown.js';
 
 $lang=Eleanor::$Language->Load($theme.'langs/bbeditor-*.php',false);
 ?><!-- BB EDITOR TEXTAREA+PANEL -->

@@ -26,8 +26,9 @@ class TplUserContacts
 			sess - идентификатор сессии
 		$bypost - флаг загрузки содержимого из POST запроса
 		$errors - массив ошибок
+		$isu - флаг пользователя (не гостя)
 		$captcha - captcha при отправке сообщения
-	*/	public static function Contacts($canupload,$info,$whom,$values,$bypost,$errors,$captcha)
+	*/	public static function Contacts($canupload,$info,$whom,$values,$bypost,$errors,$isu,$captcha)
 	{
 	}
 

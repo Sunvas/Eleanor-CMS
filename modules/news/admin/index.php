@@ -159,8 +159,9 @@ if(isset($_GET['do']))
 				'first_page'=>$Eleanor->Url->Construct($qs),
 				'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 			);
+			SetData();
 			$c=Eleanor::$Template->TagsList($items,$cnt,$pp,$qs,$page,$links);
-			MStart();
+			Start();
 			echo$c;
 		break;
 		case'addt':
@@ -179,9 +180,9 @@ if(isset($_GET['do']))
 			$Eleanor->Url->SetPrefix(array('do'=>'categories'),true);
 			$c=$Eleanor->Categories->Show();
 			if($c)
-			{
+			{				SetData();
 				$c=Eleanor::$Template->Categories($c);
-				MStart();
+				Start();
 				echo$c;
 			}
 		break;
@@ -189,9 +190,9 @@ if(isset($_GET['do']))
 			$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
 			$c=$Eleanor->Settings->GetInterface('group',$mc['opts']);
 			if($c)
-			{
+			{				SetData();
 				$c=Eleanor::$Template->Options($c);
-				MStart();
+				Start();
 				echo$c;
 			}
 		break;
@@ -209,7 +210,7 @@ if(isset($_GET['do']))
 		//case'addf':
 		//	$title='Дополнительные поля';
 		//	#ToDo!
-		//	MStart();
+		//	Start();
 		//	echo 'В разработке...';
 		//break;
 		default:
@@ -262,8 +263,9 @@ elseif(isset($_GET['delete']))
 		$back='';
 	else
 		$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
+	SetData();
 	$c=Eleanor::$Template->Delete($a,$back);
-	MStart();
+	Start();
 	echo$c;
 }
 elseif(isset($_GET['swap']))
@@ -325,8 +327,9 @@ elseif(isset($_GET['deletet']))
 		$back='';
 	else
 		$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
+	SetData();
 	$c=Eleanor::$Template->DeleteTag(sprintf($lang['deletingt'],$a['title']),$back);
-	MStart();
+	Start();
 	echo$c;
 }
 else
@@ -381,8 +384,9 @@ function AddEditTag($id,$errors=array())
 		'nodraft'=>$hasdraft ? $Eleanor->Url->Construct(array('do'=>$id ? false : 'addt','editt'=>$id ? $id : false,'nodraft'=>1)): false,
 		'draft'=>$Eleanor->Url->Construct(array('do'=>'draft')),
 	);
+	SetData();
 	$c=Eleanor::$Template->AddEditTag($id,$Eleanor->sc,$values,$errors,$back,$hasdraft,$links);
-	MStart();
+	Start();
 	echo$c;
 }
 
@@ -561,8 +565,10 @@ function ShowList()
 		'first_page'=>$Eleanor->Url->Construct($qs),
 		'pages'=>function($n)use($qs){ return$GLOBALS['Eleanor']->Url->Construct($qs+array('page'=>$n)); },
 	);
+
+	SetData();
 	$c=Eleanor::$Template->ShowList($items,$Eleanor->Categories->dump,$cnt,$pp,$qs,$page,$links);
-	MStart();
+	Start();
 	echo$c;
 }
 
@@ -749,8 +755,10 @@ function AddEdit($id,$errors=array())
 		'nodraft'=>$Eleanor->Url->Construct(array('do'=>$id ? false : 'add','edit'=>$id ? $id : false,'nodraft'=>1)),
 		'draft'=>$Eleanor->Url->Construct(array('do'=>'draft')),
 	);
+
+	SetData();
 	$c=Eleanor::$Template->AddEdit($id,$values,$errors,$Eleanor->Uploader->Show($id ? $Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id : false),$Eleanor->VotingManager->AddEdit($values['voting']),$bypost,$hasdraft,$back,$links);
-	MStart();
+	Start();
 	echo$c;
 }
 
@@ -1084,7 +1092,7 @@ function DelCategories($ids)
 	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
 }
 
-function MStart()
+function SetData()
 {global$Eleanor;	$R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$Eleanor->module['config']['t'].'` WHERE `status`=-1');
 	list($cnt)=$R->fetch_row();
 	$Eleanor->module['links']=array(
@@ -1103,4 +1111,4 @@ function MStart()
 		'categories'=>$Eleanor->Url->Construct(array('do'=>'categories')),
 		//'addf'=>$Eleanor->Url->Construct(array('do'=>'addf'),
 	);
-	Start();}
+}

@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -53,7 +53,7 @@ $Eleanor->gp=array(
 		'type'=>'input',
 		'bypost'=>&$Eleanor->gp_post,
 		'options'=>array(
-			'htmlsafe'=>false,#Òîëüêî äëÿ òåêñòîâûõ äàííûõ
+			'htmlsafe'=>false,#Ğ¢Ğ¾Ğ»ÑŒĞºĞ¾ Ğ´Ğ»Ñ Ñ‚ĞµĞºÑÑ‚Ğ¾Ğ²Ñ‹Ñ… Ğ´Ğ°Ğ½Ğ½Ñ‹Ñ…
 		),
 	),
 	'special'=>array(
@@ -74,7 +74,7 @@ $Eleanor->gp=array(
 		'type'=>'input',
 		'bypost'=>&$Eleanor->gp_post,
 		'options'=>array(
-			'htmlsafe'=>true,#Òîëüêî äëÿ òåêñòîâûõ äàííûõ
+			'htmlsafe'=>true,#Ğ¢Ğ¾Ğ»ÑŒĞºĞ¾ Ğ´Ğ»Ñ Ñ‚ĞµĞºÑÑ‚Ğ¾Ğ²Ñ‹Ñ… Ğ´Ğ°Ğ½Ğ½Ñ‹Ñ…
 		),
 	),
 	'active'=>array(
@@ -90,7 +90,7 @@ $Eleanor->gp=array(
 		'type'=>'input',
 		'bypost'=>&$Eleanor->gp_post,
 		'options'=>array(
-			'htmlsafe'=>false,#Òîëüêî äëÿ òåêñòîâûõ äàííûõ
+			'htmlsafe'=>false,#Ğ¢Ğ¾Ğ»ÑŒĞºĞ¾ Ğ´Ğ»Ñ Ñ‚ĞµĞºÑÑ‚Ğ¾Ğ²Ñ‹Ñ… Ğ´Ğ°Ğ½Ğ½Ñ‹Ñ…
 		),
 	),
 	'gr_use'=>array(

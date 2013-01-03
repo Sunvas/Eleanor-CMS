@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,4 +10,4 @@
 */
 if(!defined('CMS'))die;
 Start('');
-die('Â ðàçðàáîòêå');#ToDo!
+die('Ð’ Ñ€Ð°Ð·Ñ€Ð°Ð±Ð¾Ñ‚ÐºÐµ');#ToDo!

@@ -1,5 +1,5 @@
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -32,7 +32,7 @@
 .enterform span { float: left; width: 23%; text-align: right; padding: 2px 6px 0 0; }
 .enterform p input { float: left; width: 70%; padding: 2px; font-weight: bold; }
 
-/*Сообщение - рекоммендация по использованию браузеров*/
+/*РЎРѕРѕР±С‰РµРЅРёРµ - СЂРµРєРѕРјРјРµРЅРґР°С†РёСЏ РїРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЋ Р±СЂР°СѓР·РµСЂРѕРІ*/
 .msgbrowser, .msgbrowser a { color: #dcdcdc; font-size: 0.9em; }
 .msgbrowser a { text-decoration: underline; }
 .msgbrowser { display: none; padding-top: 5px; text-align: center; }

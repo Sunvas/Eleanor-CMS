@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -12,24 +12,24 @@
 class VotingManager extends BaseClass
 {
 	public
-		$tpl='VotingManager',#Имя класса шаблона оформления
-		$name=array('voting'),#Массив вложенности имен контролов, в данном случае имена будут иметь вид votin[c1], votin[c2] и т.п.
-		$langs=array(),#Языки. Пустое - не мультиязычно, '' - передалось мультиязычно, но нужно сохранить только Language::$main, массив - сохраняем только нужные языки
-		$noans=false,#Запретить изменения количества проголосовавших
-		$Language,#Языковые переменные
+		$tpl='VotingManager',#РРјСЏ РєР»Р°СЃСЃР° С€Р°Р±Р»РѕРЅР° РѕС„РѕСЂРјР»РµРЅРёСЏ
+		$name=array('voting'),#РњР°СЃСЃРёРІ РІР»РѕР¶РµРЅРЅРѕСЃС‚Рё РёРјРµРЅ РєРѕРЅС‚СЂРѕР»РѕРІ, РІ РґР°РЅРЅРѕРј СЃР»СѓС‡Р°Рµ РёРјРµРЅР° Р±СѓРґСѓС‚ РёРјРµС‚СЊ РІРёРґ votin[c1], votin[c2] Рё С‚.Рї.
+		$langs=array(),#РЇР·С‹РєРё. РџСѓСЃС‚РѕРµ - РЅРµ РјСѓР»СЊС‚РёСЏР·С‹С‡РЅРѕ, '' - РїРµСЂРµРґР°Р»РѕСЃСЊ РјСѓР»СЊС‚РёСЏР·С‹С‡РЅРѕ, РЅРѕ РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С‚РѕР»СЊРєРѕ Language::$main, РјР°СЃСЃРёРІ - СЃРѕС…СЂР°РЅСЏРµРј С‚РѕР»СЊРєРѕ РЅСѓР¶РЅС‹Рµ СЏР·С‹РєРё
+		$noans=false,#Р—Р°РїСЂРµС‚РёС‚СЊ РёР·РјРµРЅРµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° РїСЂРѕРіРѕР»РѕСЃРѕРІР°РІС€РёС…
+		$Language,#РЇР·С‹РєРѕРІС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 		$ti=1,#Tab Index
 		$bypost=false,#By post
-		$POST,#Откуда брать значения POST запроса. Если null - из $_POST-a, если нет - то из этого массива
-		$controls=false;#Контролы
+		$POST,#РћС‚РєСѓРґР° Р±СЂР°С‚СЊ Р·РЅР°С‡РµРЅРёСЏ POST Р·Р°РїСЂРѕСЃР°. Р•СЃР»Рё null - РёР· $_POST-a, РµСЃР»Рё РЅРµС‚ - С‚Рѕ РёР· СЌС‚РѕРіРѕ РјР°СЃСЃРёРІР°
+		$controls=false;#РљРѕРЅС‚СЂРѕР»С‹
 
 	protected
-		$table;#Основная таблица. Остальные определяются автоматически путем добавления суффиксов
+		$table;#РћСЃРЅРѕРІРЅР°СЏ С‚Р°Р±Р»РёС†Р°. РћСЃС‚Р°Р»СЊРЅС‹Рµ РѕРїСЂРµРґРµР»СЏСЋС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РїСѓС‚РµРј РґРѕР±Р°РІР»РµРЅРёСЏ СЃСѓС„С„РёРєСЃРѕРІ
 
 	/**
-	 * Конструктор редактора опроса
+	 * РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЂРµРґР°РєС‚РѕСЂР° РѕРїСЂРѕСЃР°
 	 *
-	 * @param string|FALSE $t Имя основной таблицы
-	 * @param string $l Путь к языковому файлу
+	 * @param string|FALSE $t РРјСЏ РѕСЃРЅРѕРІРЅРѕР№ С‚Р°Р±Р»РёС†С‹
+	 * @param string $l РџСѓС‚СЊ Рє СЏР·С‹РєРѕРІРѕРјСѓ С„Р°Р№Р»Сѓ
 	 */
 	public function __construct($t=false,$l='voting_manager-*.php')
 	{
@@ -42,9 +42,9 @@ class VotingManager extends BaseClass
 	}
 
 	/**
-	 * Вывод интерфейса правки опроса
+	 * Р’С‹РІРѕРґ РёРЅС‚РµСЂС„РµР№СЃР° РїСЂР°РІРєРё РѕРїСЂРѕСЃР°
 	 *
-	 * @param int|FALSE Идентификатор редактируемого опроса
+	 * @param int|FALSE РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЂРµРґР°РєС‚РёСЂСѓРµРјРѕРіРѕ РѕРїСЂРѕСЃР°
 	 */
 	public function AddEdit($id=false)
 	{
@@ -151,9 +151,9 @@ class VotingManager extends BaseClass
 	}
 
 	/**
-	 * Сохранение опроса в БД
+	 * РЎРѕС…СЂР°РЅРµРЅРёРµ РѕРїСЂРѕСЃР° РІ Р‘Р”
 	 *
-	 * @param int|FALSE Идентификатор сохраняемого опроса
+	 * @param int|FALSE РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЃРѕС…СЂР°РЅСЏРµРјРѕРіРѕ РѕРїСЂРѕСЃР°
 	 */
 	public function Save($id=false)
 	{
@@ -365,7 +365,7 @@ class VotingManager extends BaseClass
 				$v['qid']=$k++;
 				$v['answers']=serialize($v['answers']);
 			}
-			Eleanor::$Db->Insert($this->table.'_q',array_values($quests));#array_values - потому что пришедшие от пользователя ключи - текстовые
+			Eleanor::$Db->Insert($this->table.'_q',array_values($quests));#array_values - РїРѕС‚РѕРјСѓ С‡С‚Рѕ РїСЂРёС€РµРґС€РёРµ РѕС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РєР»СЋС‡Рё - С‚РµРєСЃС‚РѕРІС‹Рµ
 			$values=array('id'=>array(),'qid'=>array(),'language'=>array(),'title'=>array(),'variants'=>array());
 			foreach($lqv as $lk=>&$lv)
 				foreach($dbl as &$v)
@@ -392,9 +392,9 @@ class VotingManager extends BaseClass
 	}
 
 	/**
-	 * Удаление опроса
+	 * РЈРґР°Р»РµРЅРёРµ РѕРїСЂРѕСЃР°
 	 *
-	 * @param int|array Идентификатор удаляемого опроса
+	 * @param int|array РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СѓРґР°Р»СЏРµРјРѕРіРѕ РѕРїСЂРѕСЃР°
 	 */
 	public function Delete($ids)
 	{
@@ -407,10 +407,10 @@ class VotingManager extends BaseClass
 	}
 
 	/**
-	 * Получение контролов опроса по умолчанию
+	 * РџРѕР»СѓС‡РµРЅРёРµ РєРѕРЅС‚СЂРѕР»РѕРІ РѕРїСЂРѕСЃР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	 */
 	public function Controls()
-	{		$THIS=$this;#ToDo! PHP 5.4 убрать этот костыль (смотри ниже) use ($THIS)
+	{		$THIS=$this;#ToDo! PHP 5.4 СѓР±СЂР°С‚СЊ СЌС‚РѕС‚ РєРѕСЃС‚С‹Р»СЊ (СЃРјРѕС‚СЂРё РЅРёР¶Рµ) use ($THIS)
 		$ans=array();
 		$vaload=function($a,$Obj) use (&$ans,$THIS)
 		{

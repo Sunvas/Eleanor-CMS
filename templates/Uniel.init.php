@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -8,7 +8,7 @@
 	=====
 	*Pseudonym
 
-	Ôàéë èíèöèàëèçàöèè øàáëîíà Audora
+	Ð¤Ð°Ð¹Ð» Ð¸Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ð¸ ÑˆÐ°Ð±Ð»Ð¾Ð½Ð° Audora
 */
 if(!defined('CMS'))die;
 Eleanor::$Language->Load('templates/Uniel/langs/*.php','tpl');

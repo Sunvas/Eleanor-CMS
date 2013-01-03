@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,12 +11,12 @@
 interface Task
 {
 	/*
-		Функция должна вернуть true, если задание выполнено успешно, и false - если нет.
+		Р¤СѓРЅРєС†РёСЏ РґРѕР»Р¶РЅР° РІРµСЂРЅСѓС‚СЊ true, РµСЃР»Рё Р·Р°РґР°РЅРёРµ РІС‹РїРѕР»РЅРµРЅРѕ СѓСЃРїРµС€РЅРѕ, Рё false - РµСЃР»Рё РЅРµС‚.
 	*/
 	public function Run($data);
 
 	/*
-		Функция должна возвратить
+		Р¤СѓРЅРєС†РёСЏ РґРѕР»Р¶РЅР° РІРѕР·РІСЂР°С‚РёС‚СЊ
 	*/
 	public function GetNextRunInfo();
 }
@@ -24,7 +24,7 @@ interface Task
 define('CMS',true);
 require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
-Eleanor::$service='cron';#ID сервиса
+Eleanor::$service='cron';#ID СЃРµСЂРІРёСЃР°
 if(0<$t=strpos(Eleanor::$site_path,Eleanor::$filename))
 	Eleanor::$site_path=$t==1 ? '' : substr(Eleanor::$site_path,0,$t-1);
 Eleanor::InitService();
@@ -75,7 +75,7 @@ else
 		$R=Eleanor::$Db->Query('SELECT `id`,`task`,`free`,`options`,UNIX_TIMESTAMP(`nextrun`),`ondone`,`maxrun`,`alreadyrun`,`data`,`run_year`,`run_month`,`run_day`,`run_hour`,`run_minute`,`run_second`,`do` FROM `'.P.'tasks` WHERE `id`='.(int)$_GET['id'].' AND `status`=1 AND `locked`=0');
 	else
 	{
-		#В случае, если скрипт запис... Через 2 часа запустим его снова.
+		#Р’ СЃР»СѓС‡Р°Рµ, РµСЃР»Рё СЃРєСЂРёРїС‚ Р·Р°РїРёСЃ... Р§РµСЂРµР· 2 С‡Р°СЃР° Р·Р°РїСѓСЃС‚РёРј РµРіРѕ СЃРЅРѕРІР°.
 		Eleanor::$Db->Update(P.'tasks',array('free'=>1,'locked'=>0),'`status`=1 AND `locked`=1 AND `free`=0 AND `nextrun`<FROM_UNIXTIME('.(time()-7200).')');
 		$R=Eleanor::$Db->Query('SELECT `id`,`task`,`free`,`options`,UNIX_TIMESTAMP(`nextrun`) `nextrun`,`ondone`,`maxrun`,`alreadyrun`,`data`,`run_year`,`run_month`,`run_day`,`run_hour`,`run_minute`,`run_second`,`do` FROM `'.P.'tasks` WHERE `status`=1 AND `locked`=0 ORDER BY `free` ASC, `nextrun` ASC');
 	}
@@ -174,7 +174,7 @@ function FatalCatcher()
 		ob_end_flush();
 }
 
-#Предопределенные функции.
+#РџСЂРµРґРѕРїСЂРµРґРµР»РµРЅРЅС‹Рµ С„СѓРЅРєС†РёРё.
 function Start($clean=false)
 {
 	if($clean and ob_get_contents()!==false)
@@ -211,7 +211,7 @@ function ApplyLang($gl=false)
 		Eleanor::$lvars=array();
 }
 
-#Функция "Будь как", делает сервис другим. Полностью :)
+#Р¤СѓРЅРєС†РёСЏ "Р‘СѓРґСЊ РєР°Рє", РґРµР»Р°РµС‚ СЃРµСЂРІРёСЃ РґСЂСѓРіРёРј. РџРѕР»РЅРѕСЃС‚СЊСЋ :)
 function BeAs($n)
 {global$Eleanor;
 	if(Eleanor::$service==$n or !isset(Eleanor::$services[$n]))

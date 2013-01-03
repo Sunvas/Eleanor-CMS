@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,14 +10,14 @@
 */
 class CacheMachineMemCache implements CacheMachineInterface
 {	private
-		$u,#Уникализация кэш машины
-		$n=array(''=>true),#Массив имен того, что у нас есть в кеше.
-		$M=false;#Объект MemCache-a
+		$u,#РЈРЅРёРєР°Р»РёР·Р°С†РёСЏ РєСЌС€ РјР°С€РёРЅС‹
+		$n=array(''=>true),#РњР°СЃСЃРёРІ РёРјРµРЅ С‚РѕРіРѕ, С‡С‚Рѕ Сѓ РЅР°СЃ РµСЃС‚СЊ РІ РєРµС€Рµ.
+		$M=false;#РћР±СЉРµРєС‚ MemCache-a
 
 	/**
-	 * Конструктор кэш машины
+	 * РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєСЌС€ РјР°С€РёРЅС‹
 	 *
-	 * @param string $u Строка уникализации кэша (на одной кэш машине может быть запущено несколько копий Eleanor CMS)
+	 * @param string $u РЎС‚СЂРѕРєР° СѓРЅРёРєР°Р»РёР·Р°С†РёРё РєСЌС€Р° (РЅР° РѕРґРЅРѕР№ РєСЌС€ РјР°С€РёРЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р·Р°РїСѓС‰РµРЅРѕ РЅРµСЃРєРѕР»СЊРєРѕ РєРѕРїРёР№ Eleanor CMS)
 	 */
 	public function __construct($u='')
 	{
@@ -43,11 +43,11 @@ class CacheMachineMemCache implements CacheMachineInterface
 	}
 
 	/**
-	 * Запись значения
+	 * Р—Р°РїРёСЃСЊ Р·РЅР°С‡РµРЅРёСЏ
 	 *
-	 * @param string $k Ключ. Обратите внимение, что ключи рекомендуется задавать в виде тег1_тег2 ...
-	 * @param mixed $value Значение
-	 * @param int $t Время жизни этой записи кэша в секундах
+	 * @param string $k РљР»СЋС‡. РћР±СЂР°С‚РёС‚Рµ РІРЅРёРјРµРЅРёРµ, С‡С‚Рѕ РєР»СЋС‡Рё СЂРµРєРѕРјРµРЅРґСѓРµС‚СЃСЏ Р·Р°РґР°РІР°С‚СЊ РІ РІРёРґРµ С‚РµРі1_С‚РµРі2 ...
+	 * @param mixed $value Р—РЅР°С‡РµРЅРёРµ
+	 * @param int $t Р’СЂРµРјСЏ Р¶РёР·РЅРё СЌС‚РѕР№ Р·Р°РїРёСЃРё РєСЌС€Р° РІ СЃРµРєСѓРЅРґР°С…
 	 */
 	public function Put($k,$v,$t=0)
 	{		$r=$this->M ? memcache_set($this->M,$this->u.$k,$v,is_bool($v) || is_int($v) || is_float($v) ? 0 : MEMCACHE_COMPRESSED,$t) : false;
@@ -57,9 +57,9 @@ class CacheMachineMemCache implements CacheMachineInterface
 	}
 
 	/**
-	 * Получение записи из кэша
+	 * РџРѕР»СѓС‡РµРЅРёРµ Р·Р°РїРёСЃРё РёР· РєСЌС€Р°
 	 *
-	 * @param string $k Ключ
+	 * @param string $k РљР»СЋС‡
 	 */
 	public function Get($k)
 	{
@@ -72,9 +72,9 @@ class CacheMachineMemCache implements CacheMachineInterface
 	}
 
 	/**
-	 * Удаление записи из кэша
+	 * РЈРґР°Р»РµРЅРёРµ Р·Р°РїРёСЃРё РёР· РєСЌС€Р°
 	 *
-	 * @param string $k Ключ
+	 * @param string $k РљР»СЋС‡
 	 */
 	public function Delete($k)
 	{
@@ -83,9 +83,9 @@ class CacheMachineMemCache implements CacheMachineInterface
 	}
 
 	/**
-	 * Удаление записей по тегу. Если имя тега пустое - удаляется вешь кэш.
+	 * РЈРґР°Р»РµРЅРёРµ Р·Р°РїРёСЃРµР№ РїРѕ С‚РµРіСѓ. Р•СЃР»Рё РёРјСЏ С‚РµРіР° РїСѓСЃС‚РѕРµ - СѓРґР°Р»СЏРµС‚СЃСЏ РІРµС€СЊ РєСЌС€.
 	 *
-	 * @param string $t Тег
+	 * @param string $t РўРµРі
 	 */
 	public function DeleteByTag($t)
 	{

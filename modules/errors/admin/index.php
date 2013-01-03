@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -502,7 +502,7 @@ function Save($id)
 
 	$ml=in_array('',$langs) ? Language::$main : '';
 	foreach(array('title','text') as $field)
-		foreach($lvalues[$field] as $k=>&$v)#Íå ñòàâèòü &$v, èíà÷å â ìåñòå 1 (ñì íèæå) ïîñëå >In($langs), çíà÷åíèå ïîëó÷àåòñÿ â ïàñòðîôàõ ($lang['english']=="'english'"
+		foreach($lvalues[$field] as $k=>&$v)#ÐÐµ ÑÑ‚Ð°Ð²Ð¸Ñ‚ÑŒ &$v, Ð¸Ð½Ð°Ñ‡Ðµ Ð² Ð¼ÐµÑÑ‚Ðµ 1 (ÑÐ¼ Ð½Ð¸Ð¶Ðµ) Ð¿Ð¾ÑÐ»Ðµ >In($langs), Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÑ‚ÑÑ Ð² Ð¿Ð°ÑÑ‚Ñ€Ð¾Ñ„Ð°Ñ… ($lang['english']=="'english'"
 			if($v=='')
 			{
 				$er=strtoupper('empty_'.$field.($k ? '_'.$k : ''));
@@ -543,7 +543,7 @@ function Save($id)
 	}
 	else
 	{
-		Eleanor::$Db->Transaction();#Âñå ðàäè àïëîàäåðà
+		Eleanor::$Db->Transaction();#Ð’ÑÐµ Ñ€Ð°Ð´Ð¸ Ð°Ð¿Ð»Ð¾Ð°Ð´ÐµÑ€Ð°
 		$id=Eleanor::$Db->Insert($Eleanor->module['config']['t'],$values);
 		try
 		{

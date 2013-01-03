@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -14,9 +14,9 @@ class Blocks
 		$blocks;
 
 	/**
-	 * Получение блоков определенного места. Метод, выполняя все блоки, возвращает готовый HTML для непосредственной его вставке на странице.
+	 * РџРѕР»СѓС‡РµРЅРёРµ Р±Р»РѕРєРѕРІ РѕРїСЂРµРґРµР»РµРЅРЅРѕРіРѕ РјРµСЃС‚Р°. РњРµС‚РѕРґ, РІС‹РїРѕР»РЅСЏСЏ РІСЃРµ Р±Р»РѕРєРё, РІРѕР·РІСЂР°С‰Р°РµС‚ РіРѕС‚РѕРІС‹Р№ HTML РґР»СЏ РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕР№ РµРіРѕ РІСЃС‚Р°РІРєРµ РЅР° СЃС‚СЂР°РЅРёС†Рµ.
 	 *
-	 * @param string|array $place Названия мест, например: left, right, top, bottom
+	 * @param string|array $place РќР°Р·РІР°РЅРёСЏ РјРµСЃС‚, РЅР°РїСЂРёРјРµСЂ: left, right, top, bottom
 	 */	public static function Get($place)
 	{		if(!isset(self::$blocks))
 		{			$order=$blocks=array();			$R=Eleanor::$Db->Query('SELECT `id`,`code`,`blocks` FROM `'.P.'blocks_ids` INNER JOIN `'.P.'blocks_groups` USING(`id`) WHERE `service`=\''.Eleanor::$service.'\'');
@@ -110,9 +110,9 @@ class Blocks
 	}
 
 	/**
-	 * Оёбертка для eval, чтобы тот не испортил нам доступные переменные
+	 * РћС‘Р±РµСЂС‚РєР° РґР»СЏ eval, С‡С‚РѕР±С‹ С‚РѕС‚ РЅРµ РёСЃРїРѕСЂС‚РёР» РЅР°Рј РґРѕСЃС‚СѓРїРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 	 *
-	 * @param string Неявная переменная, код, который должен быть исполнен
+	 * @param string РќРµСЏРІРЅР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ, РєРѕРґ, РєРѕС‚РѕСЂС‹Р№ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РёСЃРїРѕР»РЅРµРЅ
 	 */
 	protected static function QuietEval()
 	{		return eval(func_get_arg(0));	}}

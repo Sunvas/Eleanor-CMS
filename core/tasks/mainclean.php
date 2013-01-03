@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.su, http://eleanor-cms.com, http://eleanor-cms.net, http://eleanor.su
 	E-mail: support@eleanor-cms.ru, support@eleanor.su
 	Developing: Alexander Sunvas*
@@ -30,15 +30,15 @@ class TaskMainClean extends BaseClass implements Task
 				UserManager::Delete($ids);
 		}
 
-		#Удаляем черновики
+		#РЈРґР°Р»СЏРµРј С‡РµСЂРЅРѕРІРёРєРё
 		Eleanor::$Db->Delete(P.'drafts','`date`<\''.date('Y-m-d H:i:s').'\' - INTERVAL '.(int)Eleanor::$vars['drafts_days'].' DAY');
 
-		#Удаляем все файлы из каталога temp, которые добавлен больше дня назад. Естественно, о них все забыли и они не будут обработаны уже никогда :)
-		Eleanor::$nolog=true;#Почему-то появляется ошибка Warning: rmdir([path]\uploads\temp) [<a href='function.rmdir'>function.rmdir</a>]: No such file or directory. Хер знает почему
+		#РЈРґР°Р»СЏРµРј РІСЃРµ С„Р°Р№Р»С‹ РёР· РєР°С‚Р°Р»РѕРіР° temp, РєРѕС‚РѕСЂС‹Рµ РґРѕР±Р°РІР»РµРЅ Р±РѕР»СЊС€Рµ РґРЅСЏ РЅР°Р·Р°Рґ. Р•СЃС‚РµСЃС‚РІРµРЅРЅРѕ, Рѕ РЅРёС… РІСЃРµ Р·Р°Р±С‹Р»Рё Рё РѕРЅРё РЅРµ Р±СѓРґСѓС‚ РѕР±СЂР°Р±РѕС‚Р°РЅС‹ СѓР¶Рµ РЅРёРєРѕРіРґР° :)
+		Eleanor::$nolog=true;#РџРѕС‡РµРјСѓ-С‚Рѕ РїРѕСЏРІР»СЏРµС‚СЃСЏ РѕС€РёР±РєР° Warning: rmdir([path]\uploads\temp) [<a href='function.rmdir'>function.rmdir</a>]: No such file or directory. РҐРµСЂ Р·РЅР°РµС‚ РїРѕС‡РµРјСѓ
 		self::RemoveTempFiles(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.'temp',time()-86400);
 		Eleanor::$nolog=false;
 
-		#Синхронизация обновленных и удаленных пользователей. Добавление здесь не делается, оно происходит в момент входа пользователя
+		#РЎРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ РѕР±РЅРѕРІР»РµРЅРЅС‹С… Рё СѓРґР°Р»РµРЅРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№. Р”РѕР±Р°РІР»РµРЅРёРµ Р·РґРµСЃСЊ РЅРµ РґРµР»Р°РµС‚СЃСЏ, РѕРЅРѕ РїСЂРѕРёСЃС…РѕРґРёС‚ РІ РјРѕРјРµРЅС‚ РІС…РѕРґР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 		if(Eleanor::$UsersDb!==Eleanor::$Db or USERS_TABLE!=P.'users')
 		{
 			$lastdate=Eleanor::$Cache->Get('date-users-sync',true);

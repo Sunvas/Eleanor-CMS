@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -9,8 +9,8 @@
 	*Pseudonym
 */
 return array(
-	'n'=>'account',#Имя таблицы с контентом
-	'usertpl'=>'UserAccount',#Класс пользовательского оформления
-	'admintpl'=>'AdminAccount',#Класс администраторского оформления
-	'api'=>'ApiAccount',#Название класса
+	'n'=>'account',#РРјСЏ С‚Р°Р±Р»РёС†С‹ СЃ РєРѕРЅС‚РµРЅС‚РѕРј
+	'usertpl'=>'UserAccount',#РљР»Р°СЃСЃ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРіРѕ РѕС„РѕСЂРјР»РµРЅРёСЏ
+	'admintpl'=>'AdminAccount',#РљР»Р°СЃСЃ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСЃРєРѕРіРѕ РѕС„РѕСЂРјР»РµРЅРёСЏ
+	'api'=>'ApiAccount',#РќР°Р·РІР°РЅРёРµ РєР»Р°СЃСЃР°
 );

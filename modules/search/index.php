@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,7 +11,7 @@
 global$Eleanor;
 $GLOBALS['title'][]=$Eleanor->module['title'];
 
-#×àñòü äëÿ ïîèñêîâèêà google.com ñì: http://www.google.com/cse/?hl=ru
+#Ð§Ð°ÑÑ‚ÑŒ Ð´Ð»Ñ Ð¿Ð¾Ð¸ÑÐºÐ¾Ð²Ð¸ÐºÐ° google.com ÑÐ¼: http://www.google.com/cse/?hl=ru
 $g=Eleanor::$Template->GoogleSearch(include $Eleanor->module['path'].'config.php');
 Start();
 echo$g;

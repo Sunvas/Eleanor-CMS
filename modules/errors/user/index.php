@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -69,7 +69,7 @@ if($a['mail'] and $_SERVER['REQUEST_METHOD']=='POST')
 			'site'=>Eleanor::$vars['site_name'],
 			'name'=>GlobalsWrapper::Filter($name),
 			'fullname'=>$isu ? $user['full_name'] : '',
-			'userlink'=>$isu ? PROTOCOL.Eleanor::$domain.Eleanor::$site_path.Eleanor::$Login->UserLink($user['name'],$user['id']) : ýý,
+			'userlink'=>$isu ? PROTOCOL.Eleanor::$domain.Eleanor::$site_path.Eleanor::$Login->UserLink($user['name'],$user['id']) : ÑÑ,
 			'text'=>$values['text'],
 			'link'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path,
 			'linkerror'=>PROTOCOL.Eleanor::$domain.Eleanor::$site_path.Url::$curpage,

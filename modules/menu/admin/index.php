@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -53,7 +53,7 @@ $Eleanor->sc=array(
 				{
 					if($k==$a['options']['exclude'] or strpos(','.$v['parents'],','.$a['options']['exclude'].',')!==false)
 						continue;
-					$sel.=Eleanor::Option(($v['parents'] ? str_repeat('&nbsp;',substr_count($v['parents'],',')).'›&nbsp;' : '').$v['title'],$k,in_array($k,$a['value']),array('style'=>$v['status']==0 ? 'color:gray;' : ''),2);
+					$sel.=Eleanor::Option(($v['parents'] ? str_repeat('&nbsp;',substr_count($v['parents'],',')).'â€º&nbsp;' : '').$v['title'],$k,in_array($k,$a['value']),array('style'=>$v['status']==0 ? 'color:gray;' : ''),2);
 				}
 				return$sel;
 			},

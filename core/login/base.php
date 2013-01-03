@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,8 +10,8 @@
 */
 class LoginBase extends BaseClass implements LoginClass
 {	const
-		MAX_SESSIONS=10,#Максимальное число сессий
-		UNIQUE='user';#Для упрощения наследования этого класса создана эта константа. Наследуем класс, меняем константу: вуаля! и у нас новый класс логина системы
+		MAX_SESSIONS=10,#РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ С‡РёСЃР»Рѕ СЃРµСЃСЃРёР№
+		UNIQUE='user';#Р”Р»СЏ СѓРїСЂРѕС‰РµРЅРёСЏ РЅР°СЃР»РµРґРѕРІР°РЅРёСЏ СЌС‚РѕРіРѕ РєР»Р°СЃСЃР° СЃРѕР·РґР°РЅР° СЌС‚Р° РєРѕРЅСЃС‚Р°РЅС‚Р°. РќР°СЃР»РµРґСѓРµРј РєР»Р°СЃСЃ, РјРµРЅСЏРµРј РєРѕРЅСЃС‚Р°РЅС‚Сѓ: РІСѓР°Р»СЏ! Рё Сѓ РЅР°СЃ РЅРѕРІС‹Р№ РєР»Р°СЃСЃ Р»РѕРіРёРЅР° СЃРёСЃС‚РµРјС‹
 
 	protected static
 		$user=array(),
@@ -19,9 +19,9 @@ class LoginBase extends BaseClass implements LoginClass
 		$Plugin;
 
 	/**
-	 * Аутентификация по определенным входящим параметрам, например, по логину и паролю
+	 * РђСѓС‚РµРЅС‚РёС„РёРєР°С†РёСЏ РїРѕ РѕРїСЂРµРґРµР»РµРЅРЅС‹Рј РІС…РѕРґСЏС‰РёРј РїР°СЂР°РјРµС‚СЂР°Рј, РЅР°РїСЂРёРјРµСЂ, РїРѕ Р»РѕРіРёРЅСѓ Рё РїР°СЂРѕР»СЋ
 	 *
-	 * @param array $data Массив с данными
+	 * @param array $data РњР°СЃСЃРёРІ СЃ РґР°РЅРЅС‹РјРё
 	 * @throws EE
 	 */
 	public static function Login(array$data,array$extra=array())
@@ -35,9 +35,9 @@ class LoginBase extends BaseClass implements LoginClass
 	}
 
 	/**
-	 * Авторизация пользователя: проверка является ли пользователь пользователем
+	 * РђРІС‚РѕСЂРёР·Р°С†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ: РїСЂРѕРІРµСЂРєР° СЏРІР»СЏРµС‚СЃСЏ Р»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
 	 *
-	 * @param bool $hard Метод кэширует результат, для сброса кэша передайте true
+	 * @param bool $hard РњРµС‚РѕРґ РєСЌС€РёСЂСѓРµС‚ СЂРµР·СѓР»СЊС‚Р°С‚, РґР»СЏ СЃР±СЂРѕСЃР° РєСЌС€Р° РїРµСЂРµРґР°Р№С‚Рµ true
 	 * @return bool
 	 */
 	public static function IsUser($hard=false)
@@ -57,7 +57,7 @@ class LoginBase extends BaseClass implements LoginClass
 	}
 
 	/**
-	 * Выход пользователя из учетной записи
+	 * Р’С‹С…РѕРґ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР· СѓС‡РµС‚РЅРѕР№ Р·Р°РїРёСЃРё
 	 */
 	public static function Logout($alls=false)
 	{		static::$login=false;
@@ -86,10 +86,10 @@ class LoginBase extends BaseClass implements LoginClass
 		$ma;
 
 	/**
-	 * Формирование ссылки на учётную запись пользователя
+	 * Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃСЃС‹Р»РєРё РЅР° СѓС‡С‘С‚РЅСѓСЋ Р·Р°РїРёСЃСЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 	 *
-	 * @param string $name Имя пользователя
-	 * @param string $id ID пользователя
+	 * @param string $name РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	 * @param string $id ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 	 * @return string|FALSE
 	 */
 	public static function UserLink($name,$id=0)
@@ -110,13 +110,13 @@ class LoginBase extends BaseClass implements LoginClass
 	}
 
 	/**
-	 * Аутентификация пользователя его имени и паролю
+	 * РђСѓС‚РµРЅС‚РёС„РёРєР°С†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РµРіРѕ РёРјРµРЅРё Рё РїР°СЂРѕР»СЋ
 	 *
-	 * @param string $name Имя пользователя
-	 * @param string $pass Пароль пользователя
-	 * @param array $extra Дополнительные параметры аутентификации, возможные ключи массива:
-	 * ismd Признак того, что пароль уже преобразован в md5 (на стороне клиента для защиты от снифферов)
-	 * captcha Признак того, что пользователь корректно ввел капчу (защита от подбора пароля)
+	 * @param string $name РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	 * @param string $pass РџР°СЂРѕР»СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	 * @param array $extra Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёРё, РІРѕР·РјРѕР¶РЅС‹Рµ РєР»СЋС‡Рё РјР°СЃСЃРёРІР°:
+	 * ismd РџСЂРёР·РЅР°Рє С‚РѕРіРѕ, С‡С‚Рѕ РїР°СЂРѕР»СЊ СѓР¶Рµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅ РІ md5 (РЅР° СЃС‚РѕСЂРѕРЅРµ РєР»РёРµРЅС‚Р° РґР»СЏ Р·Р°С‰РёС‚С‹ РѕС‚ СЃРЅРёС„С„РµСЂРѕРІ)
+	 * captcha РџСЂРёР·РЅР°Рє С‚РѕРіРѕ, С‡С‚Рѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РєРѕСЂСЂРµРєС‚РЅРѕ РІРІРµР» РєР°РїС‡Сѓ (Р·Р°С‰РёС‚Р° РѕС‚ РїРѕРґР±РѕСЂР° РїР°СЂРѕР»СЏ)
 	 */
 	public static function AuthByName($name,$pass,array$extra=array())
 	{		$extra+=array('ismd'=>false,'captcha'=>false);
@@ -124,7 +124,7 @@ class LoginBase extends BaseClass implements LoginClass
 		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`pass_salt`,`pass_hash`,`banned_until`,`ban_explain`,`u`.`language`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`failed_logins`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `u`.`name`='.Eleanor::$Db->Escape($name).' LIMIT 1');
 			if(!$user=$R->fetch_assoc())
 				throw new EE('NOT_FOUND',EE::UNIT);
-			#На случай, если синхронизация у нас в виде одной БД.
+			#РќР° СЃР»СѓС‡Р°Р№, РµСЃР»Рё СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ Сѓ РЅР°СЃ РІ РІРёРґРµ РѕРґРЅРѕР№ Р‘Р”.
 			if($user['groups']===null)
 			{				UserManager::Sync($user['id']);
 				$R=Eleanor::$Db->Query('SELECT `forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`failed_logins`,`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.P.'users_extra` INNER JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.$user['id'].' LIMIT 1');
@@ -193,17 +193,17 @@ class LoginBase extends BaseClass implements LoginClass
 	}
 
 	/**
-	 * Авторизация пользователя по ключу
+	 * РђРІС‚РѕСЂРёР·Р°С†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РїРѕ РєР»СЋС‡Сѓ
 	 *
-	 * @param int $id ID пользователя
-	 * @param string $k Ключ пользователя
+	 * @param int $id ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	 * @param string $k РљР»СЋС‡ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 	 */
 	public static function AuthByKey($id,$k)
 	{		if(Eleanor::$Db===Eleanor::$UsersDb)
 		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`banned_until`,`ban_explain`,`u`.`language`,`staticip`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
 			if(!$user=$R->fetch_assoc())
 				return false;
-			#На случай, если синхронизация у нас в виде одной БД.
+			#РќР° СЃР»СѓС‡Р°Р№, РµСЃР»Рё СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ Сѓ РЅР°СЃ РІ РІРёРґРµ РѕРґРЅРѕР№ Р‘Р”.
 			if($user['groups']===null)
 			{
 				UserManager::Sync($user['id']);
@@ -238,9 +238,9 @@ class LoginBase extends BaseClass implements LoginClass
 	}
 
 	/**
-	 * Аутентификация только по ID пользователя. Прежде всего для External
+	 * РђСѓС‚РµРЅС‚РёС„РёРєР°С†РёСЏ С‚РѕР»СЊРєРѕ РїРѕ ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ. РџСЂРµР¶РґРµ РІСЃРµРіРѕ РґР»СЏ External
 	 *
-	 * @param int $id ID пользователя
+	 * @param int $id ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 	 * @throws EE
 	 */
 	public static function Auth($id,$data=array())
@@ -250,7 +250,7 @@ class LoginBase extends BaseClass implements LoginClass
 			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`banned_until`,`ban_explain`,`u`.`language`,`staticip`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
 			if(!$user=$R->fetch_assoc())
 				return false;
-			#На случай, если синхронизация у нас в виде одной БД.
+			#РќР° СЃР»СѓС‡Р°Р№, РµСЃР»Рё СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ Сѓ РЅР°СЃ РІ РІРёРґРµ РѕРґРЅРѕР№ Р‘Р”.
 			if($user['groups']===null)
 			{
 				UserManager::Sync($user['id']);
@@ -274,9 +274,9 @@ class LoginBase extends BaseClass implements LoginClass
 	}
 
 	/**
-	 * Метод, вызываемый после успешной авторизации и аутентификации пользователя: обрабатывает данные и заносит их в таблицу
+	 * РњРµС‚РѕРґ, РІС‹Р·С‹РІР°РµРјС‹Р№ РїРѕСЃР»Рµ СѓСЃРїРµС€РЅРѕР№ Р°РІС‚РѕСЂРёР·Р°С†РёРё Рё Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ: РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РґР°РЅРЅС‹Рµ Рё Р·Р°РЅРѕСЃРёС‚ РёС… РІ С‚Р°Р±Р»РёС†Сѓ
 	 *
-	 * @param array $user Данные пользователя
+	 * @param array $user Р”Р°РЅРЅС‹Рµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 	 */
 	protected static function SetUser(array$user)
 	{		$lks=$user['login_keys'] ? unserialize($user['login_keys']) : array();
@@ -296,7 +296,7 @@ class LoginBase extends BaseClass implements LoginClass
 		static::$user=$user;	}
 
 	/**
-	 * Применение логина, как главного в системе: подстройка системы под пользователя, настройка часового пояса, проверка забаненности и т.п.
+	 * РџСЂРёРјРµРЅРµРЅРёРµ Р»РѕРіРёРЅР°, РєР°Рє РіР»Р°РІРЅРѕРіРѕ РІ СЃРёСЃС‚РµРјРµ: РїРѕРґСЃС‚СЂРѕР№РєР° СЃРёСЃС‚РµРјС‹ РїРѕРґ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, РЅР°СЃС‚СЂРѕР№РєР° С‡Р°СЃРѕРІРѕРіРѕ РїРѕСЏСЃР°, РїСЂРѕРІРµСЂРєР° Р·Р°Р±Р°РЅРµРЅРЅРѕСЃС‚Рё Рё С‚.Рї.
 	 *
 	 * @throws EE
 	 */
@@ -307,10 +307,10 @@ class LoginBase extends BaseClass implements LoginClass
 	}
 
 	/**
-	 * Получение значения пользовательского параметра
+	 * РџРѕР»СѓС‡РµРЅРёРµ Р·РЅР°С‡РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРіРѕ РїР°СЂР°РјРµС‚СЂР°
 	 *
-	 * @param array|string $key Один или несколько параметров, значения которых нужно получить
-	 * @return array|string В зависимости от типа переданной переменной
+	 * @param array|string $key РћРґРёРЅ РёР»Рё РЅРµСЃРєРѕР»СЊРєРѕ РїР°СЂР°РјРµС‚СЂРѕРІ, Р·РЅР°С‡РµРЅРёСЏ РєРѕС‚РѕСЂС‹С… РЅСѓР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ
+	 * @return array|string Р’ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РёРїР° РїРµСЂРµРґР°РЅРЅРѕР№ РїРµСЂРµРјРµРЅРЅРѕР№
 	 */
 	public static function GetUserValue($param,$safe=true,$query=true)
 	{		if(!$isa=is_array($param))
@@ -334,10 +334,10 @@ class LoginBase extends BaseClass implements LoginClass
 	}
 
 	/**
-	 * Установка значения пользовательского параметра. Метод не должен обновлять данны пользователя в БД! Только на время работы скрипта
+	 * РЈСЃС‚Р°РЅРѕРІРєР° Р·РЅР°С‡РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРіРѕ РїР°СЂР°РјРµС‚СЂР°. РњРµС‚РѕРґ РЅРµ РґРѕР»Р¶РµРЅ РѕР±РЅРѕРІР»СЏС‚СЊ РґР°РЅРЅС‹ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РІ Р‘Р”! РўРѕР»СЊРєРѕ РЅР° РІСЂРµРјСЏ СЂР°Р±РѕС‚С‹ СЃРєСЂРёРїС‚Р°
 	 *
-	 * @param array|string $key Имя параметра, либо массив в виде $key=>$value
-	 * @param mixed $value Значения
+	 * @param array|string $key РРјСЏ РїР°СЂР°РјРµС‚СЂР°, Р»РёР±Рѕ РјР°СЃСЃРёРІ РІ РІРёРґРµ $key=>$value
+	 * @param mixed $value Р—РЅР°С‡РµРЅРёСЏ
 	 */
 	public static function SetUserValue($key,$value=null)
 	{

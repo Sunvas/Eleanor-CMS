@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,7 +11,7 @@
 
 class Voting_Ajax extends Voting
 {	/**
-	 * Îñóùåñòâëåíèå äåéñòâèé ïî Ajax çàñïğîñó
+	 * ĞÑÑƒÑ‰ĞµÑÑ‚Ğ²Ğ»ĞµĞ½Ğ¸Ğµ Ğ´ĞµĞ¹ÑÑ‚Ğ²Ğ¸Ğ¹ Ğ¿Ğ¾ Ajax Ğ·Ğ°ÑĞ¿Ñ€Ğ¾ÑÑƒ
 	 */	public function Process()
 	{		if(!isset($this->status))
 			$this->Status();

@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -12,12 +12,12 @@
 class OwnBbCode_code extends OwnBbCode
 {
 	/**
-	 * Обработка информации перед показом на странице
+	 * РћР±СЂР°Р±РѕС‚РєР° РёРЅС„РѕСЂРјР°С†РёРё РїРµСЂРµРґ РїРѕРєР°Р·РѕРј РЅР° СЃС‚СЂР°РЅРёС†Рµ
 	 *
-	 * @param string $t Тег, который обрабатывается
-	 * @param string $p Параметры тега
-	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
-	 * @param bool $cu Флаг возможности использования тега
+	 * @param string $t РўРµРі, РєРѕС‚РѕСЂС‹Р№ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚СЃСЏ
+	 * @param string $p РџР°СЂР°РјРµС‚СЂС‹ С‚РµРіР°
+	 * @param string $c РЎРѕРґРµСЂР¶РёРјРѕРµ С‚РµРіР° [tag...] Р’РѕС‚ СЌС‚Рѕ [/tag]
+	 * @param bool $cu Р¤Р»Р°Рі РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ С‚РµРіР°
 	 */
 	public static function PreDisplay($t,$p,$c,$cu)
 	{
@@ -43,12 +43,12 @@ $(function(){	CORE.AddHead("highlight",$("<link>").attr({rel:"stylesheet",type:
 	}
 
 	/**
-	 * Обработка информации перед её правкой
+	 * РћР±СЂР°Р±РѕС‚РєР° РёРЅС„РѕСЂРјР°С†РёРё РїРµСЂРµРґ РµС‘ РїСЂР°РІРєРѕР№
 	 *
-	 * @param string $t Тег, который обрабатывается
-	 * @param string $p Параметры тега
-	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
-	 * @param bool $cu Флаг возможности использования тега
+	 * @param string $t РўРµРі, РєРѕС‚РѕСЂС‹Р№ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚СЃСЏ
+	 * @param string $p РџР°СЂР°РјРµС‚СЂС‹ С‚РµРіР°
+	 * @param string $c РЎРѕРґРµСЂР¶РёРјРѕРµ С‚РµРіР° [tag...] Р’РѕС‚ СЌС‚Рѕ [/tag]
+	 * @param bool $cu Р¤Р»Р°Рі РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ С‚РµРіР°
 	 */
 	public static function PreEdit($t,$p,$c,$cu)
 	{
@@ -65,12 +65,12 @@ $(function(){	CORE.AddHead("highlight",$("<link>").attr({rel:"stylesheet",type:
 	}
 
 	/**
-	 * Обработка информации перед её сохранением
+	 * РћР±СЂР°Р±РѕС‚РєР° РёРЅС„РѕСЂРјР°С†РёРё РїРµСЂРµРґ РµС‘ СЃРѕС…СЂР°РЅРµРЅРёРµРј
 	 *
-	 * @param string $t Тег, который обрабатывается
-	 * @param string $p Параметры тега
-	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
-	 * @param bool $cu Флаг возможности использования тега
+	 * @param string $t РўРµРі, РєРѕС‚РѕСЂС‹Р№ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚СЃСЏ
+	 * @param string $p РџР°СЂР°РјРµС‚СЂС‹ С‚РµРіР°
+	 * @param string $c РЎРѕРґРµСЂР¶РёРјРѕРµ С‚РµРіР° [tag...] Р’РѕС‚ СЌС‚Рѕ [/tag]
+	 * @param bool $cu Р¤Р»Р°Рі РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ С‚РµРіР°
 	 */
 	public static function PreSave($t,$p,$c,$cu)
 	{		if(!empty(OwnBB::$opts['visual']))

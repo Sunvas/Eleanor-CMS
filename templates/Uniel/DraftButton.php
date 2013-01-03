@@ -1,8 +1,8 @@
 <?php
 /*
-	Ýëåìåíò øàáëîíà. Êíîïêà "Ñîõðàíèòü ÷åðíîâèê".
+	Ð­Ð»ÐµÐ¼ÐµÐ½Ñ‚ ÑˆÐ°Ð±Ð»Ð¾Ð½Ð°. ÐšÐ½Ð¾Ð¿ÐºÐ° "Ð¡Ð¾Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑŒ Ñ‡ÐµÑ€Ð½Ð¾Ð²Ð¸Ðº".
 
-	@var URL, êóäà îòïðàâëÿòü ñîõðàíÿåìûå äàííûå
+	@var URL, ÐºÑƒÐ´Ð° Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð»ÑÑ‚ÑŒ ÑÐ¾Ñ…Ñ€Ð°Ð½ÑÐµÐ¼Ñ‹Ðµ Ð´Ð°Ð½Ð½Ñ‹Ðµ
 */
 $url=isset($v_0) ? $v_0 : array();
 $GLOBALS['head']['draft']='<script type="text/javascript">//<![CDATA[
@@ -14,7 +14,7 @@ $(function(){	var first=true,
 				window.location.href=lnk;
 		};
 
-	$("div.language a").click(function(){//Êíîïêè ïåðåêëþ÷åíèÿ ÿçûêîâ		if(first)
+	$("div.language a").click(function(){//ÐšÐ½Ð¾Ð¿ÐºÐ¸ Ð¿ÐµÑ€ÐµÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ ÑÐ·Ñ‹ÐºÐ¾Ð²		if(first)
 		{			$.each(CORE.drafts,function(i,v){				v.OnSave.add(After);			});			first=false;		}
 		cnt=CORE.drafts.length;
 		lnk=$(this).prop("href");
@@ -48,7 +48,7 @@ $(function(){
 	$("#',$u,'").click(function(){
 		D',$u,'.Save();
 	}).val(CORE.Lang("draftsaved")).show();
-	//Ïîñëå òîãî, êàê ïðîéäóò âñå ñîáûòèÿ ôîðìû
+	//ÐŸÐ¾ÑÐ»Ðµ Ñ‚Ð¾Ð³Ð¾, ÐºÐ°Ðº Ð¿Ñ€Ð¾Ð¹Ð´ÑƒÑ‚ Ð²ÑÐµ ÑÐ¾Ð±Ñ‹Ñ‚Ð¸Ñ Ñ„Ð¾Ñ€Ð¼Ñ‹
 	setTimeout(function(){
 		D',$u,'.enabled=true;
 	},2500);

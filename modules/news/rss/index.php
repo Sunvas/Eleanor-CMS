@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -108,11 +108,11 @@ foreach($items as $k=>&$v)
 		$u=$Eleanor->Url->Construct($cu+array('u'=>array($v['uri'],'nid'=>$k)));
 	}
 	echo Rss(array(
-		'title'=>$v['title'],#Çàãîëîâîê ñîîáùåíèÿ
-		'link'=>$u,#URL ñîîáùåíèÿ
-		'description'=>$v['text'],#Êğàòêèé îáçîğ ñîîáùåíèÿ
-		'guid'=>$u,#Ñòğîêà, óíèêàëüíûì îáğàçîì èäåíòèôèöèğóşùàÿ ñîîáùåíèå.
-		'category'=>$cats,#Âêëş÷àåò ñîîáùåíèå â îäíó èëè áîëåå êàòåãîğèé.
+		'title'=>$v['title'],#Ğ—Ğ°Ğ³Ğ¾Ğ»Ğ¾Ğ²Ğ¾Ğº ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ
+		'link'=>$u,#URL ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ
+		'description'=>$v['text'],#ĞšÑ€Ğ°Ñ‚ĞºĞ¸Ğ¹ Ğ¾Ğ±Ğ·Ğ¾Ñ€ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ
+		'guid'=>$u,#Ğ¡Ñ‚Ñ€Ğ¾ĞºĞ°, ÑƒĞ½Ğ¸ĞºĞ°Ğ»ÑŒĞ½Ñ‹Ğ¼ Ğ¾Ğ±Ñ€Ğ°Ğ·Ğ¾Ğ¼ Ğ¸Ğ´ĞµĞ½Ñ‚Ğ¸Ñ„Ğ¸Ñ†Ğ¸Ñ€ÑƒÑÑ‰Ğ°Ñ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ.
+		'category'=>$cats,#Ğ’ĞºĞ»ÑÑ‡Ğ°ĞµÑ‚ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ Ğ² Ğ¾Ğ´Ğ½Ñƒ Ğ¸Ğ»Ğ¸ Ğ±Ğ¾Ğ»ĞµĞµ ĞºĞ°Ñ‚ĞµĞ³Ğ¾Ñ€Ğ¸Ğ¹.
 		'comments'=>$u ? $u.'#comments' : false,
 		'pubDate'=>(int)$v['date'],
 	));

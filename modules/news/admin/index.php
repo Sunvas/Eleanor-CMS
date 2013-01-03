@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -208,10 +208,10 @@ if(isset($_GET['do']))
 			echo'ok';
 		break;
 		//case'addf':
-		//	$title='Äîïîëíèòåëüíûå ïîëÿ';
+		//	$title='Ð”Ð¾Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ Ð¿Ð¾Ð»Ñ';
 		//	#ToDo!
 		//	Start();
-		//	echo 'Â ðàçðàáîòêå...';
+		//	echo 'Ð’ Ñ€Ð°Ð·Ñ€Ð°Ð±Ð¾Ñ‚ÐºÐµ...';
 		//break;
 		default:
 			ShowList();
@@ -597,7 +597,7 @@ function AddEdit($id,$errors=array())
 			$values['cats']=$values['cats'] ? explode(',,',trim($values['cats'],',')) : array();
 			$values['tags']=$values['tags'] ? explode(',,',trim($values['tags'],',')) : array();
 
-			#Ñëóæåáíîå
+			#Ð¡Ð»ÑƒÐ¶ÐµÐ±Ð½Ð¾Ðµ
 			$values['_maincat']=reset($values['cats']);
 			if($values['status']==2)
 				$values['status']=1;
@@ -640,7 +640,7 @@ function AddEdit($id,$errors=array())
 					$values['tags'][(Eleanor::$vars['multilang'] and !$values['_onelang']) ? $a['language'] : ''][]=$a['name'];
 				foreach($values['tags'] as &$v)
 				{
-					#Óäàëåíèå îäèíàêîâûõ òåãîâ
+					#Ð£Ð´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð¾Ð´Ð¸Ð½Ð°ÐºÐ¾Ð²Ñ‹Ñ… Ñ‚ÐµÐ³Ð¾Ð²
 					foreach($v as $kt=>&$vt)
 						foreach($v as $kkt=>&$vvt)
 						{
@@ -672,14 +672,14 @@ function AddEdit($id,$errors=array())
 			'tags'=>array(''=>''),
 			'status'=>1,
 			'voting'=>false,
-			#ßçûêîâûå
+			#Ð¯Ð·Ñ‹ÐºÐ¾Ð²Ñ‹Ðµ
 			'title'=>$dv,
 			'announcement'=>$dv,
 			'text'=>$dv,
 			'uri'=>$dv,
 			'meta_title'=>$dv,
 			'meta_descr'=>$dv,
-			#Ñïåöèàëüíûå
+			#Ð¡Ð¿ÐµÑ†Ð¸Ð°Ð»ÑŒÐ½Ñ‹Ðµ
 			'_maincat'=>0,
 		);
 		if(Eleanor::$vars['multilang'])
@@ -766,7 +766,7 @@ function Save($id)
 {global$Eleanor;
 	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
 	$errors=array();
-	#Ïåðå÷åíü ïåðåìåííûõ, êîòîðûå äóáëèðóþòñÿ äëÿ ÿçûêîâîé òàáëèöû íèæå
+	#ÐŸÐµÑ€ÐµÑ‡ÐµÐ½ÑŒ Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ñ‹Ñ…, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð´ÑƒÐ±Ð»Ð¸Ñ€ÑƒÑŽÑ‚ÑÑ Ð´Ð»Ñ ÑÐ·Ñ‹ÐºÐ¾Ð²Ð¾Ð¹ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ Ð½Ð¸Ð¶Ðµ
 	$maincat=isset($_POST['_maincat']) ? (int)$_POST['_maincat'] : false;
 	$cats=isset($_POST['cats']) ? array_unique((array)$_POST['cats']) : array();
 	if($cats and count($cats)>1)
@@ -943,7 +943,7 @@ function Save($id)
 					unset($tags[$kt]);
 			}
 		}
-		unset($vt);#Íå ïðîñòî òàê
+		unset($vt);#ÐÐµ Ð¿Ñ€Ð¾ÑÑ‚Ð¾ Ñ‚Ð°Ðº
 		if(!$tags)
 			continue;
 		$toins=$utags=array();
@@ -1032,7 +1032,7 @@ function Save($id)
 			$ping=true;
 		}
 		$values['tags']=$values['tags'] ? ','.join(',,',$values['tags']).',' : '';
-		Eleanor::$Db->Transaction();#Âñå ðàäè àïëîàäåðà
+		Eleanor::$Db->Transaction();#Ð’ÑÐµ Ñ€Ð°Ð´Ð¸ Ð°Ð¿Ð»Ð¾Ð°Ð´ÐµÑ€Ð°
 		$id=Eleanor::$Db->Insert($Eleanor->module['config']['t'],$values);
 		try
 		{
@@ -1083,7 +1083,7 @@ function Save($id)
 
 function DelCategories($ids)
 {global$Eleanor;
-	#Ê ñîæàëåíèþ â MySQL íå ïðåäóñìîòðåíà ôóíêöèÿ çàìåíû ïî ðåãóëÿðíîìó âûðàæåíèþ. Ðàññòàâëÿåì ãðàáëè.
+	#Ðš ÑÐ¾Ð¶Ð°Ð»ÐµÐ½Ð¸ÑŽ Ð² MySQL Ð½Ðµ Ð¿Ñ€ÐµÐ´ÑƒÑÐ¼Ð¾Ñ‚Ñ€ÐµÐ½Ð° Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ Ð·Ð°Ð¼ÐµÐ½Ñ‹ Ð¿Ð¾ Ñ€ÐµÐ³ÑƒÐ»ÑÑ€Ð½Ð¾Ð¼Ñƒ Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸ÑŽ. Ð Ð°ÑÑÑ‚Ð°Ð²Ð»ÑÐµÐ¼ Ð³Ñ€Ð°Ð±Ð»Ð¸.
 	foreach($ids as &$v)
 	{
 		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!cats'=>'REPLACE(`cats`,\','.$v.',\',\'\')'));

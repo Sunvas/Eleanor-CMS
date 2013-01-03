@@ -7,7 +7,7 @@ return array(
 		$tmp=$Plug->GetOrderedList();
 		$now=$items='';
 		foreach($tmp as $k=>&$v)
-			$items.=Eleanor::Option(($v['parents'] ? str_repeat('&nbsp;',substr_count($v['parents'],',')+1).'›&nbsp;' : '').$v['title'],$k,false,array(),2);
+			$items.=Eleanor::Option(($v['parents'] ? str_repeat('&nbsp;',substr_count($v['parents'],',')+1).'â€º&nbsp;' : '').$v['title'],$k,false,array(),2);
 
 		$value=$co['value'] ? explode(',',trim($co['value'],',')) : array();
 		foreach($value as &$v)
@@ -60,7 +60,7 @@ $(function(){
 
 	add.click(function(){		if(res.find("[value="+sel.val()+"]").size()==0)
 			sel.find("option:selected:first").clone().each(function(){
-				$(this).html($(this).html().replace(/^(&nbsp;|›)+/g,""));
+				$(this).html($(this).html().replace(/^(&nbsp;|â€º)+/g,""));
 			}).prop("selected",false).appendTo(res);
 		res.change();
 		add.hide();

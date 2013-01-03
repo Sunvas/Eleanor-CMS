@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -9,12 +9,12 @@
 	*Pseudonym
 */
 return array(
-	'n'=>'static',#Модуля
-	't'=>P.'static',#Имя таблицы с контентом
-	'tl'=>P.'static_l',#Имя таблицы с языковым контентом
-	'admintpl'=>'AdminStatic',#Класс администраторского оформления
-	'usertpl'=>'UserStatic',#Класс пользовательского оформления
-	'opts'=>'module_static',#Название группы опций
-	'pv'=>'m_static_',#Префикс настроек
-	'api'=>'ApiStatic',#Название класса
+	'n'=>'static',#РњРѕРґСѓР»СЏ
+	't'=>P.'static',#РРјСЏ С‚Р°Р±Р»РёС†С‹ СЃ РєРѕРЅС‚РµРЅС‚РѕРј
+	'tl'=>P.'static_l',#РРјСЏ С‚Р°Р±Р»РёС†С‹ СЃ СЏР·С‹РєРѕРІС‹Рј РєРѕРЅС‚РµРЅС‚РѕРј
+	'admintpl'=>'AdminStatic',#РљР»Р°СЃСЃ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСЃРєРѕРіРѕ РѕС„РѕСЂРјР»РµРЅРёСЏ
+	'usertpl'=>'UserStatic',#РљР»Р°СЃСЃ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРіРѕ РѕС„РѕСЂРјР»РµРЅРёСЏ
+	'opts'=>'module_static',#РќР°Р·РІР°РЅРёРµ РіСЂСѓРїРїС‹ РѕРїС†РёР№
+	'pv'=>'m_static_',#РџСЂРµС„РёРєСЃ РЅР°СЃС‚СЂРѕРµРє
+	'api'=>'ApiStatic',#РќР°Р·РІР°РЅРёРµ РєР»Р°СЃСЃР°
 );

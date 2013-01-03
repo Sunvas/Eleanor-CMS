@@ -2,7 +2,7 @@
 return array(
 	#For core/others/editor.php
 	'code.php'=>'Paste the code fragment',
-	'hide.php'=>'Insert hidden text — not showing guests',
+	'hide.php'=>'Insert hidden text â€” not showing guests',
 	'quote.php'=>'Insert quote',
 	'script.php'=>'Insert JavaScript (will be executed)',
 	'php.php'=>'Insert PHP (will be executed)',

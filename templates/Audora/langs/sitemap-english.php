@@ -35,5 +35,5 @@ return array(
 	'nomops'=>'No options of modules',
 	'robots'=>'Contents of robots.txt',
 	'rsaved'=>'Contents of robots.txt successfully saved',
-	'deleting'=>'Do you really want to delete the sitemap &quot;%s&quot;? Τΰιλ &quot;%s&quot; ςΰκ ζε ασδες σδΰλεν.',
+	'deleting'=>'Do you really want to delete the sitemap &quot;%s&quot;? Π¤Π°ΠΉΠ» &quot;%s&quot; Ρ‚Π°ΠΊ Π¶Πµ Π±ΡƒΠ΄ΠµΡ‚ ΡƒΠ΄Π°Π»ΠµΠ½.',
 );

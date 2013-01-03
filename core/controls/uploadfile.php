@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,13 +11,13 @@
 class ControlUploadFile extends BaseClass implements ControlsBase
 {
 	public static
-		$Language;#Языковой объект
+		$Language;#РЇР·С‹РєРѕРІРѕР№ РѕР±СЉРµРєС‚
 
 	private static
-		$bypost;#Флаг чтения данных из POST
+		$bypost;#Р¤Р»Р°Рі С‡С‚РµРЅРёСЏ РґР°РЅРЅС‹С… РёР· POST
 
 	/**
-	 * Получение настроек контрола
+	 * РџРѕР»СѓС‡РµРЅРёРµ РЅР°СЃС‚СЂРѕРµРє РєРѕРЅС‚СЂРѕР»Р°
 	 *
 	 * @param ControlsManager $Obj
 	 */
@@ -27,7 +27,7 @@ class ControlUploadFile extends BaseClass implements ControlsBase
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 		$ml=false;
 		return array(
-			'uploadfile',#Группа контрола
+			'uploadfile',#Р“СЂСѓРїРїР° РєРѕРЅС‚СЂРѕР»Р°
 			'path'=>array(
 				'title'=>static::$Language['path_to_save'],
 				'descr'=>static::$Language['path_to_save_'],
@@ -194,9 +194,9 @@ $(function(){
 	}
 
 	/**
-	 * Получение контрола
+	 * РџРѕР»СѓС‡РµРЅРёРµ РєРѕРЅС‚СЂРѕР»Р°
 	 *
-	 * @param array $a Опции контрола
+	 * @param array $a РћРїС†РёРё РєРѕРЅС‚СЂРѕР»Р°
 	 * @param ControlsManager $Obj
 	 */
 	public static function Control($a,$Obj)
@@ -223,9 +223,9 @@ $(function(){
 	}
 
 	/**
-	 * Сохранение контрола
+	 * РЎРѕС…СЂР°РЅРµРЅРёРµ РєРѕРЅС‚СЂРѕР»Р°
 	 *
-	 * @param array $a Опции контрола
+	 * @param array $a РћРїС†РёРё РєРѕРЅС‚СЂРѕР»Р°
 	 * @param ControlsManager $Obj
 	 */
 	public static function Save($a,$Obj)
@@ -317,9 +317,9 @@ $(function(){
 	}
 
 	/**
-	 * Получение результата контрола
+	 * РџРѕР»СѓС‡РµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚Р° РєРѕРЅС‚СЂРѕР»Р°
 	 *
-	 * @param array $a Опции контрола
+	 * @param array $a РћРїС†РёРё РєРѕРЅС‚СЂРѕР»Р°
 	 * @param ControlsManager $Obj
 	 */
 	public static function Result($a,$Obj,$co)

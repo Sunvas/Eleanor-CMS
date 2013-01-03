@@ -1,10 +1,10 @@
 <?php
 return array(
-	#Для /addons/admin/modules/section_general.php
-	'server_info'=>'Информация о сервере',
-	'logs'=>'Логи',
-	'errors.log'=>'Лог ошибок в коде',
-	'request_errors.log'=>'Лог ошибочных запросов',
-	'db_errors.log'=>'Лог ошибок БД',
-	'license_'=>'Лицензия и санкции',
+	#Р”Р»СЏ /addons/admin/modules/section_general.php
+	'server_info'=>'РРЅС„РѕСЂРјР°С†РёСЏ Рѕ СЃРµСЂРІРµСЂРµ',
+	'logs'=>'Р›РѕРіРё',
+	'errors.log'=>'Р›РѕРі РѕС€РёР±РѕРє РІ РєРѕРґРµ',
+	'request_errors.log'=>'Р›РѕРі РѕС€РёР±РѕС‡РЅС‹С… Р·Р°РїСЂРѕСЃРѕРІ',
+	'db_errors.log'=>'Р›РѕРі РѕС€РёР±РѕРє Р‘Р”',
+	'license_'=>'Р›РёС†РµРЅР·РёСЏ Рё СЃР°РЅРєС†РёРё',
 );

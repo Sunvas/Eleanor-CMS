@@ -1,6 +1,6 @@
 <?php
 /*
-	Шаблон страницы входа в админку.
+	РЁР°Р±Р»РѕРЅ СЃС‚СЂР°РЅРёС†С‹ РІС…РѕРґР° РІ Р°РґРјРёРЅРєСѓ.
 */
 if(!defined('CMS'))die;
 $ltpl=Eleanor::$Language['tpl'];
@@ -109,7 +109,7 @@ CORE.MSQueue.done(function(qw){	var al=$(".submitline");
 			<div class="elfoot">
 				<span class="copyright">
 					<?php
-#Пожалуйста, не удаляйте и не изменяйте наши копирайты, если, конечно, у вас есть хоть немного уважения к разработчикам.
+#РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РЅРµ СѓРґР°Р»СЏР№С‚Рµ Рё РЅРµ РёР·РјРµРЅСЏР№С‚Рµ РЅР°С€Рё РєРѕРїРёСЂР°Р№С‚С‹, РµСЃР»Рё, РєРѕРЅРµС‡РЅРѕ, Сѓ РІР°СЃ РµСЃС‚СЊ С…РѕС‚СЊ РЅРµРјРЅРѕРіРѕ СѓРІР°Р¶РµРЅРёСЏ Рє СЂР°Р·СЂР°Р±РѕС‚С‡РёРєР°Рј.
 echo 'Powered by '.ELEANOR_COPYRIGHT?>
 				</span>
 				<span class="siteurl">
@@ -118,7 +118,7 @@ echo 'Powered by '.ELEANOR_COPYRIGHT?>
 			</div>
 		</div></div></div>
 		<div class="msgbrowser">
-			Для комфортного использования нашей системы, рекомендуем Вам  воспользоваться браузерами <a href="http://www.mozilla-europe.org/ru/firefox/" title="Mozilla Firefox">Mozilla Firefox</a> или <a href="http://ru.opera.com/" title="Opera">Opera</a>.
+			Р”Р»СЏ РєРѕРјС„РѕСЂС‚РЅРѕРіРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РЅР°С€РµР№ СЃРёСЃС‚РµРјС‹, СЂРµРєРѕРјРµРЅРґСѓРµРј Р’Р°Рј  РІРѕСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ Р±СЂР°СѓР·РµСЂР°РјРё <a href="http://www.mozilla-europe.org/ru/firefox/" title="Mozilla Firefox">Mozilla Firefox</a> РёР»Рё <a href="http://ru.opera.com/" title="Opera">Opera</a>.
 		</div>
 	</div>
 </body>

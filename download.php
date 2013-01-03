@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -12,7 +12,7 @@ define('CMS',true);
 require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::LoadOptions(array('site','users-on-site','files'));
-Eleanor::$service='download';#ID сервиса
+Eleanor::$service='download';#ID СЃРµСЂРІРёСЃР°
 Eleanor::InitService();
 $Eleanor->started=false;
 
@@ -102,7 +102,7 @@ elseif(isset($_GET['download']))
 		Eleanor::$etag=false;
 	if(!$direct)
 		Eleanor::AddSession();
-	Eleanor::$gzip=false;#Сжимать файлы - не прерогатива системы.
+	Eleanor::$gzip=false;#РЎР¶РёРјР°С‚СЊ С„Р°Р№Р»С‹ - РЅРµ РїСЂРµСЂРѕРіР°С‚РёРІР° СЃРёСЃС‚РµРјС‹.
 	Eleanor::HookOutPut(false,200,false);
 	Files::OutPutStream(array('file'=>$f,'save'=>!$direct,'etag'=>Eleanor::$etag));
 }
@@ -111,7 +111,7 @@ elseif(isset($_REQUEST['direct']) and is_string($_REQUEST['direct']) and is_file
 else
 	return ExitPage();
 
-#Предопределенные функции.
+#РџСЂРµРґРѕРїСЂРµРґРµР»РµРЅРЅС‹Рµ С„СѓРЅРєС†РёРё.
 function GoAway($info=false,$code=301,$hash='')
 {global$Eleanor;
 	if(!$ref=getenv('HTTP_REFERER') or $ref==PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'] or $info)
@@ -168,14 +168,14 @@ function Error($e=false,$extra=array())
 		);
 	}
 
-	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#Ошибка могла вылететь и в момент создания объекта $Eleanor
+	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#РћС€РёР±РєР° РјРѕРіР»Р° РІС‹Р»РµС‚РµС‚СЊ Рё РІ РјРѕРјРµРЅС‚ СЃРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚Р° $Eleanor
 	{
 		$Eleanor->error=true;
 		if($csh)
 			header('Content-Type: text/html; charset='.Eleanor::$charset,true,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503);
 		while(ob_get_contents()!==false)
 			ob_end_clean();
-		ob_start();ob_start();#Странный глюк PHP... Достаточно сделать Parse error в index.php темы и Core::FinishOutPut будет получать пустое значение
+		ob_start();ob_start();#РЎС‚СЂР°РЅРЅС‹Р№ РіР»СЋРє PHP... Р”РѕСЃС‚Р°С‚РѕС‡РЅРѕ СЃРґРµР»Р°С‚СЊ Parse error РІ index.php С‚РµРјС‹ Рё Core::FinishOutPut Р±СѓРґРµС‚ РїРѕР»СѓС‡Р°С‚СЊ РїСѓСЃС‚РѕРµ Р·РЅР°С‡РµРЅРёРµ
 		echo$e;
 	}
 	else
@@ -215,7 +215,7 @@ function ApplyLang($gl=false)
 		Eleanor::$lvars=array();
 }
 
-#Функция "Будь как", делает сервис другим. Полностью :)
+#Р¤СѓРЅРєС†РёСЏ "Р‘СѓРґСЊ РєР°Рє", РґРµР»Р°РµС‚ СЃРµСЂРІРёСЃ РґСЂСѓРіРёРј. РџРѕР»РЅРѕСЃС‚СЊСЋ :)
 function BeAs($n)
 {global$Eleanor;
 	if(Eleanor::$service==$n or !isset(Eleanor::$services[$n]))

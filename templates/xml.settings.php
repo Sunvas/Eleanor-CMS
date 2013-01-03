@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,16 +10,16 @@
 */
 if(!defined('CMS'))die;
 return array(
-	'service'=>array('xml'),#Øàáëîí äëÿ ïîëüçîâàòåëåé
-	'creation'=>'2011-10-18',#Äàòà ñîçäàíèÿ
-	'author'=>'Eleanor CMS team',#Àâòîð øàáëîíà
-	'name'=>'XML templates',#Íàçâàíèå øàáëîíà
+	'service'=>array('xml'),#Ð¨Ð°Ð±Ð»Ð¾Ð½ Ð´Ð»Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¹
+	'creation'=>'2011-10-18',#Ð”Ð°Ñ‚Ð° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ
+	'author'=>'Eleanor CMS team',#ÐÐ²Ñ‚Ð¾Ñ€ ÑˆÐ°Ð±Ð»Ð¾Ð½Ð°
+	'name'=>'XML templates',#ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ ÑˆÐ°Ð±Ð»Ð¾Ð½Ð°
 	'info'=><<<'INFO'
 	Eleanor CMS XML Template
 INFO
 ,
 	'license'=><<<'LICENSE'
-Ïîëüçîâàòüñÿ ýòèìè øàáëîíàìè â ñîñòàâå Eleanor CMS ìîæíî áåñïëàòíî. Èñïîëüçîâàòü èõ âíå ñèñòåìû èëè â ñòîðîííèõ ðàçðàáîòêàõ - ñòðîãî çàïðåùåíî!
+ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒÑÑ ÑÑ‚Ð¸Ð¼Ð¸ ÑˆÐ°Ð±Ð»Ð¾Ð½Ð°Ð¼Ð¸ Ð² ÑÐ¾ÑÑ‚Ð°Ð²Ðµ Eleanor CMS Ð¼Ð¾Ð¶Ð½Ð¾ Ð±ÐµÑÐ¿Ð»Ð°Ñ‚Ð½Ð¾. Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ Ð¸Ñ… Ð²Ð½Ðµ ÑÐ¸ÑÑ‚ÐµÐ¼Ñ‹ Ð¸Ð»Ð¸ Ð² ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½Ð¸Ñ… Ñ€Ð°Ð·Ñ€Ð°Ð±Ð¾Ñ‚ÐºÐ°Ñ… - ÑÑ‚Ñ€Ð¾Ð³Ð¾ Ð·Ð°Ð¿Ñ€ÐµÑ‰ÐµÐ½Ð¾!
 LICENSE
 ,
 );

@@ -27,7 +27,7 @@ return array(
 	'EMPTY_NAME'=>'Enter the user name',
 	'EMPTY_EMAIL'=>'Enter e-mail',
 	'reg_off'=>'Sorry, user registration is disabled.',
-	'external_reg'=>'%s, âàì íóæíî ïðîéòè ðåãèñòðàöèþ íà ñàéòå. Â äàëüíåéøåì Âû ñìîæåòå âõîäèòü íà ñàéò ñðàçó.',
+	'external_reg'=>'%s, Ð²Ð°Ð¼ Ð½ÑƒÐ¶Ð½Ð¾ Ð¿Ñ€Ð¾Ð¹Ñ‚Ð¸ Ñ€ÐµÐ³Ð¸ÑÑ‚Ñ€Ð°Ñ†Ð¸ÑŽ Ð½Ð° ÑÐ°Ð¹Ñ‚Ðµ. Ð’ Ð´Ð°Ð»ÑŒÐ½ÐµÐ¹ÑˆÐµÐ¼ Ð’Ñ‹ ÑÐ¼Ð¾Ð¶ÐµÑ‚Ðµ Ð²Ñ…Ð¾Ð´Ð¸Ñ‚ÑŒ Ð½Ð° ÑÐ°Ð¹Ñ‚ ÑÑ€Ð°Ð·Ñƒ.',
 	'name'=>'Login',
 	'enter_g_name'=>'Enter your desired username',
 	'name_'=>'Should consist of characters A-z, 0-9 begin with a letter, end with a letter or a digit, with at least 4 characters',

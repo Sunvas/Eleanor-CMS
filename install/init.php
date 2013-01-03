@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,35 +11,35 @@
 
 if(!defined('INSTALL') and !defined('UPDATE'))die;
 
-define('CHARSET','cp1251');
-define('DISPLAY_CHARSET','windows-1251');
-define('DB_CHARSET','cp1251');
+define('CHARSET','utf-8');
+define('DISPLAY_CHARSET','utf-8');
+define('DB_CHARSET','utf8');
 define('PROTOCOL','http://');
 define('ELEANOR_VERSION',0.9);
 define('ELEANOR_BUILD',6);
 define('LANGUAGE','russian');
 define('DEBUG',false);
-define('GROUP_USER',2);#Пользовательская группа
-define('GROUP_WAIT',5);#Группа ожидающих активации
+define('GROUP_USER',2);#РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєР°СЏ РіСЂСѓРїРїР°
+define('GROUP_WAIT',5);#Р“СЂСѓРїРїР° РѕР¶РёРґР°СЋС‰РёС… Р°РєС‚РёРІР°С†РёРё
 
-#Возможно глупо потому что многие из России. Но разработчик живет в Николаеве, где время киевское :)
+#Р’РѕР·РјРѕР¶РЅРѕ РіР»СѓРїРѕ РїРѕС‚РѕРјСѓ С‡С‚Рѕ РјРЅРѕРіРёРµ РёР· Р РѕСЃСЃРёРё. РќРѕ СЂР°Р·СЂР°Р±РѕС‚С‡РёРє Р¶РёРІРµС‚ РІ РќРёРєРѕР»Р°РµРІРµ, РіРґРµ РІСЂРµРјСЏ РєРёРµРІСЃРєРѕРµ :)
 date_default_timezone_set('Europe/Kiev');
 
 require'./core/core.php';
 require'./../core/core.php';
 $head=array();
 error_reporting(E_ALL^E_NOTICE);
-#ПРЕДУСТАНОВЛЕННЫЕ ЯЗЫКИ! PREINSTALLED LANGUAGES!
+#РџР Р•Р”РЈРЎРўРђРќРћР’Р›Р•РќРќР«Р• РЇР—Р«РљР! PREINSTALLED LANGUAGES!
 Eleanor::$langs=array(
-	'russian'=>array('name'=>'Русский','uri'=>'рус','sel'=>'Выбрать основной язык системы русским','d'=>'ru','l'=>'ru_RU.'.CHARSET),
+	'russian'=>array('name'=>'Р СѓСЃСЃРєРёР№','uri'=>'СЂСѓСЃ','sel'=>'Р’С‹Р±СЂР°С‚СЊ РѕСЃРЅРѕРІРЅРѕР№ СЏР·С‹Рє СЃРёСЃС‚РµРјС‹ СЂСѓСЃСЃРєРёРј','d'=>'ru','l'=>'ru_RU.'.CHARSET),
 	'english'=>array('name'=>'English','uri'=>'eng','sel'=>'Select english main language of system','d'=>'en','l'=>'en.'.CHARSET),
-	'ukrainian'=>array('name'=>'Українська','uri'=>'укр','sel'=>'Обрати основною мовою українську','d'=>'ua','l'=>'ua.'.CHARSET),
+	'ukrainian'=>array('name'=>'РЈРєСЂР°С—РЅСЃСЊРєР°','uri'=>'СѓРєСЂ','sel'=>'РћР±СЂР°С‚Рё РѕСЃРЅРѕРІРЅРѕСЋ РјРѕРІРѕСЋ СѓРєСЂР°С—РЅСЃСЊРєСѓ','d'=>'ua','l'=>'ua.'.CHARSET),
 );
 $Eleanor=Eleanor::getInstance(false);
 Eleanor::$service='admin';
 Eleanor::InitTemplate('template','');
 
-#Разные настройки:
+#Р Р°Р·РЅС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё:
 Eleanor::$vars=array(
 	'log_maxsize'=>0,
 	'cookie_prefix'=>'',
@@ -55,7 +55,7 @@ Eleanor::$vars=array(
 	'page_caching'=>false,
 )+Eleanor::$vars;
 
-#Поддержка IDN
+#РџРѕРґРґРµСЂР¶РєР° IDN
 if(strpos(Eleanor::$domain,'xn--')!==false)
 {
 	Eleanor::$punycode=Eleanor::$domain;
@@ -68,7 +68,7 @@ else
 
 Eleanor::$UsersDb=&Eleanor::$Db;
 
-#Внимание! САМОВОЛЬНОЕ УБИРАНИЕ КОПИРАЙТОВ ЧРЕВАТО БЛОКИРОВКОЙ НА ОФИЦИАЛЬНОМ САЙТЕ СИСТЕМЫ И ПРЕСЛЕДУЕТСЯ ПО ЗАКОНУ!
-#КОПИРАЙТЫ МЕНЯТЬ/ПРАВИТЬ НЕЛЬЗЯ! СОВСЕМ!! ОНИ ДОЛЖНЫ ОСТАВАТЬСЯ НЕИЗМЕННЫМИ ДО БИТА!
+#Р’РЅРёРјР°РЅРёРµ! РЎРђРњРћР’РћР›Р¬РќРћР• РЈР‘РР РђРќРР• РљРћРџРР РђР™РўРћР’ Р§Р Р•Р’РђРўРћ Р‘Р›РћРљРР РћР’РљРћР™ РќРђ РћР¤РР¦РРђР›Р¬РќРћРњ РЎРђР™РўР• РЎРРЎРўР•РњР« Р РџР Р•РЎР›Р•Р”РЈР•РўРЎРЇ РџРћ Р—РђРљРћРќРЈ!
+#РљРћРџРР РђР™РўР« РњР•РќРЇРўР¬/РџР РђР’РРўР¬ РќР•Р›Р¬Р—РЇ! РЎРћР’РЎР•Рњ!! РћРќР Р”РћР›Р–РќР« РћРЎРўРђР’РђРўР¬РЎРЇ РќР•РР—РњР•РќРќР«РњР Р”Рћ Р‘РРўРђ!
 if(!defined('ELEANOR_COPYRIGHT'))
-	define('ELEANOR_COPYRIGHT','<!-- ]]></script> --><a href="http://eleanor-cms.ru/" target="_blank">CMS Eleanor</a> © <!-- Eleanor CMS Team http://eleanor-cms.ru/copyright.php -->'.idate('Y'));
+	define('ELEANOR_COPYRIGHT','<!-- ]]></script> --><a href="http://eleanor-cms.ru/" target="_blank">CMS Eleanor</a> В© <!-- Eleanor CMS Team http://eleanor-cms.ru/copyright.php -->'.idate('Y'));

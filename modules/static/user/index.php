@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -62,7 +62,7 @@ else
 		{
 			$a=false;
 			if(!$id)
-			{				$f=preg_replace('#([^a-z0-9'.constant(Language::$main.'::ALPHABET').'\.\-_/]|\.\.)+#i','',join('/',$trace));#Îáåçîïàñèì îò âîçìîæíîãî âûõîäà èç êàòàëîãà è ïðîâåðêó äðóãèõ ôàéëîâ.
+			{				$f=preg_replace('#([^a-z0-9'.constant(Language::$main.'::ALPHABET').'\.\-_/]|\.\.)+#i','',join('/',$trace));#ÐžÐ±ÐµÐ·Ð¾Ð¿Ð°ÑÐ¸Ð¼ Ð¾Ñ‚ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾Ð³Ð¾ Ð²Ñ‹Ñ…Ð¾Ð´Ð° Ð¸Ð· ÐºÐ°Ñ‚Ð°Ð»Ð¾Ð³Ð° Ð¸ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÑƒ Ð´Ñ€ÑƒÐ³Ð¸Ñ… Ñ„Ð°Ð¹Ð»Ð¾Ð².
 				$a=glob($Eleanor->module['path'].'DIRECT/'.$f.'.php',GLOB_BRACE);
 			}
 			if($a)
@@ -147,7 +147,7 @@ else
 			$title[]=$data['title'];
 		$Eleanor->module['description']=$data['meta_descr'];
 
-		#Ïîääåðæêà ñîöñåòåé:
+		#ÐŸÐ¾Ð´Ð´ÐµÑ€Ð¶ÐºÐ° ÑÐ¾Ñ†ÑÐµÑ‚ÐµÐ¹:
 		$Lst=Eleanor::LoadListTemplate('headfoot');
 		if($data['title'])
 			$Lst->og('title',$data['title']);

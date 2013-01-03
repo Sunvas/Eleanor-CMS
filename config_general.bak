@@ -1,15 +1,15 @@
 <?php
-define('CHARSET','[charset]');#Основная кодировка
-define('DISPLAY_CHARSET','[display_charset]');#Кодировка секции head на сайте
-define('PROTOCOL','http://');#Протокол системы
-define('DEBUG',false);#Режим отладки
-define('DB_CHARSET','[db_charset]');#Кодировка для базы данных
-define('P','[db_prefix]');#Префикс таблиц БД
-define('GROUP_USER',2);#Пользовательская группа
-define('GROUP_WAIT',5);#Группа ожидающих активации
-define('USERS_TABLE',P.'users');#Таблица пользователей
-define('ELEANOR_VERSION','[version]');#Огромная просьба: НЕ изменять самостоятельно!
-define('LANGUAGE','[language]');#Основной язык системы
+define('CHARSET','[charset]');#РћСЃРЅРѕРІРЅР°СЏ РєРѕРґРёСЂРѕРІРєР°
+define('DISPLAY_CHARSET','[display_charset]');#РљРѕРґРёСЂРѕРІРєР° СЃРµРєС†РёРё head РЅР° СЃР°Р№С‚Рµ
+define('PROTOCOL','http://');#РџСЂРѕС‚РѕРєРѕР» СЃРёСЃС‚РµРјС‹
+define('DEBUG',false);#Р РµР¶РёРј РѕС‚Р»Р°РґРєРё
+define('DB_CHARSET','[db_charset]');#РљРѕРґРёСЂРѕРІРєР° РґР»СЏ Р±Р°Р·С‹ РґР°РЅРЅС‹С…
+define('P','[db_prefix]');#РџСЂРµС„РёРєСЃ С‚Р°Р±Р»РёС† Р‘Р”
+define('GROUP_USER',2);#РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєР°СЏ РіСЂСѓРїРїР°
+define('GROUP_WAIT',5);#Р“СЂСѓРїРїР° РѕР¶РёРґР°СЋС‰РёС… Р°РєС‚РёРІР°С†РёРё
+define('USERS_TABLE',P.'users');#РўР°Р±Р»РёС†Р° РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
+define('ELEANOR_VERSION','[version]');#РћРіСЂРѕРјРЅР°СЏ РїСЂРѕСЃСЊР±Р°: РќР• РёР·РјРµРЅСЏС‚СЊ СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅРѕ!
+define('LANGUAGE','[language]');#РћСЃРЅРѕРІРЅРѕР№ СЏР·С‹Рє СЃРёСЃС‚РµРјС‹
 
 return array(
 	'db_host'=>'[db_host]',
@@ -20,10 +20,10 @@ return array(
 	#[users_db]'users'=>array('db_host'=>'[users_db_host]','db'=>'[users_db]','db_user'=>'[users_db_user]','db_pass'=>'[users_db_pass]',),
 
 	'langs'=>array(
-		#[lang_russian]'russian'=>array('name'=>'Русский','uri'=>'рус','d'=>'ru','l'=>'ru_RU.[charset]'),
+		#[lang_russian]'russian'=>array('name'=>'Р СѓСЃСЃРєРёР№','uri'=>'СЂСѓСЃ','d'=>'ru','l'=>'ru_RU.[charset]'),
 		#[lang_english]'english'=>array('name'=>'English','uri'=>'eng','d'=>'en','l'=>'en.[charset]'),
-		#[lang_ukrainian]'ukrainian'=>array('name'=>'Українська','uri'=>'укр','d'=>'ua','l'=>'ua.[charset]'),
+		#[lang_ukrainian]'ukrainian'=>array('name'=>'РЈРєСЂР°С—РЅСЃСЊРєР°','uri'=>'СѓРєСЂ','d'=>'ua','l'=>'ua.[charset]'),
 	)
-	#d - от "double", http://ru.wikipedia.org/wiki/ISO_3166-1
-	#l - locale для setlocale
+	#d - РѕС‚ "double", http://ru.wikipedia.org/wiki/ISO_3166-1
+	#l - locale РґР»СЏ setlocale
 );

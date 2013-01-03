@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,12 +10,12 @@
 */
 class Dates
 {	/**
-	 * Âûâîä êàëåíäàðÿ: êîíòðîëà âûáîðà äàòû è âðåìåíè
+	 * Ð’Ñ‹Ð²Ð¾Ð´ ÐºÐ°Ð»ÐµÐ½Ð´Ð°Ñ€Ñ: ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð° Ð²Ñ‹Ð±Ð¾Ñ€Ð° Ð´Ð°Ñ‚Ñ‹ Ð¸ Ð²Ñ€ÐµÐ¼ÐµÐ½Ð¸
 	 *
-	 * @param string $name Èìÿ êîíòðîëà
-	 * @param string $value Çíà÷åíèå êîíòðîëà
-	 * @param bool $time Ôëàã âîçìîæíîñòè âûáèðàòü âðåìÿ (ìèíóòû è ñåêóíäû)
-	 * @param array $a Äîïîëíèòåëüíûå ïàðàìåòðû êîíòðîëà
+	 * @param string $name Ð˜Ð¼Ñ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
+	 * @param string $value Ð—Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
+	 * @param bool $time Ð¤Ð»Ð°Ð³ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑ‚Ð¸ Ð²Ñ‹Ð±Ð¸Ñ€Ð°Ñ‚ÑŒ Ð²Ñ€ÐµÐ¼Ñ (Ð¼Ð¸Ð½ÑƒÑ‚Ñ‹ Ð¸ ÑÐµÐºÑƒÐ½Ð´Ñ‹)
+	 * @param array $a Ð”Ð¾Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
 	 */	public static function Calendar($name,$value='',$time=false,array$a=array())
 	{
 		if(strncmp('0000-00-00',$value,10)==0)
@@ -63,11 +63,11 @@ $(function(){
 	}
 
 	/**
-	 * Ãåíåðàöèÿ "êàëåíäàðÿ" â âèäå array[week][day], ãäå week ýòî îò 1 äî 5 èëè 6, à day îò 1 äî 7.
+	 * Ð“ÐµÐ½ÐµÑ€Ð°Ñ†Ð¸Ñ "ÐºÐ°Ð»ÐµÐ½Ð´Ð°Ñ€Ñ" Ð² Ð²Ð¸Ð´Ðµ array[week][day], Ð³Ð´Ðµ week ÑÑ‚Ð¾ Ð¾Ñ‚ 1 Ð´Ð¾ 5 Ð¸Ð»Ð¸ 6, Ð° day Ð¾Ñ‚ 1 Ð´Ð¾ 7.
 	 *
-	 * @param int $y Ãîä
-	 * @param int $m Ìåñÿö
-	 * @param bool $pn Ôëàã äîïèñûâàíèÿ â íà÷àëî è êîíåö êàëåíäàðÿ ÷èñëà ñëåäóþùèõ ìåñÿöåâ, åñëè FALSE - âñòàâëÿþòñÿ íóëè
+	 * @param int $y Ð“Ð¾Ð´
+	 * @param int $m ÐœÐµÑÑÑ†
+	 * @param bool $pn Ð¤Ð»Ð°Ð³ Ð´Ð¾Ð¿Ð¸ÑÑ‹Ð²Ð°Ð½Ð¸Ñ Ð² Ð½Ð°Ñ‡Ð°Ð»Ð¾ Ð¸ ÐºÐ¾Ð½ÐµÑ† ÐºÐ°Ð»ÐµÐ½Ð´Ð°Ñ€Ñ Ñ‡Ð¸ÑÐ»Ð° ÑÐ»ÐµÐ´ÑƒÑŽÑ‰Ð¸Ñ… Ð¼ÐµÑÑÑ†ÐµÐ², ÐµÑÐ»Ð¸ FALSE - Ð²ÑÑ‚Ð°Ð²Ð»ÑÑŽÑ‚ÑÑ Ð½ÑƒÐ»Ð¸
 	 */
 	public static function BuildCalendar($y,$m,$pn=true)
 	{		$mt=mktime(0,0,0,$m,1,$y);

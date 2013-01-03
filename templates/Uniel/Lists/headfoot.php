@@ -1,7 +1,7 @@
 <?php
 $base=include Eleanor::$root.'templates/Audora/Lists/headfoot.php';
 
-#Ðåàëèçàöèÿ Open Graph äëÿ ïîääåðæêè ññûëîê âíóòðè ñîöñåòåé http://ogp.me/
+#Ð ÐµÐ°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ñ Open Graph Ð´Ð»Ñ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶ÐºÐ¸ ÑÑÑ‹Ð»Ð¾Ðº Ð²Ð½ÑƒÑ‚Ñ€Ð¸ ÑÐ¾Ñ†ÑÐµÑ‚ÐµÐ¹ http://ogp.me/
 return $base+array(
 	'og'=>'<meta property="og:{0}" content="{1}" />',
 );

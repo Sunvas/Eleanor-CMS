@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,7 +11,7 @@
 
 class ControlChecks extends BaseClass implements ControlsBase
 {	/**
-	 * Ïîëó÷åíèå íàñòðîåê êîíòðîëà
+	 * ÐŸÐ¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ðµ Ð½Ð°ÑÑ‚Ñ€Ð¾ÐµÐº ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
 	 *
 	 * @param ControlsManager $Obj
 	 */
@@ -21,9 +21,9 @@ class ControlChecks extends BaseClass implements ControlsBase
 	}
 
 	/**
-	 * Ïîëó÷åíèå êîíòðîëà
+	 * ÐŸÐ¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ðµ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
 	 *
-	 * @param array $a Îïöèè êîíòðîëà
+	 * @param array $a ÐžÐ¿Ñ†Ð¸Ð¸ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
 	 * @param ControlsManager $Obj
 	 */
 	public static function Control($a,$Obj)
@@ -66,9 +66,9 @@ class ControlChecks extends BaseClass implements ControlsBase
 	}
 
 	/**
-	 * Ñîõðàíåíèå êîíòðîëà
+	 * Ð¡Ð¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ðµ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
 	 *
-	 * @param array $a Îïöèè êîíòðîëà
+	 * @param array $a ÐžÐ¿Ñ†Ð¸Ð¸ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
 	 * @param ControlsManager $Obj
 	 */
 	public static function Save($a,$Obj)
@@ -81,9 +81,9 @@ class ControlChecks extends BaseClass implements ControlsBase
 	}
 
 	/**
-	 * Ïîëó÷åíèå ðåçóëüòàòà êîíòðîëà
+	 * ÐŸÐ¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ðµ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ð° ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
 	 *
-	 * @param array $a Îïöèè êîíòðîëà
+	 * @param array $a ÐžÐ¿Ñ†Ð¸Ð¸ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°
 	 * @param ControlsManager $Obj
 	 */
 	public static function Result($a,$Obj,$controls)

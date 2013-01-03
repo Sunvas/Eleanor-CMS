@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -9,10 +9,10 @@
 	*Pseudonym
 */
 return array(
-	'n'=>'errors',#Модуля
-	't'=>P.'errors',#Имя таблицы с контентом
-	'tl'=>P.'errors_l',#Имя таблицы с языковым контентом
-	'admintpl'=>'AdminErrors',#Класс администраторского оформления
-	'usertpl'=>'UserErrors',#Класс пользовательского оформления
-	'api'=>'ApiErrors',#Название класса
+	'n'=>'errors',#РњРѕРґСѓР»СЏ
+	't'=>P.'errors',#РРјСЏ С‚Р°Р±Р»РёС†С‹ СЃ РєРѕРЅС‚РµРЅС‚РѕРј
+	'tl'=>P.'errors_l',#РРјСЏ С‚Р°Р±Р»РёС†С‹ СЃ СЏР·С‹РєРѕРІС‹Рј РєРѕРЅС‚РµРЅС‚РѕРј
+	'admintpl'=>'AdminErrors',#РљР»Р°СЃСЃ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСЃРєРѕРіРѕ РѕС„РѕСЂРјР»РµРЅРёСЏ
+	'usertpl'=>'UserErrors',#РљР»Р°СЃСЃ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРіРѕ РѕС„РѕСЂРјР»РµРЅРёСЏ
+	'api'=>'ApiErrors',#РќР°Р·РІР°РЅРёРµ РєР»Р°СЃСЃР°
 );

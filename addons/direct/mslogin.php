@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -15,7 +15,7 @@ $service=isset($_REQUEST['service']) ? (string)$_REQUEST['service'] : '';
 if($service)
 	BeAs($service);
 switch($type)
-{	case'check':#Ïðîâåðêà ñòîðîííåãî ñàéòà íà ëîãèí â òåêóùåì ñàéòå
+{	case'check':#ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½ÐµÐ³Ð¾ ÑÐ°Ð¹Ñ‚Ð° Ð½Ð° Ð»Ð¾Ð³Ð¸Ð½ Ð² Ñ‚ÐµÐºÑƒÑ‰ÐµÐ¼ ÑÐ°Ð¹Ñ‚Ðµ
 		Eleanor::$maxage=1000;
 		Eleanor::$last_mod=time();
 		$r=Eleanor::$Login->IsUser() ? Eleanor::JsVars(array('title'=>Eleanor::$vars['site_name'],)+Eleanor::$Login->GetUserValue(array('id','name'),false),false,true) : 'false';
@@ -24,7 +24,7 @@ switch($type)
 		header('Access-Control-Allow-Origin: *');
 		echo'try{'.$c.'('.$r.')}catch(e){}';
 	break;
-	case'getlogin':#Ïîëó÷åíèå ëîãèíà ñ òåêóùåãî ñàéòà äëÿ âîçìîæíîñòè ëîãèíà íà ñòîðîííåì
+	case'getlogin':#ÐŸÐ¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ðµ Ð»Ð¾Ð³Ð¸Ð½Ð° Ñ Ñ‚ÐµÐºÑƒÑ‰ÐµÐ³Ð¾ ÑÐ°Ð¹Ñ‚Ð° Ð´Ð»Ñ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑ‚Ð¸ Ð»Ð¾Ð³Ð¸Ð½Ð° Ð½Ð° ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½ÐµÐ¼
 		if(Eleanor::$Login->IsUser())
 		{
 			Eleanor::LoadOptions('multisite');
@@ -53,7 +53,7 @@ switch($type)
 		header('Access-Control-Allow-Origin: *');
 		echo'try{'.$c.'('.$r.')}catch(e){}';
 	break;
-	case'login':#Ëîãèí ñî ñòîðîííåãî ñàéòà íà òåêóùèé
+	case'login':#Ð›Ð¾Ð³Ð¸Ð½ ÑÐ¾ ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½ÐµÐ³Ð¾ ÑÐ°Ð¹Ñ‚Ð° Ð½Ð° Ñ‚ÐµÐºÑƒÑ‰Ð¸Ð¹
 		if(Eleanor::$Login->IsUser())
 			return Result(true);		$sn=isset($_REQUEST['sn']) ? (string)$_REQUEST['sn'] : '';
 		$sign=isset($_REQUEST['signature']) ? (string)$_REQUEST['signature'] : '';
@@ -98,7 +98,7 @@ switch($type)
 		Eleanor::$Login->Auth($a['uid']);
 		Result(true);
 	break;
-	case'prejump':#Ïîäãîòîâêà ê ïðûæêó ñ òåêóùåãî íà ñòîðîííèé
+	case'prejump':#ÐŸÐ¾Ð´Ð³Ð¾Ñ‚Ð¾Ð²ÐºÐ° Ðº Ð¿Ñ€Ñ‹Ð¶ÐºÑƒ Ñ Ñ‚ÐµÐºÑƒÑ‰ÐµÐ³Ð¾ Ð½Ð° ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½Ð¸Ð¹
 		if(Eleanor::$Login->IsUser())
 		{			Eleanor::LoadOptions('multisite');			$sn=isset($_REQUEST['sn']) ? (string)$_REQUEST['sn'] : '';
 			$ms=include Eleanor::$root.'addons/config_multisite.php';
@@ -141,7 +141,7 @@ switch($type)
 		else
 			Error();
 	break;
-	case'jump':#Ïðûæîê ñî ñòîðîííåãî ñàéòà íà òåêóùèé
+	case'jump':#ÐŸÑ€Ñ‹Ð¶Ð¾Ðº ÑÐ¾ ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½ÐµÐ³Ð¾ ÑÐ°Ð¹Ñ‚Ð° Ð½Ð° Ñ‚ÐµÐºÑƒÑ‰Ð¸Ð¹
 		if(Eleanor::$Login->IsUser())
 			return GoAway(true);
 		$sp=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;

@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,13 +10,13 @@
 */
 class Types
 {	/**
-	 * Ïîëó÷åíèå âñåõ äîñòóïíûõ âðåìåííûõ çîí ñåðâåðà â âèäå option-îâ äëÿ select-à
+	 * ÐŸÐ¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ðµ Ð²ÑÐµÑ… Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ñ… Ð²Ñ€ÐµÐ¼ÐµÐ½Ð½Ñ‹Ñ… Ð·Ð¾Ð½ ÑÐµÑ€Ð²ÐµÑ€Ð° Ð² Ð²Ð¸Ð´Ðµ option-Ð¾Ð² Ð´Ð»Ñ select-Ð°
 	 *
-	 * @param string|array $act Âûáðàííûå ïóíêòû (âêëþ÷àåòñÿ ïàðàìåòð selected)
+	 * @param string|array $act Ð’Ñ‹Ð±Ñ€Ð°Ð½Ð½Ñ‹Ðµ Ð¿ÑƒÐ½ÐºÑ‚Ñ‹ (Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ÑÑ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€ selected)
 	 */	public static function TimeZonesOptions($act=false)
 	{		$tzi=timezone_identifiers_list();
 
-		#http://php.net/manual/ru/timezones.others.php Ïîæàëóéñòà, íå èñïîëüçóéòå îïèñàííûå çäåñü âðåìåííûå çîíû (êðîìå UTC), îíè ñóùåñòâóþò òîëüêî ïî ïðè÷èíàì îáðàòíîé ñîâìåñòèìîñòè.
+		#http://php.net/manual/ru/timezones.others.php ÐŸÐ¾Ð¶Ð°Ð»ÑƒÐ¹ÑÑ‚Ð°, Ð½Ðµ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐ¹Ñ‚Ðµ Ð¾Ð¿Ð¸ÑÐ°Ð½Ð½Ñ‹Ðµ Ð·Ð´ÐµÑÑŒ Ð²Ñ€ÐµÐ¼ÐµÐ½Ð½Ñ‹Ðµ Ð·Ð¾Ð½Ñ‹ (ÐºÑ€Ð¾Ð¼Ðµ UTC), Ð¾Ð½Ð¸ ÑÑƒÑ‰ÐµÑÑ‚Ð²ÑƒÑŽÑ‚ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð¿Ð¾ Ð¿Ñ€Ð¸Ñ‡Ð¸Ð½Ð°Ð¼ Ð¾Ð±Ñ€Ð°Ñ‚Ð½Ð¾Ð¹ ÑÐ¾Ð²Ð¼ÐµÑÑ‚Ð¸Ð¼Ð¾ÑÑ‚Ð¸.
 		$tzi=array_diff($tzi,array('Brazil/Acre','Brazil/DeNoronha','Brazil/East','Brazil/West','Canada/Atlantic','Canada/Central','Canada/East-Saskatchewan','Canada/Eastern','Canada/Mountain','Canada/Newfoundland','Canada/Pacific','Canada/Saskatchewan','Canada/Yukon','CET','Chile/Continental','Chile/EasterIsland','CST6CDT','Cuba','EET','Egypt','Eire','EST','EST5EDT','Etc/GMT','Etc/GMT+0','Etc/GMT+1','Etc/GMT+10','Etc/GMT+11','Etc/GMT+12','Etc/GMT+2','Etc/GMT+3','Etc/GMT+4','Etc/GMT+5','Etc/GMT+6','Etc/GMT+7','Etc/GMT+8','Etc/GMT+9','Etc/GMT-0','Etc/GMT-1','Etc/GMT-10','Etc/GMT-11','Etc/GMT-12','Etc/GMT-13','Etc/GMT-14','Etc/GMT-2','Etc/GMT-3','Etc/GMT-4','Etc/GMT-5','Etc/GMT-6','Etc/GMT-7','Etc/GMT-8','Etc/GMT-9','Etc/GMT0','Etc/Greenwich','Etc/UCT','Etc/Universal','Etc/UTC','Etc/Zulu','Factory','GB','GB-Eire','GMT','GMT+0','GMT-0','GMT0','Greenwich','Hongkong','HST','Iceland','Iran','Israel','Jamaica','Japan','Kwajalein','Libya','MET','Mexico/BajaNorte','Mexico/BajaSur','Mexico/General','MST','MST7MDT','Navajo','NZ','NZ-CHAT','Poland','Portugal','PRC','PST8PDT','ROC','ROK','Singapore','Turkey','UCT','Universal','US/Alaska','US/Aleutian','US/Arizona','US/Central','US/East-Indiana','US/Eastern','US/Hawaii','US/Indiana-Starke','US/Michigan','US/Mountain','US/Pacific','US/Pacific-New','US/Samoa','UTC','W-SU','WET','Zulu'));
 
 		$res=$gr=$grname='';
@@ -38,10 +38,10 @@ class Types
 		return$res;	}
 
 	/**
-	 * Îïðåäåëåíèå Mime òèïà ôàéëà â çàâèñèìîñòè îò åãî ðàñøèðåíèÿ
+	 * ÐžÐ¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð¸Ðµ Mime Ñ‚Ð¸Ð¿Ð° Ñ„Ð°Ð¹Ð»Ð° Ð² Ð·Ð°Ð²Ð¸ÑÐ¸Ð¼Ð¾ÑÑ‚Ð¸ Ð¾Ñ‚ ÐµÐ³Ð¾ Ñ€Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð¸Ñ
 	 *
-	 * @param string $ext Ðàñøèðåíèÿ ôàéëà, ëèáî ïîëíîå èìÿ ôàéëà
-	 * @param string $def Mime òèï ïðèìåíÿåìûé ïî óìîë÷àíèþ (åñëè Mime òèï íå óäàñòñÿ îïðåäåëèòü)
+	 * @param string $ext Ð Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð°, Ð»Ð¸Ð±Ð¾ Ð¿Ð¾Ð»Ð½Ð¾Ðµ Ð¸Ð¼Ñ Ñ„Ð°Ð¹Ð»Ð°
+	 * @param string $def Mime Ñ‚Ð¸Ð¿ Ð¿Ñ€Ð¸Ð¼ÐµÐ½ÑÐµÐ¼Ñ‹Ð¹ Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ (ÐµÑÐ»Ð¸ Mime Ñ‚Ð¸Ð¿ Ð½Ðµ ÑƒÐ´Ð°ÑÑ‚ÑÑ Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»Ð¸Ñ‚ÑŒ)
 	 */
 	public static function MimeTypeByExt($ext,$def='application/octet-stream')
 	{

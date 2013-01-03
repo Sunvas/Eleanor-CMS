@@ -44,7 +44,7 @@ return array(
 	'moveup'=>'Move up',
 	'movedown'=>'Move down',
 
-	#Äëÿ Enter.php
+	#Ğ”Ğ»Ñ Enter.php
 	'login'=>'Login:',
 	'pass'=>'Password:',
 	'enter'=>'Enter',

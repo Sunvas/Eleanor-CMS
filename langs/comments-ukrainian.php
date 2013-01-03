@@ -1,6 +1,6 @@
 <?php
 return array(
-	#Для /core/others/comments_ajax.php
-	'flood_limit'=>function($n){return 'На сайті включений флуд контроль! Pачекайте ще '.$n.Ukrainian::Plural($n,array(' секунду.',' секунди',' секунд'));},
-	'WRONG_CAPTCHA'=>'Захисний код введений з помилкою',
+	#Р”Р»СЏ /core/others/comments_ajax.php
+	'flood_limit'=>function($n){return 'РќР° СЃР°Р№С‚С– РІРєР»СЋС‡РµРЅРёР№ С„Р»СѓРґ РєРѕРЅС‚СЂРѕР»СЊ! PР°С‡РµРєР°Р№С‚Рµ С‰Рµ '.$n.Ukrainian::Plural($n,array(' СЃРµРєСѓРЅРґСѓ.',' СЃРµРєСѓРЅРґРё',' СЃРµРєСѓРЅРґ'));},
+	'WRONG_CAPTCHA'=>'Р—Р°С…РёСЃРЅРёР№ РєРѕРґ РІРІРµРґРµРЅРёР№ Р· РїРѕРјРёР»РєРѕСЋ',
 );

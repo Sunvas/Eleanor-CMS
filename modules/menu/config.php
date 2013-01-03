@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -9,10 +9,10 @@
 	*Pseudonym
 */
 return array(
-	'n'=>'menu',#Модуля
-	't'=>P.'menu',#Имя таблицы с контентом
-	'tl'=>P.'menu_l',#Имя таблицы с языковым контентом
-	'admintpl'=>'AdminMenu',#Класс администраторского оформления
-	'usertpl'=>'UserMenu',#Класс пользовательского оформления
-	'api'=>'ApiMenu',#Название класса
+	'n'=>'menu',#РњРѕРґСѓР»СЏ
+	't'=>P.'menu',#РРјСЏ С‚Р°Р±Р»РёС†С‹ СЃ РєРѕРЅС‚РµРЅС‚РѕРј
+	'tl'=>P.'menu_l',#РРјСЏ С‚Р°Р±Р»РёС†С‹ СЃ СЏР·С‹РєРѕРІС‹Рј РєРѕРЅС‚РµРЅС‚РѕРј
+	'admintpl'=>'AdminMenu',#РљР»Р°СЃСЃ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСЃРєРѕРіРѕ РѕС„РѕСЂРјР»РµРЅРёСЏ
+	'usertpl'=>'UserMenu',#РљР»Р°СЃСЃ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРіРѕ РѕС„РѕСЂРјР»РµРЅРёСЏ
+	'api'=>'ApiMenu',#РќР°Р·РІР°РЅРёРµ РєР»Р°СЃСЃР°
 );

@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.su, http://eleanor-cms.com, http://eleanor-cms.net, http://eleanor.su
 	E-mail: support@eleanor-cms.ru, support@eleanor.su
 	Developing: Alexander Sunvas*
@@ -11,20 +11,20 @@
 
 class Rating extends BaseClass
 {	/**
-	 * Âû÷èñëåíèå íîâîãî ñðåäíåãî çíà÷åíèÿ ïðè äîáàâëåíèè îöåíêè
+	 * Ð’Ñ‹Ñ‡Ð¸ÑÐ»ÐµÐ½Ð¸Ðµ Ð½Ð¾Ð²Ð¾Ð³Ð¾ ÑÑ€ÐµÐ´Ð½ÐµÐ³Ð¾ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ Ð¿Ñ€Ð¸ Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ð¸ Ð¾Ñ†ÐµÐ½ÐºÐ¸
 	 *
-	 * @param int $total Êîëè÷åñòâî ïðîãîëîñîâàâøèõ
-	 * @param float $average Ñðåäíÿÿ îöåíêà
-	 * @param int $mark Äîáàâëÿåìàÿ îöåíêà
+	 * @param int $total ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð¿Ñ€Ð¾Ð³Ð¾Ð»Ð¾ÑÐ¾Ð²Ð°Ð²ÑˆÐ¸Ñ…
+	 * @param float $average Ð¡Ñ€ÐµÐ´Ð½ÑÑ Ð¾Ñ†ÐµÐ½ÐºÐ°
+	 * @param int $mark Ð”Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼Ð°Ñ Ð¾Ñ†ÐµÐ½ÐºÐ°
 	 */	public static function AddMark($total,$average,$mark)
 	{		return round((ceil($average*$total)+$mark)/++$total,2);	}
 
 	/**
-	 * Âû÷èñëåíèå íîâîãî ñðåäíåãî çíà÷åíèÿ ïðè óäàëåíèè îöåíêè
+	 * Ð’Ñ‹Ñ‡Ð¸ÑÐ»ÐµÐ½Ð¸Ðµ Ð½Ð¾Ð²Ð¾Ð³Ð¾ ÑÑ€ÐµÐ´Ð½ÐµÐ³Ð¾ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ Ð¿Ñ€Ð¸ ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ð¸ Ð¾Ñ†ÐµÐ½ÐºÐ¸
 	 *
-	 * @param int $total Êîëè÷åñòâî ïðîãîëîñîâàâøèõ
-	 * @param float $average Ñðåäíÿÿ îöåíêà
-	 * @param int $mark Óäàëÿåìàÿ îöåíêà
+	 * @param int $total ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð¿Ñ€Ð¾Ð³Ð¾Ð»Ð¾ÑÐ¾Ð²Ð°Ð²ÑˆÐ¸Ñ…
+	 * @param float $average Ð¡Ñ€ÐµÐ´Ð½ÑÑ Ð¾Ñ†ÐµÐ½ÐºÐ°
+	 * @param int $mark Ð£Ð´Ð°Ð»ÑÐµÐ¼Ð°Ñ Ð¾Ñ†ÐµÐ½ÐºÐ°
 	 */
 	public static function SubMark($total,$average,$mark)
 	{
@@ -32,12 +32,12 @@ class Rating extends BaseClass
 	}
 
 	/**
-	 * Âû÷èñëåíèå íîâîãî ñðåäíåãî çíà÷åíèÿ ïðè èçìåíåíèè îöåíêè
+	 * Ð’Ñ‹Ñ‡Ð¸ÑÐ»ÐµÐ½Ð¸Ðµ Ð½Ð¾Ð²Ð¾Ð³Ð¾ ÑÑ€ÐµÐ´Ð½ÐµÐ³Ð¾ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ Ð¿Ñ€Ð¸ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ð¸ Ð¾Ñ†ÐµÐ½ÐºÐ¸
 	 *
-	 * @param int $total Êîëè÷åñòâî ïðîãîëîñîâàâøèõ
-	 * @param float $average Ñðåäíÿÿ îöåíêà
-	 * @param int $oldmark Ñòàðàÿ îöåíêà
-	 * @param int $newmark Íîâàÿ îöåíêà
+	 * @param int $total ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð¿Ñ€Ð¾Ð³Ð¾Ð»Ð¾ÑÐ¾Ð²Ð°Ð²ÑˆÐ¸Ñ…
+	 * @param float $average Ð¡Ñ€ÐµÐ´Ð½ÑÑ Ð¾Ñ†ÐµÐ½ÐºÐ°
+	 * @param int $oldmark Ð¡Ñ‚Ð°Ñ€Ð°Ñ Ð¾Ñ†ÐµÐ½ÐºÐ°
+	 * @param int $newmark ÐÐ¾Ð²Ð°Ñ Ð¾Ñ†ÐµÐ½ÐºÐ°
 	 */
 	public static function ChangeMark($total,$average,$oldmark,$newmark)
 	{

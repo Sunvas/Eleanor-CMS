@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,21 +11,21 @@
 class Controls_Manager extends Controls
 {
 	/**
-	 * Получение интерфейса конфигурирования контрола
+	 * РџРѕР»СѓС‡РµРЅРёРµ РёРЅС‚РµСЂС„РµР№СЃР° РєРѕРЅС„РёРіСѓСЂРёСЂРѕРІР°РЅРёСЏ РєРѕРЅС‚СЂРѕР»Р°
 	 *
-	 * @param array $co Редактируемый контрол, ключи массива:
-	 * Обязательные параметры:
-	 * type - тип контрола
-	 * Необязательные параметры
-	 * bypost Указание брать значения из POST запроса
-	 * template Название оформления таблицы
-	 * controls_name Имя превьюшки
-	 * settings_name Имя настроек контрола
-	 * Следующие ключи могут быть мультиязычными в зависимости от $this->langs
-	 * default значение по умолчанию каждого контрола для отображения
-	 * options дополнительные параметры каждого контрола
-	 * @param bool $ajax признак AJAX запроса.
-	 * @param bool $onlyprev признак того, что нужно загрузить только превью контрола без загрузки самих настроек контрола
+	 * @param array $co Р РµРґР°РєС‚РёСЂСѓРµРјС‹Р№ РєРѕРЅС‚СЂРѕР», РєР»СЋС‡Рё РјР°СЃСЃРёРІР°:
+	 * РћР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹:
+	 * type - С‚РёРї РєРѕРЅС‚СЂРѕР»Р°
+	 * РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹
+	 * bypost РЈРєР°Р·Р°РЅРёРµ Р±СЂР°С‚СЊ Р·РЅР°С‡РµРЅРёСЏ РёР· POST Р·Р°РїСЂРѕСЃР°
+	 * template РќР°Р·РІР°РЅРёРµ РѕС„РѕСЂРјР»РµРЅРёСЏ С‚Р°Р±Р»РёС†С‹
+	 * controls_name РРјСЏ РїСЂРµРІСЊСЋС€РєРё
+	 * settings_name РРјСЏ РЅР°СЃС‚СЂРѕРµРє РєРѕРЅС‚СЂРѕР»Р°
+	 * РЎР»РµРґСѓСЋС‰РёРµ РєР»СЋС‡Рё РјРѕРіСѓС‚ Р±С‹С‚СЊ РјСѓР»СЊС‚РёСЏР·С‹С‡РЅС‹РјРё РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ $this->langs
+	 * default Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РєР°Р¶РґРѕРіРѕ РєРѕРЅС‚СЂРѕР»Р° РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ
+	 * options РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РєР°Р¶РґРѕРіРѕ РєРѕРЅС‚СЂРѕР»Р°
+	 * @param bool $ajax РїСЂРёР·РЅР°Рє AJAX Р·Р°РїСЂРѕСЃР°.
+	 * @param bool $onlyprev РїСЂРёР·РЅР°Рє С‚РѕРіРѕ, С‡С‚Рѕ РЅСѓР¶РЅРѕ Р·Р°РіСЂСѓР·РёС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРµРІСЊСЋ РєРѕРЅС‚СЂРѕР»Р° Р±РµР· Р·Р°РіСЂСѓР·РєРё СЃР°РјРёС… РЅР°СЃС‚СЂРѕРµРє РєРѕРЅС‚СЂРѕР»Р°
 	 */
 	public function ConfigureControl(array$co=array(),$ajax=false,$onlyprev=false)
 	{
@@ -78,15 +78,15 @@ class Controls_Manager extends Controls
 		if(isset($setts[0]))
 		{
 			/*
-				Контролы сгруппированы по общим признакам. Так, скажем, у input и text очень много схожих свойств, поэтому они помещаются в одну
-				группу. Тогда при переключении между типами - параметры input-a будут переносится на text и наоборот.
+				РљРѕРЅС‚СЂРѕР»С‹ СЃРіСЂСѓРїРїРёСЂРѕРІР°РЅС‹ РїРѕ РѕР±С‰РёРј РїСЂРёР·РЅР°РєР°Рј. РўР°Рє, СЃРєР°Р¶РµРј, Сѓ input Рё text РѕС‡РµРЅСЊ РјРЅРѕРіРѕ СЃС…РѕР¶РёС… СЃРІРѕР№СЃС‚РІ, РїРѕСЌС‚РѕРјСѓ РѕРЅРё РїРѕРјРµС‰Р°СЋС‚СЃСЏ РІ РѕРґРЅСѓ
+				РіСЂСѓРїРїСѓ. РўРѕРіРґР° РїСЂРё РїРµСЂРµРєР»СЋС‡РµРЅРёРё РјРµР¶РґСѓ С‚РёРїР°РјРё - РїР°СЂР°РјРµС‚СЂС‹ input-a Р±СѓРґСѓС‚ РїРµСЂРµРЅРѕСЃРёС‚СЃСЏ РЅР° text Рё РЅР°РѕР±РѕСЂРѕС‚.
 			*/
 			$sgroup=$setts[0];
 			unset($setts[0]);
 		}
 		$error=false;
 		if($co['bypost'])
-			#Сохраняем контролы.
+			#РЎРѕС…СЂР°РЅСЏРµРј РєРѕРЅС‚СЂРѕР»С‹.
 			try
 			{
 				$co['options']=$this->SaveControls($setts);
@@ -149,8 +149,8 @@ class Controls_Manager extends Controls
 				if($this->langs)
 				{
 					/*
-						Поскольку $this->SaveControls() передает нам значения в виде name=>lang=>value, а в месте использоватения $options добавляется еще один ключ массива выше ('options'=>$co['options'])
-						Таким образом нам необходимо переделать струкутуру options=>name=>lang=>value в options=>lang=>name=>value поскльку в $this->DisplayControl мы должны передать лишь name=>value.
+						РџРѕСЃРєРѕР»СЊРєСѓ $this->SaveControls() РїРµСЂРµРґР°РµС‚ РЅР°Рј Р·РЅР°С‡РµРЅРёСЏ РІ РІРёРґРµ name=>lang=>value, Р° РІ РјРµСЃС‚Рµ РёСЃРїРѕР»СЊР·РѕРІР°С‚РµРЅРёСЏ $options РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РµС‰Рµ РѕРґРёРЅ РєР»СЋС‡ РјР°СЃСЃРёРІР° РІС‹С€Рµ ('options'=>$co['options'])
+						РўР°РєРёРј РѕР±СЂР°Р·РѕРј РЅР°Рј РЅРµРѕР±С…РѕРґРёРјРѕ РїРµСЂРµРґРµР»Р°С‚СЊ СЃС‚СЂСѓРєСѓС‚СѓСЂСѓ options=>name=>lang=>value РІ options=>lang=>name=>value РїРѕСЃРєР»СЊРєСѓ РІ $this->DisplayControl РјС‹ РґРѕР»Р¶РЅС‹ РїРµСЂРµРґР°С‚СЊ Р»РёС€СЊ name=>value.
 					*/
 					$options=array();
 					foreach($co['options'] as $k=>&$v)
@@ -187,10 +187,10 @@ class Controls_Manager extends Controls
 	}
 
 	/**
-	 * Сохранение результатов конфигурируемого контрола
+	 * РЎРѕС…СЂР°РЅРµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РєРѕРЅС„РёРіСѓСЂРёСЂСѓРµРјРѕРіРѕ РєРѕРЅС‚СЂРѕР»Р°
 	 *
-	 * @param array $co Редактируемый контрол
-	 * $prevlang Сохранить настройку только с одним заданным языком и размножить ее для других языков.
+	 * @param array $co Р РµРґР°РєС‚РёСЂСѓРµРјС‹Р№ РєРѕРЅС‚СЂРѕР»
+	 * $prevlang РЎРѕС…СЂР°РЅРёС‚СЊ РЅР°СЃС‚СЂРѕР№РєСѓ С‚РѕР»СЊРєРѕ СЃ РѕРґРЅРёРј Р·Р°РґР°РЅРЅС‹Рј СЏР·С‹РєРѕРј Рё СЂР°Р·РјРЅРѕР¶РёС‚СЊ РµРµ РґР»СЏ РґСЂСѓРіРёС… СЏР·С‹РєРѕРІ.
 	 */
 	public function SaveConfigureControl(array$co=array(),$prevlang=false)
 	{
@@ -213,7 +213,7 @@ class Controls_Manager extends Controls
 
 		$setts=$this->GetSettings($result['type']);
 		unset($setts[0]);
-		#Сохраняем контролы.
+		#РЎРѕС…СЂР°РЅСЏРµРј РєРѕРЅС‚СЂРѕР»С‹.
 		$this->arrname=$co['settings_name'];
 		$result['options']=$this->SaveControls($setts);
 		$this->arrname=$co['controls_name'];
@@ -264,9 +264,9 @@ class Controls_Manager extends Controls
 	}
 
 	/**
-	 * Получение массива настроек контрола определенного типа
+	 * РџРѕР»СѓС‡РµРЅРёРµ РјР°СЃСЃРёРІР° РЅР°СЃС‚СЂРѕРµРє РєРѕРЅС‚СЂРѕР»Р° РѕРїСЂРµРґРµР»РµРЅРЅРѕРіРѕ С‚РёРїР°
 	 *
-	 * @param string $type Название контрола
+	 * @param string $type РќР°Р·РІР°РЅРёРµ РєРѕРЅС‚СЂРѕР»Р°
 	 */
 	public function GetSettings($type)
 	{
@@ -387,7 +387,7 @@ class Controls_Manager extends Controls
 			case'items':
 			case'select':
 				$res=array(
-					'select',#Группа контрола
+					'select',#Р“СЂСѓРїРїР° РєРѕРЅС‚СЂРѕР»Р°
 					'eval'=>array(
 						'type'=>'user',
 						'multilang'=>$ml,
@@ -421,7 +421,7 @@ class Controls_Manager extends Controls
 					),
 					'extra'=>$a,
 				);
-				#Вверху - дополнение для функции обработки
+				#Р’РІРµСЂС…Сѓ - РґРѕРїРѕР»РЅРµРЅРёРµ РґР»СЏ С„СѓРЅРєС†РёРё РѕР±СЂР°Р±РѕС‚РєРё
 			break;
 			case'editor':
 				$E=new Editor;
@@ -440,13 +440,13 @@ class Controls_Manager extends Controls
 			break;
 			case'text':
 				$res=array(
-					'text',#Группа контрола
+					'text',#Р“СЂСѓРїРїР° РєРѕРЅС‚СЂРѕР»Р°
 					'extra'=>$a
 				);
 			break;
 			case'input':
 				$res=array(
-					'text',#Группа контрола
+					'text',#Р“СЂСѓРїРїР° РєРѕРЅС‚СЂРѕР»Р°
 					'type'=>array(
 						'title'=>'Input type',
 						'type'=>'select',
@@ -473,7 +473,7 @@ class Controls_Manager extends Controls
 			break;
 			case'date':
 				$res=array(
-					'date',#Группа контрола
+					'date',#Р“СЂСѓРїРїР° РєРѕРЅС‚СЂРѕР»Р°
 					'time'=>array(
 						'title'=>$lang['time_select'],
 						'type'=>'check',
@@ -494,9 +494,9 @@ class Controls_Manager extends Controls
 	}
 
 	/**
-	 * Получение массива настроек для контролов select, item, items
+	 * РџРѕР»СѓС‡РµРЅРёРµ РјР°СЃСЃРёРІР° РЅР°СЃС‚СЂРѕРµРє РґР»СЏ РєРѕРЅС‚СЂРѕР»РѕРІ select, item, items
 	 *
-	 * @param array $co Массив данных контрола
+	 * @param array $co РњР°СЃСЃРёРІ РґР°РЅРЅС‹С… РєРѕРЅС‚СЂРѕР»Р°
 	 */
 	public function SettingsSelectLoad(array$co)
 	{static$data=array();
@@ -517,9 +517,9 @@ class Controls_Manager extends Controls
 	}
 
 	/**
-	 * Сохранение настроек для контролов select, item, items
+	 * РЎРѕС…СЂР°РЅРµРЅРёРµ РЅР°СЃС‚СЂРѕРµРє РґР»СЏ РєРѕРЅС‚СЂРѕР»РѕРІ select, item, items
 	 *
-	 * @param array $co Массив данных контрола
+	 * @param array $co РњР°СЃСЃРёРІ РґР°РЅРЅС‹С… РєРѕРЅС‚СЂРѕР»Р°
 	 */
 	public function SettingsSelectSave($co)
 	{

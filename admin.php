@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -13,7 +13,7 @@ define('CMS',true);
 
 require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
-Eleanor::$service='admin';#ID сервиса
+Eleanor::$service='admin';#ID СЃРµСЂРІРёСЃР°
 Eleanor::LoadOptions(array('site','users-on-site'));
 Eleanor::InitService();
 Eleanor::$Language->queue['main']='langs/admin-*.php';
@@ -41,7 +41,7 @@ if(Eleanor::$vars['multilang'])
 else
 	Eleanor::$lvars=array();
 
-#Три предустановленные переменные
+#РўСЂРё РїСЂРµРґСѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 $title=$head=$jscripts=array();
 $Eleanor->started=$Eleanor->error=false;
 Eleanor::InitTemplate(Eleanor::$services[Eleanor::$service]['theme']);
@@ -150,7 +150,7 @@ else
 	Start(array('Enter',array('errors'=>$errors,'login'=>$login,'password'=>$password,'captcha'=>$captcha)));
 }
 
-#Предопределенные функции.
+#РџСЂРµРґРѕРїСЂРµРґРµР»РµРЅРЅС‹Рµ С„СѓРЅРєС†РёРё.
 function Start($tpl='index',$code=200)
 {global$Eleanor,$jscripts,$head,$title,$tcover,$thead;
 	if($Eleanor->started)
@@ -284,14 +284,14 @@ function Error($e='',$extra=array())
 			)
 		);
 
-	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#Ошибка могла вылететь и в момент создания объекта $Eleanor
+	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#РћС€РёР±РєР° РјРѕРіР»Р° РІС‹Р»РµС‚РµС‚СЊ Рё РІ РјРѕРјРµРЅС‚ СЃРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚Р° $Eleanor
 	{
 		$Eleanor->error=true;
 		if($csh)
 			header('Content-Type: text/html; charset='.Eleanor::$charset,true,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503);
 		while(ob_get_contents()!==false)
 			ob_end_clean();
-		ob_start();ob_start();ob_start();#Странный глюк PHP... Достаточно сделать Parse error в index.php темы (или Template index was not found!) и Core::FinishOutPut будет получать пустое значение
+		ob_start();ob_start();ob_start();#РЎС‚СЂР°РЅРЅС‹Р№ РіР»СЋРє PHP... Р”РѕСЃС‚Р°С‚РѕС‡РЅРѕ СЃРґРµР»Р°С‚СЊ Parse error РІ index.php С‚РµРјС‹ (РёР»Рё Template index was not found!) Рё Core::FinishOutPut Р±СѓРґРµС‚ РїРѕР»СѓС‡Р°С‚СЊ РїСѓСЃС‚РѕРµ Р·РЅР°С‡РµРЅРёРµ
 		echo$e;
 	}
 	else
@@ -304,10 +304,10 @@ function Error($e='',$extra=array())
 
 function LangNewUrl($url,$l)
 {global$Eleanor;
-	#Определим отправную точку, куда мы в любом случае отправим клиента
+	#РћРїСЂРµРґРµР»РёРј РѕС‚РїСЂР°РІРЅСѓСЋ С‚РѕС‡РєСѓ, РєСѓРґР° РјС‹ РІ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ РѕС‚РїСЂР°РІРёРј РєР»РёРµРЅС‚Р°
 	$base=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
 
-	#Если запрос пришел с чужого домена - считаем такой запрос некорректным
+	#Р•СЃР»Рё Р·Р°РїСЂРѕСЃ РїСЂРёС€РµР» СЃ С‡СѓР¶РѕРіРѕ РґРѕРјРµРЅР° - СЃС‡РёС‚Р°РµРј С‚Р°РєРѕР№ Р·Р°РїСЂРѕСЃ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рј
 	if(strpos($url,'://')!==false and strpos($url,$base)!==0)
 		$url='';
 	$url=preg_replace('#^'.preg_quote($base,'#').'('.preg_quote(Eleanor::$filename,'#').'\??)?#i','',$url);

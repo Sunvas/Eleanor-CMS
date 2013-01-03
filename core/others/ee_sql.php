@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,15 +10,15 @@
 */
 class EE_SQL extends EE
 {
-	public#private - #PHP 5.4, çàìåíèòü ïîñëå òîãî, êàê óáåðåòñÿ êîñòûëü $THIS íèæå
+	public#private - #PHP 5.4, Ð·Ð°Ð¼ÐµÐ½Ð¸Ñ‚ÑŒ Ð¿Ð¾ÑÐ»Ðµ Ñ‚Ð¾Ð³Ð¾, ÐºÐ°Ðº ÑƒÐ±ÐµÑ€ÐµÑ‚ÑÑ ÐºÐ¾ÑÑ‚Ñ‹Ð»ÑŒ $THIS Ð½Ð¸Ð¶Ðµ
 		$type;
 
 	/**
-	 * Êîíñòðóêòîð èñêëþ÷åíèé, ñâÿçàííûõ ñ áàçîé äàííûõ
+	 * ÐšÐ¾Ð½ÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€ Ð¸ÑÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ð¹, ÑÐ²ÑÐ·Ð°Ð½Ð½Ñ‹Ñ… Ñ Ð±Ð°Ð·Ð¾Ð¹ Ð´Ð°Ð½Ð½Ñ‹Ñ…
 	 *
-	 * @param string $type Òèï èñêëþ÷åíèÿ: connect - îøèáêà ïðè ïîäêëþ÷åíèè, query - îøèáêà ïðè çàïðîñå
-	 * @param array $extra Äîïîëíèòåëüíûå äàííûå èñêëþ÷åíèÿ
-	 * @param exception $PO Ïðåäûäóùåå ïåðåõâà÷åííîå èñêëþ÷åíèå, ÷òî ïîñëóæèëî "ðîäèòåëåì" äëÿ òåêóùåãî
+	 * @param string $type Ð¢Ð¸Ð¿ Ð¸ÑÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ: connect - Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð¿Ñ€Ð¸ Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ð¸, query - Ð¾ÑˆÐ¸Ð±ÐºÐ° Ð¿Ñ€Ð¸ Ð·Ð°Ð¿Ñ€Ð¾ÑÐµ
+	 * @param array $extra Ð”Ð¾Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ðµ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð¸ÑÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ
+	 * @param exception $PO ÐŸÑ€ÐµÐ´Ñ‹Ð´ÑƒÑ‰ÐµÐµ Ð¿ÐµÑ€ÐµÑ…Ð²Ð°Ñ‡ÐµÐ½Ð½Ð¾Ðµ Ð¸ÑÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ, Ñ‡Ñ‚Ð¾ Ð¿Ð¾ÑÐ»ÑƒÐ¶Ð¸Ð»Ð¾ "Ñ€Ð¾Ð´Ð¸Ñ‚ÐµÐ»ÐµÐ¼" Ð´Ð»Ñ Ñ‚ÐµÐºÑƒÑ‰ÐµÐ³Ð¾
 	 */
 	public function __construct($type,$extra=array(),$PO=null)
 	{
@@ -54,10 +54,10 @@ class EE_SQL extends EE
 	}
 
 	/**
-	 * Êîìàíäà çàëîãèðîâàòü èñêëþ÷åíèå
+	 * ÐšÐ¾Ð¼Ð°Ð½Ð´Ð° Ð·Ð°Ð»Ð¾Ð³Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ð¸ÑÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ
 	 */
 	public function Log()
-	{		$THIS=$this;#PHP 5.4 óáðàòü ðóäìèåíò
+	{		$THIS=$this;#PHP 5.4 ÑƒÐ±Ñ€Ð°Ñ‚ÑŒ Ñ€ÑƒÐ´Ð¼Ð¸ÐµÐ½Ñ‚
 		$this->LogWriter(
 			'db_errors',
 			md5($this->extra['error'].$this->line.$this->file),

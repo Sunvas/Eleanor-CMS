@@ -1,15 +1,15 @@
 <?php
 return array(
-	'error_t'=>'Ошибка на сайте {site}',
-	'error'=>'Здравствуйте!<br /><br />
-[userlink]<a href="{userlink}">{fullname}</a>[-userlink]{name}[/userlink] сообщает о следующей ошибке:<br />
+	'error_t'=>'РћС€РёР±РєР° РЅР° СЃР°Р№С‚Рµ {site}',
+	'error'=>'Р—РґСЂР°РІСЃС‚РІСѓР№С‚Рµ!<br /><br />
+[userlink]<a href="{userlink}">{fullname}</a>[-userlink]{name}[/userlink] СЃРѕРѕР±С‰Р°РµС‚ Рѕ СЃР»РµРґСѓСЋС‰РµР№ РѕС€РёР±РєРµ:<br />
 <hr />
 {text}
 <hr/>
-Адрес сайта: <b><a href="{link}">{link}</a></b><br />
-Адрес ошибки: <b><a href="{linkerror}">{linkerror}</a></b><br />
-[from]Ссылка на ошибку: <b><a href="{from}">{from}</a></b><br />[/from]
+РђРґСЂРµСЃ СЃР°Р№С‚Р°: <b><a href="{link}">{link}</a></b><br />
+РђРґСЂРµСЃ РѕС€РёР±РєРё: <b><a href="{linkerror}">{linkerror}</a></b><br />
+[from]РЎСЃС‹Р»РєР° РЅР° РѕС€РёР±РєСѓ: <b><a href="{from}">{from}</a></b><br />[/from]
 <br />
-С наилучшими пожеланиями,<br />
-команда сайта {site}.',
+РЎ РЅР°РёР»СѓС‡С€РёРјРё РїРѕР¶РµР»Р°РЅРёСЏРјРё,<br />
+РєРѕРјР°РЅРґР° СЃР°Р№С‚Р° {site}.',
 );

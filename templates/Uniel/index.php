@@ -1,6 +1,6 @@
 <?php
 /*
-	Ñêåëåò îñíîâíîãî øàáëîíà.
+	Ð¡ÐºÐµÐ»ÐµÑ‚ Ð¾ÑÐ½Ð¾Ð²Ð½Ð¾Ð³Ð¾ ÑˆÐ°Ð±Ð»Ð¾Ð½Ð°.
 */
 if(!defined('CMS'))die;
 $ltpl=Eleanor::$Language['tpl'];?><!DOCTYPE html>
@@ -31,8 +31,8 @@ if(Eleanor::$Permissions->IsAdmin())
 <div id="headerboxic"><div class="dleft"><div class="dright">
 	<a class="logotype" href="<?php echo$GLOBALS['Eleanor']->Url->special?>"><img src="<?php echo$theme?>images/eleanorcms.png" alt="<?php echo Eleanor::$vars['site_name']?>" title="<?php echo Eleanor::$vars['site_name']?>" /></a>
 	<span class="headbanner">
-		<!-- Áàííåð 468x60-->
-		<!-- <a href="link.html" title="Âàø áàííåð"><img src="<?php echo$theme?>images/spacer.png" alt="Âàø áàííåð" /></a> -->
+		<!-- Ð‘Ð°Ð½Ð½ÐµÑ€ 468x60-->
+		<!-- <a href="link.html" title="Ð’Ð°Ñˆ Ð±Ð°Ð½Ð½ÐµÑ€"><img src="<?php echo$theme?>images/spacer.png" alt="Ð’Ð°Ñˆ Ð±Ð°Ð½Ð½ÐµÑ€" /></a> -->
 	</span>
 </div></div></div>
 
@@ -84,22 +84,22 @@ echo'<div id="maincol',$blocks['right'] ? 'R' : '','">
 
 <div id="footer"><div class="dleft"><div class="dright">
 	<div class="count">
-		<span style="width: 88px;"><!-- êíîïêà, ñ÷åò÷èê --></span>
-		<span style="width: 88px;"><!-- êíîïêà, ñ÷åò÷èê --></span>
-		<span style="width: 88px;"><!-- êíîïêà, ñ÷åò÷èê --></span>
-		<span style="width: 88px;"><!-- êíîïêà, ñ÷åò÷èê --></span>
+		<span style="width: 88px;"><!-- ÐºÐ½Ð¾Ð¿ÐºÐ°, ÑÑ‡ÐµÑ‚Ñ‡Ð¸Ðº --></span>
+		<span style="width: 88px;"><!-- ÐºÐ½Ð¾Ð¿ÐºÐ°, ÑÑ‡ÐµÑ‚Ñ‡Ð¸Ðº --></span>
+		<span style="width: 88px;"><!-- ÐºÐ½Ð¾Ð¿ÐºÐ°, ÑÑ‡ÐµÑ‚Ñ‡Ð¸Ðº --></span>
+		<span style="width: 88px;"><!-- ÐºÐ½Ð¾Ð¿ÐºÐ°, ÑÑ‡ÐµÑ‚Ñ‡Ð¸Ðº --></span>
 		<span style="width: 60px;">  <a href="http://validator.w3.org/check?uri=referer"><img src="<?php echo$theme?>images/html5_valid.png" alt="Valid HTML 5" title="Valid HTML 5" width="60" height="31" /></a></span>
 
 	</div>
-	<!-- ÊÎÏÈÐÀÉÒÛ -->
+	<!-- ÐšÐžÐŸÐ˜Ð ÐÐ™Ð¢Ð« -->
 	<span class="copyright">&copy; Copyright</span>
 	<div class="clr"></div>
 </div></div></div>
 <div id="syscopyright">
-	<span class="centroarts"><a href="http://centroarts.com" title="Øàáëîí ðàçðàáîòàí ñòóäèåé CENTROARTS.com">Designed by CENTROARTS.com</a></span>
+	<span class="centroarts"><a href="http://centroarts.com" title="Ð¨Ð°Ð±Ð»Ð¾Ð½ Ñ€Ð°Ð·Ñ€Ð°Ð±Ð¾Ñ‚Ð°Ð½ ÑÑ‚ÑƒÐ´Ð¸ÐµÐ¹ CENTROARTS.com">Designed by CENTROARTS.com</a></span>
 	<div><?php
-	#Âíèìàíèå! ÑÀÌÎÂÎËÜÍÎÅ ÓÁÈÐÀÍÈÅ ÊÎÏÈÐÀÉÒÎÂ ×ÐÅÂÀÒÎ ÁËÎÊÈÐÎÂÊÎÉ ÍÀ ÎÔÈÖÈÀËÜÍÎÌ ÑÀÉÒÅ ÑÈÑÒÅÌÛ È ÏÐÅÑËÅÄÓÅÒÑß ÏÎ ÇÀÊÎÍÓ!
-	#ÊÎÏÈÐÀÉÒÛ ÌÅÍßÒÜ/ÏÐÀÂÈÒÜ ÍÅËÜÇß! ÑÎÂÑÅÌ!! ÎÍÈ ÄÎËÆÍÛ ÎÑÒÀÂÀÒÜÑß ÍÅÈÇÌÅÍÍÛÌÈ ÄÎ ÁÈÒÀ! Òàêæå íåäîïóñòèìî è èõ ñêðûòèå!
+	#Ð’Ð½Ð¸Ð¼Ð°Ð½Ð¸Ðµ! Ð¡ÐÐœÐžÐ’ÐžÐ›Ð¬ÐÐžÐ• Ð£Ð‘Ð˜Ð ÐÐÐ˜Ð• ÐšÐžÐŸÐ˜Ð ÐÐ™Ð¢ÐžÐ’ Ð§Ð Ð•Ð’ÐÐ¢Ðž Ð‘Ð›ÐžÐšÐ˜Ð ÐžÐ’ÐšÐžÐ™ ÐÐ ÐžÐ¤Ð˜Ð¦Ð˜ÐÐ›Ð¬ÐÐžÐœ Ð¡ÐÐ™Ð¢Ð• Ð¡Ð˜Ð¡Ð¢Ð•ÐœÐ« Ð˜ ÐŸÐ Ð•Ð¡Ð›Ð•Ð”Ð£Ð•Ð¢Ð¡Ð¯ ÐŸÐž Ð—ÐÐšÐžÐÐ£!
+	#ÐšÐžÐŸÐ˜Ð ÐÐ™Ð¢Ð« ÐœÐ•ÐÐ¯Ð¢Ð¬/ÐŸÐ ÐÐ’Ð˜Ð¢Ð¬ ÐÐ•Ð›Ð¬Ð—Ð¯! Ð¡ÐžÐ’Ð¡Ð•Ðœ!! ÐžÐÐ˜ Ð”ÐžÐ›Ð–ÐÐ« ÐžÐ¡Ð¢ÐÐ’ÐÐ¢Ð¬Ð¡Ð¯ ÐÐ•Ð˜Ð—ÐœÐ•ÐÐÐ«ÐœÐ˜ Ð”Ðž Ð‘Ð˜Ð¢Ð! Ð¢Ð°ÐºÐ¶Ðµ Ð½ÐµÐ´Ð¾Ð¿ÑƒÑÑ‚Ð¸Ð¼Ð¾ Ð¸ Ð¸Ñ… ÑÐºÑ€Ñ‹Ñ‚Ð¸Ðµ!
 	echo'Powered by '.ELEANOR_COPYRIGHT?></div>
 [page status]	<div>{page status}</div>
 [/page status][debug]	<div>{debug}</div>

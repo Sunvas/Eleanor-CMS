@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -12,14 +12,14 @@ define('CMS',true);
 require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::LoadOptions(array('site','users-on-site'));
-Eleanor::$service='ajax';#ID сервиса
+Eleanor::$service='ajax';#ID СЃРµСЂРІРёСЃР°
 Eleanor::InitService();
 Eleanor::$Language->queue['main'][]='langs/ajax-*.php';
 
-#Три предустановленные переменные
+#РўСЂРё РїСЂРµРґСѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 $head=$jscripts=array();
 
-#Исправляем кодировку
+#РСЃРїСЂР°РІР»СЏРµРј РєРѕРґРёСЂРѕРІРєСѓ
 if(CHARSET!='utf-8' and $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest')
 {	$F=function(&$v){ $v=mb_convert_encoding($v,CHARSET,'utf-8'); };
 	array_walk_recursive($_POST,$F);
@@ -34,7 +34,7 @@ if(Eleanor::$vars['site_closed'] and !Eleanor::LoadLogin(Eleanor::$services['adm
 if(Eleanor::$Permissions->IsBanned())
 	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::USER,array('ban'=>'group'));
 
-#$_REQUEST нельзя использовать, потому что у $_REQUEST нельзя исправить кодировку (см. выше)
+#$_REQUEST РЅРµР»СЊР·СЏ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ Сѓ $_REQUEST РЅРµР»СЊР·СЏ РёСЃРїСЂР°РІРёС‚СЊ РєРѕРґРёСЂРѕРІРєСѓ (СЃРј. РІС‹С€Рµ)
 $m=isset($_POST['module']) ? (string)$_POST['module'] : (isset($_GET['module']) ? (string)$_GET['module'] : false);
 if($m)
 {
@@ -75,7 +75,7 @@ elseif(isset($_REQUEST['direct']) and is_file($f=Eleanor::$root.'addons/direct/'
 else
 	SomeAjax();
 
-#Предопределенные функции.
+#РџСЂРµРґРѕРїСЂРµРґРµР»РµРЅРЅС‹Рµ С„СѓРЅРєС†РёРё.
 function Start($code=200)
 {static$one=true;
 	if($one)
@@ -129,7 +129,7 @@ function Result($d,$alr=false)
 	),false,true);
 }
 
-#Какие-то странные участки AJAX, которые нельзя привязать к какому-нить модулю. Как предпросмотр в редакторе, например.
+#РљР°РєРёРµ-С‚Рѕ СЃС‚СЂР°РЅРЅС‹Рµ СѓС‡Р°СЃС‚РєРё AJAX, РєРѕС‚РѕСЂС‹Рµ РЅРµР»СЊР·СЏ РїСЂРёРІСЏР·Р°С‚СЊ Рє РєР°РєРѕРјСѓ-РЅРёС‚СЊ РјРѕРґСѓР»СЋ. РљР°Рє РїСЂРµРґРїСЂРѕСЃРјРѕС‚СЂ РІ СЂРµРґР°РєС‚РѕСЂРµ, РЅР°РїСЂРёРјРµСЂ.
 function SomeAjax()
 {global$Eleanor;
 	$type=isset($_REQUEST['type']) ? $_REQUEST['type'] : '';
@@ -195,7 +195,7 @@ function ApplyLang($gl=false)
 		Eleanor::$lvars=array();
 }
 
-#Функция "Будь как", делает сервис другим. Полностью :)
+#Р¤СѓРЅРєС†РёСЏ "Р‘СѓРґСЊ РєР°Рє", РґРµР»Р°РµС‚ СЃРµСЂРІРёСЃ РґСЂСѓРіРёРј. РџРѕР»РЅРѕСЃС‚СЊСЋ :)
 function BeAs($n)
 {global$Eleanor;
 	if(Eleanor::$service==$n or !isset(Eleanor::$services[$n]))

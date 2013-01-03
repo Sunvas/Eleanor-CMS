@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -9,12 +9,12 @@
 	*Pseudonym
 */
 /*
-	Ñòàòóñû áëîêîâ:
-		-3 - áëîê îæèäàåò íàñòóïëåíèÿ äàòû íà÷àëà ïîêàçà
-		-2 -  áëîê íå îòîáðàæàåòñÿ, ïîñêîëüêó íàñòóïèëà äàòà çàâåðøåíèÿ ïîêàçîâ
-		-1 - çàðåçåðâèðîâàíî
-		0 - áëîê çàáëîêèðîâàí
-		1 - áëîê àêòèâèðîâàí
+	Ð¡Ñ‚Ð°Ñ‚ÑƒÑÑ‹ Ð±Ð»Ð¾ÐºÐ¾Ð²:
+		-3 - Ð±Ð»Ð¾Ðº Ð¾Ð¶Ð¸Ð´Ð°ÐµÑ‚ Ð½Ð°ÑÑ‚ÑƒÐ¿Ð»ÐµÐ½Ð¸Ñ Ð´Ð°Ñ‚Ñ‹ Ð½Ð°Ñ‡Ð°Ð»Ð° Ð¿Ð¾ÐºÐ°Ð·Ð°
+		-2 -  Ð±Ð»Ð¾Ðº Ð½Ðµ Ð¾Ñ‚Ð¾Ð±Ñ€Ð°Ð¶Ð°ÐµÑ‚ÑÑ, Ð¿Ð¾ÑÐºÐ¾Ð»ÑŒÐºÑƒ Ð½Ð°ÑÑ‚ÑƒÐ¿Ð¸Ð»Ð° Ð´Ð°Ñ‚Ð° Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¸Ñ Ð¿Ð¾ÐºÐ°Ð·Ð¾Ð²
+		-1 - Ð·Ð°Ñ€ÐµÐ·ÐµÑ€Ð²Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¾
+		0 - Ð±Ð»Ð¾Ðº Ð·Ð°Ð±Ð»Ð¾ÐºÐ¸Ñ€Ð¾Ð²Ð°Ð½
+		1 - Ð±Ð»Ð¾Ðº Ð°ÐºÑ‚Ð¸Ð²Ð¸Ñ€Ð¾Ð²Ð°Ð½
 */
 if(!defined('CMS'))die;
 global$Eleanor,$title;
@@ -366,7 +366,7 @@ else
 
 			if($old['places'])
 				$values['places']+=(array)unserialize($old['places']);
-			#Óäàëÿåì âîçìîæíî óäàëåííûå òåìû
+			#Ð£Ð´Ð°Ð»ÑÐµÐ¼ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ ÑƒÐ´Ð°Ð»ÐµÐ½Ð½Ñ‹Ðµ Ñ‚ÐµÐ¼Ñ‹
 			foreach($values['places'] as $k=>&$v)
 				if($k!='' and !in_array($k,$tpls))
 					unset($values['places'][$k]);
@@ -375,7 +375,7 @@ else
 			if($old['extra'])
 				$values['extra']+=(array)unserialize($old['extra']);
 			else
-				#Óäàëÿåì âîçìîæíî óäàëåííûå òåìû
+				#Ð£Ð´Ð°Ð»ÑÐµÐ¼ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ ÑƒÐ´Ð°Ð»ÐµÐ½Ð½Ñ‹Ðµ Ñ‚ÐµÐ¼Ñ‹
 				foreach($values['extra'] as $k=>&$v)
 					if($k!='' and !in_array($k,$tpls))
 						unset($values['extra'][$k]);
@@ -392,7 +392,7 @@ else
 
 			if($old['places'])
 				$values['places']+=(array)$old['places'];
-			#Óäàëÿåì âîçìîæíî óäàëåííûå òåìû
+			#Ð£Ð´Ð°Ð»ÑÐµÐ¼ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ ÑƒÐ´Ð°Ð»ÐµÐ½Ð½Ñ‹Ðµ Ñ‚ÐµÐ¼Ñ‹
 			foreach($values['places'] as $k=>&$v)
 				if($k!='' and !in_array($k,$tpls))
 					unset($values['places'][$k]);
@@ -402,7 +402,7 @@ else
 			if(count($values['extra'])==1 and !$values['extra'][$tpl])
 				unset($values['extra']);
 			else
-				#Óäàëÿåì âîçìîæíî óäàëåííûå òåìû
+				#Ð£Ð´Ð°Ð»ÑÐµÐ¼ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ ÑƒÐ´Ð°Ð»ÐµÐ½Ð½Ñ‹Ðµ Ñ‚ÐµÐ¼Ñ‹
 				foreach($values['extra'] as $k=>&$v)
 					if($k!='' and !in_array($k,$tpls))
 						unset($values['extra'][$k]);
@@ -517,7 +517,7 @@ function ShowGroup($gid,$tpl='',$errors=array(),$saved=false)
 	}
 
 	$ids=array(
-		'user'=>array('user'=>array('t'=>$lang['bydef'],'g'=>true)),#t - íàçâàíèå èäåíòèôèêàòîðà, g - ïðèçíàê íàëè÷èÿ ãðóïïû ó èäåíòèôèêàòîðà
+		'user'=>array('user'=>array('t'=>$lang['bydef'],'g'=>true)),#t - Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€Ð°, g - Ð¿Ñ€Ð¸Ð·Ð½Ð°Ðº Ð½Ð°Ð»Ð¸Ñ‡Ð¸Ñ Ð³Ñ€ÑƒÐ¿Ð¿Ñ‹ Ñƒ Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€Ð°
 		'admin'=>array('admin'=>array('t'=>$lang['bydef'],'g'=>true)),
 	);
 	$service=is_string($gid) ? $gid : false;

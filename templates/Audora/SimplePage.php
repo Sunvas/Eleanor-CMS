@@ -1,8 +1,8 @@
 <?php
 /*
-	Áàçîâûé øàáëîí âñïëûâàþùèõ îêîí. Èñïîëüçóåòñÿ, íàïðèìåð, ïðè äåòàëüíîì ïðîñìîòðå ñåññèè îíëàéí.
+	Ð‘Ð°Ð·Ð¾Ð²Ñ‹Ð¹ ÑˆÐ°Ð±Ð»Ð¾Ð½ Ð²ÑÐ¿Ð»Ñ‹Ð²Ð°ÑŽÑ‰Ð¸Ñ… Ð¾ÐºÐ¾Ð½. Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ÑÑ, Ð½Ð°Ð¿Ñ€Ð¸Ð¼ÐµÑ€, Ð¿Ñ€Ð¸ Ð´ÐµÑ‚Ð°Ð»ÑŒÐ½Ð¾Ð¼ Ð¿Ñ€Ð¾ÑÐ¼Ð¾Ñ‚Ñ€Ðµ ÑÐµÑÑÐ¸Ð¸ Ð¾Ð½Ð»Ð°Ð¹Ð½.
 
-	@var ñîäåðæèìîå body
+	@var ÑÐ¾Ð´ÐµÑ€Ð¶Ð¸Ð¼Ð¾Ðµ body
 */
 if(!defined('CMS'))die;?><!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=<?php echo DISPLAY_CHARSET?>" /><title><?php echo is_array($GLOBALS['title']) ? join(' &raquo; ',$GLOBALS['title']) : $GLOBALS['title']?></title>
 <style type="text/css">

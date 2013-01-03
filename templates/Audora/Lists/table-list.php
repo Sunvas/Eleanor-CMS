@@ -36,7 +36,7 @@ return array(
 					if($param!==false)
 						switch((string)$name)
 						{
-							case'0':#Числовые значения не ставить! Иначе не обработается default, при $v=array('title','colspan'=>'2'),
+							case'0':#Р§РёСЃР»РѕРІС‹Рµ Р·РЅР°С‡РµРЅРёСЏ РЅРµ СЃС‚Р°РІРёС‚СЊ! РРЅР°С‡Рµ РЅРµ РѕР±СЂР°Р±РѕС‚Р°РµС‚СЃСЏ default, РїСЂРё $v=array('title','colspan'=>'2'),
 								$val=$param;
 							break;
 							case'1':
@@ -89,7 +89,7 @@ return array(
 					if($param!==false)
 						switch((string)$name)
 						{
-							case'0':#Числовые значения не ставить!
+							case'0':#Р§РёСЃР»РѕРІС‹Рµ Р·РЅР°С‡РµРЅРёСЏ РЅРµ СЃС‚Р°РІРёС‚СЊ!
 								$val=$param;
 							break;
 							case'1':

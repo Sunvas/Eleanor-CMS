@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -9,7 +9,7 @@
 	*Pseudonym
 */
 global$Eleanor;
-$pp_=50;#Количество статических страниц на страницу по умолчанию :)
+$pp_=50;#РљРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚Р°С‚РёС‡РµСЃРєРёС… СЃС‚СЂР°РЅРёС† РЅР° СЃС‚СЂР°РЅРёС†Сѓ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ :)
 $Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
 if(!class_exists($Eleanor->module['config']['api'],false))
 	include $Eleanor->module['path'].'api.php';
@@ -91,10 +91,10 @@ foreach($ids as &$v)
 			$c=$hasroot ? '&#47;' : array();
 		$u=$Eleanor->Url->Construct($Plug->GetUrl($v));
 		echo Rss(array(
-			'title'=>$items[$v]['title'],#Заголовок сообщения
-			'link'=>$u,#URL сообщения
-			'description'=>$items[$v]['text'],#Краткий обзор сообщения
-			'guid'=>$u,#Строка, уникальным образом идентифицирующая сообщение.
-			'category'=>$c,#Включает сообщение в одну или более категорий. См. ниже.
+			'title'=>$items[$v]['title'],#Р—Р°РіРѕР»РѕРІРѕРє СЃРѕРѕР±С‰РµРЅРёСЏ
+			'link'=>$u,#URL СЃРѕРѕР±С‰РµРЅРёСЏ
+			'description'=>$items[$v]['text'],#РљСЂР°С‚РєРёР№ РѕР±Р·РѕСЂ СЃРѕРѕР±С‰РµРЅРёСЏ
+			'guid'=>$u,#РЎС‚СЂРѕРєР°, СѓРЅРёРєР°Р»СЊРЅС‹Рј РѕР±СЂР°Р·РѕРј РёРґРµРЅС‚РёС„РёС†РёСЂСѓСЋС‰Р°СЏ СЃРѕРѕР±С‰РµРЅРёРµ.
+			'category'=>$c,#Р’РєР»СЋС‡Р°РµС‚ СЃРѕРѕР±С‰РµРЅРёРµ РІ РѕРґРЅСѓ РёР»Рё Р±РѕР»РµРµ РєР°С‚РµРіРѕСЂРёР№. РЎРј. РЅРёР¶Рµ.
 		));
 	}

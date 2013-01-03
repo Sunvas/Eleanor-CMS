@@ -1,5 +1,5 @@
 <?php
 return array(
-	#Для user/index.php
-	'menu'=>'Мапа сайту',
+	#Р”Р»СЏ user/index.php
+	'menu'=>'РњР°РїР° СЃР°Р№С‚Сѓ',
 );

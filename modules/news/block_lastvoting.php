@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -8,10 +8,10 @@
 	=====
 	*Pseudonym
 */
-#Êîíåö íàñòðîåê
+#ÐšÐ¾Ð½ÐµÑ† Ð½Ð°ÑÑ‚Ñ€Ð¾ÐµÐº
 if(!isset($cache))
-	$cache=3600;#Âðåìÿ õðàíåíèÿ êýøà â ñåêóíäàõ
-#Êîíåö íàñòðîåê
+	$cache=3600;#Ð’Ñ€ÐµÐ¼Ñ Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ñ ÐºÑÑˆÐ° Ð² ÑÐµÐºÑƒÐ½Ð´Ð°Ñ…
+#ÐšÐ¾Ð½ÐµÑ† Ð½Ð°ÑÑ‚Ñ€Ð¾ÐµÐº
 
 global$Eleanor;
 $uri=array_keys($Eleanor->modules['sections'],'news');

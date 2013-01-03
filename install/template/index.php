@@ -6,7 +6,7 @@
 			<h1><a href="http://eleanor-cms.ru" title="Eleanor CMS">Eleanor CMS</a></h1>
 			<div class="version">
 				<span><span><span>
-				<?php echo (isset(Eleanor::$Language['install']['sysever']) ? Eleanor::$Language['install']['sysever'] : 'Âåðñèÿ ñèñòåìû: ').'<b>'.ELEANOR_VERSION.'</b>'?>
+				<?php echo (isset(Eleanor::$Language['install']['sysever']) ? Eleanor::$Language['install']['sysever'] : 'Ð’ÐµÑ€ÑÐ¸Ñ ÑÐ¸ÑÑ‚ÐµÐ¼Ñ‹: ').'<b>'.ELEANOR_VERSION.'</b>'?>
 				</span></span></span>
 			</div>
 		</div>

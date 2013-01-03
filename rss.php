@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,7 +11,7 @@
 define('CMS',true);
 require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
-Eleanor::$service='rss';#ID сервиса
+Eleanor::$service='rss';#ID СЃРµСЂРІРёСЃР°
 Eleanor::LoadOptions(array('site','rss','users-on-site'));
 Eleanor::InitService();
 
@@ -76,7 +76,7 @@ elseif(isset($_POST['direct']) and is_file($f=Eleanor::$root.'addons/direct/'.pr
 else
 	Result(array());
 
-#Предопределенные функции.
+#РџСЂРµРґРѕРїСЂРµРґРµР»РµРЅРЅС‹Рµ С„СѓРЅРєС†РёРё.
 function GoAway($info=false,$code=301,$hash='')
 {global$Eleanor;
 	if(!$ref=getenv('HTTP_REFERER') or $ref==PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'] or $info)
@@ -113,29 +113,29 @@ function Start($ch=array())
 	$sl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
 	#http://beshenov.ru/rss2.html
 	$ch+=array(
-		#Обязательное
-		'title'=>$t,#Название канала
-		'description'=>htmlspecialchars(isset($Eleanor->module,$Eleanor->module['description']) ? $Eleanor->module['description'] : Eleanor::$vars['site_description'],ELENT,CHARSET,false),#Описание канала
-		'link'=>$sl,#URL веб-сайта, связанного с каналом.
+		#РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ
+		'title'=>$t,#РќР°Р·РІР°РЅРёРµ РєР°РЅР°Р»Р°
+		'description'=>htmlspecialchars(isset($Eleanor->module,$Eleanor->module['description']) ? $Eleanor->module['description'] : Eleanor::$vars['site_description'],ELENT,CHARSET,false),#РћРїРёСЃР°РЅРёРµ РєР°РЅР°Р»Р°
+		'link'=>$sl,#URL РІРµР±-СЃР°Р№С‚Р°, СЃРІСЏР·Р°РЅРЅРѕРіРѕ СЃ РєР°РЅР°Р»РѕРј.
 
-		#Необязательное
-		'language'=>substr(Language::$main,0,2),#Язык, на котором написан канал
-		'copyright'=>false,#Информация об авторском праве
-		'managingEditor'=>false,#Адрес электронной почты ответственного за редакторский текст
-		'webMaster'=>false,#Адрес электронной почты ответственного за технические аспекты
-		'pubDate'=>false,#Дата публикации текста в канале. TIMESHTAMP или date('r')
-		'lastBuildDate'=>false,#Время Последнего изменения содержимого канала. TIMESHTAMP или date('r')
-		'category'=>false,#Указывает одну и более категорию, к которой относится канал.
-		'ttl'=>round(Eleanor::$caching/60),#Время жизни; количество минут, на которые канал может кешироваться перед обновлением с ресурса.
-		'image'=>array(),#Изображение GIF, JPEG или PNG, которое может отображаться с каналом. Смотри ниже.
+		#РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ
+		'language'=>substr(Language::$main,0,2),#РЇР·С‹Рє, РЅР° РєРѕС‚РѕСЂРѕРј РЅР°РїРёСЃР°РЅ РєР°РЅР°Р»
+		'copyright'=>false,#РРЅС„РѕСЂРјР°С†РёСЏ РѕР± Р°РІС‚РѕСЂСЃРєРѕРј РїСЂР°РІРµ
+		'managingEditor'=>false,#РђРґСЂРµСЃ СЌР»РµРєС‚СЂРѕРЅРЅРѕР№ РїРѕС‡С‚С‹ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ Р·Р° СЂРµРґР°РєС‚РѕСЂСЃРєРёР№ С‚РµРєСЃС‚
+		'webMaster'=>false,#РђРґСЂРµСЃ СЌР»РµРєС‚СЂРѕРЅРЅРѕР№ РїРѕС‡С‚С‹ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ Р·Р° С‚РµС…РЅРёС‡РµСЃРєРёРµ Р°СЃРїРµРєС‚С‹
+		'pubDate'=>false,#Р”Р°С‚Р° РїСѓР±Р»РёРєР°С†РёРё С‚РµРєСЃС‚Р° РІ РєР°РЅР°Р»Рµ. TIMESHTAMP РёР»Рё date('r')
+		'lastBuildDate'=>false,#Р’СЂРµРјСЏ РџРѕСЃР»РµРґРЅРµРіРѕ РёР·РјРµРЅРµРЅРёСЏ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ РєР°РЅР°Р»Р°. TIMESHTAMP РёР»Рё date('r')
+		'category'=>false,#РЈРєР°Р·С‹РІР°РµС‚ РѕРґРЅСѓ Рё Р±РѕР»РµРµ РєР°С‚РµРіРѕСЂРёСЋ, Рє РєРѕС‚РѕСЂРѕР№ РѕС‚РЅРѕСЃРёС‚СЃСЏ РєР°РЅР°Р».
+		'ttl'=>round(Eleanor::$caching/60),#Р’СЂРµРјСЏ Р¶РёР·РЅРё; РєРѕР»РёС‡РµСЃС‚РІРѕ РјРёРЅСѓС‚, РЅР° РєРѕС‚РѕСЂС‹Рµ РєР°РЅР°Р» РјРѕР¶РµС‚ РєРµС€РёСЂРѕРІР°С‚СЊСЃСЏ РїРµСЂРµРґ РѕР±РЅРѕРІР»РµРЅРёРµРј СЃ СЂРµСЃСѓСЂСЃР°.
+		'image'=>array(),#РР·РѕР±СЂР°Р¶РµРЅРёРµ GIF, JPEG РёР»Рё PNG, РєРѕС‚РѕСЂРѕРµ РјРѕР¶РµС‚ РѕС‚РѕР±СЂР°Р¶Р°С‚СЊСЃСЏ СЃ РєР°РЅР°Р»РѕРј. РЎРјРѕС‚СЂРё РЅРёР¶Рµ.
 	);
 	if(Eleanor::$vars['rss_image'])
 		$ch['image']+=array(
-			#Обязательное
+			#РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ
 			'url'=>$sl.Eleanor::$vars['rss_image'],
 			'title'=>$t,
 			'link'=>$sl,
-			#Необязательное
+			#РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ
 			'width'=>false,
 			'height'=>false,
 			'description'=>false,
@@ -197,14 +197,14 @@ function Error($e=false,$extra=array())
 		);
 	}
 
-	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#Ошибка могла вылететь и в момент создания объекта $Eleanor
+	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#РћС€РёР±РєР° РјРѕРіР»Р° РІС‹Р»РµС‚РµС‚СЊ Рё РІ РјРѕРјРµРЅС‚ СЃРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚Р° $Eleanor
 	{
 		$Eleanor->error=true;
 		if($csh)
 			header('Content-Type: text/html; charset='.Eleanor::$charset,true,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503);
 		while(ob_get_contents()!==false)
 			ob_end_clean();
-		ob_start();ob_start();#Странный глюк PHP... Достаточно сделать Parse error в index.php темы и Core::FinishOutPut будет получать пустое значение
+		ob_start();ob_start();#РЎС‚СЂР°РЅРЅС‹Р№ РіР»СЋРє PHP... Р”РѕСЃС‚Р°С‚РѕС‡РЅРѕ СЃРґРµР»Р°С‚СЊ Parse error РІ index.php С‚РµРјС‹ Рё Core::FinishOutPut Р±СѓРґРµС‚ РїРѕР»СѓС‡Р°С‚СЊ РїСѓСЃС‚РѕРµ Р·РЅР°С‡РµРЅРёРµ
 		echo$e;
 	}
 	else
@@ -264,20 +264,20 @@ function RssText($s)
 	return$s;
 }
 
-#Вниманеи! Это RSS для пользователей, а не для Яндекс.Новости и т.п.
+#Р’РЅРёРјР°РЅРµРё! Р­С‚Рѕ RSS РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№, Р° РЅРµ РґР»СЏ РЇРЅРґРµРєСЃ.РќРѕРІРѕСЃС‚Рё Рё С‚.Рї.
 function Rss($v)
 {
 	$v+=array(
-		'title'=>false,#Заголовок сообщения
-		'link'=>false,#URL сообщения
-		'description'=>false,#Краткий обзор сообщения
-		'author'=>false,#Адрес электронной почты автора сообщения.
-		'category'=>array(),#Включает сообщение в одну или более категорий. См. ниже.
-		'comments'=>false,#URL страницы для комментариев, относящихся к сообщению.
-		'enclosure'=>array(),#Описывает медиа-объект, прикрепленный к сообщению. См. ниже.
-		'guid'=>false,#Строка, уникальным образом идентифицирующая сообщение.
-		'pubDate'=>false,#Показывает, когда сообщение было опубликовано. TIMESHTAMP или date('r')
-		'source'=>false,#RSS-канал, из которого получено сообщение.
+		'title'=>false,#Р—Р°РіРѕР»РѕРІРѕРє СЃРѕРѕР±С‰РµРЅРёСЏ
+		'link'=>false,#URL СЃРѕРѕР±С‰РµРЅРёСЏ
+		'description'=>false,#РљСЂР°С‚РєРёР№ РѕР±Р·РѕСЂ СЃРѕРѕР±С‰РµРЅРёСЏ
+		'author'=>false,#РђРґСЂРµСЃ СЌР»РµРєС‚СЂРѕРЅРЅРѕР№ РїРѕС‡С‚С‹ Р°РІС‚РѕСЂР° СЃРѕРѕР±С‰РµРЅРёСЏ.
+		'category'=>array(),#Р’РєР»СЋС‡Р°РµС‚ СЃРѕРѕР±С‰РµРЅРёРµ РІ РѕРґРЅСѓ РёР»Рё Р±РѕР»РµРµ РєР°С‚РµРіРѕСЂРёР№. РЎРј. РЅРёР¶Рµ.
+		'comments'=>false,#URL СЃС‚СЂР°РЅРёС†С‹ РґР»СЏ РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ, РѕС‚РЅРѕСЃСЏС‰РёС…СЃСЏ Рє СЃРѕРѕР±С‰РµРЅРёСЋ.
+		'enclosure'=>array(),#РћРїРёСЃС‹РІР°РµС‚ РјРµРґРёР°-РѕР±СЉРµРєС‚, РїСЂРёРєСЂРµРїР»РµРЅРЅС‹Р№ Рє СЃРѕРѕР±С‰РµРЅРёСЋ. РЎРј. РЅРёР¶Рµ.
+		'guid'=>false,#РЎС‚СЂРѕРєР°, СѓРЅРёРєР°Р»СЊРЅС‹Рј РѕР±СЂР°Р·РѕРј РёРґРµРЅС‚РёС„РёС†РёСЂСѓСЋС‰Р°СЏ СЃРѕРѕР±С‰РµРЅРёРµ.
+		'pubDate'=>false,#РџРѕРєР°Р·С‹РІР°РµС‚, РєРѕРіРґР° СЃРѕРѕР±С‰РµРЅРёРµ Р±С‹Р»Рѕ РѕРїСѓР±Р»РёРєРѕРІР°РЅРѕ. TIMESHTAMP РёР»Рё date('r')
+		'source'=>false,#RSS-РєР°РЅР°Р», РёР· РєРѕС‚РѕСЂРѕРіРѕ РїРѕР»СѓС‡РµРЅРѕ СЃРѕРѕР±С‰РµРЅРёРµ.
 	);
 	$cats=$en='';
 	$sl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
@@ -327,7 +327,7 @@ function ApplyLang($gl=false)
 		Eleanor::$lvars=array();
 }
 
-#Функция "Будь как", делает сервис другим. Полностью :)
+#Р¤СѓРЅРєС†РёСЏ "Р‘СѓРґСЊ РєР°Рє", РґРµР»Р°РµС‚ СЃРµСЂРІРёСЃ РґСЂСѓРіРёРј. РџРѕР»РЅРѕСЃС‚СЊСЋ :)
 function BeAs($n)
 {global$Eleanor;
 	if(Eleanor::$service==$n or !isset(Eleanor::$services[$n]))

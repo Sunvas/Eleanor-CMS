@@ -1,10 +1,10 @@
 <?php
 return array(
-	#ƒÎˇ /addons/admin/modules/section_general.php
-	'server_info'=>'≤ÌÙÓÏ‡ˆ≥ˇ ÔÓ ÒÂ‚Â',
-	'logs'=>'ÀÓ„Ë',
-	'errors.log'=>'ÀÓ„ ÔÓÏËÎÓÍ Û ÍÓ‰≥',
-	'request_errors.log'=>'ÀÓ„ ÔÓÏËÎÍÓ‚Ëı Á‡ÔËÚ≥‚',
-	'db_errors.log'=>'ÀÓ„ ÔÓÏËÎÓÍ ¡ƒ',
-	'license_'=>'À≥ˆÂÌÁ≥ˇ Ú‡ Ò‡ÌÍˆ≥ø',
+	#–î–ª—è /addons/admin/modules/section_general.php
+	'server_info'=>'–Ü–Ω—Ñ–æ—Ä–º–∞—Ü—ñ—è –ø—Ä–æ —Å–µ—Ä–≤–µ—Ä',
+	'logs'=>'–õ–æ–≥–∏',
+	'errors.log'=>'–õ–æ–≥ –ø–æ–º–∏–ª–æ–∫ —É –∫–æ–¥—ñ',
+	'request_errors.log'=>'–õ–æ–≥ –ø–æ–º–∏–ª–∫–æ–≤–∏—Ö –∑–∞–ø–∏—Ç—ñ–≤',
+	'db_errors.log'=>'–õ–æ–≥ –ø–æ–º–∏–ª–æ–∫ –ë–î',
+	'license_'=>'–õ—ñ—Ü–µ–Ω–∑—ñ—è —Ç–∞ —Å–∞–Ω–∫—Ü—ñ—ó',
 );

@@ -1,10 +1,10 @@
 <?php
 return array(
-	#ƒÎˇ /addons/admin/modules/modules.php
-	'list'=>'ÃÓ‰ÛÎ≥',
-	'delc'=>'œ≥‰Ú‚Â‰ÊÂÌÌˇ ‚Ë‰‡ÎÂÌÌˇ',
-	'adding'=>'ƒÓ‰‡‚‡ÌÌˇ ÏÓ‰ÛÎˇ',
-	'editing'=>'–Â‰‡„Û‚‡ÌÌˇ ÏÓ‰ÛÎˇ',
-	'empty_title'=>function($l){ return'Õ‡Á‚‡ ÏÓ‰ÛÎˇ ÌÂ ÏÓÊÂ ·ÛÚË ÔÓÓÊÌÂ˛'.($l ? ' (‰Îˇ '.$l.')' : ''); },
-	'sec_exists'=>function($s){ return'ÃÓ‰ÛÎ¸ Á '.Ukrainian::Plural(count($s),array('ÓÁ‰≥ÎÓÏ','ÓÁ‰≥Î‡ÏË','ÓÁ‰≥Î‡ÏË')).' &quot;'.join('&quot;, &quot;',$s).'&quot; ‚ÊÂ ≥ÒÌÛ∫'; },
+	#–î–ª—è /addons/admin/modules/modules.php
+	'list'=>'–ú–æ–¥—É–ª—ñ',
+	'delc'=>'–ü—ñ–¥—Ç–≤–µ—Ä–¥–∂–µ–Ω–Ω—è –≤–∏–¥–∞–ª–µ–Ω–Ω—è',
+	'adding'=>'–î–æ–¥–∞–≤–∞–Ω–Ω—è –º–æ–¥—É–ª—è',
+	'editing'=>'–†–µ–¥–∞–≥—É–≤–∞–Ω–Ω—è –º–æ–¥—É–ª—è',
+	'empty_title'=>function($l){ return'–ù–∞–∑–≤–∞ –º–æ–¥—É–ª—è –Ω–µ –º–æ–∂–µ –±—É—Ç–∏ –ø–æ—Ä–æ–∂–Ω–µ—é'.($l ? ' (–¥–ª—è '.$l.')' : ''); },
+	'sec_exists'=>function($s){ return'–ú–æ–¥—É–ª—å –∑ '.Ukrainian::Plural(count($s),array('—Ä–æ–∑–¥—ñ–ª–æ–º','—Ä–æ–∑–¥—ñ–ª–∞–º–∏','—Ä–æ–∑–¥—ñ–ª–∞–º–∏')).' &quot;'.join('&quot;, &quot;',$s).'&quot; –≤–∂–µ —ñ—Å–Ω—É—î'; },
 );

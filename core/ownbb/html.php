@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,11 +11,11 @@
 
 class OwnBbCode_html extends OwnBbCode
 {	/**
-	 * Îáðàáîòêà èíôîðìàöèè ïåðåä ïîêàçîì íà ñòðàíèöå
+	 * ÐžÐ±Ñ€Ð°Ð±Ð¾Ñ‚ÐºÐ° Ð¸Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ð¸ Ð¿ÐµÑ€ÐµÐ´ Ð¿Ð¾ÐºÐ°Ð·Ð¾Ð¼ Ð½Ð° ÑÑ‚Ñ€Ð°Ð½Ð¸Ñ†Ðµ
 	 *
-	 * @param string $t Òåã, êîòîðûé îáðàáàòûâàåòñÿ
-	 * @param string $p Ïàðàìåòðû òåãà
-	 * @param bool $cu Ôëàã âîçìîæíîñòè èñïîëüçîâàíèÿ òåãà
+	 * @param string $t Ð¢ÐµÐ³, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð¾Ð±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÐµÑ‚ÑÑ
+	 * @param string $p ÐŸÐ°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ñ‚ÐµÐ³Ð°
+	 * @param bool $cu Ð¤Ð»Ð°Ð³ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑ‚Ð¸ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ð½Ð¸Ñ Ñ‚ÐµÐ³Ð°
 	 */
 	public static function PreDisplay($t,$p,$c,$cu)
 	{		if(strpos($p,'noparse')!==false)

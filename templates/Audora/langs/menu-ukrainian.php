@@ -1,9 +1,9 @@
 <?php
 return array(
-	#Для Classes/AdminMenu.php
-	'add'=>'Додати пункт меню',
-	'not_found'=>'Меню немає',
-	'to_pages'=>'На сторінку: %s',
-	'submenu'=>'Субменю:',
-	'addsubmenu'=>'Додати субменю',
+	#Р”Р»СЏ Classes/AdminMenu.php
+	'add'=>'Р”РѕРґР°С‚Рё РїСѓРЅРєС‚ РјРµРЅСЋ',
+	'not_found'=>'РњРµРЅСЋ РЅРµРјР°С”',
+	'to_pages'=>'РќР° СЃС‚РѕСЂС–РЅРєСѓ: %s',
+	'submenu'=>'РЎСѓР±РјРµРЅСЋ:',
+	'addsubmenu'=>'Р”РѕРґР°С‚Рё СЃСѓР±РјРµРЅСЋ',
 );

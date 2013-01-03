@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -8,13 +8,13 @@
 	=====
 	*Pseudonym
 */
-#Настройки
+#РќР°СЃС‚СЂРѕР№РєРё
 $mname=array_keys($GLOBALS['Eleanor']->modules['sections'],'news');
 $mname=reset($mname);
-#$mname=array('russian'=>'новости','ukrainian'=>'новини','english'=>'news',''=>'news');#URL модуля. Может быть строкой
+#$mname=array('russian'=>'РЅРѕРІРѕСЃС‚Рё','ukrainian'=>'РЅРѕРІРёРЅРё','english'=>'news',''=>'news');#URL РјРѕРґСѓР»СЏ. РњРѕР¶РµС‚ Р±С‹С‚СЊ СЃС‚СЂРѕРєРѕР№
 
-$limit=10;#Количество месяцев за которые брать архив по месяцам
-#Конец настроек
+$limit=10;#РљРѕР»РёС‡РµСЃС‚РІРѕ РјРµСЃСЏС†РµРІ Р·Р° РєРѕС‚РѕСЂС‹Рµ Р±СЂР°С‚СЊ Р°СЂС…РёРІ РїРѕ РјРµСЃСЏС†Р°Рј
+#РљРѕРЅРµС† РЅР°СЃС‚СЂРѕРµРє
 
 if(is_array($mname))
 	$mname=Eleanor::FilterLangValues($mname,Language::$main);

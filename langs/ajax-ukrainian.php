@@ -1,6 +1,6 @@
 <?php
 return array(
-	#Для /ajax.php
-	'site_closed'=>'Сайт закрито!',
-	'unknown_event'=>'Невідома дія!',
+	#Р”Р»СЏ /ajax.php
+	'site_closed'=>'РЎР°Р№С‚ Р·Р°РєСЂРёС‚Рѕ!',
+	'unknown_event'=>'РќРµРІС–РґРѕРјР° РґС–СЏ!',
 );

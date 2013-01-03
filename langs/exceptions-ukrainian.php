@@ -1,7 +1,7 @@
 <?php
 return array(
-	#Для /core/others/ee.php
-	'incorrect_email'=>'E-mail адресу введено невірно!',
-	'incorrect_format'=>'Порушений формат запису!',
-	'incorrect_site'=>'Адреса сайту введена некоректно!',
+	#Р”Р»СЏ /core/others/ee.php
+	'incorrect_email'=>'E-mail Р°РґСЂРµСЃСѓ РІРІРµРґРµРЅРѕ РЅРµРІС–СЂРЅРѕ!',
+	'incorrect_format'=>'РџРѕСЂСѓС€РµРЅРёР№ С„РѕСЂРјР°С‚ Р·Р°РїРёСЃСѓ!',
+	'incorrect_site'=>'РђРґСЂРµСЃР° СЃР°Р№С‚Сѓ РІРІРµРґРµРЅР° РЅРµРєРѕСЂРµРєС‚РЅРѕ!',
 );

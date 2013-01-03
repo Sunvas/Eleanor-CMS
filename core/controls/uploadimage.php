@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -12,13 +12,13 @@
 class ControlUploadImage extends BaseClass implements ControlsBase
 {
 	public static
-		$Language;#Языковой объект
+		$Language;#РЇР·С‹РєРѕРІРѕР№ РѕР±СЉРµРєС‚
 
 	private static
-		$bypost;#Флаг чтения данных из POST
+		$bypost;#Р¤Р»Р°Рі С‡С‚РµРЅРёСЏ РґР°РЅРЅС‹С… РёР· POST
 
 	/**
-	 * Получение настроек контрола
+	 * РџРѕР»СѓС‡РµРЅРёРµ РЅР°СЃС‚СЂРѕРµРє РєРѕРЅС‚СЂРѕР»Р°
 	 *
 	 * @param ControlsManager $Obj
 	 */
@@ -28,7 +28,7 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 		$ml=false;
 		return array(
-			'uploadimage',#Группа контрола
+			'uploadimage',#Р“СЂСѓРїРїР° РєРѕРЅС‚СЂРѕР»Р°
 			'path'=>array(
 				'title'=>static::$Language['path_to_save'],
 				'descr'=>static::$Language['path_to_save_'],
@@ -251,9 +251,9 @@ $(function(){
 	}
 
 	/**
-	 * Получение контрола
+	 * РџРѕР»СѓС‡РµРЅРёРµ РєРѕРЅС‚СЂРѕР»Р°
 	 *
-	 * @param array $a Опции контрола
+	 * @param array $a РћРїС†РёРё РєРѕРЅС‚СЂРѕР»Р°
 	 * @param ControlsManager $Obj
 	 */
 	public static function Control($a,$Obj)
@@ -302,7 +302,7 @@ $(function(){
 		elseif(!isset($_SESSION))
 			Eleanor::StartSession();
 
-		#Сохранение старого значения для сессии
+		#РЎРѕС…СЂР°РЅРµРЅРёРµ СЃС‚Р°СЂРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ РґР»СЏ СЃРµСЃСЃРёРё
 		$a['options']['value']=$a['value'];
 
 		$a['options']['path']=rtrim($a['options']['path'],'\\/');
@@ -341,9 +341,9 @@ $(function(){
 	}
 
 	/**
-	 * Сохранение контрола
+	 * РЎРѕС…СЂР°РЅРµРЅРёРµ РєРѕРЅС‚СЂРѕР»Р°
 	 *
-	 * @param array $a Опции контрола
+	 * @param array $a РћРїС†РёРё РєРѕРЅС‚СЂРѕР»Р°
 	 * @param ControlsManager $Obj
 	 */
 	public static function Save($a,$Obj)
@@ -466,9 +466,9 @@ $(function(){
 	}
 
 	/**
-	 * Получение результата контрола
+	 * РџРѕР»СѓС‡РµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚Р° РєРѕРЅС‚СЂРѕР»Р°
 	 *
-	 * @param array $a Опции контрола
+	 * @param array $a РћРїС†РёРё РєРѕРЅС‚СЂРѕР»Р°
 	 * @param ControlsManager $Obj
 	 */
 	public static function Result($a,$Obj,$co)
@@ -504,7 +504,7 @@ $(function(){
 	}
 
 	/**
-	 * Обработка Ajax запроса контрола
+	 * РћР±СЂР°Р±РѕС‚РєР° Ajax Р·Р°РїСЂРѕСЃР° РєРѕРЅС‚СЂРѕР»Р°
 	 */
 	public static function DoAjax()
 	{
@@ -554,7 +554,7 @@ $(function(){
 	}
 
 	/**
-	 * Обработка Upload запроса контрола
+	 * РћР±СЂР°Р±РѕС‚РєР° Upload Р·Р°РїСЂРѕСЃР° РєРѕРЅС‚СЂРѕР»Р°
 	 */
 	public static function DoUpload()
 	{

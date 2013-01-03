@@ -1,6 +1,6 @@
 <?php
 return array(
-	#Для /core/others/comments_ajax.php
-	'flood_limit'=>function($n){return 'На сайте включен флуд контроль! Подождите еще '.$n.Russian::Plural($n,array(' секунду.',' секунды',' секунд'));},
-	'WRONG_CAPTCHA'=>'Защитный код введен с ошибкой',
+	#Р”Р»СЏ /core/others/comments_ajax.php
+	'flood_limit'=>function($n){return 'РќР° СЃР°Р№С‚Рµ РІРєР»СЋС‡РµРЅ С„Р»СѓРґ РєРѕРЅС‚СЂРѕР»СЊ! РџРѕРґРѕР¶РґРёС‚Рµ РµС‰Рµ '.$n.Russian::Plural($n,array(' СЃРµРєСѓРЅРґСѓ.',' СЃРµРєСѓРЅРґС‹',' СЃРµРєСѓРЅРґ'));},
+	'WRONG_CAPTCHA'=>'Р—Р°С‰РёС‚РЅС‹Р№ РєРѕРґ РІРІРµРґРµРЅ СЃ РѕС€РёР±РєРѕР№',
 );

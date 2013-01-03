@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -12,11 +12,11 @@
 class Punycode
 {
 	/**
-	 * Кодирование и декозирование домена в Punycode и из Punycode.
-	 * Метод сам определяет, представлен ли домен в нужной форме и, если нет - выполняет преобразования.
+	 * РљРѕРґРёСЂРѕРІР°РЅРёРµ Рё РґРµРєРѕР·РёСЂРѕРІР°РЅРёРµ РґРѕРјРµРЅР° РІ Punycode Рё РёР· Punycode.
+	 * РњРµС‚РѕРґ СЃР°Рј РѕРїСЂРµРґРµР»СЏРµС‚, РїСЂРµРґСЃС‚Р°РІР»РµРЅ Р»Рё РґРѕРјРµРЅ РІ РЅСѓР¶РЅРѕР№ С„РѕСЂРјРµ Рё, РµСЃР»Рё РЅРµС‚ - РІС‹РїРѕР»РЅСЏРµС‚ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ.
 	 *
-	 * @param string $domain Доменное имя
-	 * @param bool $encode Флаг кодирования в Punycode
+	 * @param string $domain Р”РѕРјРµРЅРЅРѕРµ РёРјСЏ
+	 * @param bool $encode Р¤Р»Р°Рі РєРѕРґРёСЂРѕРІР°РЅРёСЏ РІ Punycode
 	 */
 	public static function Domain($domain,$encode=true)
 	{
@@ -45,9 +45,9 @@ class Punycode
 	}
 
 	/**
-	 * Кодирование Punycode в utf-8 строку
+	 * РљРѕРґРёСЂРѕРІР°РЅРёРµ Punycode РІ utf-8 СЃС‚СЂРѕРєСѓ
 	 *
-	 * @param string $s Домен в Punycode
+	 * @param string $s Р”РѕРјРµРЅ РІ Punycode
 	 */
 	public static function Decode($s)
 	{
@@ -60,7 +60,7 @@ class Punycode
 		$decoded=array();
 
 		$dpos=strrpos($s,'-');
-		if($dpos>4)#4 - это длина префикса xn--
+		if($dpos>4)#4 - СЌС‚Рѕ РґР»РёРЅР° РїСЂРµС„РёРєСЃР° xn--
 			for($k=4;$k<$dpos;++$k)
 				$decoded[]=ord($s[$k]);
 
@@ -113,9 +113,9 @@ class Punycode
 	}
 
 	/**
-	 * Декодирование utf-8 строки в Punycode
+	 * Р”РµРєРѕРґРёСЂРѕРІР°РЅРёРµ utf-8 СЃС‚СЂРѕРєРё РІ Punycode
 	 *
-	 * @param string $s Домен
+	 * @param string $s Р”РѕРјРµРЅ
 	 */
 	public static function Encode($s)
 	{
@@ -221,7 +221,7 @@ class Punycode
 	}
 
 	/**
-	 * Внутренний метод
+	 * Р’РЅСѓС‚СЂРµРЅРЅРёР№ РјРµС‚РѕРґ
 	 *
 	 * @param int $d
 	 */

@@ -1,13 +1,13 @@
 <?php
 return array(
-	#Для EditControlTable.php
-	'control_type'=>'Тип контролу',
-	'preview'=>'Передпроглядання',
-	'preview_'=>'Стан контрола буде збережено як його стан по замовчуванню',
+	#Р”Р»СЏ EditControlTable.php
+	'control_type'=>'РўРёРї РєРѕРЅС‚СЂРѕР»Сѓ',
+	'preview'=>'РџРµСЂРµРґРїСЂРѕРіР»СЏРґР°РЅРЅСЏ',
+	'preview_'=>'РЎС‚Р°РЅ РєРѕРЅС‚СЂРѕР»Р° Р±СѓРґРµ Р·Р±РµСЂРµР¶РµРЅРѕ СЏРє Р№РѕРіРѕ СЃС‚Р°РЅ РїРѕ Р·Р°РјРѕРІС‡СѓРІР°РЅРЅСЋ',
 
-	#Для SettingsSelectLoad.php
-	'select_source_code'=>'Код',
-	'select_source_input'=>'Заданий перелік',
-	'select_value1'=>'Відобразити',
-	'select_value'=>'Значення',
+	#Р”Р»СЏ SettingsSelectLoad.php
+	'select_source_code'=>'РљРѕРґ',
+	'select_source_input'=>'Р—Р°РґР°РЅРёР№ РїРµСЂРµР»С–Рє',
+	'select_value1'=>'Р’С–РґРѕР±СЂР°Р·РёС‚Рё',
+	'select_value'=>'Р—РЅР°С‡РµРЅРЅСЏ',
 );

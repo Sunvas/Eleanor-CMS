@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -39,7 +39,7 @@ $Eleanor->sp=array(
 		},
 		'bypost'=>&$Eleanor->sp_post,
 		'options'=>array(
-			'htmlsafe'=>false,#Òîëüêî äëÿ òåêñòîâûõ äàííûõ
+			'htmlsafe'=>false,#Ğ¢Ğ¾Ğ»ÑŒĞºĞ¾ Ğ´Ğ»Ñ Ñ‚ĞµĞºÑÑ‚Ğ¾Ğ²Ñ‹Ñ… Ğ´Ğ°Ğ½Ğ½Ñ‹Ñ…
 		),
 	),
 	'file'=>array(
@@ -49,7 +49,7 @@ $Eleanor->sp=array(
 		'imp'=>true,
 		'bypost'=>&$Eleanor->sp_post,
 		'options'=>array(
-			'htmlsafe'=>false,#Òîëüêî äëÿ òåêñòîâûõ äàííûõ
+			'htmlsafe'=>false,#Ğ¢Ğ¾Ğ»ÑŒĞºĞ¾ Ğ´Ğ»Ñ Ñ‚ĞµĞºÑÑ‚Ğ¾Ğ²Ñ‹Ñ… Ğ´Ğ°Ğ½Ğ½Ñ‹Ñ…
 		),
 	),
 	'login'=>array(
@@ -71,7 +71,7 @@ $Eleanor->sp=array(
 				$Dir->close();
 				return$ret;
 			},
-			'htmlsafe'=>false,#Òîëüêî äëÿ òåêñòîâûõ äàííûõ
+			'htmlsafe'=>false,#Ğ¢Ğ¾Ğ»ÑŒĞºĞ¾ Ğ´Ğ»Ñ Ñ‚ĞµĞºÑÑ‚Ğ¾Ğ²Ñ‹Ñ… Ğ´Ğ°Ğ½Ğ½Ñ‹Ñ…
 		),
 	),
 	'protected'=>array(

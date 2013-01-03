@@ -1,7 +1,7 @@
 <?php
 return array(
-	#Для Classes/AdminCL.php
-	'add'=>'Додати слово',
-	'not_found'=>'Слова не знайдені',
-	'to_pages'=>'На сторінку: %s',
+	#Р”Р»СЏ Classes/AdminCL.php
+	'add'=>'Р”РѕРґР°С‚Рё СЃР»РѕРІРѕ',
+	'not_found'=>'РЎР»РѕРІР° РЅРµ Р·РЅР°Р№РґРµРЅС–',
+	'to_pages'=>'РќР° СЃС‚РѕСЂС–РЅРєСѓ: %s',
 );

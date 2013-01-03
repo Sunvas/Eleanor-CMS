@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -12,18 +12,18 @@
 class Categories_Manager extends Categories
 {
 	public
-		$pp='c_',#Префикс всех параметров динамических ссылок, генерируемых данным классом
-		$table,#Имя основной таблицы категорий
-		$template='CategoriesManager',#Название класса оформления
-		$ondelete,#Callback функции, вызывамая при удалении категории, первым параметром передается массив всех удалямых категорий
-		$post=false,#Флаг bypost контролов
-		$controls=false,#Контролы категорий
-		$Language;#Языковой объект
+		$pp='c_',#РџСЂРµС„РёРєСЃ РІСЃРµС… РїР°СЂР°РјРµС‚СЂРѕРІ РґРёРЅР°РјРёС‡РµСЃРєРёС… СЃСЃС‹Р»РѕРє, РіРµРЅРµСЂРёСЂСѓРµРјС‹С… РґР°РЅРЅС‹Рј РєР»Р°СЃСЃРѕРј
+		$table,#РРјСЏ РѕСЃРЅРѕРІРЅРѕР№ С‚Р°Р±Р»РёС†С‹ РєР°С‚РµРіРѕСЂРёР№
+		$template='CategoriesManager',#РќР°Р·РІР°РЅРёРµ РєР»Р°СЃСЃР° РѕС„РѕСЂРјР»РµРЅРёСЏ
+		$ondelete,#Callback С„СѓРЅРєС†РёРё, РІС‹Р·С‹РІР°РјР°СЏ РїСЂРё СѓРґР°Р»РµРЅРёРё РєР°С‚РµРіРѕСЂРёРё, РїРµСЂРІС‹Рј РїР°СЂР°РјРµС‚СЂРѕРј РїРµСЂРµРґР°РµС‚СЃСЏ РјР°СЃСЃРёРІ РІСЃРµС… СѓРґР°Р»СЏРјС‹С… РєР°С‚РµРіРѕСЂРёР№
+		$post=false,#Р¤Р»Р°Рі bypost РєРѕРЅС‚СЂРѕР»РѕРІ
+		$controls=false,#РљРѕРЅС‚СЂРѕР»С‹ РєР°С‚РµРіРѕСЂРёР№
+		$Language;#РЇР·С‹РєРѕРІРѕР№ РѕР±СЉРµРєС‚
 
 	/**
-	 * Конструктор менеджера категорий
+	 * РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РјРµРЅРµРґР¶РµСЂР° РєР°С‚РµРіРѕСЂРёР№
 	 *
-	 * @param string $l Путь к языковому файлу
+	 * @param string $l РџСѓС‚СЊ Рє СЏР·С‹РєРѕРІРѕРјСѓ С„Р°Р№Р»Сѓ
 	 */
 	public function __construct($l='categories_manager-*.php')
 	{
@@ -32,7 +32,7 @@ class Categories_Manager extends Categories
 	}
 
 	/**
-	 * Показ содержимого менеджера категорий
+	 * РџРѕРєР°Р· СЃРѕРґРµСЂР¶РёРјРѕРіРѕ РјРµРЅРµРґР¶РµСЂР° РєР°С‚РµРіРѕСЂРёР№
 	 *
 	 * @return Template
 	 */
@@ -166,12 +166,12 @@ class Categories_Manager extends Categories
 	}
 
 	/**
-	 * Получение контролов категорий по умолчанию
+	 * РџРѕР»СѓС‡РµРЅРёРµ РєРѕРЅС‚СЂРѕР»РѕРІ РєР°С‚РµРіРѕСЂРёР№ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	 *
-	 * @return array Массив контролов
+	 * @return array РњР°СЃСЃРёРІ РєРѕРЅС‚СЂРѕР»РѕРІ
 	 */
 	public function Controls()
-	{		$THIS=$this;#PHP 5.4 Убрать этот костыль
+	{		$THIS=$this;#PHP 5.4 РЈР±СЂР°С‚СЊ СЌС‚РѕС‚ РєРѕСЃС‚С‹Р»СЊ
 		return array(
 			'parent'=>array(
 				'title'=>$this->Language['parent'],
@@ -347,7 +347,7 @@ class Categories_Manager extends Categories
 	}
 
 	/**
-	 * Получение списка всех категорий
+	 * РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РІСЃРµС… РєР°С‚РµРіРѕСЂРёР№
 	 *
 	 * @return Template
 	 */
@@ -439,7 +439,7 @@ class Categories_Manager extends Categories
 			}
 		}
 
-		$THIS=$this;#PHP 5.4 убрать костыль!
+		$THIS=$this;#PHP 5.4 СѓР±СЂР°С‚СЊ РєРѕСЃС‚С‹Р»СЊ!
 		$links=array(
 			'sort_title'=>$El->Url->Construct(array_merge($qs,array($this->pp.'sort'=>'title',$this->pp.'so'=>$qs['sort']=='title' && $qs['so']=='asc' ? 'desc' : 'asc'))),
 			'sort_pos'=>$El->Url->Construct(array_merge($qs,array($this->pp.'sort'=>'pos',$this->pp.'so'=>$qs['sort']=='pos' && $qs['so']=='asc' ? 'desc' : 'asc'))),
@@ -453,7 +453,7 @@ class Categories_Manager extends Categories
 	}
 
 	/**
-	 * Получение формы правки категории
+	 * РџРѕР»СѓС‡РµРЅРёРµ С„РѕСЂРјС‹ РїСЂР°РІРєРё РєР°С‚РµРіРѕСЂРёРё
 	 *
 	 * @return Template
 	 */
@@ -554,7 +554,7 @@ class Categories_Manager extends Categories
 	}
 
 	/**
-	 * Сохранение категории
+	 * РЎРѕС…СЂР°РЅРµРЅРёРµ РєР°С‚РµРіРѕСЂРёРё
 	 */
 	protected function Save($id,$redir=true)
 	{
@@ -653,7 +653,7 @@ class Categories_Manager extends Categories
 			Eleanor::$Db->Update($this->table,$values,'id='.$id.' LIMIT 1');
 			Eleanor::$Db->Delete($this->table.'_l','`id`='.$id.' AND `language`'.Eleanor::$Db->In($langs,true));
 
-			#Помним, что в таблице категорий могут быть еще и сторонние поля, как, например на форуме (количество сообщений, количество тем). Эти поля нужно сохранить.
+			#РџРѕРјРЅРёРј, С‡С‚Рѕ РІ С‚Р°Р±Р»РёС†Рµ РєР°С‚РµРіРѕСЂРёР№ РјРѕРіСѓС‚ Р±С‹С‚СЊ РµС‰Рµ Рё СЃС‚РѕСЂРѕРЅРЅРёРµ РїРѕР»СЏ, РєР°Рє, РЅР°РїСЂРёРјРµСЂ РЅР° С„РѕСЂСѓРјРµ (РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРѕРѕР±С‰РµРЅРёР№, РєРѕР»РёС‡РµСЃС‚РІРѕ С‚РµРј). Р­С‚Рё РїРѕР»СЏ РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ.
 			$othf=array();
 			$R=Eleanor::$Db->Query('SELECT * FROM `'.$this->table.'_l` WHERE `id`='.$id);
 			while($a=$R->fetch_assoc())
@@ -705,9 +705,9 @@ class Categories_Manager extends Categories
 	}
 
 	/**
-	 * Оптимизация положений категорий, все позиции приводятся к корректному виду
+	 * РћРїС‚РёРјРёР·Р°С†РёСЏ РїРѕР»РѕР¶РµРЅРёР№ РєР°С‚РµРіРѕСЂРёР№, РІСЃРµ РїРѕР·РёС†РёРё РїСЂРёРІРѕРґСЏС‚СЃСЏ Рє РєРѕСЂСЂРµРєС‚РЅРѕРјСѓ РІРёРґСѓ
 	 *
-	 * @param string $p Идентификатор родителей категории (parents)
+	 * @param string $p РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЂРѕРґРёС‚РµР»РµР№ РєР°С‚РµРіРѕСЂРёРё (parents)
 	 */
 	public function Optimize($p='')
 	{

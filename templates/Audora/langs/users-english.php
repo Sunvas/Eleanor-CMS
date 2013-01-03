@@ -10,7 +10,7 @@ return array(
 	'now_onp'=>'Now on page',
 	'f'=>'Referrer',
 	'browser'=>'Browser',
-	'service'=>'Ñåðâèñ',
+	'service'=>'Ð¡ÐµÑ€Ð²Ð¸Ñ',
 	'c'=>'Supporting charsets',
 	'e'=>'Supported data types',
 	'ips'=>'Addons IPs',

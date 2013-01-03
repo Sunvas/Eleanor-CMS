@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,11 +11,11 @@
 
 class Modules
 {	/**
-	 * Запуск модуля
+	 * Р—Р°РїСѓСЃРє РјРѕРґСѓР»СЏ
 	 *
-	 * @param string $p Путь к каталогу модуля
-	 * @param bool $us От "UseService", флаг указывающий на необходимость добавления к $p каталога с именем сервиса
-	 * @param string $f Файл, который будет проинклужен
+	 * @param string $p РџСѓС‚СЊ Рє РєР°С‚Р°Р»РѕРіСѓ РјРѕРґСѓР»СЏ
+	 * @param bool $us РћС‚ "UseService", С„Р»Р°Рі СѓРєР°Р·С‹РІР°СЋС‰РёР№ РЅР° РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚СЊ РґРѕР±Р°РІР»РµРЅРёСЏ Рє $p РєР°С‚Р°Р»РѕРіР° СЃ РёРјРµРЅРµРј СЃРµСЂРІРёСЃР°
+	 * @param string $f Р¤Р°Р№Р», РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ РїСЂРѕРёРЅРєР»СѓР¶РµРЅ
 	 */	public static function Load($p,$us=true,$f='index.php')
 	{		Eleanor::$Template->paths[__class__]=$p.'Template/';
 		if($us)
@@ -33,7 +33,7 @@ class Modules
 	}
 
 	/**
-	 * Перехват фатальной ошибки модуля, например PARSE_ERROR
+	 * РџРµСЂРµС…РІР°С‚ С„Р°С‚Р°Р»СЊРЅРѕР№ РѕС€РёР±РєРё РјРѕРґСѓР»СЏ, РЅР°РїСЂРёРјРµСЂ PARSE_ERROR
 	 */
 	public static function FatalHandler()
 	{		$e=error_get_last();
@@ -50,11 +50,11 @@ class Modules
 	}
 
 	/**
-	 * Получение кэша имен модулей и секций
+	 * РџРѕР»СѓС‡РµРЅРёРµ РєСЌС€Р° РёРјРµРЅ РјРѕРґСѓР»РµР№ Рё СЃРµРєС†РёР№
 	 *
-	 * @param string|FALSE $s Название сервиса системы
-	 * @param string|FALSE $l Язык
-	 * @param bool Флаг регенерации кэша
+	 * @param string|FALSE $s РќР°Р·РІР°РЅРёРµ СЃРµСЂРІРёСЃР° СЃРёСЃС‚РµРјС‹
+	 * @param string|FALSE $l РЇР·С‹Рє
+	 * @param bool Р¤Р»Р°Рі СЂРµРіРµРЅРµСЂР°С†РёРё РєСЌС€Р°
 	 */
 	public static function GetCache($s=false,$l=false,$force=false)
 	{

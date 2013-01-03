@@ -6,7 +6,7 @@ return array(
 	'to'=>'Link text',
 	'to_'=>'HTML is allowed! If you do not fill in the link text will be the original word.',
 	'reg'=>'Regular expression?',
-	'reg_'=>'Regular expression must return 3 groups to replate. Çàì³íè áóäå ïğîõîäèòè ïî øàáëîíó \1&lt;a&gt;\2&lt;/a&gt;',
+	'reg_'=>'Regular expression must return 3 groups to replate. Ğ—Ğ°Ğ¼Ñ–Ğ½Ğ¸ Ğ±ÑƒĞ´Ğµ Ğ¿Ñ€Ğ¾Ñ…Ğ¾Ğ´Ğ¸Ñ‚Ğ¸ Ğ¿Ğ¾ ÑˆĞ°Ğ±Ğ»Ğ¾Ğ½Ñƒ \1&lt;a&gt;\2&lt;/a&gt;',
 	'rege'=>'Regular expression was entered with error!',
 	'url'=>'Link address',
 	'url_'=>'&lt;a href=',

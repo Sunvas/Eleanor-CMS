@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -86,7 +86,7 @@ class AccountRegister
 		$sname=htmlspecialchars($values['name'],ELENT,CHARSET);
 		switch(Eleanor::$vars['reg_type'])
 		{
-			#Àêòèâàöèÿ íå òðåáóåòñÿ
+			#ÐÐºÑ‚Ð¸Ð²Ð°Ñ†Ð¸Ñ Ð½Ðµ Ñ‚Ñ€ÐµÐ±ÑƒÐµÑ‚ÑÑ
 			case'1':
 				$repl=array(
 					'site'=>Eleanor::$vars['site_name'],
@@ -103,7 +103,7 @@ class AccountRegister
 				$GLOBALS['title'][]=$lang['reg_fin'];
 				return Eleanor::$Template->AcSuccessReg();
 			break;
-			#Àêòèâàöèÿ ïî ìûëó
+			#ÐÐºÑ‚Ð¸Ð²Ð°Ñ†Ð¸Ñ Ð¿Ð¾ Ð¼Ñ‹Ð»Ñƒ
 			case'2':
 				$actid=Eleanor::$Db->Insert(P.
 					'confirmation',
@@ -133,7 +133,7 @@ class AccountRegister
 				$GLOBALS['title'][]=$lang['wait_act'];
 				return Eleanor::$Template->AcWaitActivate(false);
 			break;
-			#Àêòèâàöèÿ àäìèíîì
+			#ÐÐºÑ‚Ð¸Ð²Ð°Ñ†Ð¸Ñ Ð°Ð´Ð¼Ð¸Ð½Ð¾Ð¼
 			case'3':
 				$GLOBALS['title'][]=$lang['wait_act'];
 				return Eleanor::$Template->AcWaitActivate(true);

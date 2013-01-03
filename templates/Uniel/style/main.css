@@ -1,5 +1,5 @@
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -24,7 +24,7 @@ body { color: #000; background-color: #FFFFFF; font-size: 0.70em; font-style: no
 .listing li.listing { padding: 3px 4px; border: 1px solid #E0E0E0; margin-bottom: 2px; }
 .listing li.listing:hover { background-color: #f9f9f9; }
 
-/*НАСТРОЙКА ФОНА*/
+/*РќРђРЎРўР РћР™РљРђ Р¤РћРќРђ*/
 .page_bg {
 	text-align: center;
 	background-color: #f2f2f2;
@@ -61,8 +61,8 @@ ol {
 	margin-left: 2.2em;
 }
 
-/*===== ОБЩЕЕ ОФОРМЛЕНИЕ =====*/
-/*ОСНОВНОЙ БЛОК ШАБЛОНА*/
+/*===== РћР‘Р©Р•Р• РћР¤РћР РњР›Р•РќРР• =====*/
+/*РћРЎРќРћР’РќРћР™ Р‘Р›РћРљ РЁРђР‘Р›РћРќРђ*/
 .wrapper {
 	margin: auto;
 	width: 981px;
@@ -75,24 +75,24 @@ ol {
 .dleft, .dright { background-position: left; background-repeat: repeat-y; background-color: transparent; }
 .dright { background-position: right; }
 
-/*headerboxic  - Настройка шапки где расположен логотип и баннер*/
-#headerboxic, #headerboxic .dleft, #headerboxic .dright { height: 71px; } /*Высота*/
+/*headerboxic  - РќР°СЃС‚СЂРѕР№РєР° С€Р°РїРєРё РіРґРµ СЂР°СЃРїРѕР»РѕР¶РµРЅ Р»РѕРіРѕС‚РёРї Рё Р±Р°РЅРЅРµСЂ*/
+#headerboxic, #headerboxic .dleft, #headerboxic .dright { height: 71px; } /*Р’С‹СЃРѕС‚Р°*/
 #headerboxic { margin-bottom: 3px; background: #ffffff url("../images/eleanortemplate_bg_xaxa.png") repeat-x left -71px; position: relative; }
 #headerboxic .dleft { padding-left: 15px; background: transparent url("../images/eleanortemplate_bg_xaxa.png") repeat-y left 0; }
 #headerboxic .dright { padding-right: 5px; background: transparent url("../images/eleanortemplate_bg_xaxa.png") repeat-y right -142px; }
 
-.logotype {	float: left; position: relative; top: 8px; } /*НАСТРОЙКА ЛОГОТИПА*/
+.logotype {	float: left; position: relative; top: 8px; } /*РќРђРЎРўР РћР™РљРђ Р›РћР“РћРўРРџРђ*/
 .headbanner { float: right; position: relative; top: 5px; }
 .headbanner img { width: 468px; height: 60px; }
 
 
-/*menuhead - Настройка верхнего меню СТРОКА 1*/
+/*menuhead - РќР°СЃС‚СЂРѕР№РєР° РІРµСЂС…РЅРµРіРѕ РјРµРЅСЋ РЎРўР РћРљРђ 1*/
 #menuhead, #menuhead .dleft, #menuhead .dright { height: 41px; }
 #menuhead { margin-bottom: 3px; background: #4c4c4c url("../images/eleanortemplate_bg_xaxa.png") repeat-x left -254px; }
 #menuhead .dleft { padding-left: 12px; background: transparent url("../images/eleanortemplate_bg_xaxa.png") repeat-y left -213px; }
 #menuhead .dright { padding-right: 12px; background: transparent url("../images/eleanortemplate_bg_xaxa.png") repeat-y right -295px; }
 
-/*container - содержательная центральная часть*/
+/*container - СЃРѕРґРµСЂР¶Р°С‚РµР»СЊРЅР°СЏ С†РµРЅС‚СЂР°Р»СЊРЅР°СЏ С‡Р°СЃС‚СЊ*/
 .container { }
 
 .mainbox {
@@ -110,7 +110,7 @@ ol {
 	width: 760px; height: auto;
 }
 
-/*leftcol - левая колонка для блоков*/
+/*leftcol - Р»РµРІР°СЏ РєРѕР»РѕРЅРєР° РґР»СЏ Р±Р»РѕРєРѕРІ*/
 #leftcol {
 	float: left;
 	width: 218px; height: auto;
@@ -123,8 +123,8 @@ ol {
 
 #rightcol a { color: #aad8ed; }
 
-/*footer - нижняя часть*/
-#footmenu, #footmenu .dleft, #footmenu .dright { height: 24px; } /*Высота*/
+/*footer - РЅРёР¶РЅСЏСЏ С‡Р°СЃС‚СЊ*/
+#footmenu, #footmenu .dleft, #footmenu .dright { height: 24px; } /*Р’С‹СЃРѕС‚Р°*/
 #footmenu { margin-bottom: 3px; background: #4c4c4c url("../images/eleanortemplate_bg_xaxa.png") repeat-x left -360px; }
 #footmenu .dleft { padding-left: 12px; background: transparent url("../images/eleanortemplate_bg_xaxa.png") repeat-y left -336px; }
 #footmenu .dright { padding-right: 9px; background: transparent url("../images/eleanortemplate_bg_xaxa.png") repeat-y right -384px; }
@@ -141,14 +141,14 @@ a.top-top:hover {
 	background-position: left bottom;
 }
 
-/*footer - нижняя часть*/
-#footer, #footer .dleft, #footer .dright { height: 50px; } /*Высота*/
+/*footer - РЅРёР¶РЅСЏСЏ С‡Р°СЃС‚СЊ*/
+#footer, #footer .dleft, #footer .dright { height: 50px; } /*Р’С‹СЃРѕС‚Р°*/
 #footer { margin-bottom: 6px; background: #4991c3 url("../images/eleanortemplate_bg_xaxa.png") repeat-x left -458px; }
 #footer .dleft { padding-left: 25px; background: transparent url("../images/eleanortemplate_bg_xaxa.png") repeat-y left -408px; }
 #footer .dright { padding-right: 9px; background: transparent url("../images/eleanortemplate_bg_xaxa.png") repeat-y right -508px; }
 
 
-/*copyright - Копирайты*/
+/*copyright - РљРѕРїРёСЂР°Р№С‚С‹*/
 .copyright {
 	float: left;
 	color: #595959;
@@ -157,7 +157,7 @@ a.top-top:hover {
 
 .copyright a { color: #595959; }
 
-/*===СЧЕТЧИКИ===*/
+/*===РЎР§Р•РўР§РРљР===*/
 div.count {
 	float: right;
 	display: inline;
@@ -264,22 +264,22 @@ button.button:hover, input.button:hover { color: #4c4c4c; background: #fff; }
 /*upload image*/
 .screenblock { color: #757575; vertical-align: middle; text-align: center; display: table-cell; background-color: #ebe9e5; border: 1px solid #c9c7c3; }
 
-/*Вкладка заполнения других языков*/
+/*Р’РєР»Р°РґРєР° Р·Р°РїРѕР»РЅРµРЅРёСЏ РґСЂСѓРіРёС… СЏР·С‹РєРѕРІ*/
 ul.editlang, ul.editlang li { list-style: none; padding: 0; margin: 0; }
 .ol_heading { background: #fff url("../images/submitline.png") repeat-x 0 0; border-bottom: 1px solid #d6d6d6; border-top: 1px solid #ededed; font-weight: bold; padding: 5px; display: block; }
 .ol_heading img { float: left; margin-right: 8px; }
 
-/*в настройках*/
+/*РІ РЅР°СЃС‚СЂРѕР№РєР°С…*/
 .langtabcont { float: left; padding: 4px; border: 1px solid #dbddde; }
 .langtabs { clear: both; }
 .langtabs img { width: 20px; height: 16px; padding: 3px; border: 0 solid #dbddde; margin-top: -1px; }
 .langtabs .selected img { border-width: 0 1px 1px 1px; background-color: #fff; }
 
 /* tools.css */
-/*menuhead - Верхнее основное меню*/
+/*menuhead - Р’РµСЂС…РЅРµРµ РѕСЃРЅРѕРІРЅРѕРµ РјРµРЅСЋ*/
 .adminmenupanel .adminsubmenu { z-index: 999; }
 
-/*menuhead - Верхнее основное меню*/
+/*menuhead - Р’РµСЂС…РЅРµРµ РѕСЃРЅРѕРІРЅРѕРµ РјРµРЅСЋ*/
 ul.topmenu, ul.topmenu ul, ul.topmenu li, ul.blockmenu, ul.blockmenu ul, ul.blockmenu li { display: block; list-style: none; padding: 0; margin: 0; }
 ul.topmenu li, ul.blockmenu li { float: left; }
 ul.topmenu {
@@ -332,7 +332,7 @@ ul.topmenu ul a, ul.blockmenu a{
 	line-height: 20px;
 }
 
-/*footmenu - нижнее меню*/
+/*footmenu - РЅРёР¶РЅРµРµ РјРµРЅСЋ*/
 #footmenu span {
 	float: left;
 	height: 22px;
@@ -471,13 +471,13 @@ ul.topmenu ul a, ul.blockmenu a{
 	color: #fff;
 }
 
-/*baseblock - Центральный блок для основного контента - Присутствуют правые блоки*/
+/*baseblock - Р¦РµРЅС‚СЂР°Р»СЊРЅС‹Р№ Р±Р»РѕРє РґР»СЏ РѕСЃРЅРѕРІРЅРѕРіРѕ РєРѕРЅС‚РµРЅС‚Р° - РџСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‚ РїСЂР°РІС‹Рµ Р±Р»РѕРєРё*/
 #maincolR .baseblock { width: 539px; margin-bottom: 3px; background: #fcfcfc url("../images/baseblock.png") repeat-y -539px top; }
 #maincolR .baseblock .dbottom { background: transparent url("../images/baseblock.png") no-repeat -1078px bottom; }
 #maincolR .baseblock .dtop { background: transparent url("../images/baseblock.png") no-repeat 0 top; }
 #maincolR .baseblock .dcont { padding: 7px 1px 8px 1px; }
 
-/*baseblock - Центральный блок для основного контента*/
+/*baseblock - Р¦РµРЅС‚СЂР°Р»СЊРЅС‹Р№ Р±Р»РѕРє РґР»СЏ РѕСЃРЅРѕРІРЅРѕРіРѕ РєРѕРЅС‚РµРЅС‚Р°*/
 #maincol .baseblock { width: 760px; margin-bottom: 3px; background: #fcfcfc url("../images/baseblock2.png") repeat-y -760px top; }
 #maincol .baseblock .dbottom { background: transparent url("../images/baseblock2.png") no-repeat -1520px bottom; }
 #maincol .baseblock .dtop { background: transparent url("../images/baseblock2.png") no-repeat 0 top; }
@@ -501,7 +501,7 @@ ul.topmenu ul a, ul.blockmenu a{
 	background: transparent url("../images/quick_menu.png") no-repeat right bottom;
 }
 
-/*Блок категорий*/
+/*Р‘Р»РѕРє РєР°С‚РµРіРѕСЂРёР№*/
 ul.blockcategories		{list-style: none; padding: 0; margin: 0; }
 ul.blockcategories li	{ background: none; padding: 0; margin: 0; }
 ul.blockcategories li {
@@ -518,7 +518,7 @@ ul.blockcategories li.subcat ul li a { color: #828282; }
 ul.blockcategories li a:hover { }
 
 
-/*blocksites - блок топ сайты*/
+/*blocksites - Р±Р»РѕРє С‚РѕРї СЃР°Р№С‚С‹*/
 .blocktype1 ul.navs li.button {
 	text-align: center;
 	padding-top: 5px;
@@ -541,7 +541,7 @@ ul.blockcategories li a:hover { }
 .base { padding-bottom: 25px; }
 .binner { padding: 0 18px;}
 
-/*ЗАГОЛОВОК ЦЕНТРАЛЬНЫХ STORY*/
+/*Р—РђР“РћР›РћР’РћРљ Р¦Р•РќРўР РђР›Р¬РќР«РҐ STORY*/
 .heading { background: transparent url("../images/moduletitlearrow.gif") no-repeat left 9px; }
 .heading .binner { padding-bottom: 5px; }
 
@@ -629,7 +629,7 @@ span.argmore a {
 	font-weight: bold;
 }
 
-/*СОДЕРЖИМОЕ*/
+/*РЎРћР”Р•Р Р–РРњРћР•*/
 .maincont {
 	background: transparent url("../images/basegrad.png") repeat-x left top;
 	padding: 0 0 7px 0;
@@ -669,7 +669,7 @@ span.argmore a {
 .small { color: #787878; font-size: 10px; font-weight: normal;}
 .small td { color: #787878; font-size: 10px; font-weight: normal;}
 
-/*code подсветка кода!*/
+/*code РїРѕРґСЃРІРµС‚РєР° РєРѕРґР°!*/
 div.code {
 	width:100%;
 	overflow:auto;
@@ -772,7 +772,7 @@ div.numbers a:hover {
 	text-decoration: none;
 }
 
-/*рейтинг*/
+/*СЂРµР№С‚РёРЅРі*/
 .rate {
 	cursor: pointer;
 	float: right;
@@ -786,7 +786,7 @@ div.numbers a:hover {
 .rate div.active { background: transparent url("../images/rating.gif") no-repeat left -15px; }
 .rate div.noactive { background: transparent url("../images/rating.gif") no-repeat left 0; }
 
-/*КАЛЕНДАРЬ*/
+/*РљРђР›Р•РќР”РђР Р¬*/
 .blockcalendar hr { clear: both; }
 .month span.selyears { float: right; padding-top: 3px; }
 .month span.selyears a { padding-left: 2px; }
@@ -827,7 +827,7 @@ td.vday { color: #ff6600; }
 
 .blockcalendar td.today { color: #ffa800; background-color: #653718; }
 
-/*Переключение месяцов*/
+/*РџРµСЂРµРєР»СЋС‡РµРЅРёРµ РјРµСЃСЏС†РѕРІ*/
 .blockcalendar .arrows { height: 30px; }
 .blockcalendar .arrows hr { border-color: #1e1e1e; }
 .blockcalendar .arrows a { padding: 4px; font-size: 10px; font-weight: bold; }
@@ -934,7 +934,7 @@ tr.infolabel td {
 
 .subheading { font-size: 1em; margin-bottom: 1em; text-transform: uppercase; }
 
-/*Загрузка*/
+/*Р—Р°РіСЂСѓР·РєР°*/
 #loading {
 	position:fixed;
 	display:none;
@@ -1005,11 +1005,11 @@ a.button	{
 
 a.button:hover	{ background: #ffb800 url("../images/buttons_type1.png") no-repeat left -28px; }
 
-/*Перенос смайлов */
+/*РџРµСЂРµРЅРѕСЃ СЃРјР°Р№Р»РѕРІ */
 .smile { display:inline-block; }
 
 
-/*ОШИБКИ*/
+/*РћРЁРР‘РљР*/
 .warning { padding: 8px; text-align: left; margin: auto; margin-bottom: 5px;
 	-o-border-radius:4px;
 	-moz-border-radius:4px;
@@ -1026,7 +1026,7 @@ a.button:hover	{ background: #ffb800 url("../images/buttons_type1.png") no-repea
 .warning .repair { font-weight:bold; text-align:right; border-top:1px gray dashed; }
 
 
-/*Галерея аватаров*/
+/*Р“Р°Р»РµСЂРµСЏ Р°РІР°С‚Р°СЂРѕРІ*/
 .galleryavatars { text-align:center; }
 .galleryavatars a {
 	float: left;
@@ -1058,7 +1058,7 @@ a.button:hover	{ background: #ffb800 url("../images/buttons_type1.png") no-repea
 .galleryavatars a:hover b { background-color: #ececec; }
 .galleryavatars a:hover b span { color: #5b5b5b; }
 
-/*Шапка при уменьшении изображения*/
+/*РЁР°РїРєР° РїСЂРё СѓРјРµРЅСЊС€РµРЅРёРё РёР·РѕР±СЂР°Р¶РµРЅРёСЏ*/
 .resized-image-header {
 	position: absolute;
 	top: 0;

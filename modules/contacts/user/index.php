@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -26,7 +26,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 	$whom=Eleanor::FilterLangValues($config['whom']);
 	$errors=array();
 	do
-	{		#Защита от F5
+	{		#Р—Р°С‰РёС‚Р° РѕС‚ F5
 		if($values['sess'])
 			Eleanor::StartSession($values['sess']);
 		if(empty($_SESSION['can']))
@@ -51,7 +51,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 
 		$canupload=Eleanor::$Permissions->MaxUpload();
 		if($canupload===true)
-			$canupload=5*1024*1024;#5 Mb жесткий предел
+			$canupload=5*1024*1024;#5 Mb Р¶РµСЃС‚РєРёР№ РїСЂРµРґРµР»
 
 		$files=array();
 		if($canupload and isset($_FILES['file']) and is_uploaded_file($_FILES['file']['tmp_name']))
@@ -113,7 +113,7 @@ function Contacts($config,$errors=array())
 	$Eleanor->Editor->ownbb=$Eleanor->Editor->smiles=false;
 
 	if($canupload===true)
-		$canupload=5*1024*1024;#5 Mb жесткий предел
+		$canupload=5*1024*1024;#5 Mb Р¶РµСЃС‚РєРёР№ РїСЂРµРґРµР»
 
 	Eleanor::StartSession($values['sess']);
 	$_SESSION['can']=true;

@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,7 +11,7 @@
 define('CMS',true);
 require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
-Eleanor::$service='upload';#ID сервиса
+Eleanor::$service='upload';#ID СЃРµСЂРІРёСЃР°
 Eleanor::InitService();
 Eleanor::$Language->queue['main'][]='langs/main-*.php';
 Eleanor::LoadOptions('site');
@@ -20,7 +20,7 @@ ApplyLang();
 if(Eleanor::$Permissions->IsBanned())
 	throw new EE(Eleanor::$Login->GetUserValue('ban_explain'),EE::USER,array('ban'=>'group'));
 
-#Флеш любит все переводить в UTF-8
+#Р¤Р»РµС€ Р»СЋР±РёС‚ РІСЃРµ РїРµСЂРµРІРѕРґРёС‚СЊ РІ UTF-8
 if(isset($_REQUEST['flashdecode']) and CHARSET!='utf-8')
 {
 	$d=is_array($_REQUEST['flashdecode']) ? $_REQUEST['flashdecode'] : explode(',',(string)$_REQUEST['flashdecode']);
@@ -70,7 +70,7 @@ elseif(isset($_POST['direct']) and is_file($f=Eleanor::$root.'addons/direct/'.pr
 else
 	SomeUpload();
 
-#Предопределенные функции.
+#РџСЂРµРґРѕРїСЂРµРґРµР»РµРЅРЅС‹Рµ С„СѓРЅРєС†РёРё.
 function GoAway($info=false,$code=301,$hash='')
 {global$Eleanor;
 	if(!$ref=getenv('HTTP_REFERER') or $ref==PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'] or $info)
@@ -190,7 +190,7 @@ function ApplyLang($gl=false)
 		Eleanor::$lvars=array();
 }
 
-#Функция "Будь как", делает сервис другим. Полностью :)
+#Р¤СѓРЅРєС†РёСЏ "Р‘СѓРґСЊ РєР°Рє", РґРµР»Р°РµС‚ СЃРµСЂРІРёСЃ РґСЂСѓРіРёРј. РџРѕР»РЅРѕСЃС‚СЊСЋ :)
 function BeAs($n)
 {global$Eleanor;
 	if(Eleanor::$service==$n or !isset(Eleanor::$services[$n]))

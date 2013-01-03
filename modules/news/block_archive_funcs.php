@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -39,7 +39,7 @@ function ArchiveDays($y,$m,$conf,$mname,$dates=false)
 				$data+=$a;
 		}
 		if($data['min'])
-		{			#Ïîñêîëüêó ìû ìîæåì çàïðîñèòü àâãóñò 2012ãî, íî ìèíèìàëüíàÿ íîâîñòü äàòèðîâàíà ëèøü 20ì àâãóñòà, ñáðàñûâàåì "ìèíèìàëüíûé" äåíü ñ 20ãî íà 1é
+		{			#ÐŸÐ¾ÑÐºÐ¾Ð»ÑŒÐºÑƒ Ð¼Ñ‹ Ð¼Ð¾Ð¶ÐµÐ¼ Ð·Ð°Ð¿Ñ€Ð¾ÑÐ¸Ñ‚ÑŒ Ð°Ð²Ð³ÑƒÑÑ‚ 2012Ð³Ð¾, Ð½Ð¾ Ð¼Ð¸Ð½Ð¸Ð¼Ð°Ð»ÑŒÐ½Ð°Ñ Ð½Ð¾Ð²Ð¾ÑÑ‚ÑŒ Ð´Ð°Ñ‚Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð° Ð»Ð¸ÑˆÑŒ 20Ð¼ Ð°Ð²Ð³ÑƒÑÑ‚Ð°, ÑÐ±Ñ€Ð°ÑÑ‹Ð²Ð°ÐµÐ¼ "Ð¼Ð¸Ð½Ð¸Ð¼Ð°Ð»ÑŒÐ½Ñ‹Ð¹" Ð´ÐµÐ½ÑŒ Ñ 20Ð³Ð¾ Ð½Ð° 1Ð¹
 			if(!is_int($data['min']))
 				$data['min']=strtotime(substr($data['min'],0,8).'01');
 

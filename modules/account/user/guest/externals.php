@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,7 +10,7 @@
 */
 class AccountExternals
 {
-	#Âíèìàíèå! Äëÿ äîñòèæåíèÿ íàèáîëüøå áåçîïàñíîñòè, ïîñåòèòå http://loginza.ru/ è ïðåîáðåòèòå ñâîè ID è SECRET
+	#Ð’Ð½Ð¸Ð¼Ð°Ð½Ð¸Ðµ! Ð”Ð»Ñ Ð´Ð¾ÑÑ‚Ð¸Ð¶ÐµÐ½Ð¸Ñ Ð½Ð°Ð¸Ð±Ð¾Ð»ÑŒÑˆÐµ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚Ð¸, Ð¿Ð¾ÑÐµÑ‚Ð¸Ñ‚Ðµ http://loginza.ru/ Ð¸ Ð¿Ñ€ÐµÐ¾Ð±Ñ€ÐµÑ‚Ð¸Ñ‚Ðµ ÑÐ²Ð¾Ð¸ ID Ð¸ SECRET
 	const
 		ID=0,
 		SECRET='';
@@ -121,7 +121,7 @@ class AccountExternals
 				$values['name']=htmlspecialchars($values['name'],ELENT,CHARSET);
 				switch(Eleanor::$vars['reg_type'])
 				{
-					#Àêòèâàöèÿ íå òðåáóåòñÿ
+					#ÐÐºÑ‚Ð¸Ð²Ð°Ñ†Ð¸Ñ Ð½Ðµ Ñ‚Ñ€ÐµÐ±ÑƒÐµÑ‚ÑÑ
 					case'1':
 						$repl=array(
 							'site'=>Eleanor::$vars['site_name'],
@@ -138,7 +138,7 @@ class AccountExternals
 						$GLOBALS['title'][]=$lang['reg_fin'];
 						return Eleanor::$Template->AcSuccessReg();
 					break;
-					#Àêòèâàöèÿ ïî ìûëó
+					#ÐÐºÑ‚Ð¸Ð²Ð°Ñ†Ð¸Ñ Ð¿Ð¾ Ð¼Ñ‹Ð»Ñƒ
 					case'2':
 						$actid=Eleanor::$Db->Insert(P.
 							'confirmation',
@@ -168,7 +168,7 @@ class AccountExternals
 						$GLOBALS['title'][]=$lang['wait_act'];
 						return Eleanor::$Template->AcWaitActivate(false);
 					break;
-					#Àêòèâàöèÿ àäìèíîì
+					#ÐÐºÑ‚Ð¸Ð²Ð°Ñ†Ð¸Ñ Ð°Ð´Ð¼Ð¸Ð½Ð¾Ð¼
 					case'3':
 						$GLOBALS['title'][]=$lang['wait_act'];
 						return Eleanor::$Template->AcWaitActivate(true);

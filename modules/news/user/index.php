@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -14,7 +14,7 @@ global$Eleanor,$title;
 $Eleanor->module['config']=$mc=include($Eleanor->module['path'].'config.php');
 $lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$mc['n']);
 $Eleanor->Categories->Init($mc['c']);
-$Eleanor->module['etag']='';#Äîïîëíåíèå ê ETAG
+$Eleanor->module['etag']='';#Ğ”Ğ¾Ğ¿Ğ¾Ğ»Ğ½ĞµĞ½Ğ¸Ğµ Ğº ETAG
 Eleanor::LoadOptions($mc['opts']);
 
 $curls=array();
@@ -225,7 +225,7 @@ if(isset($_GET['do']))
 						sort($values['tags'],SORT_NUMERIC);
 						$query['tags']='`tags` '.($values['t']=='or' ? 'REGEXP(\',('.join('|',Eleanor::$Db->Escape($values['tags'],false)).'),\')' : 'LIKE \'%,'.join(',%,',Eleanor::$Db->Escape($values['tags'],false)).',%\'');
 						/*
-							Êàê âàğèàíò. Ìîæåò ïğèãîäèòñÿ
+							ĞšĞ°Ğº Ğ²Ğ°Ñ€Ğ¸Ğ°Ğ½Ñ‚. ĞœĞ¾Ğ¶ĞµÑ‚ Ğ¿Ñ€Ğ¸Ğ³Ğ¾Ğ´Ğ¸Ñ‚ÑÑ
 							$query['tags']=$values['t']=='or' ? ' AND `id` IN (SELECT `id` FROM `'.$mc['rt'].'` WHERE `tag`'.Eleanor::$Db->In($values['tags']).' GROUP BY `id`)' : ' AND `id` IN (SELECT `id` FROM `'.$mc['rt'].'` WHERE `tag`'.Eleanor::$Db->In($values['tags']).' GROUP BY `id` HAVING COUNT(DISTINCT `tag`)='.count($values['tags']).')';
 						*/
 					}
@@ -440,7 +440,7 @@ elseif($id or $puri)
 		$category=false;
 	if(!Eleanor::$is_bot and $a['status']==1)
 	{
-		#Íå áóäåì óâåëè÷èâàòü ñ÷åò÷èê ïğîñìîòğîâ îò ïåğåõîäîâ ïî ñòğàíèöàì íîâîñòè
+		#ĞĞµ Ğ±ÑƒĞ´ĞµĞ¼ ÑƒĞ²ĞµĞ»Ğ¸Ñ‡Ğ¸Ğ²Ğ°Ñ‚ÑŒ ÑÑ‡ĞµÑ‚Ñ‡Ğ¸Ğº Ğ¿Ñ€Ğ¾ÑĞ¼Ğ¾Ñ‚Ñ€Ğ¾Ğ² Ğ¾Ñ‚ Ğ¿ĞµÑ€ĞµÑ…Ğ¾Ğ´Ğ¾Ğ² Ğ¿Ğ¾ ÑÑ‚Ñ€Ğ°Ğ½Ğ¸Ñ†Ğ°Ğ¼ Ğ½Ğ¾Ğ²Ğ¾ÑÑ‚Ğ¸
 		$ref=getenv('HTTP_REFERER');
 		$uu=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($u,true,'');
 		$uu=htmlspecialchars_decode($uu,ELENT);
@@ -484,7 +484,7 @@ elseif($id or $puri)
 	if($a['text'])
 		$a['text']=OwnBB::Parse($a['text']);
 
-	#Ïîääåğæêà ñîöñåòåé:
+	#ĞŸĞ¾Ğ´Ğ´ĞµÑ€Ğ¶ĞºĞ° ÑĞ¾Ñ†ÑĞµÑ‚ĞµĞ¹:
 	$Lst=Eleanor::LoadListTemplate('headfoot')
 		->og('title',$a['title'])
 		->og('uri',$Eleanor->origurl)
@@ -581,7 +581,7 @@ elseif($cid or $curls)
 	$c=Eleanor::$Template->CategoryList($category,$d,$cnt,-$page,$pages,Eleanor::$vars['publ_per_page'],$links);
 	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($cu+array('page'=>array('page'=>$page==$pages ? false : $page)),true,false);
 
-	#Ïîääåğæêà ñîöñåòåé:
+	#ĞŸĞ¾Ğ´Ğ´ĞµÑ€Ğ¶ĞºĞ° ÑĞ¾Ñ†ÑĞµÑ‚ĞµĞ¹:
 	$Lst=Eleanor::LoadListTemplate('headfoot')
 		->og('title',$category['title'])
 		->og('uri',$Eleanor->origurl)

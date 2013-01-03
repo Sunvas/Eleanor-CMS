@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,7 +11,7 @@
 
 class Uploader_Ajax extends Uploader
 {	/**
-	 * Осуществление Ajax запроса
+	 * РћСЃСѓС‰РµСЃС‚РІР»РµРЅРёРµ Ajax Р·Р°РїСЂРѕСЃР°
 	 */
 	public function Process()
 	{
@@ -60,7 +60,7 @@ class Uploader_Ajax extends Uploader
 				}
 				natsort($dirs);
 				natsort($files);
-				#Превьюшки...
+				#РџСЂРµРІСЊСЋС€РєРё...
 				if($this->preview and empty($_POST['showpreviews']))
 				{
 					$oldk=-1;
@@ -275,9 +275,9 @@ class Uploader_Ajax extends Uploader
 	}
 
 	/**
-	 * Проверка корректности имени файла или каталога
+	 * РџСЂРѕРІРµСЂРєР° РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚Рё РёРјРµРЅРё С„Р°Р№Р»Р° РёР»Рё РєР°С‚Р°Р»РѕРіР°
 	 *
-	 * @param string $f Имя файла или каталога для проверки
+	 * @param string $f РРјСЏ С„Р°Р№Р»Р° РёР»Рё РєР°С‚Р°Р»РѕРіР° РґР»СЏ РїСЂРѕРІРµСЂРєРё
 	 */
 	protected static function EF($f)
 	{
@@ -285,11 +285,11 @@ class Uploader_Ajax extends Uploader
 	}
 
 	/**
-	 * Генерация относительного путь для перехода из одного каталога в другой
+	 * Р“РµРЅРµСЂР°С†РёСЏ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕРіРѕ РїСѓС‚СЊ РґР»СЏ РїРµСЂРµС…РѕРґР° РёР· РѕРґРЅРѕРіРѕ РєР°С‚Р°Р»РѕРіР° РІ РґСЂСѓРіРѕР№
 	 *
-	 * @param string $a Путь к первому каталогу
-	 * @param string $b Путь ко второму каталогу
-	 * @return string Например: ../../aa/bb/cc
+	 * @param string $a РџСѓС‚СЊ Рє РїРµСЂРІРѕРјСѓ РєР°С‚Р°Р»РѕРіСѓ
+	 * @param string $b РџСѓС‚СЊ РєРѕ РІС‚РѕСЂРѕРјСѓ РєР°С‚Р°Р»РѕРіСѓ
+	 * @return string РќР°РїСЂРёРјРµСЂ: ../../aa/bb/cc
 	 */
 	public static function ShortPathTo($a,$b)
 	{

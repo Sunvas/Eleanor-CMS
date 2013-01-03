@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -212,15 +212,15 @@ class ApiNews extends BaseClass
 	}
 
 	/*
-		$data - äàííûå, ïîëó÷åííûå îò ýòîé ôóíêöèè íà ïðåäûäóùåì ýòàïå
-		$conf - êîíôèãóðàöèÿ îò ôóíêöèè SitemapConfigure
-		$opts - îïöèè, ãäå:
-			per_time - êîëè÷åñòâî ññûëîê çà îäèí ðàç.
-			type (òèï äàííûõ):
-				number - ïîëó÷èòü ïîëíîå ÷èñëî âñåõ íîâûõ ññûëîê
-				get - ïîëó÷èòü ññûëêè
-			callback - ôóíêöèÿ, êîòîðóþ ñëåäóåò âûçàòü äëÿ îòïðàâêè ðåçóëüòàòà
-			sections - ñåêöèè ìîäóëÿ
+		$data - Ð´Ð°Ð½Ð½Ñ‹Ðµ, Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð½Ñ‹Ðµ Ð¾Ñ‚ ÑÑ‚Ð¾Ð¹ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸ Ð½Ð° Ð¿Ñ€ÐµÐ´Ñ‹Ð´ÑƒÑ‰ÐµÐ¼ ÑÑ‚Ð°Ð¿Ðµ
+		$conf - ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ñ Ð¾Ñ‚ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸ SitemapConfigure
+		$opts - Ð¾Ð¿Ñ†Ð¸Ð¸, Ð³Ð´Ðµ:
+			per_time - ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÑÑÑ‹Ð»Ð¾Ðº Ð·Ð° Ð¾Ð´Ð¸Ð½ Ñ€Ð°Ð·.
+			type (Ñ‚Ð¸Ð¿ Ð´Ð°Ð½Ð½Ñ‹Ñ…):
+				number - Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ Ð¿Ð¾Ð»Ð½Ð¾Ðµ Ñ‡Ð¸ÑÐ»Ð¾ Ð²ÑÐµÑ… Ð½Ð¾Ð²Ñ‹Ñ… ÑÑÑ‹Ð»Ð¾Ðº
+				get - Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ ÑÑÑ‹Ð»ÐºÐ¸
+			callback - Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ, ÐºÐ¾Ñ‚Ð¾Ñ€ÑƒÑŽ ÑÐ»ÐµÐ´ÑƒÐµÑ‚ Ð²Ñ‹Ð·Ð°Ñ‚ÑŒ Ð´Ð»Ñ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²ÐºÐ¸ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ð°
+			sections - ÑÐµÐºÑ†Ð¸Ð¸ Ð¼Ð¾Ð´ÑƒÐ»Ñ
 	*/
 	public function SitemapGenerate($data,$conf,$opts)
 	{
@@ -306,7 +306,7 @@ class ApiNews extends BaseClass
 				if(!$data[$lang]['cats'])
 				{
 					$Url->ending=$Url->delimiter;
-					#Î÷åíü íåîïòèìàëüíûé çàïðîñ. Äà, ÿ çíàþ. ×òî äåëàòü? Ïðåäëîæèòå ëó÷øå...
+					#ÐžÑ‡ÐµÐ½ÑŒ Ð½ÐµÐ¾Ð¿Ñ‚Ð¸Ð¼Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ð·Ð°Ð¿Ñ€Ð¾Ñ. Ð”Ð°, Ñ Ð·Ð½Ð°ÑŽ. Ð§Ñ‚Ð¾ Ð´ÐµÐ»Ð°Ñ‚ÑŒ? ÐŸÑ€ÐµÐ´Ð»Ð¾Ð¶Ð¸Ñ‚Ðµ Ð»ÑƒÑ‡ÑˆÐµ...
 					$R=Eleanor::$Db->Query('SELECT `c`.`id`,COUNT(`n`.`lstatus`) `cnt` FROM `'.$this->config['c'].'_l` `c` LEFT JOIN `'.$this->config['tl'].'` `n` ON `n`.`lcats` LIKE CONCAT(\'%,\',`c`.`id`,\',%\') WHERE `c`.`language`'.$qlang.' AND `n`.`lstatus`=1 AND `n`.`ldate`<NOW() AND `n`.`language`'.$qlang.' GROUP BY `c`.`id` LIMIT '.$data[$lang]['ocats'].','.$limit);
 					$nums=$R->num_rows;
 					if($nums<$limit)

@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -13,9 +13,9 @@ class HtmlParserContextLinks
 		$cl=array();
 
 	/**
-	 * Íåïîñðåäñòâåííàÿ îáðàáîòêà êîíòåêñòíûõ ñëîâ â òåêñòå â ññûëêè
+	 * ÐÐµÐ¿Ð¾ÑÑ€ÐµÐ´ÑÑ‚Ð²ÐµÐ½Ð½Ð°Ñ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚ÐºÐ° ÐºÐ¾Ð½Ñ‚ÐµÐºÑÑ‚Ð½Ñ‹Ñ… ÑÐ»Ð¾Ð² Ð² Ñ‚ÐµÐºÑÑ‚Ðµ Ð² ÑÑÑ‹Ð»ÐºÐ¸
 	 *
-	 * @param string $s Îáðàáàòûâàåìûé òåêñò
+	 * @param string $s ÐžÐ±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÐµÐ¼Ñ‹Ð¹ Ñ‚ÐµÐºÑÑ‚
 	 */	public static function Parse($s)
 	{		self::$cl=Eleanor::$Cache->Get('cl_'.Language::$main);
 		if(self::$cl===false)

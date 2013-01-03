@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -8,7 +8,7 @@
 	=====
 	*Pseudonym
 
-	Ýòî íå ñåðâèñ. Ýòî çàùèòà îò ïðÿìûõ ññûëîê.
+	Ð­Ñ‚Ð¾ Ð½Ðµ ÑÐµÑ€Ð²Ð¸Ñ. Ð­Ñ‚Ð¾ Ð·Ð°Ñ‰Ð¸Ñ‚Ð° Ð¾Ñ‚ Ð¿Ñ€ÑÐ¼Ñ‹Ñ… ÑÑÑ‹Ð»Ð¾Ðº.
 */
 $ref=getenv('HTTP_REFERER');
 $our=(!$ref or stripos($ref,getenv('HTTP_HOST'))!==false and stripos($ref,getenv('HTTP_HOST'))<14);

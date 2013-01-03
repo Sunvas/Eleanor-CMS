@@ -1,7 +1,7 @@
 <?php
 return array(
-	#Для всех функций Error() сервисов запуска системы
-	'happened'=>'Произошла ошибка',
-	'you_are_banned'=>'Вы забанены!',
-	'banlock'=>function($date,$reason){ return'Дата разблокировки: '.($date ? Eleanor::$Language->Date($date) : 'неизвестна').'.<br />Причина: '.($reason ? $reason : 'неизвестна'); }
+	#Р”Р»СЏ РІСЃРµС… С„СѓРЅРєС†РёР№ Error() СЃРµСЂРІРёСЃРѕРІ Р·Р°РїСѓСЃРєР° СЃРёСЃС‚РµРјС‹
+	'happened'=>'РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°',
+	'you_are_banned'=>'Р’С‹ Р·Р°Р±Р°РЅРµРЅС‹!',
+	'banlock'=>function($date,$reason){ return'Р”Р°С‚Р° СЂР°Р·Р±Р»РѕРєРёСЂРѕРІРєРё: '.($date ? Eleanor::$Language->Date($date) : 'РЅРµРёР·РІРµСЃС‚РЅР°').'.<br />РџСЂРёС‡РёРЅР°: '.($reason ? $reason : 'РЅРµРёР·РІРµСЃС‚РЅР°'); }
 );

@@ -53,7 +53,7 @@ return array(
 {newemail} - new e-mail<br />
 {oldemail} - old e-mail',
 	'letter_newemail_old'=>'Letter to the old e-mail (step 1)',
-	'letter_newemail_new'=>'Ïèñüìî íà íîâûé e-mail (øàã 2)',
+	'letter_newemail_new'=>'ĞŸĞ¸ÑÑŒĞ¼Ğ¾ Ğ½Ğ° Ğ½Ğ¾Ğ²Ñ‹Ğ¹ e-mail (ÑˆĞ°Ğ³ 2)',
 	'letters'=>'Email formats',
 	'delc'=>'Confirm delete',
 	'inactives'=>'Not activated users',

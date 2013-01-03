@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,7 +10,7 @@
 */
 class Uploader_Upload extends Uploader
 {	/**
-	 * Îñóùåñòâëåíèå Upload çàïðîñà
+	 * ÐžÑÑƒÑ‰ÐµÑÑ‚Ð²Ð»ÐµÐ½Ð¸Ðµ Upload Ð·Ð°Ð¿Ñ€Ð¾ÑÐ°
 	 */	public function Process()
 	{		if(!isset($_POST['session']))
 			return false;
@@ -21,7 +21,7 @@ class Uploader_Upload extends Uploader
 		$fname=Url::Decode($_FILES[self::FILENAME]['name']);
 		if(Eleanor::$vars['trans_uri'] and method_exists(Language::$main,'Translit'))
 			$fname=call_user_func(array(Language::$main,'Translit'),$fname);
-		#Çàìåíÿåì âñå [ è ] ïîòîìó ÷òî îíè êðèâî âñòàâëÿþòñÿ â òåã [attach]
+		#Ð—Ð°Ð¼ÐµÐ½ÑÐµÐ¼ Ð²ÑÐµ [ Ð¸ ] Ð¿Ð¾Ñ‚Ð¾Ð¼Ñƒ Ñ‡Ñ‚Ð¾ Ð¾Ð½Ð¸ ÐºÑ€Ð¸Ð²Ð¾ Ð²ÑÑ‚Ð°Ð²Ð»ÑÑŽÑ‚ÑÑ Ð² Ñ‚ÐµÐ³ [attach]
 		$fname=preg_replace('#[\s\'"%\]\[/\\\-]+#',Eleanor::$vars['url_rep_space'],$fname);
 		$type=strpos($fname,'.')===false ? '' : pathinfo($fname,PATHINFO_EXTENSION);
 		$path=$this->GetPath(isset($_POST['path']) ? Url::Decode((string)$_POST['path']) : '');
@@ -45,10 +45,10 @@ class Uploader_Upload extends Uploader
 					'top'=>(int)$this->vars['watermark_top'],
 					'left'=>(int)$this->vars['watermark_left'],
 
-					#Åñëè çàäàíà êàðòèíêà - íàðèñóåì êàðòèíêó
+					#Ð•ÑÐ»Ð¸ Ð·Ð°Ð´Ð°Ð½Ð° ÐºÐ°Ñ€Ñ‚Ð¸Ð½ÐºÐ° - Ð½Ð°Ñ€Ð¸ÑÑƒÐµÐ¼ ÐºÐ°Ñ€Ñ‚Ð¸Ð½ÐºÑƒ
 					'image'=>$this->vars['watermark_image'] ? Eleanor::FormatPath($this->vars['watermark_image']) : '',
 
-					#Åñëè êàðòèíêà - false, íàïðèñóåì òåêñò
+					#Ð•ÑÐ»Ð¸ ÐºÐ°Ñ€Ñ‚Ð¸Ð½ÐºÐ° - false, Ð½Ð°Ð¿Ñ€Ð¸ÑÑƒÐµÐ¼ Ñ‚ÐµÐºÑÑ‚
 					'text'=>$this->vars['watermark_string'],
 					'size'=>$s,
 					'angle'=>$a,
@@ -67,7 +67,7 @@ class Uploader_Upload extends Uploader
 						'height'=>$this->vars['thumb_height'],
 						'cut_first'=>in_array($this->vars['thumb_reducing'],array('cut','cutsmall')),
 						'cut_last'=>in_array($this->vars['thumb_reducing'],array('cut','smallcut')),
-						'first'=>$this->vars['thumb_first'],#×òî áóäåò óìåíüøàòüñÿ ïåðâîå: âûñîòà èëè øèðèíà. w,h . Àâòîìàòè÷åñêè: b - ïî íàèáîëüøå ñòîðîíå, s - ïî íàèìåíüøå ñòîðîíå.
+						'first'=>$this->vars['thumb_first'],#Ð§Ñ‚Ð¾ Ð±ÑƒÐ´ÐµÑ‚ ÑƒÐ¼ÐµÐ½ÑŒÑˆÐ°Ñ‚ÑŒÑÑ Ð¿ÐµÑ€Ð²Ð¾Ðµ: Ð²Ñ‹ÑÐ¾Ñ‚Ð° Ð¸Ð»Ð¸ ÑˆÐ¸Ñ€Ð¸Ð½Ð°. w,h . ÐÐ²Ñ‚Ð¾Ð¼Ð°Ñ‚Ð¸Ñ‡ÐµÑÐºÐ¸: b - Ð¿Ð¾ Ð½Ð°Ð¸Ð±Ð¾Ð»ÑŒÑˆÐµ ÑÑ‚Ð¾Ñ€Ð¾Ð½Ðµ, s - Ð¿Ð¾ Ð½Ð°Ð¸Ð¼ÐµÐ½ÑŒÑˆÐµ ÑÑ‚Ð¾Ñ€Ð¾Ð½Ðµ.
 						'suffix'=>$this->prevsuff,
 					)
 				);

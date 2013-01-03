@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.su, http://eleanor-cms.com, http://eleanor-cms.net, http://eleanor.su
 	E-mail: support@eleanor-cms.ru, support@eleanor.su
 	Developing: Alexander Sunvas*
@@ -12,17 +12,17 @@
 class TimeCheck extends BaseClass
 {
 	public
-		$table,#Èìÿ òàáëèöû
+		$table,#Ð˜Ð¼Ñ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹
 		$cp='',#Cookie prefix
-		$mid,#ID ìîäóëÿ
-		$uid;#ID ïîëüçîâàòåëÿ
+		$mid,#ID Ð¼Ð¾Ð´ÑƒÐ»Ñ
+		$uid;#ID Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
 
 	/**
-	 * Êîíñòðóêòîð
+	 * ÐšÐ¾Ð½ÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€
 	 *
-	 * @param int $mid ID ìîäóëÿ
-	 * @param string|FALSE Èìÿ òàáëèöû
-	 * @param int|FALSE ID ïîëüçîâàòåëÿ
+	 * @param int $mid ID Ð¼Ð¾Ð´ÑƒÐ»Ñ
+	 * @param string|FALSE Ð˜Ð¼Ñ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹
+	 * @param int|FALSE ID Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
 	 */
 	public function __construct($mid=0,$table=false,$uid=false)
 	{
@@ -34,9 +34,9 @@ class TimeCheck extends BaseClass
 	}
 
 	/**
-	 * Ïðîâåðêà èñòå÷åíèÿ âðåìåíè ïî îïðåäåëåííûì èäåíòèôèêàòîðàì ìîäóëÿ
+	 * ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð¸ÑÑ‚ÐµÑ‡ÐµÐ½Ð¸Ñ Ð²Ñ€ÐµÐ¼ÐµÐ½Ð¸ Ð¿Ð¾ Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð½Ñ‹Ð¼ Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€Ð°Ð¼ Ð¼Ð¾Ð´ÑƒÐ»Ñ
 	 *
-	 * @param array|string $ids Èäåíòèôèêàòîð(û) ìîäóëÿ
+	 * @param array|string $ids Ð˜Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€(Ñ‹) Ð¼Ð¾Ð´ÑƒÐ»Ñ
 	 */
 	public function Check($ids)
 	{		if(!$ids)
@@ -64,12 +64,12 @@ class TimeCheck extends BaseClass
 	}
 
 	/**
-	 * Äîáàâëåíèå èäåíòèôèêàòîðà äëÿ ïîñëåäóþùåé ïðîâåðêè èñòå÷åíèÿ âðåìåíè
+	 * Ð”Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€Ð° Ð´Ð»Ñ Ð¿Ð¾ÑÐ»ÐµÐ´ÑƒÑŽÑ‰ÐµÐ¹ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ¸ Ð¸ÑÑ‚ÐµÑ‡ÐµÐ½Ð¸Ñ Ð²Ñ€ÐµÐ¼ÐµÐ½Ð¸
 	 *
-	 * @param string $id Èäåíòèôèêàòîð (êîíòåíòà) ìîäóëÿ
-	 * @param string $value Çíà÷åíèå, ïîìåùàåìîå â áàçó
-	 * @param bool $timegone Ôëàã âîçìîæíîñòè èñòå÷åíèÿ âðåìåíè: TRUE - âðåìÿ ìîæåò èñòå÷ü, FALSE - âðåìÿ íå ìîæåò èñòå÷ü
-	 * @param int|string $t Ñðîê èñòå÷åíèÿ, ôîðìàò: \d+[mhdMys?] ïîñëåäíÿÿ áóêâà îïðåäåëÿåò òèï ñðîêà: ìèíóòû, ÷àñû, äíè, ìåñÿöû, ãîäû, ñåêóíäû (â ñëó÷àå ñåêóíä áóêâó s ìîæíî íå óêàçûâàòü)
+	 * @param string $id Ð˜Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€ (ÐºÐ¾Ð½Ñ‚ÐµÐ½Ñ‚Ð°) Ð¼Ð¾Ð´ÑƒÐ»Ñ
+	 * @param string $value Ð—Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ, Ð¿Ð¾Ð¼ÐµÑ‰Ð°ÐµÐ¼Ð¾Ðµ Ð² Ð±Ð°Ð·Ñƒ
+	 * @param bool $timegone Ð¤Ð»Ð°Ð³ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑ‚Ð¸ Ð¸ÑÑ‚ÐµÑ‡ÐµÐ½Ð¸Ñ Ð²Ñ€ÐµÐ¼ÐµÐ½Ð¸: TRUE - Ð²Ñ€ÐµÐ¼Ñ Ð¼Ð¾Ð¶ÐµÑ‚ Ð¸ÑÑ‚ÐµÑ‡ÑŒ, FALSE - Ð²Ñ€ÐµÐ¼Ñ Ð½Ðµ Ð¼Ð¾Ð¶ÐµÑ‚ Ð¸ÑÑ‚ÐµÑ‡ÑŒ
+	 * @param int|string $t Ð¡Ñ€Ð¾Ðº Ð¸ÑÑ‚ÐµÑ‡ÐµÐ½Ð¸Ñ, Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚: \d+[mhdMys?] Ð¿Ð¾ÑÐ»ÐµÐ´Ð½ÑÑ Ð±ÑƒÐºÐ²Ð° Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÑ‚ Ñ‚Ð¸Ð¿ ÑÑ€Ð¾ÐºÐ°: Ð¼Ð¸Ð½ÑƒÑ‚Ñ‹, Ñ‡Ð°ÑÑ‹, Ð´Ð½Ð¸, Ð¼ÐµÑÑÑ†Ñ‹, Ð³Ð¾Ð´Ñ‹, ÑÐµÐºÑƒÐ½Ð´Ñ‹ (Ð² ÑÐ»ÑƒÑ‡Ð°Ðµ ÑÐµÐºÑƒÐ½Ð´ Ð±ÑƒÐºÐ²Ñƒ s Ð¼Ð¾Ð¶Ð½Ð¾ Ð½Ðµ ÑƒÐºÐ°Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ)
 	 */
 	public function Add($id,$value='',$timegone=false,$t=3)
 	{		$plus='';
@@ -107,16 +107,16 @@ class TimeCheck extends BaseClass
 				'author_id'=>$this->uid,
 				'ip'=>$this->uid ? '' : Eleanor::$ip,
 				'value'=>$value,
-				'timegone'=>$timegone,#Ìîæåò èñòå÷ü ñðîê?
+				'timegone'=>$timegone,#ÐœÐ¾Ð¶ÐµÑ‚ Ð¸ÑÑ‚ÐµÑ‡ÑŒ ÑÑ€Ð¾Ðº?
 				'!date'=>'NOW()'.$plus,
 			)
 		);
 	}
 
 	/**
-	 * Óäàëåíèå çàïèñè ïî îïðåäåëåííîìó èäåíòèôèêàòîðó (êîíòåíòà) ìîäóëÿ
+	 * Ð£Ð´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð¿Ð¾ Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð½Ð¾Ð¼Ñƒ Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€Ñƒ (ÐºÐ¾Ð½Ñ‚ÐµÐ½Ñ‚Ð°) Ð¼Ð¾Ð´ÑƒÐ»Ñ
 	 *
-	 * @param string $id Èäåíòèôèêàòîð (êîíòåíòà) ìîäóëÿ
+	 * @param string $id Ð˜Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€ (ÐºÐ¾Ð½Ñ‚ÐµÐ½Ñ‚Ð°) Ð¼Ð¾Ð´ÑƒÐ»Ñ
 	 */
 	public function Delete($id)
 	{		Eleanor::$Db->Delete($this->table,($this->mid ? '`mid`'.Eleanor::$Db->Escape($this->mid,true).' AND ' : '').'`contid`'.Eleanor::$Db->Escape($id,true).' AND `author_id`'.Eleanor::$Db->Escape($this->uid,true).($this->uid ? '' : ' AND `ip`='.Eleanor::$Db->Escape(Eleanor::$ip,true)));	}

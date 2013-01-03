@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -11,19 +11,19 @@
 
 class Voting extends BaseClass
 {	public
-		$mid,#ID модуля
-		$uid,#ID пользователя
-		$tpl='Voting',#Класс шаблона с оформлением опроса
-		$status;#Статус пользователя по отношению к голосованию: [false] - можно голосовать, voted - уже проголосовали, refused - голос не защитан, confirmed - голос защитан, guest - голосовать нельзя, потому что голосование только для пользователей, wait - ожидает открытия, finished - голосование завершено
+		$mid,#ID РјРѕРґСѓР»СЏ
+		$uid,#ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+		$tpl='Voting',#РљР»Р°СЃСЃ С€Р°Р±Р»РѕРЅР° СЃ РѕС„РѕСЂРјР»РµРЅРёРµРј РѕРїСЂРѕСЃР°
+		$status;#РЎС‚Р°С‚СѓСЃ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РїРѕ РѕС‚РЅРѕС€РµРЅРёСЋ Рє РіРѕР»РѕСЃРѕРІР°РЅРёСЋ: [false] - РјРѕР¶РЅРѕ РіРѕР»РѕСЃРѕРІР°С‚СЊ, voted - СѓР¶Рµ РїСЂРѕРіРѕР»РѕСЃРѕРІР°Р»Рё, refused - РіРѕР»РѕСЃ РЅРµ Р·Р°С‰РёС‚Р°РЅ, confirmed - РіРѕР»РѕСЃ Р·Р°С‰РёС‚Р°РЅ, guest - РіРѕР»РѕСЃРѕРІР°С‚СЊ РЅРµР»СЊР·СЏ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РіРѕР»РѕСЃРѕРІР°РЅРёРµ С‚РѕР»СЊРєРѕ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№, wait - РѕР¶РёРґР°РµС‚ РѕС‚РєСЂС‹С‚РёСЏ, finished - РіРѕР»РѕСЃРѕРІР°РЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ
 	protected
-		$TC,#Объект TimeCheck
-		$table,#Таблица опроса
-		$voting;#Дамп опроса
+		$TC,#РћР±СЉРµРєС‚ TimeCheck
+		$table,#РўР°Р±Р»РёС†Р° РѕРїСЂРѕСЃР°
+		$voting;#Р”Р°РјРї РѕРїСЂРѕСЃР°
 	/**
-	 * Конструктор
+	 * РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 	 *
-	 * @param int $id идентификатор опроса
-	 * @param string|FALSE $t имя основной таблицы с опросами, в случае FALSE берется таблица по умолчанию
+	 * @param int $id РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РѕРїСЂРѕСЃР°
+	 * @param string|FALSE $t РёРјСЏ РѕСЃРЅРѕРІРЅРѕР№ С‚Р°Р±Р»РёС†С‹ СЃ РѕРїСЂРѕСЃР°РјРё, РІ СЃР»СѓС‡Р°Рµ FALSE Р±РµСЂРµС‚СЃСЏ С‚Р°Р±Р»РёС†Р° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	 */
 	public function __construct($id,$t=false)
 	{		$this->table=$t ? $t : P.'voting';
@@ -33,9 +33,9 @@ class Voting extends BaseClass
 	}
 
 	/**
-	 * Отображение опроса
+	 * РћС‚РѕР±СЂР°Р¶РµРЅРёРµ РѕРїСЂРѕСЃР°
 	 *
-	 * @param array $request Массив параметров AJAX запроса
+	 * @param array $request РњР°СЃСЃРёРІ РїР°СЂР°РјРµС‚СЂРѕРІ AJAX Р·Р°РїСЂРѕСЃР°
 	 */
 	public function Show(array$request=array())
 	{		if(!$this->voting)
@@ -53,7 +53,7 @@ class Voting extends BaseClass
 		return Eleanor::$Template->VotingCover($this->voting,$qs,$this->status,$request);	}
 
 	/**
-	 * Получение статуса опроса (смотри выше описание всех возможных статусов)
+	 * РџРѕР»СѓС‡РµРЅРёРµ СЃС‚Р°С‚СѓСЃР° РѕРїСЂРѕСЃР° (СЃРјРѕС‚СЂРё РІС‹С€Рµ РѕРїРёСЃР°РЅРёРµ РІСЃРµС… РІРѕР·РјРѕР¶РЅС‹С… СЃС‚Р°С‚СѓСЃРѕРІ)
 	 */
 	public function Status()
 	{		if((int)$this->voting['begin']>0 and time()<strtotime($this->voting['begin']))

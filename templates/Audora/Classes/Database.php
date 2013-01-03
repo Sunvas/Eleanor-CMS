@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -8,12 +8,12 @@
 	=====
 	*Pseudonym
 
-	Шаблоны баз данных админки
+	РЁР°Р±Р»РѕРЅС‹ Р±Р°Р· РґР°РЅРЅС‹С… Р°РґРјРёРЅРєРё
 */
 class TplDatabase
 {	public static
 		$lang;	/*
-		Меню модуля
+		РњРµРЅСЋ РјРѕРґСѓР»СЏ
 	*/	protected static function Menu($act='')
 	{		$lang=Eleanor::$Language['db'];
 		$links=&$GLOBALS['Eleanor']->module['links'];
@@ -27,35 +27,35 @@ class TplDatabase
 		);
 	}
 	/*
-		Шаблон страницы для дампера БД Sypex
+		РЁР°Р±Р»РѕРЅ СЃС‚СЂР°РЅРёС†С‹ РґР»СЏ РґР°РјРїРµСЂР° Р‘Р” Sypex
 	*/	public static function Sypex()
 	{		static::Menu('sypex');		return Eleanor::$Template->OpenTable().'<div style="width:586px;height:462px;margin:0px auto;"><iframe src="addons/sxd/index.php?eleanorid='.session_id().'" width="586" height="462" style="border:0px;">Loading...</iframe></div>'.Eleanor::$Template->CloseTable();	}
 
 	/*
-		Шаблон страницы для задач обновления имен
+		РЁР°Р±Р»РѕРЅ СЃС‚СЂР°РЅРёС†С‹ РґР»СЏ Р·Р°РґР°С‡ РѕР±РЅРѕРІР»РµРЅРёСЏ РёРјРµРЅ
 
-		$items список задач по обновлению имен. Формат: ID=>array(), ключи массива:
-			options - массив с ключами
-				total - всего записей
-				tables - названия таблиц, в которых необходимо изменить имена пользователей
-				ids - имена полей таблицы с ID пользователя
-				names - имена полей таблицы с именем пользователя
-			lastrun - дата последнего запуска задачи
-			status - статус активности
-			data - массив с ключами
-				total - число измененных записей
-				done - флаг завершенности задачи
-				updated - (только если done) число обновленных записей
-			_aswap - ссылка на инвертирование статуса, если возможно
-			_aedit - ссылка на редактирование, если возможно
-			_adel - ссылка на удаление
-		$cnt - число задач всего
-		$page - страница, на которой мы сейчас находимся
-		$pp - число задач на страницу
-		$links - перечень необходимых ссылок, массив с ключами:
-			pp - фукнция-генератор ссылок на изменение количества задач отображаемых на странице
-			first_page - ссылка на первую страницу пагинатора
-			pages - функция-генератор ссылок на остальные страницы
+		$items СЃРїРёСЃРѕРє Р·Р°РґР°С‡ РїРѕ РѕР±РЅРѕРІР»РµРЅРёСЋ РёРјРµРЅ. Р¤РѕСЂРјР°С‚: ID=>array(), РєР»СЋС‡Рё РјР°СЃСЃРёРІР°:
+			options - РјР°СЃСЃРёРІ СЃ РєР»СЋС‡Р°РјРё
+				total - РІСЃРµРіРѕ Р·Р°РїРёСЃРµР№
+				tables - РЅР°Р·РІР°РЅРёСЏ С‚Р°Р±Р»РёС†, РІ РєРѕС‚РѕСЂС‹С… РЅРµРѕР±С…РѕРґРёРјРѕ РёР·РјРµРЅРёС‚СЊ РёРјРµРЅР° РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
+				ids - РёРјРµРЅР° РїРѕР»РµР№ С‚Р°Р±Р»РёС†С‹ СЃ ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+				names - РёРјРµРЅР° РїРѕР»РµР№ С‚Р°Р±Р»РёС†С‹ СЃ РёРјРµРЅРµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+			lastrun - РґР°С‚Р° РїРѕСЃР»РµРґРЅРµРіРѕ Р·Р°РїСѓСЃРєР° Р·Р°РґР°С‡Рё
+			status - СЃС‚Р°С‚СѓСЃ Р°РєС‚РёРІРЅРѕСЃС‚Рё
+			data - РјР°СЃСЃРёРІ СЃ РєР»СЋС‡Р°РјРё
+				total - С‡РёСЃР»Рѕ РёР·РјРµРЅРµРЅРЅС‹С… Р·Р°РїРёСЃРµР№
+				done - С„Р»Р°Рі Р·Р°РІРµСЂС€РµРЅРЅРѕСЃС‚Рё Р·Р°РґР°С‡Рё
+				updated - (С‚РѕР»СЊРєРѕ РµСЃР»Рё done) С‡РёСЃР»Рѕ РѕР±РЅРѕРІР»РµРЅРЅС‹С… Р·Р°РїРёСЃРµР№
+			_aswap - СЃСЃС‹Р»РєР° РЅР° РёРЅРІРµСЂС‚РёСЂРѕРІР°РЅРёРµ СЃС‚Р°С‚СѓСЃР°, РµСЃР»Рё РІРѕР·РјРѕР¶РЅРѕ
+			_aedit - СЃСЃС‹Р»РєР° РЅР° СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ, РµСЃР»Рё РІРѕР·РјРѕР¶РЅРѕ
+			_adel - СЃСЃС‹Р»РєР° РЅР° СѓРґР°Р»РµРЅРёРµ
+		$cnt - С‡РёСЃР»Рѕ Р·Р°РґР°С‡ РІСЃРµРіРѕ
+		$page - СЃС‚СЂР°РЅРёС†Р°, РЅР° РєРѕС‚РѕСЂРѕР№ РјС‹ СЃРµР№С‡Р°СЃ РЅР°С…РѕРґРёРјСЃСЏ
+		$pp - С‡РёСЃР»Рѕ Р·Р°РґР°С‡ РЅР° СЃС‚СЂР°РЅРёС†Сѓ
+		$links - РїРµСЂРµС‡РµРЅСЊ РЅРµРѕР±С…РѕРґРёРјС‹С… СЃСЃС‹Р»РѕРє, РјР°СЃСЃРёРІ СЃ РєР»СЋС‡Р°РјРё:
+			pp - С„СѓРєРЅС†РёСЏ-РіРµРЅРµСЂР°С‚РѕСЂ СЃСЃС‹Р»РѕРє РЅР° РёР·РјРµРЅРµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° Р·Р°РґР°С‡ РѕС‚РѕР±СЂР°Р¶Р°РµРјС‹С… РЅР° СЃС‚СЂР°РЅРёС†Рµ
+			first_page - СЃСЃС‹Р»РєР° РЅР° РїРµСЂРІСѓСЋ СЃС‚СЂР°РЅРёС†Сѓ РїР°РіРёРЅР°С‚РѕСЂР°
+			pages - С„СѓРЅРєС†РёСЏ-РіРµРЅРµСЂР°С‚РѕСЂ СЃСЃС‹Р»РѕРє РЅР° РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹
 	*/
 	public static function ShowList($items,$cnt,$page,$pp,$links)
 	{		static::Menu('list');
@@ -82,22 +82,22 @@ class TplDatabase
 			.'<script type="text/javascript">/*<![CDATA[*/$(function(){new ProgressList("'.$GLOBALS['Eleanor']->module['name'].'","'.Eleanor::$services['cron']['file'].'");})//]]></script>';	}
 
 /*
-		Шаблон создания/редактирования задачи по обновлению имен пользователей
+		РЁР°Р±Р»РѕРЅ СЃРѕР·РґР°РЅРёСЏ/СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ Р·Р°РґР°С‡Рё РїРѕ РѕР±РЅРѕРІР»РµРЅРёСЋ РёРјРµРЅ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
 
-		$id - идентификатор редактируемой задачи, если $id==0 значит задача добавляется
-		$tables - массив всех таблиц в базе данных, куда установлена Eleanor CMS
-		$values - массив значений полей
-			ids - массив полей с ID пользователей array(field1,field2,...)
-			names - массив полей с именами пользователей array(field1,field2,...)
-			tables - массив таблицы, в которых проводить замену
-			per_load - число записей, обновляющихся за раз
-			status - флаг активности задачи
-			delete - флаг автоудаления задачи после завершения
-		$runned - признак того, что производится обновление (правка заблокирована)
-		$errors - массив ошибок
-		$back - URL возврата
-		$links - перечень необходимых ссылок, массив с ключами:
-			delete - ссылка на удаление категории или false
+		$id - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЂРµРґР°РєС‚РёСЂСѓРµРјРѕР№ Р·Р°РґР°С‡Рё, РµСЃР»Рё $id==0 Р·РЅР°С‡РёС‚ Р·Р°РґР°С‡Р° РґРѕР±Р°РІР»СЏРµС‚СЃСЏ
+		$tables - РјР°СЃСЃРёРІ РІСЃРµС… С‚Р°Р±Р»РёС† РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С…, РєСѓРґР° СѓСЃС‚Р°РЅРѕРІР»РµРЅР° Eleanor CMS
+		$values - РјР°СЃСЃРёРІ Р·РЅР°С‡РµРЅРёР№ РїРѕР»РµР№
+			ids - РјР°СЃСЃРёРІ РїРѕР»РµР№ СЃ ID РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ array(field1,field2,...)
+			names - РјР°СЃСЃРёРІ РїРѕР»РµР№ СЃ РёРјРµРЅР°РјРё РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ array(field1,field2,...)
+			tables - РјР°СЃСЃРёРІ С‚Р°Р±Р»РёС†С‹, РІ РєРѕС‚РѕСЂС‹С… РїСЂРѕРІРѕРґРёС‚СЊ Р·Р°РјРµРЅСѓ
+			per_load - С‡РёСЃР»Рѕ Р·Р°РїРёСЃРµР№, РѕР±РЅРѕРІР»СЏСЋС‰РёС…СЃСЏ Р·Р° СЂР°Р·
+			status - С„Р»Р°Рі Р°РєС‚РёРІРЅРѕСЃС‚Рё Р·Р°РґР°С‡Рё
+			delete - С„Р»Р°Рі Р°РІС‚РѕСѓРґР°Р»РµРЅРёСЏ Р·Р°РґР°С‡Рё РїРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ
+		$runned - РїСЂРёР·РЅР°Рє С‚РѕРіРѕ, С‡С‚Рѕ РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РѕР±РЅРѕРІР»РµРЅРёРµ (РїСЂР°РІРєР° Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅР°)
+		$errors - РјР°СЃСЃРёРІ РѕС€РёР±РѕРє
+		$back - URL РІРѕР·РІСЂР°С‚Р°
+		$links - РїРµСЂРµС‡РµРЅСЊ РЅРµРѕР±С…РѕРґРёРјС‹С… СЃСЃС‹Р»РѕРє, РјР°СЃСЃРёРІ СЃ РєР»СЋС‡Р°РјРё:
+			delete - СЃСЃС‹Р»РєР° РЅР° СѓРґР°Р»РµРЅРёРµ РєР°С‚РµРіРѕСЂРёРё РёР»Рё false
 	*/
 	public static function AddEdit($id,$tables,$values,$runned,$errors,$back,$links)
 	{		static::Menu($id ? '' : 'add');
@@ -126,7 +126,7 @@ class TplDatabase
 		$Lst->form(array('id'=>'newtask','onsubmit'=>$runned ? 'return false;' : false))
 			->begin()
 			->item(static::$lang['tables'],Eleanor::Items('tables',$items,array('tabindex'=>1)))
-			->item(static::$lang['fields'].'<br /><a href="#" class="plus"><img align="right" src="'.Eleanor::$Template->default['theme'].'images/plus_d.gif" alt="+" title="+" /></a>','<ul class="reset tlist" id="fields"><li><a href="#" class="tlistbtn"><img src="'.Eleanor::$Template->default['theme'].'images/minus_d.gif" alt="&minus;" title="&minus;" /></a><ul><li><span>Поле ID пользователя</span><div>'.Eleanor::Input('ids[]',$fid,array('style'=>'width:100%','tabindex'=>2)).'</div></li><li><span>Поле имени пользователя</span><div>'.Eleanor::Input('names[]',$fname,array('style'=>'width:100%','tabindex'=>2)).'</div></li></ul><div class="clr"></div></li>'.$fields.'</ul>')
+			->item(static::$lang['fields'].'<br /><a href="#" class="plus"><img align="right" src="'.Eleanor::$Template->default['theme'].'images/plus_d.gif" alt="+" title="+" /></a>','<ul class="reset tlist" id="fields"><li><a href="#" class="tlistbtn"><img src="'.Eleanor::$Template->default['theme'].'images/minus_d.gif" alt="&minus;" title="&minus;" /></a><ul><li><span>РџРѕР»Рµ ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</span><div>'.Eleanor::Input('ids[]',$fid,array('style'=>'width:100%','tabindex'=>2)).'</div></li><li><span>РџРѕР»Рµ РёРјРµРЅРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</span><div>'.Eleanor::Input('names[]',$fname,array('style'=>'width:100%','tabindex'=>2)).'</div></li></ul><div class="clr"></div></li>'.$fields.'</ul>')
 			->item(static::$lang['per_load'],Eleanor::Input('per_load',$values['per_load'],array('type'=>'number','min'=>1,'tabindex'=>3)))
 			->item(array($ltpl['activate'],Eleanor::Check('status',$values['status'],array('tabindex'=>4)),'tip'=>static::$lang['act_']))
 			->item(static::$lang['del'],Eleanor::Check('delete',$values['delete'],array('tabindex'=>5)))

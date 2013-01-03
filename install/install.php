@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -43,7 +43,7 @@ else
 			date_default_timezone_set($_SESSION['timezone']);
 			Eleanor::$Db->SyncTimeZone();
 			Eleanor::LoadOptions('mailer',false);
-			Eleanor::$vars['site_name']=$_SESSION['sitename'];#Заплаточка для маилера
+			Eleanor::$vars['site_name']=$_SESSION['sitename'];#Р—Р°РїР»Р°С‚РѕС‡РєР° РґР»СЏ РјР°РёР»РµСЂР°
 			$path=preg_replace('#install/$#','',Eleanor::$site_path);
 			$from=array(
 				'[language]',
@@ -124,10 +124,10 @@ else
 			.sprintf($lang['links'],$url1,$url2).'</div></div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';
 			try
 			{
-				#Внимание! Отправка e-mail-а осуществляется в информативных целях и НЕ содержит никакой конфиденциальной информации
+				#Р’РЅРёРјР°РЅРёРµ! РћС‚РїСЂР°РІРєР° e-mail-Р° РѕСЃСѓС‰РµСЃС‚РІР»СЏРµС‚СЃСЏ РІ РёРЅС„РѕСЂРјР°С‚РёРІРЅС‹С… С†РµР»СЏС… Рё РќР• СЃРѕРґРµСЂР¶РёС‚ РЅРёРєР°РєРѕР№ РєРѕРЅС„РёРґРµРЅС†РёР°Р»СЊРЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё
 				Email::Simple(
 					'newsite@eleanor-cms.ru',
-					'Новый сайт: '.$_SESSION['sitename'],
+					'РќРѕРІС‹Р№ СЃР°Р№С‚: '.$_SESSION['sitename'],
 					'URL: http://'.Eleanor::$domain.$path.'.<br />Encoding: '.CHARSET
 				);
 			}
@@ -286,7 +286,7 @@ else
 					foreach($tv as &$v)
 						if($v['offset']/60==-$_SESSION['tzo'] and $v['dst']==$_SESSION['dst'])
 							$tzo[]=$v['timezone_id'];
-				#Сюда можно добавить пояса по-умолчанию
+				#РЎСЋРґР° РјРѕР¶РЅРѕ РґРѕР±Р°РІРёС‚СЊ РїРѕСЏСЃР° РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ
 				if(in_array('Europe/Kiev',$tzo))
 					$tzo='Europe/Kiev';
 				elseif(in_array('Europe/Moscow',$tzo))
@@ -359,7 +359,7 @@ function DoInstall()
 	$text='<div class="wpbox wpbwhite"><div class="wptop"><b>&nbsp;</b></div><div class="wpmid"><div class="wpcont">';
 	switch($do)
 	{
-		case 1:#Создание таблиц
+		case 1:#РЎРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†
 			if(isset($_SESSION['tables']))
 				$temp=array($lang['skip']);
 			else
@@ -392,7 +392,7 @@ function DoInstall()
 			$text.='<div class="information"><h4>'.$lang['creating_tables'].'</h4>'.join(', ',$temp).'</div>';
 			$url='install.php?step=3&amp;s='.session_id().'&amp;do='.++$do;
 		break;
-		case 2:#Создание записей в таблицы
+		case 2:#РЎРѕР·РґР°РЅРёРµ Р·Р°РїРёСЃРµР№ РІ С‚Р°Р±Р»РёС†С‹
 			$percent=80;
 			if(isset($_SESSION['values']))
 				$temp=array($lang['skip']);

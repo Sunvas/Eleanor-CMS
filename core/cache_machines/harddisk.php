@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -17,11 +17,11 @@ class CacheMachineHardDisk implements CacheMachineInterface
 	}
 
 	/**
-	 * Çàïèñü çíà÷åíèÿ
+	 * Ð—Ð°Ð¿Ð¸ÑÑŒ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ
 	 *
-	 * @param string $k Êëþ÷. Îáðàòèòå âíèìåíèå, ÷òî êëþ÷è ðåêîìåíäóåòñÿ çàäàâàòü â âèäå òåã1_òåã2 ...
-	 * @param mixed $value Çíà÷åíèå
-	 * @param int $t Âðåìÿ æèçíè ýòîé çàïèñè êýøà â ñåêóíäàõ
+	 * @param string $k ÐšÐ»ÑŽÑ‡. ÐžÐ±Ñ€Ð°Ñ‚Ð¸Ñ‚Ðµ Ð²Ð½Ð¸Ð¼ÐµÐ½Ð¸Ðµ, Ñ‡Ñ‚Ð¾ ÐºÐ»ÑŽÑ‡Ð¸ Ñ€ÐµÐºÐ¾Ð¼ÐµÐ½Ð´ÑƒÐµÑ‚ÑÑ Ð·Ð°Ð´Ð°Ð²Ð°Ñ‚ÑŒ Ð² Ð²Ð¸Ð´Ðµ Ñ‚ÐµÐ³1_Ñ‚ÐµÐ³2 ...
+	 * @param mixed $value Ð—Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ
+	 * @param int $t Ð’Ñ€ÐµÐ¼Ñ Ð¶Ð¸Ð·Ð½Ð¸ ÑÑ‚Ð¾Ð¹ Ð·Ð°Ð¿Ð¸ÑÐ¸ ÐºÑÑˆÐ° Ð² ÑÐµÐºÑƒÐ½Ð´Ð°Ñ…
 	 */
 	public function Put($k,$v,$t=0)
 	{
@@ -31,9 +31,9 @@ class CacheMachineHardDisk implements CacheMachineInterface
 	}
 
 	/**
-	 * Ïîëó÷åíèå çàïèñè èç êýøà
+	 * ÐŸÐ¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð¸Ð· ÐºÑÑˆÐ°
 	 *
-	 * @param string $k Êëþ÷
+	 * @param string $k ÐšÐ»ÑŽÑ‡
 	 */
 	public function Get($k)
 	{
@@ -50,9 +50,9 @@ class CacheMachineHardDisk implements CacheMachineInterface
 	}
 
 	/**
-	 * Óäàëåíèå çàïèñè èç êýøà
+	 * Ð£Ð´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð¸Ð· ÐºÑÑˆÐ°
 	 *
-	 * @param string $k Êëþ÷
+	 * @param string $k ÐšÐ»ÑŽÑ‡
 	 */
 	public function Delete($k)
 	{
@@ -62,9 +62,9 @@ class CacheMachineHardDisk implements CacheMachineInterface
 	}
 
 	/**
-	 * Óäàëåíèå çàïèñåé ïî òåãó. Åñëè èìÿ òåãà ïóñòîå - óäàëÿåòñÿ âåøü êýø.
+	 * Ð£Ð´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐµÐ¹ Ð¿Ð¾ Ñ‚ÐµÐ³Ñƒ. Ð•ÑÐ»Ð¸ Ð¸Ð¼Ñ Ñ‚ÐµÐ³Ð° Ð¿ÑƒÑÑ‚Ð¾Ðµ - ÑƒÐ´Ð°Ð»ÑÐµÑ‚ÑÑ Ð²ÐµÑˆÑŒ ÐºÑÑˆ.
 	 *
-	 * @param string $t Òåã
+	 * @param string $t Ð¢ÐµÐ³
 	 */
 	public function DeleteByTag($t)
 	{

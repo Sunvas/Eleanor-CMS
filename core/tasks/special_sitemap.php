@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.su, http://eleanor-cms.com, http://eleanor-cms.net, http://eleanor.su
 	E-mail: support@eleanor-cms.ru, support@eleanor.su
 	Developing: Alexander Sunvas*
@@ -153,7 +153,7 @@ class TaskSpecial_Sitemap extends BaseClass implements Task
 						gzwrite($hgz,fread($this->fh,1024*64));
 					gzclose($hgz);
 					fclose($this->fh);
-					#Óäàëåíèå îðèãèíàëüíîãî ôàéëà
+					#Ð£Ð´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð¾Ñ€Ð¸Ð³Ð¸Ð½Ð°Ð»ÑŒÐ½Ð¾Ð³Ð¾ Ñ„Ð°Ð¹Ð»Ð°
 					#Files::Delete($fx);
 				}
 				$this->data['sent']=$a['sendservice'] ? explode(',,',trim($a['sendservice'],',')) : false;

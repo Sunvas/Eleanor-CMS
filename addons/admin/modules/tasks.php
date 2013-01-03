@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -63,10 +63,10 @@ $Eleanor->ta=array(
 		{
 			return$a['multilang'] ? serialize($a['value']) : serialize(array(''=>$a['value']));
 		},
-		'multilang'=>Eleanor::$vars['multilang'],#Íå ñòâèì true ïîòîìó ÷òî TitleLoad ñàì îáğàáàòûâàåò çíà÷åíèÿ â íóæíî âèäå :)
+		'multilang'=>Eleanor::$vars['multilang'],#ĞĞµ ÑÑ‚Ğ²Ğ¸Ğ¼ true Ğ¿Ğ¾Ñ‚Ğ¾Ğ¼Ñƒ Ñ‡Ñ‚Ğ¾ TitleLoad ÑĞ°Ğ¼ Ğ¾Ğ±Ñ€Ğ°Ğ±Ğ°Ñ‚Ñ‹Ğ²Ğ°ĞµÑ‚ Ğ·Ğ½Ğ°Ñ‡ĞµĞ½Ğ¸Ñ Ğ² Ğ½ÑƒĞ¶Ğ½Ğ¾ Ğ²Ğ¸Ğ´Ğµ :)
 		'bypost'=>&$Eleanor->ta_post,
 		'options'=>array(
-			'htmlsafe'=>true,#Òîëüêî äëÿ òåêñòîâûõ äàííûõ
+			'htmlsafe'=>true,#Ğ¢Ğ¾Ğ»ÑŒĞºĞ¾ Ğ´Ğ»Ñ Ñ‚ĞµĞºÑÑ‚Ğ¾Ğ²Ñ‹Ñ… Ğ´Ğ°Ğ½Ğ½Ñ‹Ñ…
 		),
 	),
 	'run_year'=>array(

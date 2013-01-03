@@ -1,15 +1,15 @@
 <?php
 return array(
-	'error_t'=>'Помилка на сайті {site}',
-	'error'=>'Здравствуйте!<br /><br />
-[userlink]<a href="{userlink}">{fullname}</a>[-userlink]{name}[/userlink] повідомляє про наступну помилку:<br />
+	'error_t'=>'РџРѕРјРёР»РєР° РЅР° СЃР°Р№С‚С– {site}',
+	'error'=>'Р—РґСЂР°РІСЃС‚РІСѓР№С‚Рµ!<br /><br />
+[userlink]<a href="{userlink}">{fullname}</a>[-userlink]{name}[/userlink] РїРѕРІС–РґРѕРјР»СЏС” РїСЂРѕ РЅР°СЃС‚СѓРїРЅСѓ РїРѕРјРёР»РєСѓ:<br />
 <hr />
 {text}
 <hr/>
-Адреса сайту: <b><a href="{link}">{link}</a></b><br />
-Адреса помилки: <b><a href="{linkerror}">{linkerror}</a></b><br />
-[from]Посилання на помилку: <b><a href="{from}">{from}</a></b><br />[/from]
+РђРґСЂРµСЃР° СЃР°Р№С‚Сѓ: <b><a href="{link}">{link}</a></b><br />
+РђРґСЂРµСЃР° РїРѕРјРёР»РєРё: <b><a href="{linkerror}">{linkerror}</a></b><br />
+[from]РџРѕСЃРёР»Р°РЅРЅСЏ РЅР° РїРѕРјРёР»РєСѓ: <b><a href="{from}">{from}</a></b><br />[/from]
 <br />
-З найкращими побажаннями,<br />
-команда сайту {site}.',
+Р— РЅР°Р№РєСЂР°С‰РёРјРё РїРѕР±Р°Р¶Р°РЅРЅСЏРјРё,<br />
+РєРѕРјР°РЅРґР° СЃР°Р№С‚Сѓ {site}.',
 );

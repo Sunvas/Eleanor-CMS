@@ -1,13 +1,13 @@
 <?php
 return array(
-	#Äëÿ EditControlTable.php
-	'control_type'=>'Òèï êîíòðîëà',
-	'preview'=>'Ïðåäïðîñìîòð',
-	'preview_'=>'Ñîñòîÿíèå êîíòðîëà áóäåò ñîõðàíåíî êàê åãî ñîñòîÿíèå ïî óìîë÷àíèþ',
+	#Ð”Ð»Ñ EditControlTable.php
+	'control_type'=>'Ð¢Ð¸Ð¿ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð°',
+	'preview'=>'ÐŸÑ€ÐµÐ´Ð¿Ñ€Ð¾ÑÐ¼Ð¾Ñ‚Ñ€',
+	'preview_'=>'Ð¡Ð¾ÑÑ‚Ð¾ÑÐ½Ð¸Ðµ ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»Ð° Ð±ÑƒÐ´ÐµÑ‚ ÑÐ¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¾ ÐºÐ°Ðº ÐµÐ³Ð¾ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ðµ Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ',
 
-	#Äëÿ SettingsSelectLoad.php
-	'select_source_code'=>'Êîä',
-	'select_source_input'=>'Çàäàííûé ïåðå÷åíü',
-	'select_value1'=>'Îòîáðàæàåìîå',
-	'select_value'=>'Çíà÷åíèå',
+	#Ð”Ð»Ñ SettingsSelectLoad.php
+	'select_source_code'=>'ÐšÐ¾Ð´',
+	'select_source_input'=>'Ð—Ð°Ð´Ð°Ð½Ð½Ñ‹Ð¹ Ð¿ÐµÑ€ÐµÑ‡ÐµÐ½ÑŒ',
+	'select_value1'=>'ÐžÑ‚Ð¾Ð±Ñ€Ð°Ð¶Ð°ÐµÐ¼Ð¾Ðµ',
+	'select_value'=>'Ð—Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ',
 );

@@ -1,9 +1,9 @@
 <?php
 /*
-	Ýëåìåíò øàáëîíà. Îòîáðàæàåò êíîïêè äëÿ îñóùåñòâëåíèÿ âíåøíåé àâòîðèçàöèè, èñïîëüçóÿ ñèñòåìó èäåíòèôèêàöèè Loginza. http://loginza.ru
+	Ð­Ð»ÐµÐ¼ÐµÐ½Ñ‚ ÑˆÐ°Ð±Ð»Ð¾Ð½Ð°. ÐžÑ‚Ð¾Ð±Ñ€Ð°Ð¶Ð°ÐµÑ‚ ÐºÐ½Ð¾Ð¿ÐºÐ¸ Ð´Ð»Ñ Ð¾ÑÑƒÑ‰ÐµÑÑ‚Ð²Ð»ÐµÐ½Ð¸Ñ Ð²Ð½ÐµÑˆÐ½ÐµÐ¹ Ð°Ð²Ñ‚Ð¾Ñ€Ð¸Ð·Ð°Ñ†Ð¸Ð¸, Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÑ ÑÐ¸ÑÑ‚ÐµÐ¼Ñƒ Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ†Ð¸Ð¸ Loginza. http://loginza.ru
 */
 if(!defined('CMS'))die;?><a style="text-decoration:none" href="#" class="externals loginza">
-<img src="http://loginza.ru/img/providers/vkontakte.png" title="ÂÊîíòàêòå" alt="ÂÊîíòàêòå" />
+<img src="http://loginza.ru/img/providers/vkontakte.png" title="Ð’ÐšÐ¾Ð½Ñ‚Ð°ÐºÑ‚Ðµ" alt="Ð’ÐšÐ¾Ð½Ñ‚Ð°ÐºÑ‚Ðµ" />
 <img src="http://loginza.ru/img/providers/facebook.png" title="Facebook" alt="Facebook" />
 <img src="http://loginza.ru/img/providers/google.png" title="Google Accounts" alt="Google Accounts" />
 <img src="http://loginza.ru/img/providers/twitter.png" title="Twitter" alt="Twitter" />

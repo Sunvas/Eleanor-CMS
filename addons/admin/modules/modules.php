@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright ¬© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -66,7 +66,7 @@ elseif(isset($_GET['swap']))
 	if(Eleanor::$our_query)
 		Eleanor::$Db->Update(P.'modules',array('!active'=>'NOT `active`'),'`id`='.$id.' AND `protected`=0 LIMIT 1');
 	$back=getenv('HTTP_REFERER');
-	Eleanor::$Cache->Obsolete('mainpage');#ƒÎˇ ÏÓ‰ÛÎˇ "„Î‡‚Ì‡ˇ ÒÚ‡ÌËˆ‡"
+	Eleanor::$Cache->Obsolete('mainpage');#–î–ª—è –º–æ–¥—É–ª—è "–≥–ª–∞–≤–Ω–∞—è —Å—Ç—Ä–∞–Ω–∏—Ü–∞"
 	GoAway($back ? $back.'#it'.$id : true);
 }
 else

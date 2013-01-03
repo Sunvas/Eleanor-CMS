@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -10,7 +10,7 @@
 */
 class AccountExternals
 {
-	#Âíèìàíèå! Äëÿ äîñòèæåíèÿ íàèáîëüøå áåçîïàñíîñòè, ïîñåòèòå http://loginza.ru/ è ïðåîáðåòèòå ñâîè ID è SECRET
+	#Ð’Ð½Ð¸Ð¼Ð°Ð½Ð¸Ðµ! Ð”Ð»Ñ Ð´Ð¾ÑÑ‚Ð¸Ð¶ÐµÐ½Ð¸Ñ Ð½Ð°Ð¸Ð±Ð¾Ð»ÑŒÑˆÐµ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚Ð¸, Ð¿Ð¾ÑÐµÑ‚Ð¸Ñ‚Ðµ http://loginza.ru/ Ð¸ Ð¿Ñ€ÐµÐ¾Ð±Ñ€ÐµÑ‚Ð¸Ñ‚Ðµ ÑÐ²Ð¾Ð¸ ID Ð¸ SECRET
 	const
 		ID=0,
 		SECRET='';

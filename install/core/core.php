@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -60,12 +60,12 @@ function Result($s)
 class Install
 {
 	/*
-		Ôóíêöèÿ ïðîâåðêè âîçìîæíîñòè óñòàíîâèòü Eleanor CMS. Ïðîâåðÿåòñÿ:
-			-Ïðàâ çàïèñè â ïàïêè
+		Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ¸ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑ‚Ð¸ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ Eleanor CMS. ÐŸÑ€Ð¾Ð²ÐµÑ€ÑÐµÑ‚ÑÑ:
+			-ÐŸÑ€Ð°Ð² Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð² Ð¿Ð°Ð¿ÐºÐ¸
 				/uploads
 				/addons/logs
 				/cache
-		Âîçâðàùàåò ëèáî TRUE, ëèáî ìàññèâ ñ îøèáêàìè.
+		Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð»Ð¸Ð±Ð¾ TRUE, Ð»Ð¸Ð±Ð¾ Ð¼Ð°ÑÑÐ¸Ð² Ñ Ð¾ÑˆÐ¸Ð±ÐºÐ°Ð¼Ð¸.
 	*/
 	static function CheckErrors($wr_conf=true)
 	{
@@ -120,7 +120,7 @@ class Install
 	}
 
 	/*
-		Ôóíêöèÿ ïðîâåðÿåò âåðñèþ MySQLa. (íå íèæå 5.0.18)
+		Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÑ‚ Ð²ÐµÑ€ÑÐ¸ÑŽ MySQLa. (Ð½Ðµ Ð½Ð¸Ð¶Ðµ 5.0.18)
 	*/
 	static function CheckMySQLVersion()
 	{
@@ -158,8 +158,8 @@ abstract class UpdateClass
 class Update_1 extends UpdateClass
 {	public static function Run($data)
 	{
-		#Òóò - ñîáûòèÿ.
-		return true - îáíîâëåíèå çàâåðøåíî, false - íóæíî ïðîäîëæàòü
+		#Ð¢ÑƒÑ‚ - ÑÐ¾Ð±Ñ‹Ñ‚Ð¸Ñ.
+		return true - Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¾, false - Ð½ÑƒÐ¶Ð½Ð¾ Ð¿Ñ€Ð¾Ð´Ð¾Ð»Ð¶Ð°Ñ‚ÑŒ
 	}
 
 	public static function GetText()

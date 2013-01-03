@@ -733,7 +733,7 @@ CREATE TABLE `{$prefix}users_extra` (
 PRIMARY KEY (`id`),
 FOREIGN KEY (`id`) REFERENCES `{$prefix}users_site`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=".DB_CHARSET;
-#'' в enum-е нужен потому что при вставке строки, где поле avatar_type не определено по-умолчанию берется первое значение
+#'' РІ enum-Рµ РЅСѓР¶РµРЅ РїРѕС‚РѕРјСѓ С‡С‚Рѕ РїСЂРё РІСЃС‚Р°РІРєРµ СЃС‚СЂРѕРєРё, РіРґРµ РїРѕР»Рµ avatar_type РЅРµ РѕРїСЂРµРґРµР»РµРЅРѕ РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ Р±РµСЂРµС‚СЃСЏ РїРµСЂРІРѕРµ Р·РЅР°С‡РµРЅРёРµ
 
 $tables[]="DROP TABLE IF EXISTS `{$prefix}voting`";
 $tables['voting']="

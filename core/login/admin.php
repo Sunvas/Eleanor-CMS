@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -14,13 +14,13 @@ if(!class_exists('LoginBase',false))
 
 class LoginAdmin extends LoginBase implements LoginClass
 {	const
-		MAX_SESSIONS=1,#Ìàêñèìàëüíîå ÷èñëî ñåññèé
+		MAX_SESSIONS=1,#ÐœÐ°ÐºÑÐ¸Ð¼Ð°Ð»ÑŒÐ½Ð¾Ðµ Ñ‡Ð¸ÑÐ»Ð¾ ÑÐµÑÑÐ¸Ð¹
 		UNIQUE='admin';
 
 	/**
-	 * Àóòåíòèôèêàöèÿ ïî îïðåäåëåííûì âõîäÿùèì ïàðàìåòðàì, íàïðèìåð, ïî ëîãèíó è ïàðîëþ
+	 * ÐÑƒÑ‚ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ†Ð¸Ñ Ð¿Ð¾ Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð½Ñ‹Ð¼ Ð²Ñ…Ð¾Ð´ÑÑ‰Ð¸Ð¼ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ð°Ð¼, Ð½Ð°Ð¿Ñ€Ð¸Ð¼ÐµÑ€, Ð¿Ð¾ Ð»Ð¾Ð³Ð¸Ð½Ñƒ Ð¸ Ð¿Ð°Ñ€Ð¾Ð»ÑŽ
 	 *
-	 * @param array $data Ìàññèâ ñ äàííûìè
+	 * @param array $data ÐœÐ°ÑÑÐ¸Ð² Ñ Ð´Ð°Ð½Ð½Ñ‹Ð¼Ð¸
 	 * @throws EE
 	 */
 	public static function Login(array$data,array$extra=array())
@@ -44,9 +44,9 @@ class LoginAdmin extends LoginBase implements LoginClass
 	}
 
 	/**
-	 * Àâòîðèçàöèÿ ïîëüçîâàòåëÿ: ïðîâåðêà ÿâëÿåòñÿ ëè ïîëüçîâàòåëü ïîëüçîâàòåëåì
+	 * ÐÐ²Ñ‚Ð¾Ñ€Ð¸Ð·Ð°Ñ†Ð¸Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ: Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð»Ð¸ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¼
 	 *
-	 * @param bool $hard Ìåòîä êýøèðóåò ðåçóëüòàò, äëÿ ñáðîñà êýøà ïåðåäàéòå true
+	 * @param bool $hard ÐœÐµÑ‚Ð¾Ð´ ÐºÑÑˆÐ¸Ñ€ÑƒÐµÑ‚ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚, Ð´Ð»Ñ ÑÐ±Ñ€Ð¾ÑÐ° ÐºÑÑˆÐ° Ð¿ÐµÑ€ÐµÐ´Ð°Ð¹Ñ‚Ðµ true
 	 * @return bool
 	 */
 	public static function IsUser($hard=false)
@@ -69,10 +69,10 @@ class LoginAdmin extends LoginBase implements LoginClass
 	}
 
 	/**
-	 * Ôîðìèðîâàíèå ññûëêè íà ó÷¸òíóþ çàïèñü ïîëüçîâàòåëÿ
+	 * Ð¤Ð¾Ñ€Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ ÑÑÑ‹Ð»ÐºÐ¸ Ð½Ð° ÑƒÑ‡Ñ‘Ñ‚Ð½ÑƒÑŽ Ð·Ð°Ð¿Ð¸ÑÑŒ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
 	 *
-	 * @param string $name Èìÿ ïîëüçîâàòåëÿ
-	 * @param string $id ID ïîëüçîâàòåëÿ
+	 * @param string $name Ð˜Ð¼Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
+	 * @param string $id ID Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
 	 * @return string|FALSE
 	 */
 	public static function UserLink($username,$uid=0)
@@ -83,12 +83,12 @@ class LoginAdmin extends LoginBase implements LoginClass
 	}
 
 	/**
-	 * Ïðèìåíåíèå ëîãèíà, êàê ãëàâíîãî â ñèñòåìå: ïîäñòðîéêà ñèñòåìû ïîä ïîëüçîâàòåëÿ, íàñòðîéêà ÷àñîâîãî ïîÿñà, ïðîâåðêà çàáàíåííîñòè è ò.ï.
+	 * ÐŸÑ€Ð¸Ð¼ÐµÐ½ÐµÐ½Ð¸Ðµ Ð»Ð¾Ð³Ð¸Ð½Ð°, ÐºÐ°Ðº Ð³Ð»Ð°Ð²Ð½Ð¾Ð³Ð¾ Ð² ÑÐ¸ÑÑ‚ÐµÐ¼Ðµ: Ð¿Ð¾Ð´ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ° ÑÐ¸ÑÑ‚ÐµÐ¼Ñ‹ Ð¿Ð¾Ð´ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ, Ð½Ð°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ° Ñ‡Ð°ÑÐ¾Ð²Ð¾Ð³Ð¾ Ð¿Ð¾ÑÑÐ°, Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð·Ð°Ð±Ð°Ð½ÐµÐ½Ð½Ð¾ÑÑ‚Ð¸ Ð¸ Ñ‚.Ð¿.
 	 */
 	public static function ApplyCheck(){}
 
 	/**
-	 * Ïðîâåðêà íàëè÷èÿ ó ïîëüçîâàòåëÿ ïðàâà âõîäèòü â ïàíåëü àäìèíèñòðàòîðà
+	 * ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð½Ð°Ð»Ð¸Ñ‡Ð¸Ñ Ñƒ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ Ð¿Ñ€Ð°Ð²Ð° Ð²Ñ…Ð¾Ð´Ð¸Ñ‚ÑŒ Ð² Ð¿Ð°Ð½ÐµÐ»ÑŒ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€Ð°
 	 */
 	private static function CheckPermission()
 	{

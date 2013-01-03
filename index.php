@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.su, http://eleanor-cms.ru, http://eleanor-cms.com, http://eleanor-cms.net
 	E-mail: support@eleanor-cms.su, support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -13,7 +13,7 @@ define('CMS',true);
 require dirname(__file__).'/core/core.php';
 
 $Eleanor=Eleanor::getInstance();
-Eleanor::$service='user';#ID ñåğâèñà
+Eleanor::$service='user';#ID ÑĞµÑ€Ğ²Ğ¸ÑĞ°
 Eleanor::$Language->queue['main']='langs/user-*.php';
 Eleanor::LoadOptions(array('site','users-on-site'));
 Eleanor::InitService();
@@ -50,7 +50,7 @@ if(Eleanor::$vars['multilang'])
 		Language::$main=$l;
 		Eleanor::$Language->Change($l);
 	}
-	#Ïîïğîáóåì îïğåäåëèòü îñíîâíîé ÿçûê ïîëüçîâàòåëÿ
+	#ĞŸĞ¾Ğ¿Ñ€Ğ¾Ğ±ÑƒĞµĞ¼ Ğ¾Ğ¿Ñ€ĞµĞ´ĞµĞ»Ğ¸Ñ‚ÑŒ Ğ¾ÑĞ½Ğ¾Ğ²Ğ½Ğ¾Ğ¹ ÑĞ·Ñ‹Ğº Ğ¿Ğ¾Ğ»ÑŒĞ·Ğ¾Ğ²Ğ°Ñ‚ĞµĞ»Ñ
 	elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 	{
 		$la=array();
@@ -117,7 +117,7 @@ if(Eleanor::$vars['multilang'])
 }
 else
 	Eleanor::$lvars=array();
-#Òğè ïğåäóñòàíîâëåííûå ïåğåìåííûå
+#Ğ¢Ñ€Ğ¸ Ğ¿Ñ€ĞµĞ´ÑƒÑÑ‚Ğ°Ğ½Ğ¾Ğ²Ğ»ĞµĞ½Ğ½Ñ‹Ğµ Ğ¿ĞµÑ€ĞµĞ¼ĞµĞ½Ğ½Ñ‹Ğµ
 $title=$head=$jscripts=array();
 
 $theme=Eleanor::$Login->IsUser() ? Eleanor::$Login->GetUserValue('theme') : Eleanor::GetCookie('theme');
@@ -187,7 +187,7 @@ elseif(isset($_REQUEST['direct']) and is_file($f=Eleanor::$root.'addons/direct/'
 else
 	return MainPage();
 
-#Ïğåäîïğåäåëåííûå ôóíêöèè.
+#ĞŸÑ€ĞµĞ´Ğ¾Ğ¿Ñ€ĞµĞ´ĞµĞ»ĞµĞ½Ğ½Ñ‹Ğµ Ñ„ÑƒĞ½ĞºÑ†Ğ¸Ğ¸.
 function Start($tpl='index',$code=200)
 {global$Eleanor,$jscripts,$head,$title,$tcover,$thead;
 	if($Eleanor->started)
@@ -256,7 +256,7 @@ function Start($tpl='index',$code=200)
 
 	if(Eleanor::$vars['site_domain']!=Eleanor::$domain and Eleanor::$vars['parked_domains']=='rel' and Eleanor::$vars['site_domain'])
 		$Lst->link(array('rel'=>'canonical','href'=>PROTOCOL.preg_replace('#^[a-z0-9\-]+\.[a-z\-]{2,}#i',Eleanor::$vars['site_domain'],$_SERVER['SERVER_NAME']).$_SERVER['REQUEST_URI']));
-	#Åñëè ìîäóëåì çàäàí îğèãèíàëüíûé URL ñòğàíèöû, ñğàâíèì åãî ñ ïîëó÷åííûì
+	#Ğ•ÑĞ»Ğ¸ Ğ¼Ğ¾Ğ´ÑƒĞ»ĞµĞ¼ Ğ·Ğ°Ğ´Ğ°Ğ½ Ğ¾Ñ€Ğ¸Ğ³Ğ¸Ğ½Ğ°Ğ»ÑŒĞ½Ñ‹Ğ¹ URL ÑÑ‚Ñ€Ğ°Ğ½Ğ¸Ñ†Ñ‹, ÑÑ€Ğ°Ğ²Ğ½Ğ¸Ğ¼ ĞµĞ³Ğ¾ Ñ Ğ¿Ğ¾Ğ»ÑƒÑ‡ĞµĞ½Ğ½Ñ‹Ğ¼
 	elseif(isset($Eleanor->origurl))
 	{
 		$u=isset($Eleanor->module['general']) ? PROTOCOL.Eleanor::$punycode.Eleanor::$site_path : $Eleanor->origurl;
@@ -374,14 +374,14 @@ function Error($e=false,$extra=array())
 		);
 	}
 
-	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#Îøèáêà ìîãëà âûëåòåòü è â ìîìåíò ñîçäàíèÿ îáúåêòà $Eleanor
+	if(isset($Eleanor,$Eleanor->started) and $Eleanor->started)#ĞÑˆĞ¸Ğ±ĞºĞ° Ğ¼Ğ¾Ğ³Ğ»Ğ° Ğ²Ñ‹Ğ»ĞµÑ‚ĞµÑ‚ÑŒ Ğ¸ Ğ² Ğ¼Ğ¾Ğ¼ĞµĞ½Ñ‚ ÑĞ¾Ğ·Ğ´Ğ°Ğ½Ğ¸Ñ Ğ¾Ğ±ÑŠĞµĞºÑ‚Ğ° $Eleanor
 	{
 		$Eleanor->error=true;
 		if($csh)
 			header('Content-Type: text/html; charset='.Eleanor::$charset,true,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503);
 		while(ob_get_contents()!==false)
 			ob_end_clean();
-		ob_start();ob_start();ob_start();#Ñòğàííûé ãëşê PHP... Äîñòàòî÷íî ñäåëàòü Parse error â index.php òåìû (èëè Template index was not found!) è Core::FinishOutPut áóäåò ïîëó÷àòü ïóñòîå çíà÷åíèå
+		ob_start();ob_start();ob_start();#Ğ¡Ñ‚Ñ€Ğ°Ğ½Ğ½Ñ‹Ğ¹ Ğ³Ğ»ÑĞº PHP... Ğ”Ğ¾ÑÑ‚Ğ°Ñ‚Ğ¾Ñ‡Ğ½Ğ¾ ÑĞ´ĞµĞ»Ğ°Ñ‚ÑŒ Parse error Ğ² index.php Ñ‚ĞµĞ¼Ñ‹ (Ğ¸Ğ»Ğ¸ Template index was not found!) Ğ¸ Core::FinishOutPut Ğ±ÑƒĞ´ĞµÑ‚ Ğ¿Ğ¾Ğ»ÑƒÑ‡Ğ°Ñ‚ÑŒ Ğ¿ÑƒÑÑ‚Ğ¾Ğµ Ğ·Ğ½Ğ°Ñ‡ĞµĞ½Ğ¸Ğµ
 		echo$e;
 	}
 	else
@@ -391,11 +391,11 @@ function Error($e=false,$extra=array())
 		die;
 	}
 }
-#Ñïåöèàëüíûå ôóíêöèè äëÿ ñåğâèñà user
+#Ğ¡Ğ¿ĞµÑ†Ğ¸Ğ°Ğ»ÑŒĞ½Ñ‹Ğµ Ñ„ÑƒĞ½ĞºÑ†Ğ¸Ğ¸ Ğ´Ğ»Ñ ÑĞµÑ€Ğ²Ğ¸ÑĞ° user
 
 function ExitPage($code=404)
 {global$Eleanor;
-	#Ñòğàíèöà ñ Error
+	#Ğ¡Ñ‚Ñ€Ğ°Ğ½Ğ¸Ñ†Ğ° Ñ Error
 	$R=Eleanor::$Db->Query('SELECT `id`,`sections`,`title_l`,`image` FROM `'.P.'modules` WHERE `id`=4 LIMIT 1');
 	if(!$a=$R->fetch_assoc())
 		return GoAway(true);
@@ -471,16 +471,16 @@ function MainPage($tm=false)
 		return ExitPage();
 	}while(false);
 
-	#Òóò ìû ïî-óìîë÷àíèş ãğóçèì ìîäóëü ãëàâíîé ñòğàíèöû, êîòîğûé íàñòğàèâàåòñÿ â àäìèíêå. Íî íèêòî íå ìåøàåò ïèõàíóòü ñşäà ÷òî-òî ñâîå.
+	#Ğ¢ÑƒÑ‚ Ğ¼Ñ‹ Ğ¿Ğ¾-ÑƒĞ¼Ğ¾Ğ»Ñ‡Ğ°Ğ½Ğ¸Ñ Ğ³Ñ€ÑƒĞ·Ğ¸Ğ¼ Ğ¼Ğ¾Ğ´ÑƒĞ»ÑŒ Ğ³Ğ»Ğ°Ğ²Ğ½Ğ¾Ğ¹ ÑÑ‚Ñ€Ğ°Ğ½Ğ¸Ñ†Ñ‹, ĞºĞ¾Ñ‚Ğ¾Ñ€Ñ‹Ğ¹ Ğ½Ğ°ÑÑ‚Ñ€Ğ°Ğ¸Ğ²Ğ°ĞµÑ‚ÑÑ Ğ² Ğ°Ğ´Ğ¼Ğ¸Ğ½ĞºĞµ. ĞĞ¾ Ğ½Ğ¸ĞºÑ‚Ğ¾ Ğ½Ğµ Ğ¼ĞµÑˆĞ°ĞµÑ‚ Ğ¿Ğ¸Ñ…Ğ°Ğ½ÑƒÑ‚ÑŒ ÑÑĞ´Ğ° Ñ‡Ñ‚Ğ¾-Ñ‚Ğ¾ ÑĞ²Ğ¾Ğµ.
 	Modules::Load(Eleanor::$root.'modules/mainpage/');
 }
 
 function LangNewUrl($url,$l)
 {global$Eleanor;
-	#Îïğåäåëèì îòïğàâíóş òî÷êó, êóäà ìû â ëşáîì ñëó÷àå îòïğàâèì êëèåíòà
+	#ĞĞ¿Ñ€ĞµĞ´ĞµĞ»Ğ¸Ğ¼ Ğ¾Ñ‚Ğ¿Ñ€Ğ°Ğ²Ğ½ÑƒÑ Ñ‚Ğ¾Ñ‡ĞºÑƒ, ĞºÑƒĞ´Ğ° Ğ¼Ñ‹ Ğ² Ğ»ÑĞ±Ğ¾Ğ¼ ÑĞ»ÑƒÑ‡Ğ°Ğµ Ğ¾Ñ‚Ğ¿Ñ€Ğ°Ğ²Ğ¸Ğ¼ ĞºĞ»Ğ¸ĞµĞ½Ñ‚Ğ°
 	$base=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
 
-	#Åñëè çàïğîñ ïğèøåë ñ ÷óæîãî äîìåíà - ñ÷èòàåì òàêîé çàïğîñ íåêîğğåêòíûì
+	#Ğ•ÑĞ»Ğ¸ Ğ·Ğ°Ğ¿Ñ€Ğ¾Ñ Ğ¿Ñ€Ğ¸ÑˆĞµĞ» Ñ Ñ‡ÑƒĞ¶Ğ¾Ğ³Ğ¾ Ğ´Ğ¾Ğ¼ĞµĞ½Ğ° - ÑÑ‡Ğ¸Ñ‚Ğ°ĞµĞ¼ Ñ‚Ğ°ĞºĞ¾Ğ¹ Ğ·Ğ°Ğ¿Ñ€Ğ¾Ñ Ğ½ĞµĞºĞ¾Ñ€Ñ€ĞµĞºÑ‚Ğ½Ñ‹Ğ¼
 	if(strpos($url,'://')!==false and strpos($url,$base)!==0)
 		$url='';
 	$url=preg_replace('#^'.preg_quote($base,'#').'('.preg_quote(Eleanor::$filename,'#').')?#i','',$url);
@@ -529,7 +529,7 @@ function LangNewUrl($url,$l)
 					$lang=$k;
 
 		$m=isset($q['module']) ? $q['module'] : false;
-		unset($q['module'],$q['lang']);#Ñìîòğè â Static api. Äëÿ èçáåæàíèÿ êîíôëèêòîâ ñ $Url->prefix
+		unset($q['module'],$q['lang']);#Ğ¡Ğ¼Ğ¾Ñ‚Ñ€Ğ¸ Ğ² Static api. Ğ”Ğ»Ñ Ğ¸Ğ·Ğ±ĞµĞ¶Ğ°Ğ½Ğ¸Ñ ĞºĞ¾Ğ½Ñ„Ğ»Ğ¸ĞºÑ‚Ğ¾Ğ² Ñ $Url->prefix
 		if(!$m and !$q)
 			return$base.$special;
 	}

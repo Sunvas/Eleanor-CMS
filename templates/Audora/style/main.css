@@ -1,5 +1,5 @@
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -230,18 +230,18 @@ div.code pre code {
 
 .quote { color: #a5a4a4; background: #f9f7f6 url("../images/quote.gif") no-repeat 0 0; border: 1px solid #f3f2f1; padding: 20px 7px 7px 7px; clear: both; }
 
-/*Вкладка заполнения других языков*/
+/*Р’РєР»Р°РґРєР° Р·Р°РїРѕР»РЅРµРЅРёСЏ РґСЂСѓРіРёС… СЏР·С‹РєРѕРІ*/
 ul.editlang, ul.editlang li { list-style: none; padding: 0; margin: 0; }
 .ol_heading { background: #fff url("../images/submitline.png") repeat-x 0 0; border-bottom: 1px solid #d6d6d6; border-top: 1px solid #ededed; font-weight: bold; padding: 5px; display: block; }
 .ol_heading img { float: left; margin-right: 8px; }
 
-/*в настройках*/
+/*РІ РЅР°СЃС‚СЂРѕР№РєР°С…*/
 .langtabcont { float: left; padding: 4px; border: 1px solid #dbddde; }
 .langtabs { clear: both; }
 .langtabs img { width: 20px; height: 16px; padding: 3px; border: 0 solid #dbddde; margin-top: -1px; }
 .langtabs .selected img { border-width: 0 1px 1px 1px; background-color: #fff; }
 
-/*Галерея аватаров*/
+/*Р“Р°Р»РµСЂРµСЏ Р°РІР°С‚Р°СЂРѕРІ*/
 .galleryavatars { text-align:center; }
 .galleryavatars a {
 	float: left;
@@ -273,7 +273,7 @@ ul.editlang, ul.editlang li { list-style: none; padding: 0; margin: 0; }
 .galleryavatars a:hover b { background-color: #ececec; }
 .galleryavatars a:hover b span { color: #5b5b5b; }
 
-/*Шапка при уменьшении изображения*/
+/*РЁР°РїРєР° РїСЂРё СѓРјРµРЅСЊС€РµРЅРёРё РёР·РѕР±СЂР°Р¶РµРЅРёСЏ*/
 .resized-image-header {
 	position: absolute;
 	top: 0;

@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright Â© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -67,7 +67,7 @@ function AddEdit($id,$errors=array(),$gn=array())
 					$values['tags'][(Eleanor::$vars['multilang'] and !$values['_onelang']) ? $a['language'] : ''][]=$a['name'];
 				foreach($values['tags'] as &$v)
 				{
-					#Óäàëåíèå îäèíàêîâûõ òåãîâ
+					#Ð£Ð´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð¾Ð´Ð¸Ð½Ð°ÐºÐ¾Ð²Ñ‹Ñ… Ñ‚ÐµÐ³Ð¾Ð²
 					foreach($v as $kt=>&$vt)
 						foreach($v as $kkt=>&$vvt)
 						{
@@ -94,12 +94,12 @@ function AddEdit($id,$errors=array(),$gn=array())
 			'tags'=>array(''=>''),
 			'voting'=>false,
 			'enddate'=>'',
-			#ßçûêîâûå
+			#Ð¯Ð·Ñ‹ÐºÐ¾Ð²Ñ‹Ðµ
 			'uri'=>$dv,
 			'title'=>$dv,
 			'announcement'=>$dv,
 			'text'=>$dv,
-			#Ñïåöèàëüíûå
+			#Ð¡Ð¿ÐµÑ†Ð¸Ð°Ð»ÑŒÐ½Ñ‹Ðµ
 			'_maincat'=>0,
 		);
 		if(Eleanor::$vars['multilang'])
@@ -215,7 +215,7 @@ function Save($id,$gn=array())
 	}
 
 	$mod=Eleanor::$Permissions->Moderate();
-	#Ïåðå÷åíü ïåðåìåííûõ, êîòîðûå äóáëèðóþòñÿ äëÿ ÿçûêîâîé òàáëèöû íèæå
+	#ÐŸÐµÑ€ÐµÑ‡ÐµÐ½ÑŒ Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ñ‹Ñ…, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð´ÑƒÐ±Ð»Ð¸Ñ€ÑƒÑŽÑ‚ÑÑ Ð´Ð»Ñ ÑÐ·Ñ‹ÐºÐ¾Ð²Ð¾Ð¹ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ Ð½Ð¸Ð¶Ðµ
 	$maincat=isset($_POST['_maincat']) ? (int)$_POST['_maincat'] : false;
 	$cats=isset($_POST['cats']) ? array_unique((array)$_POST['cats']) : array();
 	if($cats and count($cats)>1)
@@ -367,7 +367,7 @@ function Save($id,$gn=array())
 					unset($tags[$kt]);
 			}
 		}
-		unset($vt);#Íå ïðîñòî òàê
+		unset($vt);#ÐÐµ Ð¿Ñ€Ð¾ÑÑ‚Ð¾ Ñ‚Ð°Ðº
 		if(!$tags)
 			continue;
 		$toins=$utags=array();
@@ -467,7 +467,7 @@ function Save($id,$gn=array())
 			'date'=>$date,
 			'author_id'=>$uid,
 		);
-		Eleanor::$Db->Transaction();#Âñå ðàäè àïëîàäåðà
+		Eleanor::$Db->Transaction();#Ð’ÑÐµ Ñ€Ð°Ð´Ð¸ Ð°Ð¿Ð»Ð¾Ð°Ð´ÐµÑ€Ð°
 		$id=Eleanor::$Db->Insert($Eleanor->module['config']['t'],$values);
 		try
 		{

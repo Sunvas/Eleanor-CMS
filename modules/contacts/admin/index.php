@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright © Eleanor CMS
+	Copyright В© Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -12,7 +12,7 @@ if(!defined('CMS'))die;
 global$Eleanor,$title;
 $title[]=$Eleanor->module['title'];
 Eleanor::$Template->queue[]='AdminContacts';
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php','contacts');#'contacts' - для шаблона
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php','contacts');#'contacts' - РґР»СЏ С€Р°Р±Р»РѕРЅР°
 
 $post=false;
 $controls=array(

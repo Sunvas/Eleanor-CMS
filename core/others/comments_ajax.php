@@ -91,7 +91,8 @@ class Comments_Ajax extends Comments
 				OwnBB::$replace['quote']='CommentsQoute';
 				if(!class_exists('CommentsQoute',false))
 					include Eleanor::$root.'core/others/comments/ownbb-quote.php';
-				CommentsQoute::$findlink=$this->Url(array($this->upref.'find'=>true));
+				$THIS=$this;#PHP 5.4 Убрать этот костыль
+				CommentsQoute::$findlink=function($id) use ($THIS){ return$THIS->Url(array($this->upref.'find'=>$id)); };
 
 				$El=Eleanor::getInstance();
 				$text=isset($post['text']) ? $El->Editor_result->GetHtml($post['text'],true) : '';
@@ -407,7 +408,8 @@ class Comments_Ajax extends Comments
 				OwnBB::$replace['quote']='CommentsQoute';
 				if(!class_exists('CommentsQoute',false))
 					include Eleanor::$root.'core/others/comments/ownbb-quote.php';
-				CommentsQoute::$findlink=$this->Url(array($this->upref.'find'=>true));
+				$THIS=$this;#PHP 5.4 Убрать этот костыль
+				CommentsQoute::$findlink=function($id) use ($THIS){ return$THIS->Url(array($this->upref.'find'=>$id)); };
 
 				$El=Eleanor::getInstance();
 				$text=isset($post['text'.$id]) ? $El->Editor_result->GetHtml($post['text'.$id],true) : '';

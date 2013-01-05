@@ -287,8 +287,8 @@ $(function(){
 						Files::MkDir($temp);
 					$a['value']=array();
 					foreach($sv['moved'] as $k=>&$v)
-					{						$bp=$temp.basename($v);						if(rename($v,Eleanor::$root.$bn))
-							$a['value'][$k]=$bp;					}
+					{						$bn=$temp.basename($v);						if(rename($v,Eleanor::$root.$bn))
+							$a['value'][$k]=$bn;					}
 					unset($sv['moved']);				}
 
 				if(isset($sv['deleted']))
@@ -410,6 +410,8 @@ $(function(){
 
 		if(is_string($sess['value']))
 			return$sess['value'];
+		if(!$sess['value'])
+			return'';
 
 		$path=($a['options']['path'] ? Eleanor::FormatPath($a['options']['path']) : Eleanor::$root.Eleanor::$uploads).DIRECTORY_SEPARATOR;
 		if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))

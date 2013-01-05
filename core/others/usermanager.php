@@ -33,12 +33,13 @@ class UserManager extends BaseClass
 			throw new EE('NAME_TOO_LONG',EE::DEV,array('max'=>(int)Eleanor::$vars['max_name_length'],'you'=>$l));
 		if(Eleanor::$vars['min_pass_length'] and ($l=mb_strlen($user['_password']))<(int)Eleanor::$vars['min_pass_length'])
 			throw new EE('PASS_TOO_SHORT',EE::DEV,array('min'=>(int)Eleanor::$vars['min_pass_length'],'you'=>$l));
-		$escpn=Eleanor::$Db->Escape($user['name']);
-		$R=Eleanor::$UsersDb->Query('SELECT `name` FROM `'.USERS_TABLE.'` WHERE `name`='.$escpn.' LIMIT 1');
+
+		$R=Eleanor::$UsersDb->Query('SELECT `name` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($user['name']).' LIMIT 1');
 		if($R->num_rows>0)
 			throw new EE('NAME_EXISTS',EE::DEV);
-		$R2=Eleanor::$Db->Query('SELECT `email` FROM `'.P.'users_site` WHERE `email`='.$escpn.' LIMIT 1');
-		if($R2->num_rows>0)
+
+		$R=Eleanor::$Db->Query('SELECT `email` FROM `'.P.'users_site` WHERE `email`='.Eleanor::$Db->Escape($user['email']).' LIMIT 1');
+		if($R->num_rows>0)
 			throw new EE('EMAIL_EXISTS',EE::UNIT);
 
 		$un=addcslashes($user['name'],"\n\r\t");

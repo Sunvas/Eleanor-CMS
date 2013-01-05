@@ -303,7 +303,6 @@ $Eleanor->avatar=array(
 		{
 			return isset($a['id']) ? 'av-'.$a['id'].strrchr($a['filename'],'.') : $a['filename'];
 		},
-		'deleted'=>false,
 	),
 );
 
@@ -1198,7 +1197,10 @@ function Save($id)
 			$extra['pass']=strlen($extra['pass'])>=Eleanor::$vars['min_pass_length'] ? substr($extra['pass'],0,Eleanor::$vars['min_pass_length']>7 ? Eleanor::$vars['min_pass_length'] : 7) : str_pad($extra['pass'],Eleanor::$vars['min_pass_length'],uniqid(),STR_PAD_RIGHT);		}
 		try
 		{			$newid=UserManager::Add($values+array('_password'=>$extra['pass']));		}
-		catch(EE $E)
+		catch(EE_SQL$E)
+		{			$E->Log();
+			return AddEdit($id,array($E->getMessage()));		}
+		catch(EE$E)
 		{			$mess=$E->getMessage();			$errors=array();
 			switch($mess)
 			{

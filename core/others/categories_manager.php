@@ -80,6 +80,7 @@ class Categories_Manager extends Categories
 				Eleanor::$Db->Delete($this->table,'`id`'.$ids);
 				Eleanor::$Db->Delete($this->table.'_l','`id`'.$ids);
 				Eleanor::$Db->Update($this->table,array('!pos'=>'`pos`-1'),'`pos`>'.$a['pos'].' AND `parent`=\''.$a['parent'].'\'');
+				Eleanor::$Db->Delete(P.'drafts','`key`=\''.get_class($this).'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
 
 				Eleanor::$Cache->Lib->DeleteByTag($this->table);
 				GoAway(empty($_POST['back']) ? true : $_POST['back']);
@@ -156,7 +157,7 @@ class Categories_Manager extends Categories
 				case'draft':
 					$id=isset($_POST['_draft']) ? (int)$_POST['_draft'] : 0;
 					unset($_POST['_draft'],$_POST['back']);
-					Eleanor::$Db->Replace(P.'drafts',array('key'=>get_class().'-'.Eleanor::$Login->GetUserValue('id').'-'.$id,'value'=>serialize($_POST)));
+					Eleanor::$Db->Replace(P.'drafts',array('key'=>get_class($this).'-'.Eleanor::$Login->GetUserValue('id').'-'.$id,'value'=>serialize($_POST)));
 					Eleanor::$content_type='text/plain';
 					Start('');
 					echo'ok';
@@ -551,7 +552,7 @@ class Categories_Manager extends Categories
 		$C=new Controls;
 		$values=$C->DisplayControls($this->controls,$values)+$values;
 		$links=array(
-			'delete'=>$id ? $U->Construct(array($this->pp.$this->pp.'delete'=>$id,$this->pp.'noback'=>1)) : false,
+			'delete'=>$id ? $U->Construct(array($this->pp.'delete'=>$id,$this->pp.'noback'=>1)) : false,
 			'nodraft'=>$hasdraft ? $U->Construct(array($this->pp.'do'=>$id ? false : 'add',$this->pp.'edit'=>$id ? $id : false,$this->pp.'nodraft'=>1)) : false,
 			'draft'=>$U->Construct(array($this->pp.'do'=>'draft')),
 		);
@@ -632,6 +633,7 @@ class Categories_Manager extends Categories
 				$v=null;
 		}
 
+		Eleanor::$Db->Delete(P.'drafts','`key`=\''.get_class($this).'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
 		if($id)
 		{
 			if($values['parent']>0)

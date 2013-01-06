@@ -144,7 +144,8 @@ if(isset($_GET['do']))
 			{
 				$R=Eleanor::$Db->Query('SELECT `id`,`language`,`name`,`cnt` FROM `'.$mc['tt'].'`'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
 				while($a=$R->fetch_assoc())
-				{					$a['_aedit']=$Eleanor->Url->Construct(array('editt'=>$a['id']));
+				{
+					$a['_aedit']=$Eleanor->Url->Construct(array('editt'=>$a['id']));
 					$a['_adel']=$Eleanor->Url->Construct(array('deletet'=>$a['id']));
 
 					$items[$a['id']]=array_slice($a,1);
@@ -180,7 +181,8 @@ if(isset($_GET['do']))
 			$Eleanor->Url->SetPrefix(array('do'=>'categories'),true);
 			$c=$Eleanor->Categories->Show();
 			if($c)
-			{				SetData();
+			{
+				SetData();
 				$c=Eleanor::$Template->Categories($c);
 				Start();
 				echo$c;
@@ -190,7 +192,8 @@ if(isset($_GET['do']))
 			$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
 			$c=$Eleanor->Settings->GetInterface('group',$mc['opts']);
 			if($c)
-			{				SetData();
+			{
+				SetData();
 				$c=Eleanor::$Template->Options($c);
 				Start();
 				echo$c;
@@ -204,7 +207,7 @@ if(isset($_GET['do']))
 				Eleanor::$Db->Replace(P.'drafts',array('key'=>$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$t,'value'=>serialize($_POST)));
 			}
 			Eleanor::$content_type='text/plain';
-			MStart('');
+			Start('');
 			echo'ok';
 		break;
 		//case'addf':
@@ -538,7 +541,8 @@ function ShowList()
 	$qs+=array('sort'=>false,'so'=>false);
 
 	if($cnt>0)
-	{		$t=time();
+	{
+		$t=time();
 		$R=Eleanor::$Db->Query('SELECT `id`,`cats`,`date`,`enddate`,`pinned`,`date`>`pinned` `_pinned`,`author`,`author_id`,`status`,`title` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\')'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
 		while($a=$R->fetch_assoc())
 		{
@@ -1093,7 +1097,8 @@ function DelCategories($ids)
 }
 
 function SetData()
-{global$Eleanor;	$R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$Eleanor->module['config']['t'].'` WHERE `status`=-1');
+{global$Eleanor;
+	$R=Eleanor::$Db->Query('SELECT COUNT(`status`) FROM `'.$Eleanor->module['config']['t'].'` WHERE `status`=-1');
 	list($cnt)=$R->fetch_row();
 	$Eleanor->module['links']=array(
 		'list'=>$Eleanor->Url->Prefix(),

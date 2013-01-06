@@ -57,7 +57,7 @@ class Categories_Manager extends Categories
 			$error='';
 			do
 			{
-				if(!isset($_POST['ok']) or $_POST['ok']!='ok')
+				if(!isset($_POST['ok']))
 					break;
 
 				$ids=array($id);
@@ -171,7 +171,8 @@ class Categories_Manager extends Categories
 	 * @return array Массив контролов
 	 */
 	public function Controls()
-	{		$THIS=$this;#PHP 5.4 Убрать этот костыль
+	{
+		$THIS=$this;#PHP 5.4 Убрать этот костыль
 		return array(
 			'parent'=>array(
 				'title'=>$this->Language['parent'],
@@ -211,7 +212,8 @@ class Categories_Manager extends Categories
 				'descr'=>'',
 				'type'=>'input',
 				'check'=>function($value)use($THIS)
-				{					$errors=array();
+				{
+					$errors=array();
 					if(Eleanor::$vars['multilang'])
 						foreach($value as $k=>&$v)
 						{
@@ -282,6 +284,7 @@ class Categories_Manager extends Categories
 					'htmlsafe'=>true,
 					'extra'=>array(
 						'tabindex'=>6,
+						'onfocus'=>'if(!$(this).val())$(this).val( $(\'[name=\\\'\'+ $(this).prop("name").replace("uri","title") +\'\\\']\').val() )',
 					),
 				),
 			),
@@ -406,7 +409,8 @@ class Categories_Manager extends Categories
 		{
 			$R=Eleanor::$Db->Query('SELECT `id`,`title`,`parent`,`image`,`pos` FROM `'.$this->table.'` INNER JOIN `'.$this->table.'_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `parent`='.$parent.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.','.$pp);
 			while($a=$R->fetch_assoc())
-			{				$a['_aedit']=$El->Url->Construct(array($this->pp.'edit'=>$a['id']));
+			{
+				$a['_aedit']=$El->Url->Construct(array($this->pp.'edit'=>$a['id']));
 				$a['_adel']=$El->Url->Construct(array($this->pp.'delete'=>$a['id']));
 				$a['_aparent']=$El->Url->Construct(array($this->pp.'parent'=>$a['id']));
 				$a['_aup']=$a['pos']<$cnt ? $El->Url->Construct(array($this->pp.'up'=>$a['id'])) : false;
@@ -496,7 +500,8 @@ class Categories_Manager extends Categories
 							if(isset($this->controls[$k]))
 								$values[$k]['value'][$a['language']]=$v;
 				if(Eleanor::$vars['multilang'])
-				{					if(!isset($values['_onelang']))
+				{
+					if(!isset($values['_onelang']))
 						$values['_onelang']=false;
 					$values['_langs']=isset($values['title']['value']) ? array_keys($values['title']['value']) : array();
 				}

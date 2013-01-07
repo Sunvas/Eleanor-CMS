@@ -48,7 +48,7 @@ if(Eleanor::$vars['multilang'])
 	if(!$isu and $l=Eleanor::GetCookie('lang') and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
 	{
 		Language::$main=$l;
-		Eleanor::$Language->Change($l);
+		Eleanor::$Language->Change($gl);
 	}
 	#Попробуем определить основной язык пользователя
 	elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
@@ -128,7 +128,8 @@ Eleanor::InitTemplate($theme ? $theme : Eleanor::$services[Eleanor::$service]['t
 $Eleanor->modules=Modules::GetCache();
 
 if(Eleanor::$vars['site_closed'] and !Eleanor::$Permissions->ShowClosedSite() and !Eleanor::LoadLogin(Eleanor::$services['admin']['login'])->IsUser())
-{	$s=Eleanor::$Template->Denied();
+{
+	$s=Eleanor::$Template->Denied();
 	Start('');
 	header('Retry-After: 7200',true,503);
 	die($s);
@@ -148,7 +149,8 @@ if(!$m)
 	$m=$Eleanor->Url->ParseToValue('module');
 
 if($m)
-{	if(!isset($Eleanor->modules['ids'][$m]))
+{
+	if(!isset($Eleanor->modules['ids'][$m]))
 		return MainPage($m);
 	$R=Eleanor::$Db->Query('SELECT `id`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files` FROM `'.P.'modules` WHERE `id`='.(int)$Eleanor->modules['ids'][$m].' AND `active`=1 LIMIT 1');
 	if(!$a=$R->fetch_assoc())
@@ -349,7 +351,8 @@ function Error($e=false,$extra=array())
 	$csh=!headers_sent();
 	$le=Eleanor::$Language['errors'];
 	if(empty($extra['ban']))
-	{		$e=Eleanor::LoadFileTemplate(
+	{
+		$e=Eleanor::LoadFileTemplate(
 			Eleanor::$root.'templates/error.html',
 			array(
 				'title'=>$le['happened'],
@@ -491,7 +494,8 @@ function LangNewUrl($url,$l)
 	if(0!==$p=strpos($url,'?'))
 		$Eleanor->Url->__construct('!'.($p===false ? $url.'!&' : str_replace('?','!&',$url)));
 	else
-	{		$url=ltrim($url,'?');
+	{
+		$url=ltrim($url,'?');
 		$Eleanor->Url->is_static=false;
 	}
 	$Eleanor->Url->furl=$Eleanor->Url->is_static;
@@ -505,7 +509,8 @@ function LangNewUrl($url,$l)
 
 	$lang=LANGUAGE;
 	if($Eleanor->Url->furl)
-	{		$Eleanor->Url->ending=$Eleanor->Url->GetEnding(array($Eleanor->Url->delimiter,$Eleanor->Url->ending));
+	{
+		$Eleanor->Url->ending=$Eleanor->Url->GetEnding(array($Eleanor->Url->delimiter,$Eleanor->Url->ending));
 		$olds=$Eleanor->Url->string;
 		$m=$Eleanor->Url->ParseToValue('lang');
 		foreach(Eleanor::$langs as $k=>&$v)

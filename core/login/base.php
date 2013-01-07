@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class LoginBase extends BaseClass implements LoginClass
-{	const
+{
+	const
 		MAX_SESSIONS=10,#Максимальное число сессий
 		UNIQUE='user';#Для упрощения наследования этого класса создана эта константа. Наследуем класс, меняем константу: вуаля! и у нас новый класс логина системы
 
@@ -25,7 +26,8 @@ class LoginBase extends BaseClass implements LoginClass
 	 * @throws EE
 	 */
 	public static function Login(array$data,array$extra=array())
-	{		if(!isset($data['name'],$data['password']))
+	{
+		if(!isset($data['name'],$data['password']))
 			throw new EE('EMPTY_DATA',EE::UNIT);
 		static::AuthByName($data['name'],$data['password'],$extra);
 
@@ -60,7 +62,8 @@ class LoginBase extends BaseClass implements LoginClass
 	 * Выход пользователя из учетной записи
 	 */
 	public static function Logout($alls=false)
-	{		static::$login=false;
+	{
+		static::$login=false;
 		Eleanor::SetCookie(static::UNIQUE,false,365,true);
 		if(isset(static::$user['id']))
 		{
@@ -96,10 +99,13 @@ class LoginBase extends BaseClass implements LoginClass
 	{
 		$El=Eleanor::getInstance();
 		if(!self::$ma)
-		{			self::$ma=array_keys($El->modules['sections'],'user');
+		{
+			self::$ma=array_keys($El->modules['sections'],'user');
 			if(!self::$ma)
 				return false;
-			self::$ma=reset(self::$ma);		}		$a=array('module'=>self::$ma);
+			self::$ma=reset(self::$ma);
+		}
+		$a=array('module'=>self::$ma);
 		if($name and $id)
 			$a['user']=html_entity_decode($name);
 		elseif($id)
@@ -119,24 +125,30 @@ class LoginBase extends BaseClass implements LoginClass
 	 * captcha Признак того, что пользователь корректно ввел капчу (защита от подбора пароля)
 	 */
 	public static function AuthByName($name,$pass,array$extra=array())
-	{		$extra+=array('ismd'=>false,'captcha'=>false);
+	{
+		$extra+=array('ismd'=>false,'captcha'=>false);
 		if(Eleanor::$Db===Eleanor::$UsersDb)
-		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`pass_salt`,`pass_hash`,`banned_until`,`ban_explain`,`u`.`language`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`failed_logins`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `u`.`name`='.Eleanor::$Db->Escape($name).' LIMIT 1');
+		{
+			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`pass_salt`,`pass_hash`,`banned_until`,`ban_explain`,`u`.`language`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`failed_logins`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `u`.`name`='.Eleanor::$Db->Escape($name).' LIMIT 1');
 			if(!$user=$R->fetch_assoc())
 				throw new EE('NOT_FOUND',EE::UNIT);
 			#На случай, если синхронизация у нас в виде одной БД.
 			if($user['groups']===null)
-			{				UserManager::Sync($user['id']);
+			{
+				UserManager::Sync($user['id']);
 				$R=Eleanor::$Db->Query('SELECT `forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`failed_logins`,`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.P.'users_extra` INNER JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.$user['id'].' LIMIT 1');
-				$user+=$R->fetch_assoc();			}
+				$user+=$R->fetch_assoc();
+			}
 		}
 		else
-		{			Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`pass_salt`,`pass_hash`,`register`,`last_visit`,`banned_until`,`ban_explain`,`language`,`timezone` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($name).' AND `temp`=0 LIMIT 1');
+		{
+			Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`pass_salt`,`pass_hash`,`register`,`last_visit`,`banned_until`,`ban_explain`,`language`,`timezone` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($name).' AND `temp`=0 LIMIT 1');
 			if(!$user=Eleanor::$UsersDb->fetch_assoc())
 				throw new EE('NOT_FOUND',EE::UNIT);
 			UserManager::Sync(array($user['id']=>array('full_name'=>$user['full_name'],'name'=>$user['name'],'register'=>$user['register'],'language'=>$user['language'])));
 			$R=Eleanor::$Db->Query('SELECT `id`,`forum_id`,`email`,`groups`,`groups_overload`,`failed_logins`,`login_keys`,`ip`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.P.'users_site` INNER JOIN `'.P.'users_extra` USING(`id`) WHERE `id`='.$user['id'].' LIMIT 1');
-			$user+=$R->fetch_assoc();		}
+			$user+=$R->fetch_assoc();
+		}
 		$t=time();
 		if(Eleanor::$vars['antibrute'])
 		{
@@ -153,7 +165,8 @@ class LoginBase extends BaseClass implements LoginClass
 					return$a>$b ? -1 : 1;
 				});
 				if(isset($fls[$acnt-1]) and (Eleanor::$vars['antibrute']==1 or !$extra['captcha']) and strtotime($user['last_visit'])<$fls[$acnt-1][0])
-				{					$lt=$t-$fls[$acnt-1][0];
+				{
+					$lt=$t-$fls[$acnt-1][0];
 					if($lt<$atime)
 					{
 						if(Eleanor::$vars['antibrute']==2)
@@ -169,7 +182,8 @@ class LoginBase extends BaseClass implements LoginClass
 		if($user['pass_hash']===UserManager::PassHash($user['pass_salt'],$pass,$extra['ismd']))
 			static::SetUser($user);
 		else
-		{			if(Eleanor::$vars['antibrute'])
+		{
+			if(Eleanor::$vars['antibrute'])
 			{
 				if(count($fls)>$acnt)
 					array_splice($fls,$acnt);
@@ -199,8 +213,10 @@ class LoginBase extends BaseClass implements LoginClass
 	 * @param string $k Ключ пользователя
 	 */
 	public static function AuthByKey($id,$k)
-	{		if(Eleanor::$Db===Eleanor::$UsersDb)
-		{			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`banned_until`,`ban_explain`,`u`.`language`,`staticip`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
+	{
+		if(Eleanor::$Db===Eleanor::$UsersDb)
+		{
+			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`banned_until`,`ban_explain`,`u`.`language`,`staticip`,`u`.`timezone`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`s`.`last_visit`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.USERS_TABLE.'` `u` LEFT JOIN `'.P.'users_extra` USING(`id`) LEFT JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
 			if(!$user=$R->fetch_assoc())
 				return false;
 			#На случай, если синхронизация у нас в виде одной БД.
@@ -212,7 +228,8 @@ class LoginBase extends BaseClass implements LoginClass
 			}
 		}
 		else
-		{			$R2=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`banned_until`,`ban_explain`,`language`,`timezone`,`staticip` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' AND `temp`=0 LIMIT 1');
+		{
+			$R2=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`banned_until`,`ban_explain`,`language`,`timezone`,`staticip` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' AND `temp`=0 LIMIT 1');
 			if(!$user=$R2->fetch_assoc())
 				return false;
 			UserManager::Sync(array($user['id']=>array('full_name'=>$user['full_name'],'name'=>$user['name'],'register'=>$user['register'],'language'=>$user['language'])));
@@ -227,7 +244,8 @@ class LoginBase extends BaseClass implements LoginClass
 			return false;
 		$t=time();
 		if($lks[$cl][$k][0]-Eleanor::$vars['time_online'][$cl]<$t or strtotime($user['last_visit'])<mktime(0,0,0))
-		{			$lks[$cl][$k][0]=Eleanor::$vars['time_online'][$cl]+$t;
+		{
+			$lks[$cl][$k][0]=Eleanor::$vars['time_online'][$cl]+$t;
 			Eleanor::$Db->Update(P.'users_site',array('login_keys'=>serialize($lks),'!last_visit'=>'NOW()','ip'=>Eleanor::$ip),'`id`='.$user['id'].' LIMIT 1');
 			Eleanor::$UsersDb->Update(USERS_TABLE,array('!last_visit'=>'NOW()'),'`id`='.$user['id'].' LIMIT 1');
 		}
@@ -279,7 +297,8 @@ class LoginBase extends BaseClass implements LoginClass
 	 * @param array $user Данные пользователя
 	 */
 	protected static function SetUser(array$user)
-	{		$lks=$user['login_keys'] ? unserialize($user['login_keys']) : array();
+	{
+		$lks=$user['login_keys'] ? unserialize($user['login_keys']) : array();
 		$user['login_key']=md5(uniqid($user['id']));
 		$user['groups_overload']=$user['groups_overload'] ? unserialize($user['groups_overload']) : array();
 		$user['groups']=$user['groups'] ? explode(',,',trim($user['groups'],',')) : array();
@@ -293,7 +312,8 @@ class LoginBase extends BaseClass implements LoginClass
 		unset($user['failed_logins'],$user['pass_salt'],$user['pass_hash'],$user['login_keys']);
 		if(Eleanor::$vars['antibrute']==2)
 			Eleanor::SetCookie('Captcha_'.get_class(),false);
-		static::$user=$user;	}
+		static::$user=$user;
+	}
 
 	/**
 	 * Применение логина, как главного в системе: подстройка системы под пользователя, настройка часового пояса, проверка забаненности и т.п.
@@ -313,7 +333,8 @@ class LoginBase extends BaseClass implements LoginClass
 	 * @return array|string В зависимости от типа переданной переменной
 	 */
 	public static function GetUserValue($param,$safe=true,$query=true)
-	{		if(!$isa=is_array($param))
+	{
+		if(!$isa=is_array($param))
 			$param=(array)$param;
 		$pnew=$res=array();
 		foreach($param as &$v)
@@ -341,6 +362,9 @@ class LoginBase extends BaseClass implements LoginClass
 	 */
 	public static function SetUserValue($key,$value=null)
 	{
-		static::$user[$key]=$value;
+		if(is_array($key))
+			static::$user=$key+static::$user;
+		else
+			static::$user[$key]=$value;
 	}
 }

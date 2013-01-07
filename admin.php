@@ -47,7 +47,8 @@ $Eleanor->started=$Eleanor->error=false;
 Eleanor::InitTemplate(Eleanor::$services[Eleanor::$service]['theme']);
 
 if(Eleanor::$Login->IsUser())
-{	$section=isset($_REQUEST['section']) ? $_REQUEST['section'] : '';
+{
+	$section=isset($_REQUEST['section']) ? $_REQUEST['section'] : '';
 	if(!$section and isset($_GET['logout']))
 	{
 		Eleanor::$Login->LogOut();
@@ -98,14 +99,16 @@ if(Eleanor::$Login->IsUser())
 	}
 }
 else
-{	$l=Eleanor::$Language->Load('langs/admin_enter-*.php','enter');
+{
+	$l=Eleanor::$Language->Load('langs/admin_enter-*.php','enter');
 	$login=isset($_POST['login']['name']) ? (string)$_POST['login']['name'] : '';
 	$password=isset($_POST['login']['password']) ? (string)$_POST['login']['password'] : '';
 	$errors=array();
 	$captcha=Eleanor::$vars['antibrute']==2 && (isset($_POST['check']) || $ct=Eleanor::GetCookie('Captcha_'.get_class(Eleanor::$Login)) && $ct>time());
 
 	if($captcha)
-	{		if($_SERVER['REQUEST_METHOD']=='POST')
+	{
+		if($_SERVER['REQUEST_METHOD']=='POST')
 		{
 			$Eleanor->Captcha->disabled=false;
 			if(isset($_POST['check']))
@@ -130,7 +133,8 @@ else
 			return GoAway(Eleanor::$filename.($_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''));
 		}
 		catch(EE$E)
-		{			$error=$E->getMessage();
+		{
+			$error=$E->getMessage();
 			switch($error)
 			{
 				case'TEMPORARILY_BLOCKED':

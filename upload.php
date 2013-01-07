@@ -111,7 +111,8 @@ function Error($e='',$toutf=true)
 	}
 
 	if(isset($Eleanor))
-	{		$le=Eleanor::$Language['errors'];
+	{
+		$le=Eleanor::$Language['errors'];
 		if(!$e)
 			$e=$le['happened'];
 		elseif(isset($le[$e]))
@@ -181,7 +182,7 @@ function ApplyLang($gl=false)
 		if(!Eleanor::$Login->IsUser() and ($gl or $gl=Eleanor::GetCookie('lang')) and isset(Eleanor::$langs[$gl]) and $gl!=LANGUAGE)
 		{
 			Language::$main=$gl;
-			Eleanor::$Language->Change($l);
+			Eleanor::$Language->Change($gl);
 		}
 		foreach(Eleanor::$lvars as $k=>&$v)
 			Eleanor::$vars[$k]=Eleanor::FilterLangValues($v);

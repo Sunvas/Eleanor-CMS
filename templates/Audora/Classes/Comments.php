@@ -11,22 +11,28 @@
 	Шаблон для админки управления комментариями
 */
 class TPLComments
-{	public static
+{
+	public static
 		$lang;
-	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
 
+	protected static function Menu($act='')
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
+
+		$ln=static::$lang['news'];
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],Eleanor::$Language['lc']['list'],'act'=>$act=='list',
 				'submenu'=>$links['news']
 					? array(
-						array($links['news']['link'],static::$lang['news']($links['news']['cnt'])),
+						array($links['news']['link'],$ln($links['news']['cnt'])),
 					)
 					: false,
 			),
 			array($links['options'],Eleanor::$Language['main']['options'],'act'=>$act=='options'),
-		);	}
-	/*
+		);
+	}
+
+	/*
 		Страница отображения всех комментариев
 		$items - массив комментариев. Формат: ID=>array(), ключи внутреннего массива:
 			module - id модуля
@@ -61,7 +67,8 @@ class TPLComments
 		$ong - флаг отображения интерфейса на главной странице админки
 	*/
 	public static function CommentsList($items,$modules,$titles,$cnt,$pp,$qs,$page,$links,$ong)
-	{		if(!$ong)
+	{
+		if(!$ong)
 			static::Menu('list');
 		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$ltpl=Eleanor::$Language['tpl'];
@@ -77,7 +84,8 @@ class TPLComments
 				$ong ? false : array(Eleanor::Check('mass',false,array('id'=>'mass-check')),10)
 			);
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as $k=>&$v)
 				$Lst->item(
 					Eleanor::$Language->Date($v['date'],'fdt'),
@@ -153,7 +161,8 @@ $(function(){
 			delete - ссылка на удаление категории или false
 	*/
 	public static function Edit($id,$module,$info,$values,$bypost,$error,$back,$links)
-	{		static::Menu();
+	{
+		static::Menu();
 		if($back)
 			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 		$ltpl=Eleanor::$Language['tpl'];
@@ -188,7 +197,9 @@ $(function(){
 		$c - интерфейс настроек
 	*/
 	public static function Options($c)
-	{		static::Menu('options');
-		return$c;	}
+	{
+		static::Menu('options');
+		return$c;
+	}
 }
 TplComments::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/comments-*.php',false);

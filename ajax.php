@@ -21,7 +21,8 @@ $head=$jscripts=array();
 
 #Исправляем кодировку
 if(CHARSET!='utf-8' and $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest')
-{	$F=function(&$v){ $v=mb_convert_encoding($v,CHARSET,'utf-8'); };
+{
+	$F=function(&$v){ $v=mb_convert_encoding($v,CHARSET,'utf-8'); };
 	array_walk_recursive($_POST,$F);
 	array_walk_recursive($_GET,$F);
 }
@@ -105,7 +106,8 @@ function GoAway($info=false,$code=301,$hash='')
 function Error($e='',$extra=array())
 {global$Eleanor;
 	if(isset($Eleanor))
-	{		$le=Eleanor::$Language['errors'];
+	{
+		$le=Eleanor::$Language['errors'];
 		if(!$e)
 			$e=$le['happened'];
 		elseif(is_string($e) and isset($le[$e]))
@@ -186,7 +188,7 @@ function ApplyLang($gl=false)
 		if(!Eleanor::$Login->IsUser() and ($gl or $gl=Eleanor::GetCookie('lang')) and isset(Eleanor::$langs[$gl]) and $gl!=LANGUAGE)
 		{
 			Language::$main=$gl;
-			Eleanor::$Language->Change($l);
+			Eleanor::$Language->Change($gl);
 		}
 		foreach(Eleanor::$lvars as $k=>&$v)
 			Eleanor::$vars[$k]=Eleanor::FilterLangValues($v);

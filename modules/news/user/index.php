@@ -34,9 +34,11 @@ $cid=isset($_GET['cid']) ? (int)$_GET['cid'] : 0;
 $id=isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if(isset($_GET['do']))
-{	$d=(string)$_GET['do'];
+{
+	$d=(string)$_GET['do'];
 	switch($d)
-	{		case'tags':
+	{
+		case'tags':
 			SetData();
 			$title[]=$lang['tags'];
 			$c=Eleanor::$Template->ShowAllTags();
@@ -53,8 +55,10 @@ if(isset($_GET['do']))
 					$cntf='author_id';
 				}
 				else
-				{					$gn=GetGN();
-					$where='`id`'.($gn ? Eleanor::$Db->In($gn) : '=0');					$cntf='id';
+				{
+					$gn=GetGN();
+					$where='`id`'.($gn ? Eleanor::$Db->In($gn) : '=0');
+					$cntf='id';
 				}
 				$R=Eleanor::$Db->Query('SELECT COUNT(`'.$cntf.'`) FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND '.$where);
 					list($cnt)=$R->fetch_row();
@@ -79,10 +83,12 @@ if(isset($_GET['do']))
 				echo$c;
 			}
 			else
-				Main();		break;
+				Main();
+		break;
 		case'add':
 			if(Eleanor::$vars['publ_add'])
-			{				include$Eleanor->module['path'].'user/addedit.php';
+			{
+				include$Eleanor->module['path'].'user/addedit.php';
 				if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 					Save(0);
 				else
@@ -268,7 +274,8 @@ if(isset($_GET['do']))
 				}while(false);
 
 			if($cnt>0)
-			{				$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
+			{
+				$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
 				if($page<1)
 					$page=1;
 				$offset=abs(($page-1)*Eleanor::$vars['publ_per_page']);
@@ -277,7 +284,8 @@ if(isset($_GET['do']))
 					$offset=max(0,$cnt-Eleanor::$vars['publ_per_page']);
 
 				$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting`'.$seladd.' FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND '.$query.' LIMIT '.$offset.', '.Eleanor::$vars['publ_per_page']);
-				$data=FormatList($R,false,$values['text'] ? array('hl'=>array('hl'=>$values['text'])) : array());			}
+				$data=FormatList($R,false,$values['text'] ? array('hl'=>array('hl'=>$values['text'])) : array());
+			}
 
 			$tags=array();
 			$R=Eleanor::$Db->Query('SELECT `id`,`name` FROM `'.$mc['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `cnt`>0 ORDER BY `name` ASC LIMIT 150');
@@ -316,7 +324,8 @@ if(isset($_GET['do']))
 		break;
 		default:
 			if(preg_match('#^(\d{4})\D(\d{1,2})(?:\D(\d{1,2}))?$#',$d,$ma)>0)
-			{				if(strtotime($d)>time())
+			{
+				if(strtotime($d)>time())
 					return GoAway(true);
 				$title[]=sprintf($lang['for'],Eleanor::$Language->Date($d,strlen($d)>7 ? 'fd' : 'my',array('lowercase'=>true)));
 				$R=Eleanor::$Db->Query('SELECT COUNT(`lstatus`) FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 AND IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) LIKE \''.$d.'%\'');
@@ -342,17 +351,20 @@ if(isset($_GET['do']))
 					return;
 				$links=array(
 					'first_page'=>$Eleanor->Url->Prefix(''),
-					'pages'=>function($n) use ($d){ return$GLOBALS['Eleanor']->Url->Construct(array('do'=>$d,''=>array('page'=>$n)),true,''); },
+					'pages'=>function($n) use ($d){ return$GLOBALS['Eleanor']->Url->Construct(array('do'=>$d,''=>array('page'=>$n))); },
 				);
 				$c=Eleanor::$Template->DateList($d,$data,$cnt,-$page,$pages,Eleanor::$vars['publ_per_page'],$links);
 				$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct(array('do'=>$d),true,'');
 				Start();
-				echo$c;			}
+				echo$c;
+			}
 			else
-				ExitPage();	}
+				ExitPage();
+	}
 }
 elseif(isset($_GET['tag']))
-{	$tag=(string)$_GET['tag'];
+{
+	$tag=(string)$_GET['tag'];
 	$tag=htmlspecialchars($tag,ELENT,CHARSET,true);
 	$R=Eleanor::$Db->Query('SELECT `id`,`name`,`cnt` FROM `'.$mc['tt'].'` WHERE `name`=\''.Eleanor::$Db->Escape($tag,false).'\' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
 	if(!$tag=$R->fetch_assoc())
@@ -394,9 +406,11 @@ elseif(isset($_GET['tag']))
 	);
 	$c=Eleanor::$Template->TagsList($tag,$d,$tag['cnt'],$page,$pages,Eleanor::$vars['publ_per_page'],$links);
 	Start();
-	echo$c;}
+	echo$c;
+}
 elseif($id or $puri)
-{	$where=$id ? '`id`='.(int)$id : '`uri`=\''.Eleanor::$Db->Escape($puri,false).'\'';
+{
+	$where=$id ? '`id`='.(int)$id : '`uri`=\''.Eleanor::$Db->Escape($puri,false).'\'';
 	$uid=(int)Eleanor::$Login->GetUserValue('id');
 	$gn=$uid==0 ? GetGN() : array();
 
@@ -407,7 +421,9 @@ elseif($id or $puri)
 	if($a['status']!=1 and !$ed)
 		return ExitPage();
 	if($ed)
-	{		$a['_aedit']=$Eleanor->Url->Construct(array('do'=>'edit','id'=>$a['id']),true,'');		$a['_adel']=$Eleanor->Url->Construct(array('do'=>'delete','id'=>$a['id']),true,'');
+	{
+		$a['_aedit']=$Eleanor->Url->Construct(array('do'=>'edit','id'=>$a['id']),true,'');
+		$a['_adel']=$Eleanor->Url->Construct(array('do'=>'delete','id'=>$a['id']),true,'');
 	}
 	else
 		$a['_aedit']=$a['_adel']=false;
@@ -426,7 +442,8 @@ elseif($id or $puri)
 	{
 		$category=$Eleanor->Categories->GetCategory($cid ? $cid : $curls);
 		if($category)
-		{			$category['_a']=$Eleanor->Url->Construct($Eleanor->Categories->GetUri($category['id']),true,false);
+		{
+			$category['_a']=$Eleanor->Url->Construct($Eleanor->Categories->GetUri($category['id']),true,false);
 			if($category['id']!=$a['_cat'])
 			{
 				$commu=$Eleanor->Comments->GET();
@@ -462,7 +479,8 @@ elseif($id or $puri)
 	SetData();
 
 	if(Eleanor::$vars['publ_rating'] and $a['status']==1)
-	{		$TCH=new TimeCheck($Eleanor->module['id'],false,$uid);
+	{
+		$TCH=new TimeCheck($Eleanor->module['id'],false,$uid);
 		$a['_canrate']=(!Eleanor::$vars['publ_mark_users'] and Eleanor::$vars['publ_remark'] or $uid>0) && !$TCH->Check($a['id']);
 	}
 	else
@@ -501,7 +519,8 @@ elseif($id or $puri)
 	{
 		$R=Eleanor::$Db->Query('SELECT `id`,`name`,`cnt` FROM `'.$mc['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id`'.Eleanor::$Db->In($a['tags']));
 		while($temp=$R->fetch_assoc())
-		{			$temp['_a']=$Eleanor->Url->Construct(array(array('tag'=>htmlspecialchars_decode($temp['name'],ELENT))));
+		{
+			$temp['_a']=$Eleanor->Url->Construct(array(array('tag'=>htmlspecialchars_decode($temp['name'],ELENT))));
 			$a['_tags'][$temp['id']]=array_slice($temp,1);
 		}
 	}
@@ -519,7 +538,8 @@ elseif($id or $puri)
 	$hl=isset($_GET['hl']) && is_string($_GET['hl']) && preg_match('#^[a-z0-9'.constant(Language::$main.'::ALPHABET').' ]+$#i',$_GET['hl'])>0 ? preg_split('/\s+/',$_GET['hl']) : false;
 	$c=Eleanor::$Template->Show($a,$category,$voting,$Eleanor->Comments->off ? '' : $Eleanor->Comments->Show($a['id']),$hl);
 	Start();
-	echo$c;}
+	echo$c;
+}
 elseif($cid or $curls)
 {
 	$category=$Eleanor->Categories->GetCategory($cid ? $cid : $curls);
@@ -636,7 +656,8 @@ function Main()
 }
 
 function FormatList($R,$caching=true,$anurl=array())
-{global$Eleanor;	$items=$cats=$tags=$cus=array();
+{global$Eleanor;
+	$items=$cats=$tags=$cus=array();
 	$lmod=0;
 	$ids=',';
 	$uid=(int)Eleanor::$Login->GetUserValue('id');
@@ -646,7 +667,8 @@ function FormatList($R,$caching=true,$anurl=array())
 		$gn=$uid==0 ? GetGN() : array();
 
 		while($a=$R->fetch_assoc())
-		{			if($isa || ($uid>0 and $a['author_id']==$uid or $uid==0 and in_array($a['id'],$gn)))
+		{
+			if($isa || ($uid>0 and $a['author_id']==$uid or $uid==0 and in_array($a['id'],$gn)))
 			{
 				$a['_aedit']=$Eleanor->Url->Construct(array('do'=>'edit','id'=>$a['id']),true,'');
 				$a['_adel']=$Eleanor->Url->Construct(array('do'=>'delete','id'=>$a['id']),true,'');
@@ -654,11 +676,14 @@ function FormatList($R,$caching=true,$anurl=array())
 			else
 				$a['_aedit']=$a['_adel']=false;
 
-			$ids.=$a['id'].',';			if($a['last_mod']>$lmod)				$lmod=$a['last_mod'];
+			$ids.=$a['id'].',';
+			if($a['last_mod']>$lmod)
+				$lmod=$a['last_mod'];
 
 			$a['_cat']=$a['cats'] ? (int)ltrim($a['cats'],',') : false;
 			if($a['_cat'] and !isset($cats[$a['_cat']]) and isset($Eleanor->Categories->dump[$a['_cat']]))
-			{				$cus[$a['_cat']]=$Eleanor->Categories->GetUri($a['_cat']);
+			{
+				$cus[$a['_cat']]=$Eleanor->Categories->GetUri($a['_cat']);
 				$cats[$a['_cat']]=array(
 					'_a'=>$Eleanor->Url->Construct($cus[$a['_cat']],true,false),
 					't'=>$Eleanor->Categories->dump[$a['_cat']]['title'],
@@ -695,7 +720,9 @@ function FormatList($R,$caching=true,$anurl=array())
 	SetData();
 
 	if(Eleanor::$vars['publ_rating'] and !Eleanor::$vars['publ_mark_details'])
-	{		$TCH=new TimeCheck($Eleanor->module['id'],false,$uid);		$ch=$TCH->Check(array_keys($items));
+	{
+		$TCH=new TimeCheck($Eleanor->module['id'],false,$uid);
+		$ch=$TCH->Check(array_keys($items));
 		$guests=!Eleanor::$vars['publ_mark_users'];
 		foreach($items as $k=>&$v)
 			$v['_canrate']=($guests and Eleanor::$vars['publ_remark'] or $uid>0) && !isset($ch[$k]);
@@ -706,23 +733,28 @@ function FormatList($R,$caching=true,$anurl=array())
 		$R=Eleanor::$Db->Query('SELECT `id`,`name`,`cnt` FROM `'.$Eleanor->module['config']['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id`'.Eleanor::$Db->In($tags));
 		$tags=array();
 		while($a=$R->fetch_assoc())
-		{			$a['_url']=$Eleanor->Url->Construct(array(array('tag'=>htmlspecialchars_decode($a['name'],ELENT))));
+		{
+			$a['_url']=$Eleanor->Url->Construct(array(array('tag'=>htmlspecialchars_decode($a['name'],ELENT))));
 			$tags[$a['id']]=array_slice($a,1);
 		}
 	}
-	return compact('items','cats','tags');}
+	return compact('items','cats','tags');
+}
 
 function GetGN()
-{global$Eleanor;	$gn=Eleanor::GetCookie($Eleanor->module['config']['n'].'-gn');
+{global$Eleanor;
+	$gn=Eleanor::GetCookie($Eleanor->module['config']['n'].'-gn');
 	$gns=Eleanor::GetCookie($Eleanor->module['config']['n'].'-gns');
 
 	if($gn and $gns and $gns===md5($gn.$Eleanor->module['config']['secret']))
 		return explode(',',$gn);
-	return array();}
+	return array();
+}
 
 function SetData($tpl=false)
 {global$Eleanor,$head;
-	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];	$Lst=Eleanor::LoadListTemplate('headfoot');
+	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
+	$Lst=Eleanor::LoadListTemplate('headfoot');
 	$u='?'.Url::Query(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
 	$Eleanor->module['rss']=Eleanor::$services['rss']['file'].$u;
 	$head['rss']=$Lst('link',array(
@@ -746,7 +778,8 @@ function SetData($tpl=false)
 		$tags=array();
 		$R=Eleanor::$Db->Query('SELECT `name`,`cnt` FROM `'.$Eleanor->module['config']['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `cnt`>0 ORDER BY `cnt` DESC LIMIT 50');
 		while($a=$R->fetch_assoc())
-		{			$a['_a']=$Eleanor->Url->Construct(array(array('tag'=>htmlspecialchars_decode($a['name'],ELENT))));
+		{
+			$a['_a']=$Eleanor->Url->Construct(array(array('tag'=>htmlspecialchars_decode($a['name'],ELENT))));
 			$tags[]=$a;
 		}
 		Eleanor::$Cache->Put($Eleanor->module['config']['n'].'_tags_'.Language::$main,$tags,3600);
@@ -773,4 +806,5 @@ function SetData($tpl=false)
 			'add'=>Eleanor::$vars['publ_add'] ? $Eleanor->Url->Construct(array('do'=>'add'),true,'') : false,
 			'my'=>Eleanor::$vars['publ_add'] ? $Eleanor->Url->Construct(array('do'=>'my'),true,'') : false,
 		)
-	);}
+	);
+}

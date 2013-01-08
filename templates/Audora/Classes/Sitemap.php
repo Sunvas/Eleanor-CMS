@@ -11,13 +11,16 @@
 	Шаблоны для админки генератора sitemap-ов
 */
 class TPLSitemap
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],Eleanor::$Language['sitemap']['list'],'act'=>$act=='list',
@@ -28,7 +31,8 @@ class TPLSitemap
 			array($links['er'],static::$lang['editrobots'],'act'=>$act=='er'),
 		);
 	}
-	/*
+
+	/*
 		Страница отображения всех sitemap-ов
 		$items - массив sitemap-ов. Формат: ID=>array(), ключи внутреннего массива:
 			title - название sitemap-а
@@ -58,8 +62,11 @@ class TPLSitemap
 			pp - фукнция-генератор ссылок на изменение количества sitemap-ов отображаемых на странице
 			first_page - ссылка на первую страницу пагинатора
 			pages - функция-генератор ссылок на остальные страницы
-	*/	public static function ShowList($items,$cnt,$modules,$page,$pp,$qs,$links)
-	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
+	*/
+	public static function ShowList($items,$cnt,$modules,$page,$pp,$qs,$links)
+	{
+		static::Menu('list');
+		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$qs+=array(''=>array());
@@ -83,10 +90,12 @@ class TPLSitemap
 		if($items)
 		{
 			foreach($items as $k=>&$v)
-			{				if($v['free'])
+			{
+				if($v['free'])
 					$status=$v['lastrun']===null ? '<span style="color:red">Error</span>' : '<span style="color:green" title="'.static::$lang['pnrun'].'">'.((int)$v['lastrun']>0 ? Eleanor::$Language->Date($v['lastrun'],'fdt') : '&empty;').' - '.($v['nextrun'] ? Eleanor::$Language->Date($v['nextrun'],'fdt') : '&empty;').'</span>';
 				else
-					$status='<progress data-id="'.$k.'" style="width:100%" value="'.$v['already'].'" max="'.($v['total']>0 ? $v['total'] : 1).'" title="'.($pers=$v['total']>0 ? round($v['already']/$v['total']*100,2) : 0).'%"><span>'.$pers.'</span>%</progress>';				$ms='';
+					$status='<progress data-id="'.$k.'" style="width:100%" value="'.$v['already'].'" max="'.($v['total']>0 ? $v['total'] : 1).'" title="'.($pers=$v['total']>0 ? round($v['already']/$v['total']*100,2) : 0).'%"><span>'.$pers.'</span>%</progress>';
+				$ms='';
 				foreach($v['modules'] as &$mv)
 					if(isset($modules[$mv]))
 						$ms.=$modules[$mv].', ';
@@ -125,11 +134,14 @@ $(function(){
 		return false;
 	})'.($fs ? '' : '.click()').';
 	One2AllCheckboxes("#checks-form","#mass-check","[name=\"mass[]\"]",true);
+
+	new ProgressList("'.$GLOBALS['Eleanor']->module['name'].'","'.Eleanor::$services['cron']['file'].'");
 });//]]></script>
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
 		.$Lst->end()
 		.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['smpp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
-		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));	}
+		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
+	}
 
 	/*
 		Шаблон создания/редактирования sitemap-а
@@ -172,7 +184,8 @@ $(function(){
 		$back - URL возврата
 	*/
 	public static function AddEdit($id,$values,$modules,$settings,$errors,$bypost,$links,$back)
-	{		static::Menu($id ? '' : 'add');
+	{
+		static::Menu($id ? '' : 'add');
 		$ltpl=Eleanor::$Language['tpl'];
 
 		if(Eleanor::$vars['multilang'])
@@ -240,14 +253,20 @@ $(function(){
 				$v=static::$lang[$v];
 
 		return Eleanor::$Template->Cover($c,$errors,'error').'<script type="text/javascript">//<![CDATA[
-$(function(){	var msetts={},
+$(function(){
+	var msetts={},
 		noms=$("#mod-options");
-	$("table[id^=\"ms-\"]","#msetts").each(function(){		msetts[$(this).prop("id").replace("ms-","")]=$(this).data("showed",true);	});	$("#modules").change(function(){		var th=$(this),
+	$("table[id^=\"ms-\"]","#msetts").each(function(){
+		msetts[$(this).prop("id").replace("ms-","")]=$(this).data("showed",true);
+	});
+	$("#modules").change(function(){
+		var th=$(this),
 			mids=th.val()||[],
 			ina,
 			oldv=false,
 			messsh=false;
-		$.each(msetts,function(k,v){			ina=$.inArray(k,mids);
+		$.each(msetts,function(k,v){
+			ina=$.inArray(k,mids);
 			if(ina>-1)
 			{
 				if(!v.data("showed"))
@@ -263,7 +282,8 @@ $(function(){	var msetts={},
 				oldv=v;
 			}
 			else if(ina==-1 && v.data("showed"))
-				v.detach().data("showed",false);		})
+				v.detach().data("showed",false);
+		})
 
 		if(messsh)
 		{
@@ -275,15 +295,19 @@ $(function(){	var msetts={},
 			$("#mod-options").show();
 			$("#msetts").hide();
 		}
-		if(mids.length>0)			CORE.Ajax(
-				{					direct:"admin",
+		if(mids.length>0)
+			CORE.Ajax(
+				{
+					direct:"admin",
 					file:"sitemap",
 					event:"loadmsetts",
 					mids:mids
 				},
 				function(r)
-				{					var op;
-					$.each(r,function(k,v){						if($.inArray(k,mids)>-1)
+				{
+					var op;
+					$.each(r,function(k,v){
+						if($.inArray(k,mids)>-1)
 						{
 							op=th.find("option[value=\""+k+"\"]").prev();
 							while(op.size()>0)
@@ -308,7 +332,9 @@ $(function(){	var msetts={},
 					})
 				}
 			);
-	});})//]]></script>';	}
+	});
+})//]]></script>';
+	}
 
 	/*
 		Элемент шаблона. Отображение настроек модуля при правке sitemap-а. Используется и для AJAX
@@ -324,7 +350,8 @@ $(function(){	var msetts={},
 			s - массив результирующего HTML для настроек, ключи сходны с ключами массива c выше.
 	*/
 	public static function GetSettings($ms)
-	{		$Lst=Eleanor::LoadListTemplate('table-form')
+	{
+		$Lst=Eleanor::LoadListTemplate('table-form')
 			->begin(array('id'=>'ms-'.$ms['id']))
 			->head('<span title="'.$ms['d'].'">'.$ms['t'].'</span>');
 
@@ -341,15 +368,19 @@ $(function(){	var msetts={},
 
 		$v - содержимое файла
 		$save - флаг сохраненности
-	*/	public static function EditRobots($v,$saved)
-	{		static::Menu('er');
-		$Lst=Eleanor::LoadListTemplate('table-form')			->form()
+	*/
+	public static function EditRobots($v,$saved)
+	{
+		static::Menu('er');
+		$Lst=Eleanor::LoadListTemplate('table-form')
+			->form()
 			->begin()
 			->item(static::$lang['robots'],Eleanor::Text('text',$v,array(),0))
 			->button(Eleanor::Button())
 			->end()
 			->endform();
-		return Eleanor::$Template->Cover(($saved ? Eleanor::$Template->Message(static::$lang['rsaved'],'info') : '').$Lst);	}
+		return Eleanor::$Template->Cover(($saved ? Eleanor::$Template->Message(static::$lang['rsaved'],'info') : '').$Lst);
+	}
 
 	/*
 		Страница удаления карты сайта

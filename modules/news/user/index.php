@@ -456,14 +456,7 @@ elseif($id or $puri)
 	else
 		$category=false;
 	if(!Eleanor::$is_bot and $a['status']==1)
-	{
-		#Не будем увеличивать счетчик просмотров от переходов по страницам новости
-		$ref=getenv('HTTP_REFERER');
-		$uu=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($u,true,'');
-		$uu=htmlspecialchars_decode($uu,ELENT);
-		if(strpos($ref,$uu)===false)
-			Eleanor::$Db->Update($mc['t'],array('!reads'=>'`reads`+1'),'`id`='.$a['id'].' LIMIT 1');
-	}
+		Eleanor::$Db->Update($mc['t'],array('!reads'=>'`reads`+1'),'`id`='.$a['id'].' LIMIT 1');
 
 	if(Eleanor::$caching)
 	{
@@ -595,7 +588,7 @@ elseif($cid or $curls)
 	$cu=$Eleanor->Categories->GetUri($category['id']);
 	$links=array(
 		'first_page'=>$Eleanor->Url->Construct($cu,true,false),
-		'pages'=>function($n) use ($cu){ return$GLOBALS['Eleanor']->Url->Construct($cu+array('page'=>array('page'=>$n)),true,''); },
+		'pages'=>function($n) use ($cu){ return$GLOBALS['Eleanor']->Url->Construct($cu+array('page'=>array('page'=>$n))); },
 	);
 
 	$c=Eleanor::$Template->CategoryList($category,$d,$cnt,-$page,$pages,Eleanor::$vars['publ_per_page'],$links);

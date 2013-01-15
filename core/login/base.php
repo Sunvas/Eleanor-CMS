@@ -91,12 +91,13 @@ class LoginBase extends BaseClass implements LoginClass
 	/**
 	 * Формирование ссылки на учётную запись пользователя
 	 *
-	 * @param string $name Имя пользователя
-	 * @param string $id ID пользователя
-	 * @return string|FALSE
+	 * @param string|array $name Имя пользователя
+	 * @param string|array $id ID пользователя
+	 * @return string|array|FALSE
 	 */
 	public static function UserLink($name,$id=0)
 	{
+		#ToDo! Input array
 		$El=Eleanor::getInstance();
 		if(!self::$ma)
 		{

@@ -331,7 +331,7 @@ elseif(isset($_GET['deletet']))
 	else
 		$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
 	SetData();
-	$c=Eleanor::$Template->DeleteTag(sprintf($lang['deletingt'],$a['title']),$back);
+	$c=Eleanor::$Template->DeleteTag($a,$back);
 	Start();
 	echo$c;
 }

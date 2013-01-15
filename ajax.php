@@ -20,7 +20,7 @@ Eleanor::$Language->queue['main'][]='langs/ajax-*.php';
 $head=$jscripts=array();
 
 #Исправляем кодировку
-if(CHARSET!='utf-8' and $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest')
+if(CHARSET!='utf-8' and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest')
 {
 	$F=function(&$v){ $v=mb_convert_encoding($v,CHARSET,'utf-8'); };
 	array_walk_recursive($_POST,$F);

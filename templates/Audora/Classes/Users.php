@@ -11,12 +11,15 @@
 	Шаблоны управления пользователями в админке
 */
 class TplUsers
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['users'];
+	{
+		$lang=Eleanor::$Language['users'];
 		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
@@ -30,7 +33,8 @@ class TplUsers
 			array($links['options'],Eleanor::$Language['main']['options'],'act'=>$act=='options'),
 		);
 	}
-	/*
+
+	/*
 		Страница отображения пользователей
 		$items - массив пользователей. Формат: ID=>array(), ключи внутреннего массива:
 			name - имя пользователя (не безопасных HTML)
@@ -60,8 +64,13 @@ class TplUsers
 			pp - фукнция-генератор ссылок на изменение количества пользователей отображаемых на странице
 			first_page - ссылка на первую страницу пагинатора
 			pages - функция-генератор ссылок на остальные страницы
-	*/	public static function ShowList($items,$groups,$cnt,$pp,$qs,$page,$links)
-	{		static::Menu('list');		$ltpl=Eleanor::$Language['tpl'];		$GLOBALS['jscripts'][]='js/checkboxes.js';
+	*/
+	public static function ShowList($items,$groups,$cnt,$pp,$qs,$page,$links)
+	{
+		static::Menu('list');
+		$ltpl=Eleanor::$Language['tpl'];
+		$GLOBALS['jscripts'][]='js/checkboxes.js';
+
 		$qs+=array(''=>array());
 		$qs['']+=array('fi'=>array());
 		$fs=(bool)$qs['']['fi'];
@@ -92,12 +101,15 @@ class TplUsers
 			);
 
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as &$v)
-			{				$grs='';
+			{
+				$grs='';
 				foreach($v['groups'] as &$gv)
 					if(isset($groups[$gv]))
-						$grs.='<a href="'.$groups[$gv]['_aedit'].'">'.$groups[$gv]['html_pref'].$groups[$gv]['title'].$groups[$gv]['html_end'].'</a>, ';				$Lst->item(
+						$grs.='<a href="'.$groups[$gv]['_aedit'].'">'.$groups[$gv]['html_pref'].$groups[$gv]['title'].$groups[$gv]['html_end'].'</a>, ';
+				$Lst->item(
 					'<a href="'.$v['_aedit'].'">'.htmlspecialchars($v['name'],ELENT,CHARSET).'</a>'.($v['name']==$v['full_name'] ? '' : '<br /><i>'.$v['full_name'].'</i>'),
 					array($v['email'],'center'),
 					rtrim($grs,' ,'),
@@ -163,7 +175,8 @@ $(function(){
 		</form>
 		<form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
 		.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['upp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'d')).Eleanor::Button('Ok').'</div></form>'
-		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));	}
+		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
+	}
 
 	/*
 		Страница добавления/редактирования пользователя
@@ -215,16 +228,21 @@ $(function(){
 			delete - ссылка на удаление пользователя или false
 	*/
 	public static function AddEditUser($id,$values,$overload,$ovv,$upavatar,$extra,$exv,$bypost,$errors,$back,$links)
-	{		static::Menu($id ? '' : 'add');
-		#Весь JS вынесен в отдельный файл, потому что его слишком много, чтобы писать здесь		$GLOBALS['jscripts'][]='js/admin_users_ae.js';
+	{
+		static::Menu($id ? '' : 'add');
+		#Весь JS вынесен в отдельный файл, потому что его слишком много, чтобы писать здесь
+		$GLOBALS['jscripts'][]='js/admin_users_ae.js';
 
 		$lang=Eleanor::$Language['users'];
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$langs=Eleanor::Option($lang['by_default'],'',!$values['language']);
 		foreach(Eleanor::$langs as $k=>&$v)
-			$langs.=Eleanor::Option($v['name'],$k,$k==$values['language']);		list($awidth,$aheight)=explode(' ',Eleanor::$vars['avatar_size']);
-		$Lst=Eleanor::LoadListTemplate('table-form')
+			$langs.=Eleanor::Option($v['name'],$k,$k==$values['language']);
+
+		list($awidth,$aheight)=explode(' ',Eleanor::$vars['avatar_size']);
+
+		$Lst=Eleanor::LoadListTemplate('table-form')
 			->begin()
 			->head(static::$lang['lap'])
 			->item(static::$lang['name'],Eleanor::Input('name',$values['name'],array('id'=>'name','tabindex'=>1)))
@@ -295,7 +313,8 @@ $(function(){
 		$Lst->begin();
 		foreach($overload as $k=>&$v)
 			if(is_array($v))
-			{				$inherited=!isset($values['_overskip'][$k]) || $values['_overskip'][$k]=='inherit';
+			{
+				$inherited=!isset($values['_overskip'][$k]) || $values['_overskip'][$k]=='inherit';
 				$Lst->item(array(
 					$v['title'],
 					'<div class="overload"'.($inherited ? ' style="display:none"' : '').'>'.Eleanor::$Template->LangEdit($ovv[$k],null).'</div><div class="inherit"'.($inherited ? '' : ' style="display:none"').'>---<div class="clr"></div></div>',
@@ -314,12 +333,14 @@ $(function(){
 		$special=(string)$Lst->end();
 
 		if($id)
-		{			$fla=$axauth='';
+		{
+			$fla=$axauth='';
 			foreach($values['failed_logins'] as &$v)
-				$fla.='Date: '.Eleanor::$Language->Date($v[0])."\r\nService: ".$v[1]."\r\nBrowser: ".$v[2]."\r\nIP: ".$v[3]."\r\n\r\n";
+				$fla.='Date: '.Eleanor::$Language->Date($v[0])."\nService: ".$v[1]."\nBrowser: ".$v[2]."\nIP: ".$v[3]."\n\n";
 			foreach($values['_externalauth'] as &$v)
 				$axauth.='<span><a href="'.$v['identity'].'" target="_blank" class="exl">'.(isset(static::$lang[$v['provider']]) ? static::$lang[$v['provider']] : $v['provider']).'</a><a href="#" onclick="return data-provider="'.$v['provider'].'" data-providerid="'.$v['provider_uid'].'" title="'.$ltpl['delete'].'">X</a></span> ';
-			$Lst->begin()
+
+			$Lst->begin()
 				->item(static::$lang['fla'],Eleanor::Text('',$fla,array('readonly'=>'readonly','style'=>'width:95%')).'<br /><label>'.Eleanor::Check('_cleanfla',$values['_cleanfla']).' '.static::$lang['clean'].'</label>')
 				->item(static::$lang['register'],$values['register'])
 				->item(static::$lang['last_visit'],$values['last_visit']);
@@ -327,7 +348,8 @@ $(function(){
 				$Lst->item(static::$lang['externals'],$axauth);
 
 			if($values['_sessions'])
-			{				$images=Eleanor::$Template->default['theme'].'images/';
+			{
+				$images=Eleanor::$Template->default['theme'].'images/';
 				$bicons=array(
 					'opera'=>array('images/browsers/opera.png','Opera'),
 					'firefox'=>array('images/browsers/firefox.png','Mozilla Firefox'),
@@ -335,7 +357,8 @@ $(function(){
 					'safari'=>array('images/browsers/safari.png','Apple Safari'),
 					'msie'=>array('images/browsers/ie.png','Microsoft Internet Explore'),
 				);
-				$Ls=Eleanor::LoadListTemplate('table-list',4)
+
+				$Ls=Eleanor::LoadListTemplate('table-list',4)
 					->begin(
 						array('Browser &amp; IP','colspan'=>2,'tableextra'=>array('id'=>'sessions')),
 						static::$lang['datee'],
@@ -343,7 +366,8 @@ $(function(){
 					);
 
 				foreach($values['_sessions'] as $cl=>&$sess)
-				{					$uses='';
+				{
+					$uses='';
 					foreach(Eleanor::$services as $kk=>&$vv)
 						if('Login'.ucfirst($vv['login'])==$cl)
 							$uses.=$kk.', ';
@@ -426,7 +450,8 @@ $(function(){
 			foreach($errors as $k=>&$v)
 				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
-		return Eleanor::$Template->Cover((string)$Lst,$errors,'error');	}
+		return Eleanor::$Template->Cover((string)$Lst,$errors,'error');
+	}
 
 	/*
 		Элемент шаблона: загрузка галерей
@@ -436,10 +461,12 @@ $(function(){
 			d - описание галереи
 	*/
 	public static function Galleries($galleries)
-	{		$c='';
+	{
+		$c='';
 		foreach($galleries as &$v)
 			$c.='<a href="#" class="gallery" data-gallery="'.$v['n'].'"><b><img src="'.$v['i'].'" alt="" /><span>'.$v['d'].'</span></b></a>';
-		return$c ? '<a class="imagebtn cancelavatar" href="#">'.static::$lang['cancel_avatar'].'</a><div class="clr"></div><div class="galleryavatars">'.$c.'</div>' : '<div class="noavatars cancelavatar">'.static::$lang['no_avatars'].'</div>';	}
+		return$c ? '<a class="imagebtn cancelavatar" href="#">'.static::$lang['cancel_avatar'].'</a><div class="clr"></div><div class="galleryavatars">'.$c.'</div>' : '<div class="noavatars cancelavatar">'.static::$lang['no_avatars'].'</div>';
+	}
 
 	/*
 		Элемент шаблона: загрузка аватаров
@@ -448,7 +475,8 @@ $(function(){
 			f - имя файла
 	*/
 	public static function Avatars($avatars)
-	{		$c='';
+	{
+		$c='';
 		foreach($avatars as &$v)
 			$c.='<a href="#" class="applyavatar" title="'.$v['f'].'"><img src="'.join($v).'" /></a>';
 		return$c ? '<a class="imagebtn getgalleries" href="#">'.static::$lang['togals'].'</a><a class="imagebtn cancelavatar" href="#">'.static::$lang['cancel_avatar'].'</a><div class="clr"></div><div class="avatarscover">'.$c.'</div>' : '<div class="noavatars cancelavatar">'.static::$lang['no_avatars'].'</div>';
@@ -489,7 +517,8 @@ $(function(){
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function UsersOnline($items,$groups,$cnt,$pp,$qs,$page,$links)
-	{		static::Menu('online');
+	{
+		static::Menu('online');
 		$ltpl=Eleanor::$Language['tpl'];
 		$sess=array(
 			static::$lang['awo'],
@@ -514,7 +543,9 @@ $(function(){
 			);
 
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';			$bicons=array(
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
+			$bicons=array(
 				'opera'=>array('images/browsers/opera.png','Opera'),
 				'firefox'=>array('images/browsers/firefox.png','Mozilla Firefox'),
 				'chrome'=>array('images/browsers/chrome.png','Google Chrome'),
@@ -523,7 +554,8 @@ $(function(){
 			);
 
 			foreach($items as &$v)
-			{				$user=$icon=$iconh=false;
+			{
+				$user=$icon=$iconh=false;
 				foreach($bicons as $br=>$brv)
 					if(stripos($v['browser'],$br)!==false)
 					{
@@ -533,7 +565,8 @@ $(function(){
 					}
 
 				switch($v['type'])
-				{					case'bot':
+				{
+					case'bot':
 						$name='<span class="entry" data-gip="'.$v['ip_guest'].'" data-s="'.$v['service'].'">'.htmlspecialchars($v['botname'],ELENT,CHARSET).'</span>';
 					break;
 					case'user':
@@ -542,7 +575,8 @@ $(function(){
 							.'</a>'.($v['name']==$v['full_name'] ? '' : '<br /><i>'.$v['full_name'].'</i>');
 						$user=true;
 					break;
-					default:						$name='<i class="entry" data-gip="'.$v['ip_guest'].'" data-s="'.$v['service'].'">'.static::$lang['guest'].'</i>';
+					default:
+						$name='<i class="entry" data-gip="'.$v['ip_guest'].'" data-s="'.$v['service'].'">'.static::$lang['guest'].'</i>';
 				}
 				$v['location']=htmlspecialchars($v['location'],ELENT,CHARSET,false);
 				$ip=$v['ip_guest'] ? $v['ip_guest'] : $v['ip_user'];
@@ -611,14 +645,20 @@ $(function(){
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function FindUsers($users,$groups,$total,$pp,$page,$values,$links)
-	{		$n=($page-1)*$pp;
+	{
+		$n=($page-1)*$pp;
 		foreach($users as $k=>&$v)
-		{			if(isset($groups[$v['_group']]))
-			{				$g=&$groups[$v['_group']];				$t=$g['title'];
+		{
+			if(isset($groups[$v['_group']]))
+			{
+				$g=&$groups[$v['_group']];
+				$t=$g['title'];
 				$p=$g['html_pref'];
-				$e=$g['html_end'];			}
+				$e=$g['html_end'];
+			}
 			else
-				$t=$p=$e='';			$v=++$n.'. <a href="'.$v['_a'].'" data-id="'.$k.'"'.($t ? ' title="'.$t.'"' : '').'>'.$p.htmlspecialchars($v['name'],ELENT,CHARSET).$e.'</a>';
+				$t=$p=$e='';
+			$v=++$n.'. <a href="'.$v['_a'].'" data-id="'.$k.'"'.($t ? ' title="'.$t.'"' : '').'>'.$p.htmlspecialchars($v['name'],ELENT,CHARSET).$e.'</a>';
 		}
 		return'<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset='.DISPLAY_CHARSET.'" /><title>'.static::$lang['list'].'</title>
 <style type="text/css">
@@ -639,9 +679,13 @@ $(function(){
 </head>
 <body style="text-align: left; margin: 20px;">
 <script type="text/javascript">//<![CDATA[
-$(function(){	$("table a").click(function(){		window.opener.AuthorSelected($(this).text(),$(this).data("id"),window.name);
+$(function(){
+	$("table a").click(function(){
+		window.opener.AuthorSelected($(this).text(),$(this).data("id"),window.name);
 		window.close();
-		return false;	})});//]]></script>
+		return false;
+	})
+});//]]></script>
 <table><tr>
 	<td colspan="3"><h2>'.static::$lang['list'].'</h2><hr /></td>
 	</tr>'.($total==0 ? '<tr><td colspan="3" aling="center"><b>'.static::$lang['unf'].'</b></td></tr>' : '
@@ -649,7 +693,8 @@ $(function(){	$("table a").click(function(){		window.opener.AuthorSelected($(t
 	<td><ul><li>'.implode('</li><li>',array_splice($users,0,10)).'</li></ul></td>
 	<td><ul><li>'.implode('</li><li>',array_splice($users,0,10)).'</li></ul></td>
 	<td><ul><li>'.implode('</li><li>',$users).'</li></ul></td>
-	</tr>').'<tr><td colspan="3">'.Eleanor::$Template->Pages($total,$pp,$page,array($links['pages'],$links['first_page'])).'<div class="clr"></div><hr /><form method="post">'.Eleanor::Input('name',$values['name'],array('tabindex'=>1)).Eleanor::Button(static::$lang['find'],'submit',array('tabindex'=>2)).'</form></td></tr></table></body></html>';	}
+	</tr>').'<tr><td colspan="3">'.Eleanor::$Template->Pages($total,$pp,$page,array($links['pages'],$links['first_page'])).'<div class="clr"></div><hr /><form method="post">'.Eleanor::Input('name',$values['name'],array('tabindex'=>1)).Eleanor::Button(static::$lang['find'],'submit',array('tabindex'=>2)).'</form></td></tr></table></body></html>';
+	}
 
 	/*
 		Шаблон страницы с редактированием форматов писем
@@ -657,12 +702,13 @@ $(function(){	$("table a").click(function(){		window.opener.AuthorSelected($(t
 		$values - результирующий HTML код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
 	*/
 	public static function Letters($controls,$values)
-	{		static::Menu('letters');
+	{
+		static::Menu('letters');
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 		return Eleanor::$Template->Cover($Lst->button(Eleanor::Button())->end()->endform());
 	}
@@ -685,7 +731,9 @@ $(function(){	$("table a").click(function(){		window.opener.AuthorSelected($(t
 		$c - интерфейс настроек
 	*/
 	public static function Options($c)
-	{		static::Menu('options');
-		return$c;	}
+	{
+		static::Menu('options');
+		return$c;
+	}
 }
 TplUsers::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/users-*.php',false);

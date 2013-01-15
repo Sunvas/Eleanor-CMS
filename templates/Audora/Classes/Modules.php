@@ -11,20 +11,27 @@
 	Админка управления модулями
 */
 class TPLModules
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Меню модуля
-	*/	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
-		$GLOBALS['Eleanor']->module['navigation']=array(
+	*/
+	protected static function Menu($act='')
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
+
+		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],Eleanor::$Language['modules']['list'],'modules','act'=>$act=='list',
 				'submenu'=>array(
 					array($links['add'],static::$lang['add'],'addmodule','act'=>$act=='add'),
 				),
 			),
-		);	}
-	/*
+		);
+	}
+
+	/*
 		Шаблон списка модулей
 		$items массив модулей. Формат: id=>array(), ключи внутреннего массива:
 			services - массив сервисов, в которых доступен модуль
@@ -36,7 +43,9 @@ class TPLModules
 			active - флаг активности модуля
 	*/
 	public static function ShowList($items)
-	{		static::Menu('list');		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu('list');
+		$ltpl=Eleanor::$Language['tpl'];
 
 		$Lst=Eleanor::LoadListTemplate('table-list',4);
 		$Lstp=clone$Lst;#protected
@@ -107,7 +116,8 @@ class TPLModules
 			delete - ссылка на удаление категории или false
 	*/
 	public static function AddEdit($id,$values,$errors,$back,$links)
-	{		static::Menu($id ? '' : 'add');
+	{
+		static::Menu($id ? '' : 'add');
 		$ltpl=Eleanor::$Language['tpl'];
 
 		array_push($GLOBALS['jscripts'],'js/jquery.drag.js','addons/autocomplete/jquery.autocomplete.js','js/admin_modules.js','js/admin_modules-'.Language::$main.'.js');

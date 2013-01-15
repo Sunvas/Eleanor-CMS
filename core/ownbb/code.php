@@ -32,9 +32,12 @@ class OwnBbCode_code extends OwnBbCode
 		$GLOBALS['jscripts'][]='addons/highlight/highlight.pack.js';
 		$GLOBALS['head'][]='<script type="text/javascript">//<![CDATA[
 hljs.tabReplace="    ";
-$(function(){	CORE.AddHead("highlight",$("<link>").attr({rel:"stylesheet",type:"text/css",href:"addons/highlight/default.css",media:"screen"}));
-	$("pre code").each(function(){		if(!$(this).data("hlled"))
-		{			hljs.highlightBlock(this);
+$(function(){
+	CORE.AddHead("highlight",$("<link>").attr({rel:"stylesheet",type:"text/css",href:"addons/highlight/default.css",media:"screen"}));
+	$("pre code").each(function(){
+		if(!$(this).data("hlled"))
+		{
+			hljs.highlightBlock(this);
 			$(this).data("hlled",true);
 		}
 	});
@@ -73,12 +76,14 @@ $(function(){	CORE.AddHead("highlight",$("<link>").attr({rel:"stylesheet",type:
 	 * @param bool $cu Флаг возможности использования тега
 	 */
 	public static function PreSave($t,$p,$c,$cu)
-	{		if(!empty(OwnBB::$opts['visual']))
+	{
+		if(!empty(OwnBB::$opts['visual']))
 		{
-			$c=preg_replace("#<br ?/?>#i","\r\n",$c);
+			$c=preg_replace('#<br ?/?>#i',"\n",$c);
 			$c=strip_tags($c,'<span><a><img><input><b><i><u><s><em><strong>');
 		}
-		else			$c=htmlspecialchars($c,ENT_NOQUOTES | ENT_HTML5 | ENT_SUBSTITUTE | ENT_DISALLOWED,CHARSET);
+		else
+			$c=htmlspecialchars($c,ELENT,CHARSET);
 		$Ed=new Editor_Result;
 		$c=$Ed->SafeHtml($c);
 		return parent::PreSave($t,$p,$c,$cu);

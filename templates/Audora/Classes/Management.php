@@ -11,7 +11,8 @@
 	Шаблоны страниц раздела "Управление" и "Модули" в админке
 */
 class TPLManagement
-{	/*
+{
+	/*
 		Шаблон страницы раздела "Управление"
 
 		$gen - перечень основных системных, защищенных модулей. Формат array(m1,m2...). mN - массив с ключами:
@@ -21,14 +22,18 @@ class TPLManagement
 			_a - ссылка на запуск модуля
 		$add - перечень дополнительных системных модулей. Формат и ключи идентичны $gen
 		$e - ошибка, если ошибка пустая - значит ее нет
-	*/	public static function ManagCover($gen,$add,$e)
-	{		$g=$a='';
+	*/
+	public static function ManagCover($gen,$add,$e)
+	{
+		$g=$a='';
 		$n=3;
 		$di='images/modules/default-big.png';
 		foreach($gen as &$v)
-		{			$img=$di;
+		{
+			$img=$di;
 			if($v['image'])
-			{				$v['image']='images/modules/'.str_replace('*','big',$v['image']);
+			{
+				$v['image']='images/modules/'.str_replace('*','big',$v['image']);
 				if(is_file(Eleanor::$root.$v['image']))
 					$img=$v['image'];
 			}

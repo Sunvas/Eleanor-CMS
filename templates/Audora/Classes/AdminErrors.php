@@ -11,12 +11,16 @@
 	Шаблон админки системного модуля страниц ошибок
 */
 class TPLAdminErrors
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Меню модуля
-	*/	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+	*/
+	protected static function Menu($act='')
+	{
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
@@ -28,7 +32,8 @@ class TPLAdminErrors
 			array($links['letters'],$lang['letters'],'act'=>$act=='letters'),
 		);
 	}
-	/*
+
+	/*
 		Страница отображения всех страниц ошибок
 		$items - массив страниц ошибок. Формат: ID=>array(), ключи внутреннего массива:
 			mail - e-mail, куда будут отправляться сообщения об ошибках
@@ -50,7 +55,8 @@ class TPLAdminErrors
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$cnt,$pp,$qs,$page,$links)
-	{		static::Menu('list');
+	{
+		static::Menu('list');
 		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
@@ -71,7 +77,8 @@ class TPLAdminErrors
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as $k=>&$v)
 				$Lst->item(
 					'<a href="'.$v['_aedit'].'">'.$v['title'].'</a>',
@@ -146,12 +153,14 @@ $(function(){
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEdit($id,$controls,$values,$errors,$back,$uploader,$hasdraft,$links)
-	{		static::Menu($id ? '' : 'add');		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu($id ? '' : 'add');
+		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 
 		if($back)
@@ -196,12 +205,13 @@ $(function(){
 		$errors - массив ошибок
 	*/
 	public static function Letters($controls,$values,$errors)
-	{		static::Menu('letters');
+	{
+		static::Menu('letters');
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 		$Lst->button(Eleanor::Button())->end()->endform();
 
@@ -209,6 +219,7 @@ $(function(){
 			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 				$v=static::$lang[$v];
 
-		return Eleanor::$Template->Cover((string)$Lst,$errors);	}
+		return Eleanor::$Template->Cover((string)$Lst,$errors);
+	}
 }
 TplAdminErrors::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/errors-*.php',false);

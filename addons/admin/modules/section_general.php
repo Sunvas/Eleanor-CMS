@@ -46,7 +46,8 @@ switch(isset($_GET['do']) ? $_GET['do'] : '')
 			$help=$f.'.inc';
 
 			if(is_file($f))
-			{				$bn=basename($f);
+			{
+				$bn=basename($f);
 				$title[]=isset($lang[$bn]) ? $lang[$bn] : $bn;
 				if(in_array($bn,array('errors.log','db_errors.log','request_errors.log')) and is_file($help))
 					$help=unserialize(file_get_contents($help));
@@ -141,7 +142,7 @@ switch(isset($_GET['do']) ? $_GET['do'] : '')
 		list($nums['sl'])=$R->fetch_row();
 
 		$op=$Eleanor->Url->Prefix();
-		$Eleanor->Url->SetPrefix($Eleanor->Url->file.'?section=management&amp;module=comments&amp;');
+		$Eleanor->Url->SetPrefix('section=management&amp;module=comments&amp;');
 		$ong=true;
 		$comments=require Eleanor::$root.'addons/admin/modules/comments.php';
 		$Eleanor->Url->SetPrefix($op);

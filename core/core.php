@@ -19,7 +19,8 @@ define('ELENT',defined('ENT_HTML5') ? ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE | 
 spl_autoload_register(array('Eleanor','Autoload'));
 
 abstract class BaseClass
-{	/**
+{
+	/**
 	 * Получение местоположения ошибки в коде: файл + строка
 	 *
 	 * @param array $d Дамп стека вызова при помощи функции debug_backtrace
@@ -62,7 +63,8 @@ abstract class BaseClass
 	 * @param array $p Массив входящих параметров вызываемого метода
 	 */
 	public function __call($n,$p)
-	{		if(property_exists($this,$n) and is_object($this->$n) and method_exists($this->$n,'__invoke'))
+	{
+		if(property_exists($this,$n) and is_object($this->$n) and method_exists($this->$n,'__invoke'))
 			return call_user_func_array(array($this->$n,'__invoke'),$p);
 		$d=self::_BT(debug_backtrace());
 		$E=new EE('Called undefined method '.get_class().' -› '.$n,EE::DEV,array('file'=>$d['file'],'line'=>$d['line']));
@@ -440,7 +442,8 @@ final class Eleanor extends BaseClass
 	 * @param string $l Строка в файле, на которой возникла ошибка
 	 */
 	public static function ErrorHandle($num,$str,$f,$l)
-	{		if(self::$nolog or $num&E_STRICT)
+	{
+		if(self::$nolog or $num&E_STRICT)
 			return;
 		$ae=array(
 			E_ERROR=>'Error',
@@ -463,7 +466,8 @@ final class Eleanor extends BaseClass
 	 * @param exception $E Объект неперехваченного исключения
 	 */
 	public static function ExceptionHandle($E)
-	{		$m=$E->getMessage();
+	{
+		$m=$E->getMessage();
 		if($E instanceof EE)
 			$E->Log();
 		else
@@ -1013,7 +1017,8 @@ final class Eleanor extends BaseClass
 				if(is_int($k))
 					$ad.=' '.$v;
 				else
-				{					$ad.=' '.$k;
+				{
+					$ad.=' '.$k;
 					if($v!==true)
 						$ad.='="'.str_replace('"','&quot;',(string)$v).'"';
 				}
@@ -1254,7 +1259,8 @@ final class Eleanor extends BaseClass
 	 * @return array
 	 */
 	public static function GetPermission($p,$L=false,$t=false,$go='groups_overload')
-	{		if(!$L)
+	{
+		if(!$L)
 			$L=self::$Login;
 		if(!$over=$L::GetUserValue($go) or !isset($over['method'][$p],$over['value'][$p]) or $over['method'][$p]=='inherit')
 			return self::Permissions(self::GetUserGroups($L),$p,$t);
@@ -1477,7 +1483,8 @@ abstract class Template
 	 * @param array $p Параметры шаблона
 	 */
 	public function __call($n,$p)
-	{		if(!$this->cloned)
+	{
+		if(!$this->cloned)
 		{
 			$O=clone$this;
 			return$O->__call($n,$p);
@@ -1545,7 +1552,8 @@ class Template_Mixed extends Template
 		}
 
 		while($cl=array_pop($this->queue))
-		{			$c='Tpl'.$cl;
+		{
+			$c='Tpl'.$cl;
 			if(!class_exists($c,false))
 				do
 				{
@@ -1749,7 +1757,8 @@ class Cache
 		}
 
 		if($tdb and $this->table)
-		{			if(DEBUG)
+		{
+			if(DEBUG)
 				foreach($n as &$v)
 					$v=serialize($v);
 			Eleanor::$Db->Replace($this->table,array('key'=>array_keys($n),'value'=>array_values($n)));
@@ -2145,7 +2154,8 @@ class Db extends BaseClass
 #Функция для обработки результатов запросов
 
 interface LoginClass#Интерфейс для создания медов авторизации
-{	/**
+{
+	/**
 	 * Аутентификация по определенным входящим параметрам, например, по логину и паролю
 	 *
 	 * @param array $data Массив с данными
@@ -2184,9 +2194,9 @@ interface LoginClass#Интерфейс для создания медов ав�
 	/**
 	 * Формирование ссылки на учётную запись пользователя
 	 *
-	 * @param string $name Имя пользователя
-	 * @param string $id ID пользователя
-	 * @return string|FALSE
+	 * @param string|array $name Имя пользователя
+	 * @param string|array $id ID пользователя
+	 * @return string|array|FALSE
 	 */
 	public static function UserLink($name,$id=0);
 

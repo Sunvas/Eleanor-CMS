@@ -11,13 +11,18 @@
 	Шаблоны баз данных админки
 */
 class TplDatabase
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Меню модуля
-	*/	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['db'];
+	*/
+	protected static function Menu($act='')
+	{
+		$lang=Eleanor::$Language['db'];
 		$links=&$GLOBALS['Eleanor']->module['links'];
-		$GLOBALS['Eleanor']->module['navigation']=array(
+
+		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['br'],$lang['backup&recovery'],'act'=>$act=='sypex'),
 			array($links['rn'],$lang['recovernames'],'act'=>$act=='list',
 				'submenu'=>array(
@@ -26,10 +31,15 @@ class TplDatabase
 			),
 		);
 	}
-	/*
+
+	/*
 		Шаблон страницы для дампера БД Sypex
-	*/	public static function Sypex()
-	{		static::Menu('sypex');		return Eleanor::$Template->OpenTable().'<div style="width:586px;height:462px;margin:0px auto;"><iframe src="addons/sxd/index.php?eleanorid='.session_id().'" width="586" height="462" style="border:0px;">Loading...</iframe></div>'.Eleanor::$Template->CloseTable();	}
+	*/
+	public static function Sypex()
+	{
+		static::Menu('sypex');
+		return Eleanor::$Template->OpenTable().'<div style="width:586px;height:462px;margin:0px auto;"><iframe src="addons/sxd/index.php?eleanorid='.session_id().'" width="586" height="462" style="border:0px;">Loading...</iframe></div>'.Eleanor::$Template->CloseTable();
+	}
 
 	/*
 		Шаблон страницы для задач обновления имен
@@ -58,13 +68,16 @@ class TplDatabase
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$cnt,$page,$pp,$links)
-	{		static::Menu('list');
-		$ltpl=Eleanor::$Language['tpl'];		$Lst=Eleanor::LoadListTemplate('table-list',4)->begin(static::$lang['tables'],static::$lang['fields'],static::$lang['status'],array($ltpl['functs'],80));
+	{
+		static::Menu('list');
+		$ltpl=Eleanor::$Language['tpl'];
+		$Lst=Eleanor::LoadListTemplate('table-list',4)->begin(static::$lang['tables'],static::$lang['fields'],static::$lang['status'],array($ltpl['functs'],80));
 
 		$image=Eleanor::$Template->default['theme'].'images/';
 		if($items)
 			foreach($items as &$v)
-			{				$status=$v['status'] && $v['options']['total']>=$v['data']['total'] && $v['options']['total']>0 ? '<progress data-id="'.$v['id'].'" style="width:100%" value="'.$v['data']['total'].'" max="'.$v['options']['total'].'" title="'.($pers=round($v['data']['total']/$v['options']['total']*100,2)).'%"><span>'.$pers.'</span>%</progress>' : '&mdash;';
+			{
+				$status=$v['status'] && $v['options']['total']>=$v['data']['total'] && $v['options']['total']>0 ? '<progress data-id="'.$v['id'].'" style="width:100%" value="'.$v['data']['total'].'" max="'.$v['options']['total'].'" title="'.($pers=round($v['data']['total']/$v['options']['total']*100,2)).'%"><span>'.$pers.'</span>%</progress>' : '&mdash;';
 				$Lst->item(
 					join(', ',array_keys($v['options']['tables'])),
 					join(', ',array_merge($v['options']['ids'],$v['options']['names'])),
@@ -79,7 +92,8 @@ class TplDatabase
 		else
 			$Lst->empty(static::$lang['notasks']);
 		return Eleanor::$Template->Cover($Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['tpp'],$Lst->perpage($pp,$links['pp'])).'</div></div>'.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])))
-			.'<script type="text/javascript">/*<![CDATA[*/$(function(){new ProgressList("'.$GLOBALS['Eleanor']->module['name'].'","'.Eleanor::$services['cron']['file'].'");})//]]></script>';	}
+			.'<script type="text/javascript">/*<![CDATA[*/$(function(){new ProgressList("'.$GLOBALS['Eleanor']->module['name'].'","'.Eleanor::$services['cron']['file'].'");})//]]></script>';
+	}
 
 /*
 		Шаблон создания/редактирования задачи по обновлению имен пользователей
@@ -100,7 +114,8 @@ class TplDatabase
 			delete - ссылка на удаление категории или false
 	*/
 	public static function AddEdit($id,$tables,$values,$runned,$errors,$back,$links)
-	{		static::Menu($id ? '' : 'add');
+	{
+		static::Menu($id ? '' : 'add');
 		$ltpl=Eleanor::$Language['tpl'];
 
 		if($back)
@@ -112,7 +127,8 @@ class TplDatabase
 			$items.=Eleanor::Option($v,false,in_array($v,$values['tables']));
 
 		foreach($values['ids'] as $k=>&$v)
-		{			if(!isset($values['names'][$k]))
+		{
+			if(!isset($values['names'][$k]))
 				continue;
 			if($k==0)
 			{
@@ -149,12 +165,14 @@ $(function(){'.($runned ? '$("#newtask").find(":input").prop("disabled",true);' 
 				.find("a:first").show().end().appendTo("#fields");
 			return false;
 		})
-		.on("click","a.tlistbtn",function(){			if($("#fields").children("li").size()>1)
+		.on("click","a.tlistbtn",function(){
+			if($("#fields").children("li").size()>1)
 				$(this).parent().remove();
 			else
 				$("#fields input").val("");
 			return false;
 		})
-})//]]></script>';	}
+})//]]></script>';
+	}
 }
 TplDatabase::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/database-*.php',false);

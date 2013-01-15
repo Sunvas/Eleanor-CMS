@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class Strings extends BaseClass
-{	/**
+{
+	/**
 	 * Проверка корректиности e-mail
 	 *
 	 * @param string $s Проверяемый e-mail
@@ -169,13 +170,13 @@ class Strings extends BaseClass
 				unset($w[$k]);
 		}
 
-		$F=function($s)use($w,$c,$b)
-		{
-			$s=stripslashes($s);
-			foreach($w as &$v)
-				$v=preg_quote($v,'#');
-			return preg_replace('#(?:\b)('.join('|',$w).')(?:\b)#i','<span style="background-color: '.$c.'; color: '.$b.';">\1</span>',$s);
-		};
-		return preg_replace('#(?<=>|^)([^<]+)#e','$F(\'\1\')',$s);
+		return preg_replace_callback(
+			'#(?<=>|^)([^<]+)#',
+			function($s)use($w,$c,$bc)
+			{
+				return preg_replace('#(?:\b)('.join('|',$w).')(?:\b)#i','<span style="background-color: '.$c.'; color: '.$bc.';">\1</span>',$s[1]);
+			},
+			$s
+		);
 	}
 }

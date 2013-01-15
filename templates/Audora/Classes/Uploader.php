@@ -11,9 +11,11 @@
 	Шаблоны загрузчика файлов
 */
 class TplUploader
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Общий шаблон загрузчика файлов, обложка.
 		$buttons - массив управляющих кнопок. Формат название кнопки=>флаг отображения. Возможные названия кнопок:
 			create_file - кнопка создания файла
@@ -28,11 +30,14 @@ class TplUploader
 		$u - строка для уникальности аплоадеров
 	*/
 	public static function UplUploader($buttons,$title,$maxu,$types,$u)
-	{		array_push($GLOBALS['jscripts'],'js/eleanor_uploader.js','js/jquery.poshytip.js');
+	{
+		array_push($GLOBALS['jscripts'],'js/eleanor_uploader.js','js/jquery.poshytip.js');
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="templates/Audora/style/uploader.css" media="screen" /><link type="text/css" rel="stylesheet" href="addons/swfupload/css.css" />';
 
 		if($maxu)
-		{			$types=$types ? '*.'.join(';*.',$types) : '*.*';			array_push(
+		{
+			$types=$types ? '*.'.join(';*.',$types) : '*.*';
+			array_push(
 				$GLOBALS['jscripts'],
 				'addons/swfupload/swfupload.js',
 				'addons/swfupload/swfupload.queue.js',
@@ -74,7 +79,8 @@ class TplUploader
 	upload_complete_handler:CORE.UPLOADER.UploadComplete,
 	button_window_mode:SWFUpload.WINDOW_MODE.OPAQUE,
 	swfupload_loaded_handler:function(){FI'.$u.'.Update()}
-});';		}
+});';
+		}
 		else
 		{
 			$upscript='FI'.$u.'.Update();';
@@ -84,7 +90,8 @@ class TplUploader
 		foreach($buttons as $k=>&$v)
 			if($v)
 				switch($k)
-				{					case'create_file':
+				{
+					case'create_file':
 						$icons.='<a href="#" class="up-create_file" title="'.static::$lang['create_file'].'"><img style="background-image:url(images/uploader/add_file.png)" src="images/spacer.png" alt="" /></a>';
 					break;
 					case'create_folder':
@@ -98,10 +105,12 @@ class TplUploader
 					break;
 					case'show_previews':
 						$icons.='<a href="#" class="up-show_previews" title="'.static::$lang['showprevs'].'"><img style="background-image:url(images/uploader/showpreviews.png)" src="images/spacer.png" alt="" /></a>';
-					break;					case'create_previews':
+					break;
+					case'create_previews':
 						$icons.='<a href="#" class="up-dopreviews" title="'.static::$lang['doprevs'].'"><img style="background-image:url(images/uploader/dopreviews.png)" src="images/spacer.png" alt="" /></a>';
 				}
-		return'<div class="uploadbox"><div class="uploadhead"><h2>'.$title.'</h2><a href="#" id="showb-'.$u.'" onclick="CORE.UPLOADER.Toggle(\'#upl-'.$u.'\',\''.static::$lang['show'].'\',\''.static::$lang['hide'].'\',this);return false" style="text-decoration:none"><b>'.static::$lang['show'].'</b></a></div><div class="uploader" style="display:none" id="upl-'.$u.'"><div class="uppanel">'.$uploader.'<div class="uppanel_ricons">'.$icons.'</div><div class="clr"></div></div><ul class="uppanel_files files"><li>'.static::$lang['loading'].'</li></ul><div class="pages" style="display:none"></div>'.$floading.'</div></div><script type="text/javascript">/*<![CDATA[*/var FI'.$u.';$(function(){FI'.$u.'=new CORE.UPLOADER({container:"#upl-'.$u.'",uniq:"'.$u.'",sess:"'.session_id().'",service:"'.Eleanor::$service.'"});'.$upscript.'})//]]></script>';	}
+		return'<div class="uploadbox"><div class="uploadhead"><h2>'.$title.'</h2><a href="#" id="showb-'.$u.'" onclick="CORE.UPLOADER.Toggle(\'#upl-'.$u.'\',\''.static::$lang['show'].'\',\''.static::$lang['hide'].'\',this);return false" style="text-decoration:none"><b>'.static::$lang['show'].'</b></a></div><div class="uploader" style="display:none" id="upl-'.$u.'"><div class="uppanel">'.$uploader.'<div class="uppanel_ricons">'.$icons.'</div><div class="clr"></div></div><ul class="uppanel_files files"><li>'.static::$lang['loading'].'</li></ul><div class="pages" style="display:none"></div>'.$floading.'</div></div><script type="text/javascript">/*<![CDATA[*/var FI'.$u.';$(function(){FI'.$u.'=new CORE.UPLOADER({container:"#upl-'.$u.'",uniq:"'.$u.'",sess:"'.session_id().'",service:"'.Eleanor::$service.'"});'.$upscript.'})//]]></script>';
+	}
 
 	/*
 		Отображение списка каталогов и файлов - контент загрузчика файлов. Загружается по ajax
@@ -131,9 +140,12 @@ class TplUploader
 		$prev - суффикс имен файлов, которые являются превьюшками
 	*/
 	public static function UplContent($buttons,$short,$path,$dirs,$files,$previews,$prev)
-	{		$r='';
+	{
+		$r='';
 		if($short)
-		{			$a=explode('/',ltrim($short,'/'));			$r.='<li><a href="#" class="up-go" data-goal=".." title="'.static::$lang['go_up'].'"><img class="typeicon" src="images/uploader/folder_up.gif" alt="" style="width:25px;height:16px;" /></a><b>';
+		{
+			$a=explode('/',ltrim($short,'/'));
+			$r.='<li><a href="#" class="up-go" data-goal=".." title="'.static::$lang['go_up'].'"><img class="typeicon" src="images/uploader/folder_up.gif" alt="" style="width:25px;height:16px;" /></a><b>';
 			$cnt=count($a)-1;
 			for($i=0;$i<$cnt;++$i)
 				$r.='<a href="#" class="up-go" data-goal="'.rtrim(str_repeat('../',$cnt-$i),'/').'">'.$a[$i].'</a>/';
@@ -158,7 +170,8 @@ class TplUploader
 			$r.='<li>'.($icons ? '<span>'.str_replace('{goal}',$v,$icons).'</span>' : '').'<a href="#"  class="up-go" data-goal="'.$v.'"><img class="typeicon" src="images/uploader/type_folder.png" style="width:16px;height:16px;" /><b>'.$v.'</b></a></li>';
 
 		foreach($files as &$v)
-		{			$icons='';
+		{
+			$icons='';
 			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($buttons as $bk=>&$bv)
 				if($bv)
@@ -186,7 +199,8 @@ class TplUploader
 			$tip=$v['image'] ? ' title="&lt;div class=&quot;frdatethm&quot;&gt;'.$t.'&nbsp;&nbsp;&nbsp;&nbsp;'.$si.'&lt;br /&gt;&lt;img src=&quot;'.$path.$v['file'].'&quot; alt=&quot;&quot; style=&quot;max-width:100%&quot; /&gt;&lt;/div&gt;"' : ' title="&lt;div class=&quot;frdatethm&quot;&gt;'.$t.'&nbsp;&nbsp;&nbsp;&nbsp;'.$si.'&lt;/div&gt;"';
 			$r.='<li>'.($icons ? '<span>'.$icons.'</span>' : '').'<img'.$tip.' class="typeicon type up-open" data-goal="'.$v['file'].'" src="images/uploader/file_types/'.$v['type'].'.png" alt="" title="'.static::$lang['open_file'].'" style="width:16px;height:16px;cursor:pointer" />'.$v['file'].'</li>';
 		}
-		return$r;	}
+		return$r;
+	}
 
 	/*
 		Элемент аплоадера: пагинатор (листалка страниц). Это отдельный элемент управления, поэтому вынесен в отдельный шаблон
@@ -208,7 +222,9 @@ class TplUploader
 		$add - флаг создания файла. Если true, значит файл создается
 	*/
 	public static function UplEditFile($t,$editor,$path,$add)
-	{		#Мини заплатка		$js='';
+	{
+		#Мини заплатка
+		$js='';
 		foreach($GLOBALS['jscripts'] as &$v)
 			$js.='<script type="text/javascript" src="'.$v.'"></script>';
 
@@ -229,7 +245,10 @@ body { text-align: left; margin: 20px; }
 </style></head>
 <body>'.$editor.'<div id="down">'.Eleanor::Button(static::$lang['save'],'button',array('id'=>'save')).' '.Eleanor::Button(static::$lang['cancel'],'button',array('id'=>'cancel')).'</div>
 		<script type="text/javascript">//<![CDATA[
-		$(function(){			var fr=function(){$(".CodeMirror").height(window.innerHeight-100)};			setTimeout(function(){				fr();
+		$(function(){
+			var fr=function(){$(".CodeMirror").height(window.innerHeight-100)};
+			setTimeout(function(){
+				fr();
 			},50);
 			$(window).resize(fr);
 

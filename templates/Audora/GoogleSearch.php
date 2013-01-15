@@ -12,7 +12,7 @@ $Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 foreach($controls as $k=>&$v)
 	if(is_array($v))
 		$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'descr'=>$v['descr']));
-	else
+	elseif($v)
 		$Lst->head($v);
 
 $Lst->button(Eleanor::Button('OK','submit',array('tabindex'=>10)))->end()->endform();

@@ -11,11 +11,15 @@
 	Оформление для админки системного модуля "Главная страница".
 */
 class TPLAdminMainpage
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Меню модуля
-	*/	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
+	*/
+	protected static function Menu($act='')
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],static::$lang['list'],'act'=>$act=='list',
@@ -23,8 +27,10 @@ class TPLAdminMainpage
 					$links['add'] ? array($links['add'],static::$lang['add'],'act'=>$act=='add') : false,
 				),
 			),
-		);	}
-	/*
+		);
+	}
+
+	/*
 		Перечень модулей, основная страница админки модуля
 
 		$items - массив, содержащий в себе перечень модулей. Формат: ID=>array() ключи внутреннего массива:
@@ -43,7 +49,8 @@ class TPLAdminMainpage
 			_adown - ссылка на опускание модуля вниз, если равна false - значит модуль уже и так находится в самом низу
 	*/
 	public static function ShowList($items)
-	{		static::Menu('list');
+	{
+		static::Menu('list');
 		$ltpl=Eleanor::$Language['tpl'];
 		$cnt=count($items);
 
@@ -55,7 +62,8 @@ class TPLAdminMainpage
 				array($ltpl['functs'],80)
 			);
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			$di='images/modules/default-small.png';
 			$modpref=$GLOBALS['Eleanor']->Url->file.'?section=management&amp;module=modules&amp;';
 			$grspref=$GLOBALS['Eleanor']->Url->file.'?section=management&amp;module=groups&amp;';
@@ -115,7 +123,9 @@ class TPLAdminMainpage
 			delete - ссылка на удаление или false
 	*/
 	public static function AddEdit($id,$values,$modules,$error,$back,$links)
-	{		static::Menu($id ? '' : 'add');		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu($id ? '' : 'add');
+		$ltpl=Eleanor::$Language['tpl'];
 		$mops='';
 		foreach($modules as $k=>&$v)
 			$mops.=Eleanor::Option($v,$k,$k==$values['id']);

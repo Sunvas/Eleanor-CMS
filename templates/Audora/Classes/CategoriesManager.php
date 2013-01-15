@@ -11,18 +11,24 @@
 	Шаблона управления категориями
 */
 class TplCategoriesManager
-{	public static
+{
+	public static
 		$lang;
-	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links_categories'];		$GLOBALS['Eleanor']->module['navigation']=array(
+
+	protected static function Menu($act='')
+	{
+		$links=&$GLOBALS['Eleanor']->module['links_categories'];
+		$GLOBALS['Eleanor']->module['navigation']=array(
 			'categories'=>array($links['list'],static::$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
 					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),
 		);
-	}
-	/*
+
+	}
+
+	/*
 		Страница отображения всех категорий
 		$items - массив категорий. Формат: ID=>array(), ключи внутреннего массива:
 			title - название категории
@@ -54,7 +60,9 @@ class TplCategoriesManager
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function CMList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links)
-	{		static::Menu('list');		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu('list');
+		$ltpl=Eleanor::$Language['tpl'];
 		$nav=array();
 		foreach($navi as &$v)
 			$nav[]=$v['_a'] ? '<a href="'.$v['_a'].'">'.$v['title'].'</a>' : $v['title'];
@@ -66,7 +74,8 @@ class TplCategoriesManager
 				array($ltpl['functs'],80,'href'=>$links['sort_id'])
 			);
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 
 			$posasc=!$qs['sort'] || $qs['sort']=='pos' && $qs['so']=='asc';
 			foreach($items as $k=>&$v)
@@ -115,13 +124,15 @@ class TplCategoriesManager
 			draft - ссылка на сохранение черновика (для фоновых запросов)
 	*/
 	public static function CMAddEdit($id,$controls,$values,$errors,$back,$links)
-	{		static::Menu($id ? 'edit' : 'add');		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu($id ? 'edit' : 'add');
+		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if($values[$k])
 				if(is_array($v))
 					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-				else
+				elseif($v)
 					$Lst->head($v);
 
 		if($back)
@@ -130,13 +141,15 @@ class TplCategoriesManager
 		if(Eleanor::$vars['multilang'])
 			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,9));
 
-		$Lst->button(
+		$Lst->end()
+		->submitline((string)Eleanor::getInstance()->Uploader->Show('categories'))
+		->submitline(
 			$back.Eleanor::Button('OK','submit',array('tabindex'=>10))
 			.($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>11,'onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 			.Eleanor::Input('_draft',$id,array('type'=>'hidden'))
 			.Eleanor::$Template->DraftButton($links['draft'],1)
 			.($links['nodraft'] ? ' <a href="'.$links['nodraft'].'">'.$ltpl['nodraft'].'</a>' : '')
-		)->end()->endform();
+		)->endform();
 
 		if($errors)
 			foreach($errors as $k=>&$v)
@@ -154,6 +167,9 @@ class TplCategoriesManager
 		$error - ошибка, если ошибка пустая - значит ее нет
 	*/
 	public static function CMDelete($a,$back,$error)
-	{		static::Menu();		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back),$error);	}
+	{
+		static::Menu();
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back),$error);
+	}
 }
 TplCategoriesManager::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/categories_manager-*.php',false);

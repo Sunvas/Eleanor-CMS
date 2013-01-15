@@ -11,13 +11,16 @@
 	Шаблоны менеджера задач
 */
 class TPLTasks
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],Eleanor::$Language['tasks']['list'],'act'=>$act=='list',
@@ -29,7 +32,8 @@ class TPLTasks
 			),
 		);
 	}
-	/*
+
+	/*
 		Страница отображения всех задач
 		$items - массив задач Формат: ID=>array(), ключи внутреннего массива:
 			task - файл-обработчик задачи
@@ -62,7 +66,8 @@ class TPLTasks
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$cnt,$page,$pp,$qs,$links)
-	{		static::Menu('list');
+	{
+		static::Menu('list');
 		$lang=Eleanor::$Language['tasks'];
 		$ltpl=Eleanor::$Language['tpl'];
 
@@ -118,13 +123,14 @@ class TPLTasks
 			delete - ссылка на удаление категории или false
 	*/
 	public static function AddEdit($id,$controls,$values,$errors,$back,$links)
-	{		static::Menu($id ? '' : 'add');
+	{
+		static::Menu($id ? '' : 'add');
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 
 		if($back)
@@ -149,7 +155,8 @@ class TPLTasks
 		$back - URL возврата
 	*/
 	public static function Delete($a,$back)
-	{		static::Menu();
+	{
+		static::Menu();
 		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back));
 	}
 }

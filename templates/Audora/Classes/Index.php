@@ -11,7 +11,8 @@
 	Файл частоиспользуемых элементов шаблона
 */
 class TplIndex
-{	/*
+{
+	/*
 		Элемент шаблона: листалка страниц
 
 		$cnt - количество элементов
@@ -20,14 +21,19 @@ class TplIndex
 		$href - массив для генератора ссылок Url, либо строка с участком {page} (этот участок может быть и в массиве)
 		$ajax - название функции, куда будет передан запрос
 		$hash - окончание ссылок для страниц после знака #
-	*/	public static function Pages($cnt,$pp,$page,$href,$ajax=false,$hash='',$all=false,$gap=4)
-	{		$ltpl=Eleanor::$Language['tpl'];		$h=$hash ? '#'.$hash : '';
-		if($reverse=$page<0)
+	*/
+	public static function Pages($cnt,$pp,$page,$href,$ajax=false,$hash='',$all=false,$gap=4)
+	{
+		$ltpl=Eleanor::$Language['tpl'];
+		$h=$hash ? '#'.$hash : '';
+
+		if($reverse=$page<0)
 			$page=-$page;
 
 		$pages=$reverse ? (int)($cnt/$pp) : ceil($cnt/$pp);
 		if($pages>1)
-		{			$js=static::PageUrl($href,'{page}');
+		{
+			$js=static::PageUrl($href,'{page}');
 			$js=str_replace('%7Bpage%7D','{page}',$js);
 			$result[]='<a href="#"'.($ajax ? '' : ' onclick="CORE.JumpToPage(\''.$js.$h.'\','.$pages.');return !1;"').' title="'.$ltpl['goto_page'].'"><img src="'.Eleanor::$Template->default['theme'].'images/gotopage.png" alt="" /></a>';
 			if(strpos($js,'{page}')!==false)
@@ -70,16 +76,23 @@ class TplIndex
 			}
 			$u=uniqid('nu-');
 			return'<div class="numbers"'.($ajax ? ' id="'.$u.'"' : '').'><b>'.$ltpl['pages'].' </b>'.implode(' ',$result).'</div>'.($ajax ? '<script type="text/javascript">//<![CDATA[
-$(function(){	$("#'.$u.' a").click(function(){		var p=$(this).data("page");
-		if(p)			'.$ajax.'(p);
+$(function(){
+	$("#'.$u.' a").click(function(){
+		var p=$(this).data("page");
+		if(p)
+			'.$ajax.'(p);
 		else
 			CORE.JumpToPage('.$ajax.','.$pages.');
 		return false;
 	});
 })//]]></script>' : '');
-		}	}
+		}
+	}
 
 	private static function PageUrl($h,$p)
-	{		if(is_array($h))
+	{
+		if(is_array($h))
 			$h=isset($h[$p]) ? $h[$p] : $h[0];
-		return is_object($h) ? $h($p) : $h;	}}
+		return is_object($h) ? $h($p) : $h;
+	}
+}

@@ -9,9 +9,11 @@
 	*Pseudonym
 */
 class Url extends BaseClass
-{	public static
+{
+	public static
 		$curpage;#Текущая ссылка
-	public
+
+	public
 		$delimiter='/',#Символ, или последовательсность символов для разделения параметров в статике
 		$defis='_',#Символ для отделения параметров от значений в статике
 		$ending='.html',#Окончание УРЛа может использоваться только в статике
@@ -27,7 +29,9 @@ class Url extends BaseClass
 /*
 	#ToDo!
 	public function __invoke(array$p=array(),$pr=true,$e=true)
-	{		return$this->Construct($p,$pr,$e);	}
+	{
+		return$this->Construct($p,$pr,$e);
+	}
 */
 
 	/**
@@ -38,30 +42,40 @@ class Url extends BaseClass
 	 * @param bool|string $e Окончание будущего URLа, имеет смысл только для ЧПУ. Передача true включает использование стандартного окончания, false - в качестве окончания подставится разделитесь, если передать строку - она и станет окончанием
 	 */
 	public function Construct(array$p=array(),$pr=true,$e=true)
-	{		if(isset($p['']))
-		{			$suf=static::Query($p['']);			unset($p['']);
+	{
+		if(isset($p['']))
+		{
+			$suf=static::Query($p['']);
+			unset($p['']);
 		}
 		else
 			$suf=false;
 
-		$r=array();#result		if($this->furl)
-		{			if($e===true)
+		$r=array();#result
+		if($this->furl)
+		{
+			if($e===true)
 				$e=$this->ending;
 			elseif($e===false)
 				$e=$this->delimiter;
 			foreach($p as $pk=>&$pv)
 				if(is_array($pv))
-				{					$add=true;					foreach($pv as $k=>&$v)
+				{
+					$add=true;
+					foreach($pv as $k=>&$v)
 						if(is_int($k))
-						{							if($v or (string)$v=='0')
+						{
+							if($v or (string)$v=='0')
 							{
 								$add=false;
 								$r[]=static::Encode($v);
 							}
 						}
 						elseif($add)
-						{							if($v or (string)$v=='0')
-								$r[]=static::Encode($k).$this->defis.static::Encode($v);						}
+						{
+							if($v or (string)$v=='0')
+								$r[]=static::Encode($k).$this->defis.static::Encode($v);
+						}
 						else
 							$add=true;
 				}
@@ -76,7 +90,8 @@ class Url extends BaseClass
 				$r.='?'.$suf;
 		}
 		else
-		{			foreach($p as $pk=>&$pv)
+		{
+			foreach($p as $pk=>&$pv)
 				if(is_array($pv))
 				{
 					foreach($pv as $k=>&$v)
@@ -106,8 +121,10 @@ class Url extends BaseClass
 	 * @param bool $pd Флаг обработки значений с дефисом, как разделитель ключ=>значения
 	 */
 	public function Parse(array$params=array(),$pd=true)
-	{		if($this->is_static)
-		{			$input=$this->string;
+	{
+		if($this->is_static)
+		{
+			$input=$this->string;
 
 			$input=ltrim($input,$this->delimiter);
 			/*if(strpos($input,$this->delimiter)===0)
@@ -137,7 +154,8 @@ class Url extends BaseClass
 					$r[$params[$n]]=$v;
 				else
 					$r[''][]=$v;
-			$this->string='';		}
+			$this->string='';
+		}
 		else
 			parse_str($this->string,$r);
 		return$r;
@@ -151,18 +169,23 @@ class Url extends BaseClass
 	 * @param bool $cut Флаг удаления окончания из обрабатываемой ссылки
 	*/
 	public function GetEnding($es=array(),$cut=true)
-	{		if($es)
-		{			$ends='';
+	{
+		if($es)
+		{
+			$ends='';
 			foreach((array)$es as $v)
 				$ends.=preg_quote($v,'#').'|';
 			$e=preg_match('#('.rtrim($ends,'|').')$#',$this->string,$m)>0 ? $m[1] : '';
 		}
 		else
-		{			$ab=constant(Language::$main.'::ALPHABET');			$e=preg_match('/([^a-z0-9'.$ab.'][a-z0-9'.$ab.']*)$/',$this->string,$m)>0 ? $m[1] : '';
+		{
+			$ab=constant(Language::$main.'::ALPHABET');
+			$e=preg_match('/([^a-z0-9'.$ab.'][a-z0-9'.$ab.']*)$/',$this->string,$m)>0 ? $m[1] : '';
 		}
 		if($e and $cut)
 			$this->string=substr($this->string,0,-strlen($e));
-		return$e;	}
+		return$e;
+	}
 
 	/**
 	 * Распарсить до первого нужного значения. Все, что идет после этого - уже параметры модуля.
@@ -172,24 +195,33 @@ class Url extends BaseClass
 	 * @param bool $pd Флаг обработки значений с дефисом, как разделитель ключ=>значения
 	*/
 	public function ParseToValue($p,$cut=true,$pd=true)
-	{		if(!$this->is_static)
+	{
+		if(!$this->is_static)
 			return isset($_GET[$p]) ? $_GET[$p] : false;
 		$str=strtok($this->string,$this->delimiter);
 		$value=false;
 		$a=array();
 		$ending=preg_quote($this->ending,'#');
 		while($str!==false)
-		{			if(!$pd or strpos($str,$this->defis)===false)
-			{				$value=$str;
-				break;			}
+		{
+			if(!$pd or strpos($str,$this->defis)===false)
+			{
+				$value=$str;
+				break;
+			}
 			else
-			{				$temp=explode($this->defis,$str,2);
+			{
+				$temp=explode($this->defis,$str,2);
 				if($temp[0]==$p)
-				{					$value=$temp[1];
-					break;				}
+				{
+					$value=$temp[1];
+					break;
+				}
 				elseif($cut)
-					$a[$temp[0]]=preg_replace('#'.$ending.'$#i','',$temp[1]);			}
-			$str=strtok($this->delimiter);		}
+					$a[$temp[0]]=preg_replace('#'.$ending.'$#i','',$temp[1]);
+			}
+			$str=strtok($this->delimiter);
+		}
 		if($a)
 			$_GET+=$a;
 		if($cut)
@@ -207,7 +239,8 @@ class Url extends BaseClass
 	 * @param string|FALSE $rep Последовательность символов, которыми будут заменены пробелы
 	*/
 	public function Filter($s,$l=false,$rep=false)
-	{		if(!$l)
+	{
+		if(!$l)
 			$l=Language::$main;
 		if(Eleanor::$vars['trans_uri'] and method_exists($l,'Translit'))
 			$s=$l::Translit($s);
@@ -225,7 +258,8 @@ class Url extends BaseClass
 	 * @param bool|string $e Окончание URL
 	 */
 	public function Prefix($e=true)
-	{		if($this->furl)
+	{
+		if($this->furl)
 			return$e===false ? $this->sp : preg_replace('#'.preg_quote($this->delimiter,'#').'$#','',$this->sp).($e===true ? $this->ending : $e);
 
 		$p=$this->file.$this->dp;
@@ -239,14 +273,19 @@ class Url extends BaseClass
 	 * @param bool $a Флаг добавления к ссылки к текщуему префиксу
 	 */
 	public function SetPrefix($p,$a=false)
-	{		if($p and is_array($p))
-		{			$f=$this->furl;
-			$this->furl=true;			$this->sp=($a ? $this->sp : '').$this->Construct($p,false,false);			$this->furl=false;
+	{
+		if($p and is_array($p))
+		{
+			$f=$this->furl;
+			$this->furl=true;
+			$this->sp=($a ? $this->sp : '').$this->Construct($p,false,false);
+			$this->furl=false;
 			$this->dp=($a ? $this->dp : '?').$this->Construct($p,false,false);
 			$this->furl=$f;
 		}
 		elseif($this->furl)
-		{			$p=preg_replace('#('.preg_quote($this->delimiter,'#').'|'.preg_quote($this->ending,'#').')+$#','',$p);
+		{
+			$p=preg_replace('#('.preg_quote($this->delimiter,'#').'|'.preg_quote($this->ending,'#').')+$#','',$p);
 			if($p)
 				$p.=$this->delimiter;
 			$this->sp=$a ? $this->sp.$p : $p;
@@ -255,7 +294,7 @@ class Url extends BaseClass
 		{
 			$p=preg_replace('#(&amp;)+$#','',$p);
 			if(false!==$qp=strpos($p,'?'))
-				$p=substr($p,$a ? $qp+1 : $qp);
+				$p=substr($p,$qp+1);
 			if($p)
 				$p.='&amp;';
 			$this->dp=$a ? $this->dp.$p : '?'.$p;
@@ -300,7 +339,8 @@ class Url extends BaseClass
 	 * @param string $s Входящая строка
 	 */
 	public static function Decode($s)
-	{		$s=urldecode($s);
+	{
+		$s=urldecode($s);
 		return preg_match('/^.{1}/us',$s)==1 ? mb_convert_encoding($s,CHARSET,'utf-8') : $s;
 	}
 
@@ -345,7 +385,8 @@ class Url extends BaseClass
 Url::$curpage=isset($_SERVER['REDIRECT_QUERY_STRING']) ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
 Url::$curpage.='&';
 if(strpos(Url::$curpage,'!')===0 and strpos(Url::$curpage,'!&')!==false)
-{	Url::$curpage=str_replace('!&','?',ltrim(Url::$curpage,'!'));
+{
+	Url::$curpage=str_replace('!&','?',ltrim(Url::$curpage,'!'));
 	Url::$curpage=rtrim(Url::$curpage,'?&');
 	Url::$curpage=Url::Decode(Url::$curpage);
 }

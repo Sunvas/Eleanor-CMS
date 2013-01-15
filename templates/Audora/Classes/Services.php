@@ -11,13 +11,16 @@
 	Шаблоны сервисов
 */
 class TPLServices
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],Eleanor::$Language['ser']['list'],'act'=>$act=='list',
@@ -27,7 +30,8 @@ class TPLServices
 			),
 		);
 	}
-	/*
+
+	/*
 		Страница отображения всех сервисов
 		$items - массив sitemap-ов. Формат: >array(array(),array()...), ключи внутренних массивов:
 			file - имя файла сервиса
@@ -39,7 +43,8 @@ class TPLServices
 			_adel - ссылка на удаление сервиса
 	*/
 	public static function Services($items)
-	{		static::Menu('list');
+	{
+		static::Menu('list');
 		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$lang=Eleanor::$Language['ser'];
 		$ltpl=Eleanor::$Language['tpl'];
@@ -82,7 +87,7 @@ class TPLServices
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 
 		if($back)

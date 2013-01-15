@@ -11,13 +11,16 @@
 	Шаблоны мультисайта
 */
 class TPLMultisite
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['main'],Eleanor::$Language['ms']['conf'],'act'=>$act=='main'),
@@ -25,14 +28,17 @@ class TPLMultisite
 		);
 
 	}
-	/*
+
+	/*
 		Шаблон редактирования мультисайта
 		$sites - массив id=>результирующий HTML-код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
 		$controls - перечень контролов в соответствии с классом контролов. Если какой-то элемент массива не является массивом, значит это заголовок подгруппы контролов
 		$error - ошибка, если ошибка пустая - значит ее нет
 	*/
 	public static function Multisite($sites,$controls,$error)
-	{		static::Menu('main');		$GLOBALS['jscripts'][]='js/multisite_manager.js';
+	{
+		static::Menu('main');
+		$GLOBALS['jscripts'][]='js/multisite_manager.js';
 		$Lst=Eleanor::LoadListTemplate('table-form')->form(array('id'=>'multisite'));
 
 		foreach($sites as $sn=>&$site)
@@ -42,14 +48,16 @@ class TPLMultisite
 			{
 				if(is_array($v))
 					$Lst->item(array($v['title'].$cl,Eleanor::$Template->LangEdit($site[$k],null),'tip'=>$v['descr'],'imp'=>$v['imp']));
-				else
+				elseif($v)
 				{
 					switch($v)
-					{						case'site':
+					{
+						case'site':
 							$h=static::$lang['sgd'].' <a href="#" class="delsite">'.static::$lang['dels'].'</a>';
 						break;
 						default:
-							$h=static::$lang['dbt'].' <a href="#" class="checkdb">'.static::$lang['chdb'].'</a>';					}
+							$h=static::$lang['dbt'].' <a href="#" class="checkdb">'.static::$lang['chdb'].'</a>';
+					}
 					$Lst->head($h);
 				}
 				$cl='';
@@ -65,7 +73,9 @@ class TPLMultisite
 		$c - интерфейс настроек
 	*/
 	public static function Options($c)
-	{		static::Menu('options');
-		return$c;	}
+	{
+		static::Menu('options');
+		return$c;
+	}
 }
 TplMultisite::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/multisite-*.php',false);

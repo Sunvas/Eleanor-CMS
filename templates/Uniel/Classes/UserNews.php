@@ -36,17 +36,23 @@
 				my - ссылка на материалы пользователя (свои материалы), либо false
 */
 class TplUserNews
-{	public static
-		$lang=array();	/*
+{
+	public static
+		$lang=array();
+	/*
 		Внутренний метод. Важный момент Cron
-	*/	protected static function TopMenu($tit=false)
-	{		$GLOBALS['jscripts'][]=Eleanor::$Template->default['theme'].'js/publications.js';
+	*/
+	protected static function TopMenu($tit=false)
+	{
+		$GLOBALS['jscripts'][]=Eleanor::$Template->default['theme'].'js/publications.js';
 		#Cron
 		$cron=$GLOBALS['Eleanor']->module['cron'] ? '<img src="'.$GLOBALS['Eleanor']->module['cron'].'" style="width:1px;height1px;" />' : '';
 		#[E] Cron
 		if(isset($GLOBALS['Eleanor']->module['general']))
-			return$cron;		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		$links=&$GLOBALS['Eleanor']->module['links'];		return Eleanor::$Template->Menu(array(
+			return$cron;
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+		$links=&$GLOBALS['Eleanor']->module['links'];
+		return Eleanor::$Template->Menu(array(
 			'menu'=>array(
 				array($links['base'],static::$lang['all']),
 				$links['categories'] ? array($links['categories'],$lang['categs']) : false,
@@ -60,8 +66,10 @@ class TplUserNews
 	}
 
 	protected static function List_($data,$shst=false)
-	{		$GLOBALS['head'][__class__]=Eleanor::JsVars(array('module'=>$GLOBALS['Eleanor']->module['name']),true,false,'');
-		$T=clone Eleanor::$Template;
+	{
+		$GLOBALS['head'][__class__]=Eleanor::JsVars(array('module'=>$GLOBALS['Eleanor']->module['name']),true,false,'');
+
+		$T=clone Eleanor::$Template;
 		$lc=static::$lang['comments_'];
 		$marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);
 		if(false!==$z=array_search(0,$marks))
@@ -76,9 +84,11 @@ class TplUserNews
 			$status=false;
 			if(isset($v['status']) and $shst)
 				switch($v['status'])
-				{					case-1:
+				{
+					case-1:
 						$status='<span style="font-weight:bold;color:darkyellow">'.static::$lang['waitmod'].'</span>';
-					break;					case 1:
+					break;
+					case 1:
 						$status='<span style="font-weight:bold;color:green">'.static::$lang['activated'].'</span>';
 					break;
 					default:
@@ -103,7 +113,8 @@ class TplUserNews
 				'text'=>$v['announcement'].($v['_hastext'] ? '<div id="more-'.$k.'" style="display:none"></div>' : '').($ntags ? '<div class="tags">'.sprintf(static::$lang['tags_'],rtrim($ntags,', ')).'</div>' : ''),
 			));
 		}
-		return$T;	}
+		return$T;
+	}
 
 	/*
 		Список новостей на главной сайта и главной модуля
@@ -145,7 +156,8 @@ class TplUserNews
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($data,$cnt,$page,$pages,$pp,$links)
-	{		return static::TopMenu().static::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$pages=>$links['first_page']));
+	{
+		return static::TopMenu().static::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$pages=>$links['first_page']));
 	}
 
 	/*
@@ -182,7 +194,8 @@ class TplUserNews
 		Описание остальных переменных доступно в методе List
 	*/
 	public static function CategoryList($category,$data,$cnt,$page,$pages,$pp,$links)
-	{		return self::ShowCategories($category['id']).self::List_($data)
+	{
+		return self::ShowCategories($category['id']).self::List_($data)
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$pages=>$links['first_page']));
 	}
 
@@ -190,23 +203,32 @@ class TplUserNews
 		Страница вывода всех категорий
 	*/
 	public static function ShowCategories($cat=0)
-	{		$dump=&$GLOBALS['Eleanor']->Categories->dump;		if(isset($dump[$cat]))
-		{			$way=$dump[$cat]['parents'] ? explode(',',rtrim($dump[$cat]['parents'],',')) : array();
+	{
+		$dump=&$GLOBALS['Eleanor']->Categories->dump;
+		if(isset($dump[$cat]))
+		{
+			$way=$dump[$cat]['parents'] ? explode(',',rtrim($dump[$cat]['parents'],',')) : array();
 			foreach($way as $k=>&$v)
 				if(isset($dump[$v]))
 					$v=array(
 						$GLOBALS['Eleanor']->Url->Construct($GLOBALS['Eleanor']->Categories->GetUri($v),true,false),
 						$dump[$v]['title'],
-					);				else
+					);
+				else
 					unset($way[$k]);
 			if($way)
-			{				$w='<span class="cat1">';				foreach($way as $v)
+			{
+				$w='<span class="cat1">';
+				foreach($way as $v)
 					$w='<a href="'.$v[0].'">'.$v[1].'</a> &raquo; ';
-				$w.='</span><hr />';			}
+				$w.='</span><hr />';
+			}
 			else
-				$w='';			$c=$w.'<table style="width:100%"><tr>'
+				$w='';
+			$c=$w.'<table style="width:100%"><tr>'
 				.($dump[$cat]['image'] ? '<td><img src="'.$GLOBALS['Eleanor']->Categories->imgfolder.$dump[$cat]['image'].'" alt="'.$dump[$cat]['title'].'" title="'.$dump[$cat]['title'].'" /></td>' : '')
-				.'<td><td><h2 class="title">'.$dump[$cat]['title'].'</h2>'.$dump[$cat]['description'].'</td></tr></table>';		}
+				.'<td><td><h2 class="title">'.$dump[$cat]['title'].'</h2>'.$dump[$cat]['description'].'</td></tr></table>';
+		}
 		else
 			$c='';
 		$cols=3;#Количество колонок категорий
@@ -218,7 +240,8 @@ class TplUserNews
 		$subcatsb=true;
 		foreach($dump as $k=>&$v)
 			switch($v['parent'])
-			{				case$cat:
+			{
+				case$cat:
 					if($iscats)
 					{
 						$c.=($cat ? '<hr />' : '').'<table class="categories">';
@@ -226,9 +249,11 @@ class TplUserNews
 					}
 
 					if($subcat>0)
-					{						if(!$subcatsb)
+					{
+						if(!$subcatsb)
 							$c.='</ul>';
-						$c.='</td>';					}
+						$c.='</td>';
+					}
 					if($num==0)
 					{
 						$c.='</tr>';
@@ -247,13 +272,16 @@ class TplUserNews
 				break;
 				case$subcat:
 					if($subcatsb)
-					{						$c.='<ul>';
-						$subcatsb=false;					}
+					{
+						$c.='<ul>';
+						$subcatsb=false;
+					}
 					$c.='<li><a href="'.$GLOBALS['Eleanor']->Url->Construct($GLOBALS['Eleanor']->Categories->GetUri($k),true,false).'">'.$v['title'].'</a></li>';
 				break;
 			}
 		if(!$iscats)
-		{			if($subcat>0)
+		{
+			if($subcat>0)
 			{
 				if(!$subcatsb)
 					$c.='</ul>';
@@ -263,14 +291,17 @@ class TplUserNews
 				$c.='<td></td>';
 			if($num==0)
 				$c.='</tr>';
-			$c.='</table>';		}
-		return static::TopMenu().Eleanor::$Template->OpenTable().$c.Eleanor::$Template->CloseTable();	}
+			$c.='</table>';
+		}
+		return static::TopMenu().Eleanor::$Template->OpenTable().$c.Eleanor::$Template->CloseTable();
+	}
 
 	/*
 		Страница вывода всех тегов
 	*/
 	public static function ShowAllTags()
-	{		$tags=clone Eleanor::$Template;
+	{
+		$tags=clone Eleanor::$Template;
 		foreach($GLOBALS['Eleanor']->module['tags'] as &$v)
 			$tags->Tag($v);
 		return static::TopMenu().Eleanor::$Template->OpenTable().'<span class="alltags">'.$tags.'</span>'.Eleanor::$Template->CloseTable();
@@ -285,8 +316,10 @@ class TplUserNews
 		Описание остальных переменных доступно в методе List
 	*/
 	public static function TagsList($tag,$data,$cnt,$page,$pages,$pp,$links)
-	{		return static::TopMenu(reset($GLOBALS['title']))
-			.($data['items'] ? self::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$pages=>$links['first_page'])) : Eleanor::$Template->Message(sprintf(static::$lang['notag'],$tag['name']),'info'));	}
+	{
+		return static::TopMenu(reset($GLOBALS['title']))
+			.($data['items'] ? self::List_($data).Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$pages=>$links['first_page'])) : Eleanor::$Template->Message(sprintf(static::$lang['notag'],$tag['name']),'info'));
+	}
 
 	/*
 		Страница поиска новостей
@@ -307,6 +340,9 @@ class TplUserNews
 	*/
 	public static function Search($values,$error,$tags,$data,$cnt,$page,$pp,$links)
 	{
+		$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
+		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
+
 		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$tagopts='';
 		foreach($tags as $k=>&$v)
@@ -331,7 +367,7 @@ class TplUserNews
 		return static::TopMenu(static::$lang['lookfor'])
 			.($error ? Eleanor::$Template->Message($error,'error') : '')
 			.($cnt===0 ? Eleanor::$Template->Message(static::$lang['notfound'],'info') : '')
-			.'<form method="post">'
+			.'<form method="post" id="newssearch">'
 			.$Lst->begin()
 				->item(static::$lang['what'],Eleanor::Input('text',$values['text']))
 				->item(static::$lang['swhere'],Eleanor::Select('where',Eleanor::Option(static::$lang['title'],'title',$values['where']=='t').Eleanor::Option(static::$lang['ta'],'ta',$values['where']=='ta').Eleanor::Option(static::$lang['tat'],'tat',$values['where']=='tat')))
@@ -340,7 +376,18 @@ class TplUserNews
 				->item(static::$lang['sortby'],Eleanor::Select('sort',Eleanor::Option(static::$lang['sdate'],'date',$values['sort']=='date').Eleanor::Option(static::$lang['srel'],'relevance',$values['sort']=='relevance')).'</label>')
 				->button(Eleanor::Button(static::$lang['find']))
 				->end()
-			.'</form>'
+			.'</form><script type="text/javascript">//<![CDATA[
+$(function(){
+	$("#newssearch [name=text]").autocomplete({
+		serviceUrl:CORE.ajax_file,
+		minChars:2,
+		delimiter: null,
+		params:{
+			module:"'.$GLOBALS['Eleanor']->module['name'].'",
+			"do":"searchsuggesions"
+		}
+	});
+})//]]></script>'
 			.$results;
 	}
 
@@ -374,8 +421,10 @@ class TplUserNews
 		$hl - массив слов, которые необходимо подсветить в новости
 	*/
 	public static function Show($a,$category,$voting,$comments,$hl)
-	{		if($hl)
-		{			$a['title']=Strings::MarkWords($hl,$a['title']);
+	{
+		if($hl)
+		{
+			$a['title']=Strings::MarkWords($hl,$a['title']);
 			$a['text']=Strings::MarkWords($hl,$a['text']);
 			if($a['announcement'])
 				$a['announcement']=Strings::MarkWords($hl,$a['announcement']);
@@ -415,7 +464,8 @@ class TplUserNews
 				'title'=>$a['title'],
 				'text'=>($a['announcement'] ? $a['announcement'].'<a id="more"></a>' : '').$a['text'].($tags ? '<div class="tags">'.sprintf(static::$lang['tags_'],rtrim($tags,', ')).'</div>' : '').($voting ? '<a id="voting"></a>'.$voting : ''),
 			))
-			.$comments;	}
+			.$comments;
+	}
 
 	/*
 		Вывод рейтинга новости

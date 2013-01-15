@@ -9,12 +9,15 @@
 	*Pseudonym
 */
 class TPLBlocks
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['blocks'];
+	{
+		$lang=Eleanor::$Language['blocks'];
 		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
@@ -41,10 +44,12 @@ class TPLBlocks
 			_adel - ссылка на удаление идентификатора
 	*/
 	public static function BlocksIdsList($items)
-	{		static::Menu('ids');
+	{
+		static::Menu('ids');
 		$c='';
 		if($items)
-		{			$ltpl=Eleanor::$Language['tpl'];
+		{
+			$ltpl=Eleanor::$Language['tpl'];
 			$Lst=Eleanor::LoadListTemplate('table-list',3);
 			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as $service=>&$v)
@@ -98,7 +103,8 @@ class TPLBlocks
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function BlocksGroup($gid,$blocks,$ids,$group,$tpls,$errors,$hasdraft,$saved,$links)
-	{		static::Menu('main');
+	{
+		static::Menu('main');
 		$GLOBALS['jscripts'][]='js/admin_blocks.js';
 		$ltpl=Eleanor::$Language['tpl'];
 
@@ -106,10 +112,12 @@ class TPLBlocks
 		$Lst=Eleanor::LoadListTemplate('table-form',3);
 		$avblocks=$gopts=$places='';
 		foreach($ids as $k=>&$v)
-		{			$gr='';
+		{
+			$gr='';
 			foreach($v as $kk=>&$vv)
 				$gr.=Eleanor::Option($vv['t'],$kk,$kk==$gid,$vv['g'] ? array('class'=>'exists') : array());
-			$gopts.=Eleanor::OptGroup($k,$gr);		}
+			$gopts.=Eleanor::OptGroup($k,$gr);
+		}
 		foreach($blocks as $k=>&$v)
 			$avblocks.='<li id="bl-'.$k.'"><b></b><span>'.$v['title'].'</span><i><a href="'.$v['_aedit'].'"><img src="'.$images.'edit.png" /></a> <a href="'.$v['_adel'].'"><img src="'.$images.'delete.png" /></a></i></li>';
 
@@ -125,7 +133,8 @@ class TPLBlocks
 			);
 
 		foreach($group['places'] as $k=>&$v)
-		{			$plblocks='';
+		{
+			$plblocks='';
 			if(isset($group['blocks'][$k]))
 				foreach($group['blocks'][$k] as &$bv)
 					if(isset($blocks[$bv]))
@@ -138,7 +147,8 @@ class TPLBlocks
 				<div class="title">'.$v['title'].'</div>
 				<div class="bcontainer">'.$plblocks.'</div>
 				<div class="resize"></div>'
-				.Eleanor::Input('place['.$k.']',isset($v['extra']) ? $v['extra'] : '',array('type'=>'hidden')).'</div>';		}
+				.Eleanor::Input('place['.$k.']',isset($v['extra']) ? $v['extra'] : '',array('type'=>'hidden')).'</div>';
+		}
 
 		$themes=' ';
 		foreach($tpls as &$v)
@@ -178,7 +188,8 @@ $(window).load(function(){
 
 	BlocksMain(Change);
 
-	$(".blocks .site").EleanorVisualBlocks({		dragimg:"'.Eleanor::$Template->default['theme'].'images/catmanag.png",
+	$(".blocks .site").EleanorVisualBlocks({
+		dragimg:"'.Eleanor::$Template->default['theme'].'images/catmanag.png",
 		distribblock:$("<div>").addClass("block").html("<span class=\"caption\"></span><div class=\"buttons\"><a href=\"#\" title=\"'.static::$lang['delb'].'\" class=\"deleteblock\"><img src=\"'.$images.'delete.png\" /></a><a href=\"#\" title=\"'.static::$lang['edb'].'\" class=\"editblock\"><img src=\"'.$images.'edit.png\" /></a></div><input type=\"hidden\"/>"),
 		Recount:function(a){
 			$(".blocks .available li b").text("");
@@ -209,14 +220,16 @@ $(window).load(function(){
 
 	var drafts=typeof CORE.drafts!="undefined";
 	if(drafts)
-	{		var first=true,
+	{
+		var first=true,
 			lnk="",
 			cnt,
 			After=function(){
 				if(--cnt==0)
 					window.location.href=lnk;
 			},
-			Aclick=function(){				if(first)
+			Aclick=function(){
+				if(first)
 				{
 					$.each(CORE.drafts,function(i,v){
 						v.OnSave.add(After);
@@ -239,8 +252,10 @@ $(window).load(function(){
 			var id=$(this).closest(".block").find("input:first").val();
 			$(this).prop("href",$("#bl-"+id+" a:first").prop("href"))
 			if(drafts)
-			{				Aclick.call(this);
-				return false;			}
+			{
+				Aclick.call(this);
+				return false;
+			}
 		}
 	});
 
@@ -299,7 +314,8 @@ $(window).load(function(){
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$groups,$cnt,$pp,$qs,$page,$links)
-	{		static::Menu('list');
+	{
+		static::Menu('list');
 		array_push($GLOBALS['jscripts'],'js/checkboxes.js','js/jquery.poshytip.js','js/admin_blocks.js');
 		$ltpl=Eleanor::$Language['tpl'];
 
@@ -322,7 +338,8 @@ $(window).load(function(){
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as $k=>&$v)
 			{
 				$grs='';
@@ -609,7 +626,9 @@ $(function(){
 		$e - текст ошибки ошибка
 	*/
 	public static function FatalError($e)
-	{		static::Menu('');
-		return Eleanor::$Template->Cover('',isset(static::$lang[$e]) ? static::$lang[$e] : '');	}
+	{
+		static::Menu('');
+		return Eleanor::$Template->Cover('',isset(static::$lang[$e]) ? static::$lang[$e] : '');
+	}
 }
 TplBlocks::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/blocks-*.php',false);

@@ -8,11 +8,14 @@
 	=====
 	*Pseudonym
 
-	Шаблоны для админки модуля аккаунт пользователя*/
+	Шаблоны для админки модуля аккаунт пользователя
+*/
 class TPLAdminAccount
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
@@ -27,7 +30,8 @@ class TPLAdminAccount
 			$options ? $options : array($links['options'],Eleanor::$Language['main']['options'],'act'=>$act=='options'),
 		);
 	}
-	/*
+
+	/*
 		Шаблон отображения списка пользователей, ожидающих модерации
 		$items - массив пользователей страниц. Формат: ID=>array(), ключи внутреннего массива:
 			full_name -
@@ -53,7 +57,8 @@ class TPLAdminAccount
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function InactiveUsers($items,$sletters,$cnt,$pp,$page,$qs,$links)
-	{		static::Menu('list');
+	{
+		static::Menu('list');
 		$ltpl=Eleanor::$Language['tpl'];
 		$GLOBALS['jscripts'][]='js/checkboxes.js';
 
@@ -90,7 +95,8 @@ class TPLAdminAccount
 			);
 
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as $k=>&$v)
 				$Lst->item(
 					'<a href="'.$v['_aedit'].'">'.$v['name'].'</a>'.($v['name']==$v['full_name'] ? '' : '<br /><i>'.$v['full_name'].'</i>').(in_array($k,$sletters) ? '<br /><b style="color:green">'.static::$lang['lettersent'].'</b>' : ''),
@@ -166,12 +172,13 @@ $(function(){
 		$values - результирующий HTML код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
 	*/
 	public static function Letters($controls,$values)
-	{		static::Menu('letters');
+	{
+		static::Menu('letters');
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 		return Eleanor::$Template->Cover($Lst->button(Eleanor::Button())->end()->endform());
 	}

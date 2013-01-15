@@ -39,7 +39,7 @@ else
 	$trace=array();
 	if($Eleanor->Url->is_static)
 	{
-		$Eleanor->Url->GetEnding($Eleanor->Url->ending,true);
+		$Eleanor->Url->GetEnding(array($Eleanor->Url->ending,$Eleanor->Url->delimiter),true);
 		$_GET+=$Eleanor->Url->Parse();
 		if(isset($_GET['']))
 			$trace=(array)$_GET[''];
@@ -62,7 +62,8 @@ else
 		{
 			$a=false;
 			if(!$id)
-			{				$f=preg_replace('#([^a-z0-9'.constant(Language::$main.'::ALPHABET').'\.\-_/]|\.\.)+#i','',join('/',$trace));#Обезопасим от возможного выхода из каталога и проверку других файлов.
+			{
+				$f=preg_replace('#([^a-z0-9'.constant(Language::$main.'::ALPHABET').'\.\-_/]|\.\.)+#i','',join('/',$trace));#Обезопасим от возможного выхода из каталога и проверку других файлов.
 				$a=glob($Eleanor->module['path'].'DIRECT/'.$f.'.php',GLOB_BRACE);
 			}
 			if($a)

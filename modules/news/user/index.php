@@ -61,7 +61,7 @@ if(isset($_GET['do']))
 					$cntf='id';
 				}
 				$R=Eleanor::$Db->Query('SELECT COUNT(`'.$cntf.'`) FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND '.$where);
-					list($cnt)=$R->fetch_row();
+				list($cnt)=$R->fetch_row();
 
 				$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
 				if($page<1)
@@ -165,19 +165,30 @@ if(isset($_GET['do']))
 			);
 			$error='';
 			$data=$cnt=$page=false;
-			if($_SERVER['REQUEST_METHOD']=='POST')
+			if($_SERVER['REQUEST_METHOD']=='POST' or isset($_GET['q']))#$_GET['q'] XML пользовательский поиск из браузера
 				do
 				{
 					$T=new TimeCheck($Eleanor->module['id']);
-					$values=array(
-						'text'=>isset($_POST['text']) ? (string)Eleanor::$POST['text'] : '',
-						'where'=>isset($_POST['where']) ? (string)$_POST['where'] : '',
-						'tags'=>isset($_POST['tags']) ? (array)$_POST['tags'] : array(),
-						'categs'=>isset($_POST['categs']) ? (array)$_POST['categs'] : array(),
-						'sort'=>isset($_POST['sort']) ? (string)$_POST['sort'] : 'date',
-						'c'=>isset($_POST['c']) && $_POST['c']=='or' ? 'or' : 'and',
-						't'=>isset($_POST['t']) && $_POST['t']=='or' ? 'or' : 'and',
-					);
+					if(isset($_GET['q']))
+						$values=array(
+							'text'=>GlobalsWrapper::Filter(CHARSET=='utf-8' ? (string)$_GET['q'] : mb_convert_encoding((string)$_GET['q'],CHARSET,'utf-8')),
+							'where'=>'',
+							'tags'=>array(),
+							'categs'=>array(),
+							'sort'=>'date',
+							'c'=>'and',
+							't'=>'and',
+						);
+					else
+						$values=array(
+							'text'=>isset($_POST['text']) ? (string)Eleanor::$POST['text'] : '',
+							'where'=>isset($_POST['where']) ? (string)$_POST['where'] : '',
+							'tags'=>isset($_POST['tags']) ? (array)$_POST['tags'] : array(),
+							'categs'=>isset($_POST['categs']) ? (array)$_POST['categs'] : array(),
+							'sort'=>isset($_POST['sort']) ? (string)$_POST['sort'] : 'date',
+							'c'=>isset($_POST['c']) && $_POST['c']=='or' ? 'or' : 'and',
+							't'=>isset($_POST['t']) && $_POST['t']=='or' ? 'or' : 'and',
+						);
 					if($ch=$T->Check('search',false))
 					{
 						$error=$lang['search_limit'](Eleanor::$Permissions->SearchLimit(),$ch['_datets']-time());
@@ -673,7 +684,7 @@ function FormatList($R,$caching=true,$anurl=array())
 			if($a['last_mod']>$lmod)
 				$lmod=$a['last_mod'];
 
-			$a['_cat']=$a['cats'] ? (int)ltrim($a['cats'],',') : false;
+			$a['_cat']=$a['cats'] && $Eleanor->Url->furl ? (int)ltrim($a['cats'],',') : false;
 			if($a['_cat'] and !isset($cats[$a['_cat']]) and isset($Eleanor->Categories->dump[$a['_cat']]))
 			{
 				$cus[$a['_cat']]=$Eleanor->Categories->GetUri($a['_cat']);
@@ -695,7 +706,7 @@ function FormatList($R,$caching=true,$anurl=array())
 				$a['announcement']=OwnBB::Parse($a['announcement']);
 
 			$u=array('u'=>array($a['uri'],'id'=>$a['id']))+$anurl;
-			$a['_url']=$Eleanor->Url->Construct($a['_cat'] && $Eleanor->Url->furl && isset($cus[$a['_cat']]) ? $cus[$a['_cat']]+$u : $u);
+			$a['_url']=$Eleanor->Url->Construct($a['_cat'] && isset($cus[$a['_cat']]) ? $cus[$a['_cat']]+$u : $u);
 			$items[$a['id']]=array_slice($a,1);
 		}
 	}

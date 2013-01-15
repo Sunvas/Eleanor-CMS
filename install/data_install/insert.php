@@ -218,18 +218,18 @@ QUERY;
 
 $insert['config']=<<<QUERY
 INSERT INTO `{$prefix}config` (`id`,`group`,`type`,`name`,`protected`,`pos`,`multilang`,`eval_load`,`eval_save`) VALUES
-(1, 1, 'input', 'site_domain', 1, 1, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=preg_replace(''#^(?:[a-z]{2,}://)?([a-z0-9\\\\-\\\\.]+).*\$#i'',''\\\\1'',\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nelse\\r\\n	return preg_replace(''#^(?:[a-z]{2,}://)?([a-z0-9\\\\-\\\\.]+).*\$#i'',''\\\\1'',\$co[''value'']);'),
+(1, 1, 'input', 'site_domain', 1, 1, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=preg_replace(''#^(?:[a-z]{2,}://)?([a-z0-9\\\\-\\\\.]+).*\$#i'',''\\\\1'',\$v);\\n	return\$co[''value''];\\n}\\nelse\\n	return preg_replace(''#^(?:[a-z]{2,}://)?([a-z0-9\\\\-\\\\.]+).*\$#i'',''\\\\1'',\$co[''value'']);'),
 (2, 1, 'select', 'parked_domains', 1, 2, 0, '', ''),
-(3, 1, 'input', 'page_caching', 1, 3, 0, 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs(round((int)\$v/60));\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs(round((int)\$co[''value'']/60));\\r\\nreturn\$co;', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v)*60;\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']*60);'),
+(3, 1, 'input', 'page_caching', 1, 3, 0, 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs(round((int)\$v/60));\\n}\\nelse\\n	\$co[''value'']=abs(round((int)\$co[''value'']/60));\\nreturn\$co;', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v)*60;\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']*60);'),
 (4, 1, 'check', 'gzip', 1, 4, 0, '', ''),
-(5, 1, 'input', 'cookie_save_time', 1, 5, 0, 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=round(\$v/86400);\\r\\nelse\\r\\n	\$co[''value'']=round(\$co[''value'']/86400);\\r\\nreturn\$co;', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v*86400);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']*86400);'),
+(5, 1, 'input', 'cookie_save_time', 1, 5, 0, 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=round(\$v/86400);\\nelse\\n	\$co[''value'']=round(\$co[''value'']/86400);\\nreturn\$co;', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v*86400);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']*86400);'),
 (6, 1, 'input', 'cookie_domain', 1, 6, 0, '', ''),
 (7, 1, 'input', 'cookie_prefix', 1, 7, 0, '', ''),
 (8, 1, 'items', 'guest_group', 1, 8, 0, '', ''),
 (9, 1, 'check', 'bots_enable', 1, 9, 0, '', ''),
 (10, 1, 'items', 'bot_group', 1, 10, 0, '', ''),
 (11, 1, 'text', 'bots_list', 0, 11, 0, 'if(\$co[''multilang''])\r\n	foreach(\$co[''value''] as &\$v)\r\n	{\r\n		foreach(\$v as \$k=>&\$bot)\r\n			\$bot=\$k.''=''.\$bot;\r\n		\$v=join("\\n",\$v);\r\n	}\r\nelse\r\n{\r\n	foreach(\$co[''value''] as \$k=>&\$bot)\r\n		\$bot=\$k.''=''.\$bot;\r\n	\$co[''value'']=join("\\n",\$co[''value'']);\r\n}\r\nreturn\$co;', 'if(\$co[''multilang''])\r\n{\r\n	foreach(\$co[''value''] as &\$v)\r\n	{\r\n		\$res=array();\r\n		\$v=str_replace("\\r",'''',\$v);\r\n		foreach(explode("\\n",\$v) as \$bot)\r\n			if(strpos(\$bot,''='')!==false)\r\n			{\r\n				list(\$uagent,\$name)=explode(''='',\$bot,2);\r\n				\$res[\$uagent]=\$name;\r\n			}\r\n		\$v=\$res;\r\n	}\r\n	return\$co[''value''];\r\n}\r\nelse\r\n{\r\n	\$v=str_replace("\\r",'''',\$co[''value'']);\r\n	\$res=array();\r\n	foreach(explode("\\n",\$v) as \$bot)\r\n		if(strpos(\$bot,''='')!==false)\r\n		{\r\n			list(\$uagent,\$name)=explode(''='',\$bot,2);\r\n			\$res[\$uagent]=\$name;\r\n		}\r\n	return \$res;\r\n}'),
-(12, 1, 'check', 'multilang', 1, 12, 0, 'if(count(Eleanor::\$langs)==1)\\r\\n	if(\$co[''multilang''])\\r\\n	{\\r\\n		\$co[''options''][''extra''][''disabled'']=''disabled'';\\r\\n		foreach(\$co[''value''] as &\$v)\\r\\n			\$v=0;\\r\\n	}\\r\\n	else\\r\\n	{\\r\\n		\$co[''value'']=0;\\r\\n		\$co[''options''][''extra''][''disabled'']=''disabled'';\\r\\n	}\\r\\nreturn\$co;', ''),
+(12, 1, 'check', 'multilang', 1, 12, 0, 'if(count(Eleanor::\$langs)==1)\\n	if(\$co[''multilang''])\\n	{\\n		\$co[''options''][''extra''][''disabled'']=''disabled'';\\n		foreach(\$co[''value''] as &\$v)\\n			\$v=0;\\n	}\\n	else\\n	{\\n		\$co[''value'']=0;\\n		\$co[''options''][''extra''][''disabled'']=''disabled'';\\n	}\\nreturn\$co;', ''),
 (13, 1, 'select', 'time_zone', 1, 13, 0, '', ''),
 (14, 1, 'text', 'blocked_ips', 1, 14, 0, '', ''),
 (15, 1, 'input', 'blocked_message', 1, 15, 1, '', ''),
@@ -239,10 +239,10 @@ INSERT INTO `{$prefix}config` (`id`,`group`,`type`,`name`,`protected`,`pos`,`mul
 (18, 2, 'text', 'site_description', 1, 3, 1, '', ''),
 (19, 2, 'check', 'furl', 1, 4, 0, '', ''),
 (20, 2, 'check', 'trans_uri', 1, 5, 0, '', ''),
-(21, 2, 'input', 'url_static_delimiter', 1, 6, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$v);\\r\\n		if(!\$v)\\r\\n			\$v=''/'';\\r\\n	}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$co[''value'']);\\r\\n	if(!\$co[''value''])\\r\\n		\$co[''value'']=''/'';\\r\\n}\\r\\n	return\$co[''value''];'),
-(22, 2, 'input', 'url_static_defis', 1, 7, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$v);\\r\\n		if(!\$v)\\r\\n			\$v=''_'';\\r\\n	}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$co[''value'']);\\r\\n	if(!\$co[''value''])\\r\\n		\$co[''value'']=''_'';\\r\\n}\\r\\nreturn\$co[''value''];'),
-(23, 2, 'input', 'url_static_ending', 1, 8, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		if(preg_match(''/^[^a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']/i'',\$v)==0)\\r\\n			\$v=''.''.\$v;\\r\\n}\\r\\nelse\\r\\n{\\r\\n	if(preg_match(''/^[^a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']/i'',\$co[''value''])==0)\\r\\n		\$co[''value'']=''.''.\$co[''value''];\\r\\n}\\r\\nreturn\$co[''value''];'),
-(24, 2, 'input', 'url_rep_space', 1, 9, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$v);\\r\\n		if(!\$v)\\r\\n			\$v=''-'';\\r\\n	}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$co[''value'']);\\r\\n	if(!\$co[''value''])\\r\\n		\$co[''value'']=''-'';\\r\\n}\\r\\nreturn\$co[''value''];'),
+(21, 2, 'input', 'url_static_delimiter', 1, 6, 0, '', 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n	{\\n		\$v=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$v);\\n		if(!\$v)\\n			\$v=''/'';\\n	}\\nelse\\n{\\n	\$co[''value'']=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$co[''value'']);\\n	if(!\$co[''value''])\\n		\$co[''value'']=''/'';\\n}\\n	return\$co[''value''];'),
+(22, 2, 'input', 'url_static_defis', 1, 7, 0, '', 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n	{\\n		\$v=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$v);\\n		if(!\$v)\\n			\$v=''_'';\\n	}\\nelse\\n{\\n	\$co[''value'']=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$co[''value'']);\\n	if(!\$co[''value''])\\n		\$co[''value'']=''_'';\\n}\\nreturn\$co[''value''];'),
+(23, 2, 'input', 'url_static_ending', 1, 8, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		if(preg_match(''/^[^a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']/i'',\$v)==0)\\n			\$v=''.''.\$v;\\n}\\nelse\\n{\\n	if(preg_match(''/^[^a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']/i'',\$co[''value''])==0)\\n		\$co[''value'']=''.''.\$co[''value''];\\n}\\nreturn\$co[''value''];'),
+(24, 2, 'input', 'url_rep_space', 1, 9, 0, '', 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n	{\\n		\$v=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$v);\\n		if(!\$v)\\n			\$v=''-'';\\n	}\\nelse\\n{\\n	\$co[''value'']=preg_replace(''/[a-z0-9''.constant(Language::\$main.''::ALPHABET'').'']+/i'','''',\$co[''value'']);\\n	if(!\$co[''value''])\\n		\$co[''value'']=''-'';\\n}\\nreturn\$co[''value''];'),
 (25, 2, 'select', 'prefix_free_module', 1, 10, 0, '', ''),
 (26, 2, 'check', 'site_closed', 1, 11, 0, '', ''),
 (27, 2, 'editor', 'site_close_mes', 1, 12, 1, '', ''),
@@ -254,32 +254,32 @@ INSERT INTO `{$prefix}config` (`id`,`group`,`type`,`name`,`protected`,`pos`,`mul
 (32, 3, 'input', 'link_passlost', 1, 3, 1, '', ''),
 (33, 3, 'user', 'time_online', 1, 4, 0, '', ''),
 (34, 3, 'select', 'antibrute', 1, 5, 0, '', ''),
-(35, 3, 'input', 'antibrute_cnt', 1, 6, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
-(36, 3, 'input', 'antibrute_time', 1, 7, 0, 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=round(\$v/60);\\r\\nelse\\r\\n	\$co[''value'']=round(\$co[''value'']/60);\\r\\nreturn\$co;', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v*60);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']*60);'),
+(35, 3, 'input', 'antibrute_cnt', 1, 6, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
+(36, 3, 'input', 'antibrute_time', 1, 7, 0, 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=round(\$v/60);\\nelse\\n	\$co[''value'']=round(\$co[''value'']/60);\\nreturn\$co;', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v*60);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']*60);'),
 
 (37, 4, 'text', 'blocked_names', 1, 1, 0, '', ''),
 (38, 4, 'text', 'blocked_emails', 1, 2, 0, '', ''),
 (39, 4, 'select', 'reg_type', 1, 3, 0, '', ''),
-(40, 4, 'input', 'reg_act_time', 1, 4, 0, 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs(round((int)\$v/3600));\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs(round((int)\$co[''value'']/3600));\\r\\nreturn\$co;', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v)*3600;\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']*3600);'),
+(40, 4, 'input', 'reg_act_time', 1, 4, 0, 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs(round((int)\$v/3600));\\n}\\nelse\\n	\$co[''value'']=abs(round((int)\$co[''value'']/3600));\\nreturn\$co;', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v)*3600;\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']*3600);'),
 (41, 4, 'select', 'reg_unactivated', 1, 5, 0, '', ''),
 (42, 4, 'check', 'reg_off', 1, 6, 0, '', ''),
-(43, 4, 'input', 'max_name_length', 1, 7, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v<5)\\r\\n			\$v=5;\\r\\n	}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']<5)\\r\\n		\$co[''value'']=5;\\r\\n}\\r\\nreturn\$co[''value''];'),
-(44, 4, 'input', 'min_pass_length', 1, 8, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
-(45, 4, 'input', 'avatar_bytes', 1, 9, 0, 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs(round((int)\$v/1024));\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs(round((int)\$co[''value'']/1024));\\r\\nreturn\$co;', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v)*1024;\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']*1024);'),
-(46, 4, 'input', 'avatar_size', 1, 10, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		if(preg_match(''#^\\\\d+ \\\\d+\$#'',\$v)==0)\\r\\n			throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\r\\n}\\r\\nelseif(preg_match(''#^\\\\d+ \\\\d+\$#'',\$co[''value''])==0)\\r\\n	throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
+(43, 4, 'input', 'max_name_length', 1, 7, 0, '', 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n	{\\n		\$v=abs((int)\$v);\\n		if(\$v<5)\\n			\$v=5;\\n	}\\nelse\\n{\\n	\$co[''value'']=abs((int)\$co[''value'']);\\n	if(\$co[''value'']<5)\\n		\$co[''value'']=5;\\n}\\nreturn\$co[''value''];'),
+(44, 4, 'input', 'min_pass_length', 1, 8, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
+(45, 4, 'input', 'avatar_bytes', 1, 9, 0, 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs(round((int)\$v/1024));\\n}\\nelse\\n	\$co[''value'']=abs(round((int)\$co[''value'']/1024));\\nreturn\$co;', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v)*1024;\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']*1024);'),
+(46, 4, 'input', 'avatar_size', 1, 10, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		if(preg_match(''#^\\\\d+ \\\\d+\$#'',\$v)==0)\\n			throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\n}\\nelseif(preg_match(''#^\\\\d+ \\\\d+\$#'',\$co[''value''])==0)\\n	throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\nreturn\$co[''value''];'),
 (47, 4, 'select', 'account_pass_rec_t', 1, 11, 0, '', ''),
 
-(48, 5, 'input', 'captcha_length', 1, 1, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
+(48, 5, 'input', 'captcha_length', 1, 1, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
 (49, 5, 'input', 'captcha_symbols', 1, 2, 0, '', ''),
-(50, 5, 'input', 'captcha_width', 1, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
-(51, 5, 'input', 'captcha_height', 1, 4, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
-(52, 5, 'input', 'captcha_fluctuation', 1, 5, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
+(50, 5, 'input', 'captcha_width', 1, 3, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
+(51, 5, 'input', 'captcha_height', 1, 4, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
+(52, 5, 'input', 'captcha_fluctuation', 1, 5, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
 
 (53, 6, 'select', 'mail_method', 1, 1, 0, '', ''),
-(54, 6, 'input', 'mail_from', 1, 2, 0, '', 'if(!Strings::CheckEmail(\$co[''value'']))\\r\\n	throw new EE(''incorrect_email'',EE::USER,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
+(54, 6, 'input', 'mail_from', 1, 2, 0, '', 'if(!Strings::CheckEmail(\$co[''value'']))\\n	throw new EE(''incorrect_email'',EE::USER,array(''lang''=>true));\\nreturn\$co[''value''];'),
 (55, 6, 'select', 'mail_priority', 1, 3, 0, '', ''),
-(56, 6, 'input', 'mail_reply', 1, 4, 0, '', 'if(!Strings::CheckEmail(\$co[''value''],false))\\r\\n	throw new EE(''incorrect_email'',EE::USER,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
-(57, 6, 'input', 'mail_notice', 1, 5, 0, '', 'if(!Strings::CheckEmail(\$co[''value''],false))\\r\\n	throw new EE(''incorrect_email'',EE::USER,array(''lang''=>true));\\r\\nreturn\$co[''value''];'),
+(56, 6, 'input', 'mail_reply', 1, 4, 0, '', 'if(!Strings::CheckEmail(\$co[''value''],false))\\n	throw new EE(''incorrect_email'',EE::USER,array(''lang''=>true));\\nreturn\$co[''value''];'),
+(57, 6, 'input', 'mail_notice', 1, 5, 0, '', 'if(!Strings::CheckEmail(\$co[''value''],false))\\n	throw new EE(''incorrect_email'',EE::USER,array(''lang''=>true));\\nreturn\$co[''value''];'),
 (58, 6, 'input', 'mail_smtp_user', 1, 6, 0, '', ''),
 (59, 6, 'input', 'mail_smtp_pass', 1, 7, 0, '', ''),
 (60, 6, 'input', 'mail_smtp_host', 1, 8, 0, '', ''),
@@ -304,52 +304,53 @@ INSERT INTO `{$prefix}config` (`id`,`group`,`type`,`name`,`protected`,`pos`,`mul
 (76, 9, 'uploadimage', 'rss_image', 1, 1, 0, '', ''),
 
 (77, 10, 'select', 'comments_sort', 1, 1, 0, '', ''),
-(78, 10, 'input', 'comments_pp', 1, 2, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v==0)\\r\\n			\$v=10;\\r\\n	}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']==0)\\r\\n		\$co[''value'']=10;\\r\\n}\\r\\nreturn\$co[''value''];'),
-(79, 10, 'input', 'comments_timelimit', 1, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
+(78, 10, 'input', 'comments_pp', 1, 2, 0, '', 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n	{\\n		\$v=abs((int)\$v);\\n		if(\$v==0)\\n			\$v=10;\\n	}\\nelse\\n{\\n	\$co[''value'']=abs((int)\$co[''value'']);\\n	if(\$co[''value'']==0)\\n		\$co[''value'']=10;\\n}\\nreturn\$co[''value''];'),
+(79, 10, 'input', 'comments_timelimit', 1, 3, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
 (80, 10, 'items', 'comments_display_for', 1, 5, 0, '', ''),
 (81, 10, 'items', 'comments_post_for', 1, 6, 0, '', ''),
 
 (82, 11, 'check', 'thumbs', 1, 1, 0, '', ''),
 (83, 11, 'input', 'thumb_types', 1, 2, 0, '', ''),
-(84, 11, 'input', 'thumb_width', 1, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\nreturn\$co[''value''];'),
-(85, 11, 'input', 'thumb_height', 1, 4, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n}\\r\\nelse\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\nreturn\$co[''value''];'),
+(84, 11, 'input', 'thumb_width', 1, 3, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n}\\nelse\\n	\$co[''value'']=abs((int)\$co[''value'']);\\nreturn\$co[''value''];'),
+(85, 11, 'input', 'thumb_height', 1, 4, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n}\\nelse\\n	\$co[''value'']=abs((int)\$co[''value'']);\\nreturn\$co[''value''];'),
 (86, 11, 'select', 'thumb_reducing', 1, 5, 0, '', ''),
 (87, 11, 'select', 'thumb_first', 1, 6, 0, '', ''),
 (88, 11, 'check', 'watermark', 1, 7, 0, '', ''),
 (89, 11, 'input', 'watermark_types', 1, 8, 0, '', ''),
-(90, 11, 'input', 'watermark_alpha', 1, 9, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v>100)\\r\\n			\$v=100;\\r\\n	}\\r\\n}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']>100)\\r\\n		\$co[''value'']=100;\\r\\n}\\r\\nreturn\$co[''value''];'),
-(91, 11, 'input', 'watermark_top', 1, 10, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v>100)\\r\\n			\$v=100;\\r\\n	}\\r\\n}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']>100)\\r\\n		\$co[''value'']=100;\\r\\n}\\r\\nreturn\$co[''value''];'),
-(92, 11, 'input', 'watermark_left', 1, 11, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n	{\\r\\n		\$v=abs((int)\$v);\\r\\n		if(\$v>100)\\r\\n			\$v=100;\\r\\n	}\\r\\n}\\r\\nelse\\r\\n{\\r\\n	\$co[''value'']=abs((int)\$co[''value'']);\\r\\n	if(\$co[''value'']>100)\\r\\n		\$co[''value'']=100;\\r\\n}\\r\\nreturn\$co[''value''];'),
+(90, 11, 'input', 'watermark_alpha', 1, 9, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n	{\\n		\$v=abs((int)\$v);\\n		if(\$v>100)\\n			\$v=100;\\n	}\\n}\\nelse\\n{\\n	\$co[''value'']=abs((int)\$co[''value'']);\\n	if(\$co[''value'']>100)\\n		\$co[''value'']=100;\\n}\\nreturn\$co[''value''];'),
+(91, 11, 'input', 'watermark_top', 1, 10, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n	{\\n		\$v=abs((int)\$v);\\n		if(\$v>100)\\n			\$v=100;\\n	}\\n}\\nelse\\n{\\n	\$co[''value'']=abs((int)\$co[''value'']);\\n	if(\$co[''value'']>100)\\n		\$co[''value'']=100;\\n}\\nreturn\$co[''value''];'),
+(92, 11, 'input', 'watermark_left', 1, 11, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n	{\\n		\$v=abs((int)\$v);\\n		if(\$v>100)\\n			\$v=100;\\n	}\\n}\\nelse\\n{\\n	\$co[''value'']=abs((int)\$co[''value'']);\\n	if(\$co[''value'']>100)\\n		\$co[''value'']=100;\\n}\\nreturn\$co[''value''];'),
 (93, 11, 'input', 'watermark_image', 1, 12, 0, '', ''),
 (94, 11, 'input', 'watermark_string', 1, 13, 1, '', ''),
-(95, 11, 'input', 'watermark_csa', 1, 14, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		if(preg_match(''#^\\\\d+,\\\\d+,\\\\d+,\\\\d+,\\\\d+\$#'',\$v)==0)\\r\\n			throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\r\\n}\\r\\nelse\\r\\n{\\r\\n	if(preg_match(''#^\\\\d+,\\\\d+,\\\\d+,\\\\d+,\\\\d+\$#'',\$co[''value''])==0)\\r\\n		throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\r\\n}\\r\\nreturn\$co[''value''];'),
+(95, 11, 'input', 'watermark_csa', 1, 14, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		if(preg_match(''#^\\\\d+,\\\\d+,\\\\d+,\\\\d+,\\\\d+\$#'',\$v)==0)\\n			throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\n}\\nelse\\n{\\n	if(preg_match(''#^\\\\d+,\\\\d+,\\\\d+,\\\\d+,\\\\d+\$#'',\$co[''value''])==0)\\n		throw new EE(''incorrect_format'',EE::USER,array(''lang''=>true));\\n}\\nreturn\$co[''value''];'),
 (96, 11, 'check', 'download_antileech', 1, 15, 0, '', ''),
 (97, 11, 'check', 'download_no_session', 1, 16, 0, '', ''),
 
 (98, 12, 'input', 'multisite_secret', 0, 1, 0, '', ''),
-(99, 12, 'input', 'multisite_ttl', 0, 2, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
+(99, 12, 'input', 'multisite_ttl', 0, 2, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
 
 (100, 13, 'input', 'drafts_days', 0, 1, 0, '', 'if(\$co[''multilang''])\r\n{\r\n	foreach(\$co[''value''] as &\$v)\r\n		\$v=(int)\$v;\r\n	return\$co[''value''];\r\n}\r\nreturn(int)\$co[''value''];'),
 (101, 13, 'input', 'drafts_autosave', 0, 2, 0, '', 'if(\$co[''multilang''])\r\n{\r\n	foreach(\$co[''value''] as &\$v)\r\n		\$v=(int)\$v;\r\n	return\$co[''value''];\r\n}\r\nreturn(int)\$co[''value''];'),
 
 (102, 14, 'user', 'm_static_general', 1, 1, 0, '', ''),
 
-(103, 15, 'input', 'publ_per_page', 0, 1, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
-(104, 15, 'input', 'publ_rss_per_page', 0, 3, 0, '', 'if(\$co[''multilang''])\\r\\n{\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=abs((int)\$v);\\r\\n	return\$co[''value''];\\r\\n}\\r\\nreturn abs((int)\$co[''value'']);'),
+(103, 15, 'input', 'publ_per_page', 0, 1, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
+(104, 15, 'input', 'publ_rss_per_page', 0, 3, 0, '', 'if(\$co[''multilang''])\\n{\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=abs((int)\$v);\\n	return\$co[''value''];\\n}\\nreturn abs((int)\$co[''value'']);'),
 (105, 15, 'check', 'publ_add', 0, 4, 0, '', ''),
 (106, 15, 'check', 'publ_catsubcat', 0, 5, 0, '', ''),
 (107, 15, 'check', 'publ_ping', 0, 6, 0, '', ''),
 (108, 15, 'check', 'publ_rating', 0, 7, 0, '', ''),
 (109, 15, 'check', 'publ_mark_details', 0, 8, 0, '', ''),
 (110, 15, 'check', 'publ_mark_users', 0, 9, 0, '', ''),
-(111, 15, 'input', 'publ_remark', 0, 10, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=max((int)\$v,1);\\r\\nelse\\r\\n	\$co[''value'']=max((int)\$co[''value''],1);\\r\\nreturn\$co[''value''];'),
-(112, 15, 'input', 'publ_lowmark', 0, 11, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=min((int)\$v,0);\\r\\nelse\\r\\n	\$co[''value'']=min((int)\$co[''value''],0);\\r\\nreturn\$co[''value''];'),
-(113, 15, 'input', 'publ_highmark', 0, 12, 0, '', 'if(\$co[''multilang''])\\r\\n	foreach(\$co[''value''] as &\$v)\\r\\n		\$v=max((int)\$v,0);\\r\\nelse\\r\\n	\$co[''value'']=max((int)\$co[''value''],0);\\r\\nreturn\$co[''value''];')
+(111, 15, 'input', 'publ_remark', 0, 10, 0, '', 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=max((int)\$v,1);\\nelse\\n	\$co[''value'']=max((int)\$co[''value''],1);\\nreturn\$co[''value''];'),
+(112, 15, 'input', 'publ_lowmark', 0, 11, 0, '', 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=min((int)\$v,0);\\nelse\\n	\$co[''value'']=min((int)\$co[''value''],0);\\nreturn\$co[''value''];'),
+(113, 15, 'input', 'publ_highmark', 0, 12, 0, '', 'if(\$co[''multilang''])\\n	foreach(\$co[''value''] as &\$v)\\n		\$v=max((int)\$v,0);\\nelse\\n	\$co[''value'']=max((int)\$co[''value''],0);\\nreturn\$co[''value''];')
 QUERY;
 
 $multilang=count($languages)>1;
 if($furl)
-{	$p=Language::$main=='russian' ? '' : '%D1%80%D1%83%D1%81/';
+{
+	$p=Language::$main=='russian' ? '' : '%D1%80%D1%83%D1%81/';
 	$ac_a_r=$p.'%D0%B0%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82.html';
 	$ac_r_r=$p.'%D0%B0%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82/register';
 	$ac_p_r=$p.'%D0%B0%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82/lostpass';
@@ -367,7 +368,8 @@ if($furl)
 	$e_403='index.php?module=errors&code=403';
 }
 else
-{	$ac_a='index.php?module=account';
+{
+	$ac_a='index.php?module=account';
 	$ac_r='index.php?module=account&amp;do=register';
 	$ac_p='index.php?module=account&amp;do=lostpass';
 
@@ -386,7 +388,8 @@ else
 	$ac_a_e='index.php?'.$p.'module=account';
 	$ac_r_e='index.php?'.$p.'module=account&amp;do=register';
 	$ac_p_e='index.php?'.$p.'module=account&amp;do=lostpass';
-	$e_403='errors/403.html';}
+	$e_403='errors/403.html';
+}
 
 $ser=array(
 	'errors'=>'include Eleanor::$root.\'\'addons/admin/options/errors_users.php\'\';',
@@ -549,13 +552,13 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serial
 
 (62, 'russian', 'Ответственные пользователи', 'Введите имена пользователей, разделяя их запятыми', 1, 0, 1, '{$ser['errors']}', 'Ошибки в коде'),
 (63, 'russian', 'Тема письма', '{site} - название сайта<br />{link} - ссылка на сайт<br />{full} - ссылка в админку на просмотр всего лога<br />{cnt} - число ошибок<br />{errors} - лог ошибок<br />{name} - имя пользователя', 'Новые ошибки на {site}', 0, 'Новые ошибки на {site}', 'array(''checkout''=>false)', ''),
-(64, 'russian', 'Текст письма', '{site} - название сайта<br />{link} - ссылка на сайт<br />{full} - ссылка в админку на просмотр всего лога<br />{cnt} - число ошибок<br />{errors} - лог ошибок<br />{name} - имя пользователя', 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендуется срочно их исправить. <br />\\r\\n<br />\\r\\nС наилучшими пожеланиями,<br />\\r\\nкоманда сайта {site} .', 0, 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендуется срочно их исправить. <br />\\r\\n<br />\\r\\nС наилучшими пожеланиями,<br />\\r\\nкоманда сайта {site} .', 'array(''checkout''=>false)', ''),
+(64, 'russian', 'Текст письма', '{site} - название сайта<br />{link} - ссылка на сайт<br />{full} - ссылка в админку на просмотр всего лога<br />{cnt} - число ошибок<br />{errors} - лог ошибок<br />{name} - имя пользователя', 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендуется срочно их исправить. <br />\\n<br />\\nС наилучшими пожеланиями,<br />\\nкоманда сайта {site} .', 0, 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендуется срочно их исправить. <br />\\n<br />\\nС наилучшими пожеланиями,<br />\\nкоманда сайта {site} .', 'array(''checkout''=>false)', ''),
 (65, 'russian', 'Ответственные пользователи', 'Введите имена пользователей, разделяя их запятыми', 1, 0, 1, '{$ser['errors']}', 'Ошибки базы данных'),
 (66, 'russian', 'Тема письма', '{site} - название сайта<br />{link} - ссылка на сайт<br />{full} - ссылка в админку на просмотр всего лога<br />{cnt} - число ошибок<br />{errors} - лог ошибок<br />{name} - имя пользователя', 'Новые ошибки на {site}', 0, 'Новые ошибки на {site}', 'array(''checkout''=>false)', ''),
-(67, 'russian', 'Текст письма', '{site} - название сайта<br />{link} - ссылка на сайт<br />{full} - ссылка в админку на просмотр всего лога<br />{cnt} - число ошибок<br />{errors} - лог ошибок<br />{name} - имя пользователя', 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендуется срочно их исправить. <br />\\r\\n<br />\\r\\nС наилучшими пожеланиями,<br />\\r\\nкоманда сайта {site} .', 0, 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендуется срочно их исправить. <br />\\r\\n<br />\\r\\nС наилучшими пожеланиями,<br />\\r\\nкоманда сайта {site} .', 'array(''checkout''=>false)', ''),
+(67, 'russian', 'Текст письма', '{site} - название сайта<br />{link} - ссылка на сайт<br />{full} - ссылка в админку на просмотр всего лога<br />{cnt} - число ошибок<br />{errors} - лог ошибок<br />{name} - имя пользователя', 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендуется срочно их исправить. <br />\\n<br />\\nС наилучшими пожеланиями,<br />\\nкоманда сайта {site} .', 0, 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендуется срочно их исправить. <br />\\n<br />\\nС наилучшими пожеланиями,<br />\\nкоманда сайта {site} .', 'array(''checkout''=>false)', ''),
 (68, 'russian', 'Ответственные пользователи', 'Введите имена пользователей, разделяя их запятыми', 1, 0, 1, '{$ser['errors']}', 'Ошибочные запросы'),
 (69, 'russian', 'Тема письма', '{site} - название сайта<br />{link} - ссылка на сайт<br />{full} - ссылка в админку на просмотр всего лога<br />{cnt} - число ошибок<br />{errors} - лог ошибок<br />{name} - имя пользователя', 'Новые ошибки на {site}', 0, 'Новые ошибки на {site}', 'array(''checkout''=>false)', ''),
-(70, 'russian', 'Текст письма', '{site} - название сайта<br />{link} - ссылка на сайт<br />{full} - ссылка в админку на просмотр всего лога<br />{cnt} - число ошибок<br />{errors} - лог ошибок<br />{name} - имя пользователя', 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендуется срочно их исправить. <br />\\r\\n<br />\\r\\nС наилучшими пожеланиями,<br />\\r\\nкоманда сайта {site} .', 0, 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендуется срочно их исправить. <br />\\r\\n<br />\\r\\nС наилучшими пожеланиями,<br />\\r\\nкоманда сайта {site} .', 'array(''checkout''=>false)', ''),
+(70, 'russian', 'Текст письма', '{site} - название сайта<br />{link} - ссылка на сайт<br />{full} - ссылка в админку на просмотр всего лога<br />{cnt} - число ошибок<br />{errors} - лог ошибок<br />{name} - имя пользователя', 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендуется срочно их исправить. <br />\\n<br />\\nС наилучшими пожеланиями,<br />\\nкоманда сайта {site} .', 0, 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайте "{site}" [cnt=plural]произошла {cnt} ошибка|произошли {cnt} ошибки|произошло {cnt} ошибок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендуется срочно их исправить. <br />\\n<br />\\nС наилучшими пожеланиями,<br />\\nкоманда сайта {site} .', 'array(''checkout''=>false)', ''),
 
 (71, 'russian', 'Редактор по умолчанию', '', 'bb', 0, 'bb', 'array(''eval''=>''return Eleanor::getInstance()->Editor->editors;'')', ''),
 (72, 'russian', 'Запрещенные слова', 'Маты и ругательства. Через запятую.', 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', 0, 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', '', ''),
@@ -729,13 +732,13 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`, `title`, `descr`, `value`, `se
 
 (62, 'ukrainian', 'Відповідальні користувачі', 'Введіть імена користувачів, розділяючи їх комами', 1, 0, 1, '{$ser['errors']}', 'Помилки у коді'),
 (63, 'ukrainian', 'Тема листа', '{site} - назва сайту<br />{link} - посилання на сайт<br />{full} - посилання в адмінку на перегляд всього логу<br />{cnt} - число помилок<br />{errors} - лог помилок<br />{name} - им\\\\''я користувача', 'Нові помилки на {site}', 0, 'Нові помилки на {site}', 'array(''checkout''=>false)', ''),
-(64, 'ukrainian', 'Текст листа', '{site} - назва сайту<br />{link} - посилання на сайт<br />{full} - посилання в адмінку на перегляд всього логу<br />{cnt} - число помилок<br />{errors} - лог помилок<br />{name} - им\\\\''я користувача', 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендується терміново їх виправити.<br />\\r\\n<br />\\r\\nЗ найкращими побажаннями,<br />\\r\\nкоманда сайту {site} .', 0, 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендується терміново їх виправити.<br />\\r\\n<br />\\r\\nЗ найкращими побажаннями,<br />\\r\\nкоманда сайту {site} .', 'array(''checkout''=>false)', ''),
+(64, 'ukrainian', 'Текст листа', '{site} - назва сайту<br />{link} - посилання на сайт<br />{full} - посилання в адмінку на перегляд всього логу<br />{cnt} - число помилок<br />{errors} - лог помилок<br />{name} - им\\\\''я користувача', 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендується терміново їх виправити.<br />\\n<br />\\nЗ найкращими побажаннями,<br />\\nкоманда сайту {site} .', 0, 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендується терміново їх виправити.<br />\\n<br />\\nЗ найкращими побажаннями,<br />\\nкоманда сайту {site} .', 'array(''checkout''=>false)', ''),
 (65, 'ukrainian', 'Відповідальні користувачі', 'Введіть імена користувачів, розділяючи їх комами', 1, 0, 1, '{$ser['errors']}', 'Помилки баз даних'),
 (66, 'ukrainian', 'Тема листа', '{site} - назва сайту<br />{link} - посилання на сайт<br />{full} - посилання в адмінку на перегляд всього логу<br />{cnt} - число помилок<br />{errors} - лог помилок<br />{name} - им\\\\''я користувача', 'Нові помилки на {site}', 0, 'Нові помилки на {site}', 'array(''checkout''=>false)', ''),
-(67, 'ukrainian', 'Текст листа', '{site} - назва сайту<br />{link} - посилання на сайт<br />{full} - посилання в адмінку на перегляд всього логу<br />{cnt} - число помилок<br />{errors} - лог помилок<br />{name} - им\\\\''я користувача', 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендується терміново їх виправити.<br />\\r\\n<br />\\r\\nЗ найкращими побажаннями,<br />\\r\\nкоманда сайту {site} .', 0, 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендується терміново їх виправити.<br />\\r\\n<br />\\r\\nЗ найкращими побажаннями,<br />\\r\\nкоманда сайту {site} .', 'array(''checkout''=>false)', ''),
+(67, 'ukrainian', 'Текст листа', '{site} - назва сайту<br />{link} - посилання на сайт<br />{full} - посилання в адмінку на перегляд всього логу<br />{cnt} - число помилок<br />{errors} - лог помилок<br />{name} - им\\\\''я користувача', 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендується терміново їх виправити.<br />\\n<br />\\nЗ найкращими побажаннями,<br />\\nкоманда сайту {site} .', 0, 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендується терміново їх виправити.<br />\\n<br />\\nЗ найкращими побажаннями,<br />\\nкоманда сайту {site} .', 'array(''checkout''=>false)', ''),
 (68, 'ukrainian', 'Відповідальні користувачі', 'Введіть імена користувачів, розділяючи їх комами', 1, 0, 1, '{$ser['errors']}', 'Помилкові запити'),
 (69, 'ukrainian', 'Тема листа', '{site} - назва сайту<br />{link} - посилання на сайт<br />{full} - посилання в адмінку на перегляд всього логу<br />{cnt} - число помилок<br />{errors} - лог помилок<br />{name} - им\\\\''я користувача', 'Нові помилки на {site}', 0, 'Нові помилки на {site}', 'array(''checkout''=>false)', ''),
-(70, 'ukrainian', 'Текст листа', '{site} - назва сайту<br />{link} - посилання на сай<br />{full} - посилання в адмінку на перегляд всього логут<br />{cnt} - число помилок<br />{errors} - лог помилок<br />{name} - им\\\\''я користувача', 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендується терміново їх виправити.<br />\\r\\n<br />\\r\\nЗ найкращими побажаннями,<br />\\r\\nкоманда сайту {site} .', 0, 'Здравствуйте, {name}!<br />\\r\\n<br />\\r\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nРекомендується терміново їх виправити.<br />\\r\\n<br />\\r\\nЗ найкращими побажаннями,<br />\\r\\nкоманда сайту {site} .', 'array(''checkout''=>false)', ''),
+(70, 'ukrainian', 'Текст листа', '{site} - назва сайту<br />{link} - посилання на сай<br />{full} - посилання в адмінку на перегляд всього логут<br />{cnt} - число помилок<br />{errors} - лог помилок<br />{name} - им\\\\''я користувача', 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендується терміново їх виправити.<br />\\n<br />\\nЗ найкращими побажаннями,<br />\\nкоманда сайту {site} .', 0, 'Здравствуйте, {name}!<br />\\n<br />\\nНа сайті "{site}" [cnt=plural]сталася {cnt} помилка|сталися {cnt} помилки|сталося {cnt} помилок[/cnt]:<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nРекомендується терміново їх виправити.<br />\\n<br />\\nЗ найкращими побажаннями,<br />\\nкоманда сайту {site} .', 'array(''checkout''=>false)', ''),
 
 (71, 'ukrainian', 'Редактор по замовчуванню', '', 'bb', 0, 'bb', 'array(''eval''=>''return Eleanor::getInstance()->Editor->editors;'')', ''),
 (72, 'ukrainian', 'Заборонені слова', 'Мати й лайки. Через кому.', 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', 0, 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', '', ''),
@@ -908,13 +911,13 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serial
 
 (62, 'english', 'Responsible users', 'Enter user names, separated by commas', 1, 0, 1, '{$ser['errors']}', 'Code errors'),
 (63, 'english', 'Subject email', '{site} - site name<br />{link} - link to site<br />{full} - link in the admin panel to view the entire log<br />{cnt} - number of errors<br />{errors} - error log<br />{name} - user name', 'New errors on {site}', 0, 'New errors on {site}', 'array(''checkout''=>false)', ''),
-(64, 'english', 'Text email', '{site} - site name<br />{link} - link to site<br />{full} - link in the admin panel to view the entire log<br />{cnt} - number of errors<br />{errors} - error log<br />{name} - user name', 'Hello, {name}!<br />\\r\\n<br />\\r\\n{cnt} errors happend on site "{site}".<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nImmediately recommended to fix them.<br />\\r\\n<br />\\r\\nWith best wishes,<br />\\r\\nteam {site} .', 0, 'Hello, {name}!<br />\\r\\n<br />\\r\\n{cnt} errors happend on site "{site}".<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nImmediately recommended to fix them.<br />\\r\\n<br />\\r\\nWith best wishes,<br />\\r\\nteam {site} .', 'array(''checkout''=>false)', ''),
+(64, 'english', 'Text email', '{site} - site name<br />{link} - link to site<br />{full} - link in the admin panel to view the entire log<br />{cnt} - number of errors<br />{errors} - error log<br />{name} - user name', 'Hello, {name}!<br />\\n<br />\\n{cnt} errors happend on site "{site}".<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nImmediately recommended to fix them.<br />\\n<br />\\nWith best wishes,<br />\\nteam {site} .', 0, 'Hello, {name}!<br />\\n<br />\\n{cnt} errors happend on site "{site}".<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nImmediately recommended to fix them.<br />\\n<br />\\nWith best wishes,<br />\\nteam {site} .', 'array(''checkout''=>false)', ''),
 (65, 'english', 'Responsible users', 'Enter user names, separated by commas', 1, 0, 1, '{$ser['errors']}', 'Database errors'),
 (66, 'english', 'Subject email', '{site} - site name<br />{link} - link to site<br />{full} - link in the admin panel to view the entire log<br />{cnt} - number of errors<br />{errors} - error log<br />{name} - user name', 'New errors on {site}', 0, 'New errors on {site}', 'array(''checkout''=>false)', ''),
-(67, 'english', 'Text email', '{site} - site name<br />{link} - link to site<br />{full} - link in the admin panel to view the entire log<br />{cnt} - number of errors<br />{errors} - error log<br />{name} - user name', 'Hello, {name}!<br />\\r\\n<br />\\r\\n{cnt} errors happend on site "{site}".<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nImmediately recommended to fix them.<br />\\r\\n<br />\\r\\nWith best wishes,<br />\\r\\nteam {site} .', 0, 'Hello, {name}!<br />\\r\\n<br />\\r\\n{cnt} errors happend on site "{site}".<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nImmediately recommended to fix them.<br />\\r\\n<br />\\r\\nWith best wishes,<br />\\r\\nteam {site} .', 'array(''checkout''=>false)', ''),
+(67, 'english', 'Text email', '{site} - site name<br />{link} - link to site<br />{full} - link in the admin panel to view the entire log<br />{cnt} - number of errors<br />{errors} - error log<br />{name} - user name', 'Hello, {name}!<br />\\n<br />\\n{cnt} errors happend on site "{site}".<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nImmediately recommended to fix them.<br />\\n<br />\\nWith best wishes,<br />\\nteam {site} .', 0, 'Hello, {name}!<br />\\n<br />\\n{cnt} errors happend on site "{site}".<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nImmediately recommended to fix them.<br />\\n<br />\\nWith best wishes,<br />\\nteam {site} .', 'array(''checkout''=>false)', ''),
 (68, 'english', 'Responsible users', 'Enter user names, separated by commas', 1, 0, 1, '{$ser['errors']}', 'Errors request'),
 (69, 'english', 'Subject email', '{site} - site name<br />{link} - link to site<br />{full} - link in the admin panel to view the entire log<br />{cnt} - number of errors<br />{errors} - error log<br />{name} - user name', 'New errors on {site}', 0, 'New errors on {site}', 'array(''checkout''=>false)', ''),
-(70, 'english', 'Text email', '{site} - site name<br />{link} - link to site<br />{full} - link in the admin panel to view the entire log<br />{cnt} - number of errors<br />{errors} - error log<br />{name} - user name', 'Hello, {name}!<br />\\r\\n<br />\\r\\n{cnt} errors happend on site "{site}".<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nImmediately recommended to fix them.<br />\\r\\n<br />\\r\\nWith best wishes,<br />\\r\\nteam {site} .', 0, 'Hello, {name}!<br />\\r\\n<br />\\r\\n{cnt} errors happend on site "{site}".<br />\\r\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\r\\nImmediately recommended to fix them.<br />\\r\\n<br />\\r\\nWith best wishes,<br />\\r\\nteam {site} .', 'array(''checkout''=>false)', ''),
+(70, 'english', 'Text email', '{site} - site name<br />{link} - link to site<br />{full} - link in the admin panel to view the entire log<br />{cnt} - number of errors<br />{errors} - error log<br />{name} - user name', 'Hello, {name}!<br />\\n<br />\\n{cnt} errors happend on site "{site}".<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nImmediately recommended to fix them.<br />\\n<br />\\nWith best wishes,<br />\\nteam {site} .', 0, 'Hello, {name}!<br />\\n<br />\\n{cnt} errors happend on site "{site}".<br />\\n[html]<pre><code>{errors}</code></pre>[/html]<br />\\nImmediately recommended to fix them.<br />\\n<br />\\nWith best wishes,<br />\\nteam {site} .', 'array(''checkout''=>false)', ''),
 
 (71, 'english', 'Editor by default', '', 'bb', 0, 'bb', 'array(''eval''=>''return Eleanor::getInstance()->Editor->editors;'')', ''),
 (72, 'english', 'Swear words', 'Mats and abuse. Separated by commas.', 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', 0, 'slaed, slaed cms, Edmann, DiFor, zigmat, peter911', '', ''),
@@ -1016,8 +1019,7 @@ INSERT INTO `{$prefix}menu` (`id`,`pos`,`parents`,`in_map`,`status`) VALUES
 (6, 6, '', 1, 1),
 (7, 7, '', 1, 1),
 (8, 1, '7,', 1, 1),
-(9, 2, '7,', 1, 1),
-(10, 3, '7,', 1, 1)
+(9, 2, '7,', 1, 1)
 QUERY;
 
 #Russian
@@ -1032,8 +1034,7 @@ INSERT INTO `{$prefix}menu_l` (`id`, `language`, `title`, `url`, `eval_url`, `pa
 (6, 'russian', 'Обратная связь', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''обратная связь''),false);', ' rel="contact"'),
 (7, 'russian', 'Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
 (8, 'russian', 'Официальный сайт Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
-(9, 'russian', 'Форум поддержки', 'http://eleanor-cms.ru/%D1%84%D0%BE%D1%80%D1%83%D0%BC/', '', ''),
-(10, 'russian', 'Eleanor Server', 'http://eleanor-cms.ru/%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80/', '', '')
+(9, 'russian', 'Форум поддержки', 'http://eleanor-cms.ru/%D1%84%D0%BE%D1%80%D1%83%D0%BC/', '', '')
 QUERY;
 #[E] Russian
 
@@ -1049,8 +1050,7 @@ INSERT INTO `{$prefix}menu_l` (`id`, `language`, `title`, `url`, `eval_url`, `pa
 (6, 'english', 'Contacts', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''contacts''),false);', ' rel="contact"'),
 (7, 'english', 'Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
 (8, 'english', 'Official site Eleanor CMS', 'http://eleanor-cms.ru/eng/', '', ''),
-(9, 'english', 'Supporting forum', 'http://eleanor-cms.ru/eng/forum/', '', ''),
-(10, 'english', 'Eleanor Server', 'http://eleanor-cms.ru/eng/server/', '', '')
+(9, 'english', 'Supporting forum', 'http://eleanor-cms.ru/eng/forum/', '', '')
 QUERY;
 #[E] English
 
@@ -1066,8 +1066,7 @@ INSERT INTO `{$prefix}menu_l` (`id`, `language`, `title`, `url`, `eval_url`, `pa
 (6, 'ukrainian', 'Зворотній зв''язок', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''зворотній зв\\\\''язок''),false);', ' rel="contact"'),
 (7, 'ukrainian', 'Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
 (8, 'ukrainian', 'Офіційний сайт Eleanor CMS', 'http://eleanor-cms.ru/%D1%83%D0%BA%D1%80/', '', ''),
-(9, 'ukrainian', 'Форум підтримки', 'http://eleanor-cms.ru/%D1%83%D0%BA%D1%80/%D1%84%D0%BE%D1%80%D1%83%D0%BC/', '', ''),
-(10, 'ukrainian', 'Eleanor Server', 'http://eleanor-cms.ru/%D1%83%D0%BA%D1%80/%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80/', '', '')
+(9, 'ukrainian', 'Форум підтримки', 'http://eleanor-cms.ru/%D1%83%D0%BA%D1%80/%D1%84%D0%BE%D1%80%D1%83%D0%BC/', '', '')
 QUERY;
 #[E]Ukrainian
 

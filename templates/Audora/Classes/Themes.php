@@ -11,13 +11,17 @@
 	Шаблоны менеджера шаблонов
 */
 class TplThemes
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
+
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],Eleanor::$Language['te']['list'],'act'=>$act=='list'),
 			$links['info']
@@ -30,7 +34,8 @@ class TplThemes
 			: false,
 		);
 	}
-	/*
+
+	/*
 		Основная страница менеджера шаблонов. Вывод всех шаблонов, которые существуют в системе
 		$tpls - массив шаблонов. Формат имя шаблона=>array(), ключи внутреннего массива:
 			title - название шаблона
@@ -42,15 +47,21 @@ class TplThemes
 			image - ссылка на изображение-логотип шаблона
 			used - массив сервисов, использующие этот шаблон по умолчанию
 			creation - дата создания шаблона (задается создателем шаблона)
-	*/	public static function TemplatesGeneral($tpls)
-	{		static::Menu('list');		$ltpl=Eleanor::$Language['tpl'];
-		$images=Eleanor::$Template->default['theme'].'images/';		$used=$notused='';
+	*/
+	public static function TemplatesGeneral($tpls)
+	{
+		static::Menu('list');
+		$ltpl=Eleanor::$Language['tpl'];
+		$images=Eleanor::$Template->default['theme'].'images/';
+		$used=$notused='';
 		$n=$nn=2;
 		foreach($tpls as $k=>&$v)
-		{			$setto='';
+		{
+			$setto='';
 			$title=$v['title'] ? $v['title'].' ('.$k.')' : $k;
 			foreach($v['setto'] as $sk=>&$sv)
-				$setto.='<p><a href="'.$sv.'" style="font-weight:bold">'.sprintf(static::$lang['set_for'],$sk).'</a></p>';
+				$setto.='<p><a href="'.$sv.'" style="font-weight:bold">'.sprintf(static::$lang['set_for'],$sk).'</a></p>';
+
 			$c='<td><div class="thm_block"><div class="thm_brd"><div class="thm_menu"><div class="thm_cont"><div class="thm_mtop">'
 				.($v['_aopts'] ? '<a href="'.$v['_aopts'].'">'.static::$lang['config'].'</a> | ' : '')
 				.($v['_ainfo'] ? '<a href="'.$v['_ainfo'].'">'.$ltpl['info'].'</a> | ' : '')
@@ -79,7 +90,8 @@ class TplThemes
 					$nn=2;
 				}
 			}
-		}		if($n>0 and $n<2)
+		}
+		if($n>0 and $n<2)
 		{
 			while($n--)
 				$used.='<td></td>';
@@ -95,7 +107,8 @@ class TplThemes
 			.($notused ? Eleanor::$Template->Title(static::$lang['avai_templ'])->OpenTable().'<table class="tablethm">'.$notused.'</table>'.Eleanor::$Template->CloseTable() : '')
 			.'<script type="text/javascript">//<![CDATA[
 $(function(){
-	$(".tablethm").on("click",".copy",function(){		var nt=prompt("'.static::$lang['enter_nt'].'"),
+	$(".tablethm").on("click",".copy",function(){
+		var nt=prompt("'.static::$lang['enter_nt'].'"),
 			t=$(this).data("n");
 		if(!nt || !t || t==nt)
 			return false;
@@ -112,7 +125,8 @@ $(function(){
 				window.location.reload();
 			}
 		);
-		return false;	});
+		return false;
+	});
 })//]]></script>';
 	}
 
@@ -123,7 +137,8 @@ $(function(){
 		$lic - лицензионное соглашение
 	*/
 	public static function License($t,$back,$lic)
-	{		static::Menu('info');
+	{
+		static::Menu('info');
 		return'<div class="wbpad"><div class="warning">
 <img src="'.Eleanor::$Template->default['theme'].'images/warning.png" class="info" alt="" title="'.$t.'" />
 <div>
@@ -136,7 +151,8 @@ $(function(){
 	</form>
 </div>
 <div class="clr"></div>
-</div></div>';	}
+</div></div>';
+	}
 
 	/*
 		Страница с информацией о шаблоне оформления
@@ -145,7 +161,8 @@ $(function(){
 		$license - лицензия шаблона
 	*/
 	public static function Info($name,$info,$license)
-	{		static::Menu('info');
+	{
+		static::Menu('info');
 		return ($info
 			? Eleanor::$Template->Title($name)
 				->OpenTable().'<div class="wbpad" style="max-height:300px">'.$info.'</div>'.Eleanor::$Template->CloseTable()
@@ -153,7 +170,8 @@ $(function(){
 			.($license
 			? Eleanor::$Template->Title(Eleanor::$Language['te']['agreement'])
 				->OpenTable().'<div class="wbpad" style="max-height:300px">'.$license.'</div>'.Eleanor::$Template->CloseTable()
-			: '');	}
+			: '');
+	}
 
 	/*
 		Страница управления файлами шаблона
@@ -161,12 +179,18 @@ $(function(){
 		$name - название шаблона
 	*/
 	public static function Files($files,$name)
-	{		static::Menu('files');		return Eleanor::$Template->Cover($files).'<script type="text/javascript">//<![CDATA[
-$(function(){	$("#showb-tpl").hide().click();
+	{
+		static::Menu('files');
+		return Eleanor::$Template->Cover($files).'<script type="text/javascript">//<![CDATA[
+$(function(){
+	$("#showb-tpl").hide().click();
 	FItpl.Open=function(url)
-	{		url=encodeURIComponent(FItpl.Get("realpath").replace("templates/","")+"/"+url).replace(/!/g,"%21").replace(/\'/g,"%27").replace(/\(/g,"%28").replace(/\)/g,"%29").replace(/\*/g,"%2A").replace(/%20/g,"+")		window.open(window.location.protocol+"//"+window.location.hostname+CORE.site_path+"'.Eleanor::$services['download']['file'].'?direct='.Eleanor::$service.'&file='.$GLOBALS['Eleanor']->module['name'].'&f="+url);
+	{
+		url=encodeURIComponent(FItpl.Get("realpath").replace("templates/","")+"/"+url).replace(/!/g,"%21").replace(/\'/g,"%27").replace(/\(/g,"%28").replace(/\)/g,"%29").replace(/\*/g,"%2A").replace(/%20/g,"+")
+		window.open(window.location.protocol+"//"+window.location.hostname+CORE.site_path+"'.Eleanor::$services['download']['file'].'?direct='.Eleanor::$service.'&file='.$GLOBALS['Eleanor']->module['name'].'&f="+url);
 		return false;
-	}})//]]></script>';
+	}
+})//]]></script>';
 	}
 
 	/*
@@ -176,12 +200,13 @@ $(function(){	$("#showb-tpl").hide().click();
 		$errors - массив ошибок
 	*/
 	public static function Config($controls,$values,$errors)
-	{		static::Menu('config');
+	{
+		static::Menu('config');
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 
 		foreach($errors as $k=>&$v)
@@ -197,7 +222,9 @@ $(function(){	$("#showb-tpl").hide().click();
 		$back - URL возврата
 	*/
 	public static function Delete($t,$back)
-	{		static::Menu();
+	{
+		static::Menu();
 		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm($t,$back));
-	}}
+	}
+}
 TplThemes::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/themes-*.php',false);

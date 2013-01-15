@@ -11,8 +11,10 @@
 	Шаблон для админки модуля новостей
 */
 class TPLAdminNews
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
@@ -39,7 +41,8 @@ class TPLAdminNews
 			//array($links['addf'],static::$lang['addf'],'act'=>$act=='addf'),
 		);
 	}
-	/*
+
+	/*
 		Страница отображения всех тегов
 		$items - массив статических страниц. Формат: ID=>array(), ключи внутреннего массива:
 			language - язык тега
@@ -61,7 +64,9 @@ class TPLAdminNews
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function TagsList($items,$cnt,$pp,$qs,$page,$links)
-	{		static::Menu('tags');		$GLOBALS['jscripts'][]='js/checkboxes.js';
+	{
+		static::Menu('tags');
+		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$ltpl=Eleanor::$Language['tpl'];
 
@@ -85,7 +90,8 @@ class TPLAdminNews
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as $k=>&$v)
 				$Lst->item(
 					'<a href="'.$v['_aedit'].'">'.$v['name'].'</a>',
@@ -154,7 +160,8 @@ $(function(){
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
 			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['nto_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
-		);	}
+		);
+	}
 
 	/*
 		Страница добавления/редактирования тега
@@ -170,12 +177,14 @@ $(function(){
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEditTag($id,$controls,$values,$errors,$back,$hasdraft,$links)
-	{		static::Menu($id ? 'editt' : 'addt');		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu($id ? 'editt' : 'addt');
+		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 
 		if($back)
@@ -226,7 +235,9 @@ $(function(){
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$categs,$cnt,$pp,$qs,$page,$links)
-	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
+	{
+		static::Menu('list');
+		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$qs+=array(''=>array());
@@ -248,9 +259,11 @@ $(function(){
 			array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 		);
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as $k=>&$v)
-			{				$cats='';
+			{
+				$cats='';
 				foreach($v['cats'] as &$cv)
 					if(isset($categs[$cv]))
 						$cats.=($cats ? '' : '<b>').$categs[$cv]['title'].($cats ? '' : '</b>').', ';
@@ -313,7 +326,8 @@ $(function(){
 		</form><form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
 			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['tto_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['activate'],'a').Eleanor::Option($ltpl['deactivate'],'d').Eleanor::Option($ltpl['delete'],'k').Eleanor::Option(static::$lang['waitmod'],'m')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
-		);	}
+		);
+	}
 
 	/*
 		Страница добавления/редактирования новости
@@ -357,14 +371,18 @@ $(function(){
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEdit($id,$values,$errors,$uploader,$voting,$bypost,$hasdraft,$back,$links)
-	{		static::Menu($id ? 'edit' : 'add');		#$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js'; #Автор есть - это не нужно.
+	{
+		static::Menu($id ? 'edit' : 'add');
+		#$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js'; #Автор есть - это не нужно.
 		#$GLOBALS['head']['autocomplete']='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 
 		$ltpl=Eleanor::$Language['tpl'];
 		if(Eleanor::$vars['multilang'])
-		{			$ml=array();
+		{
+			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
-			{				$ml['meta_title'][$k]=Eleanor::Input('meta_title['.$k.']',Eleanor::FilterLangValues($values['meta_title'],$k),array('tabindex'=>17));
+			{
+				$ml['meta_title'][$k]=Eleanor::Input('meta_title['.$k.']',Eleanor::FilterLangValues($values['meta_title'],$k),array('tabindex'=>17));
 				$ml['meta_descr'][$k]=Eleanor::Input('meta_descr['.$k.']',Eleanor::FilterLangValues($values['meta_descr'],$k),array('tabindex'=>18));
 				$ml['title'][$k]=Eleanor::Input('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
 				$ml['announcement'][$k]=$GLOBALS['Eleanor']->Editor->Area('announcement['.$k.']',Eleanor::FilterLangValues($values['announcement'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>6,'rows'=>10)));
@@ -385,7 +403,8 @@ $(function(){
 
 				'tags'=>Eleanor::Input('tags',Eleanor::FilterLangValues($values['tags']),array('tabindex'=>5)),
 			);
-		$Lst=Eleanor::LoadListTemplate('table-form')
+
+		$Lst=Eleanor::LoadListTemplate('table-form')
 			->form()
 			->begin()
 			->item($ltpl['title'],Eleanor::$Template->LangEdit($ml['title'],null));
@@ -442,11 +461,18 @@ $(function(){
 				$v=static::$lang[$v];
 
 		return Eleanor::$Template->Cover($c,$errors,'error').'<script type="text/javascript">//<![CDATA[
-$(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each(function(i){			if($("option:eq("+i+")",cs).prop("selected"))
+$(function(){
+	$("#cs").change(function(){
+		var cs=this;
+		$("#mc option").each(function(i){
+			if($("option:eq("+i+")",cs).prop("selected"))
 				$(this).prop("disabled",false);
 			else
-				$(this).prop({disabled:true,selected:false});		});	}).change();
-	$("input[name^=\"tags\"]").each(function(){		var m=$(this).prop("name").match(/tags\[([a-z]+)\]/),
+				$(this).prop({disabled:true,selected:false});
+		});
+	}).change();
+	$("input[name^=\"tags\"]").each(function(){
+		var m=$(this).prop("name").match(/tags\[([a-z]+)\]/),
 			p={
 				module:"'.$GLOBALS['Eleanor']->module['name'].'",
 				event:"tags",
@@ -458,9 +484,13 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 				delimiter:/,\s*/,
 				params:p
 			});
-		$("input[name=\"_onelang\"]").change(function(){			p.lang=(m && !$(this).prop("checked")) ? m[1] : "";
-			a.setOptions({params:p})		});
-	});})//]]></script>';	}
+		$("input[name=\"_onelang\"]").change(function(){
+			p.lang=(m && !$(this).prop("checked")) ? m[1] : "";
+			a.setOptions({params:p})
+		});
+	});
+})//]]></script>';
+	}
 
 	/*
 		Страница удаления новости
@@ -469,7 +499,8 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 		$back - URL возврата
 	*/
 	public static function Delete($a,$back)
-	{		static::Menu();
+	{
+		static::Menu();
 		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['submit_del'],$a['title']),$back));
 	}
 
@@ -490,7 +521,10 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 		$c - интерфейс категорий
 	*/
 	public static function Categories($c)
-	{		static::Menu();		return$c;	}
+	{
+		static::Menu();
+		return$c;
+	}
 
 	/*
 		Обертка для настроек

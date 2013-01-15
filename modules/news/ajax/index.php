@@ -10,27 +10,59 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor;
-$mc=include($Eleanor->module['path'].'config.php');
+$mc=include$Eleanor->module['path'].'config.php';
 Eleanor::LoadOptions($mc['opts']);
 if(isset($_GET['do']))
-{	$d=(string)$_GET['do'];
+{
+	$d=(string)$_GET['do'];
 	switch($d)
-	{		case'suggestions':
+	{
+		case'opensearch':#http://usabili.ru/news/2011/03/04/opensearch.html
+			BeAs('user');
+			$q=isset($_GET['q']) ? (string)$_GET['q'] : false;
+			$items=$dates=$urls=$cats=array();
+			if($q)
+			{
+				$Eleanor->Categories->Init($mc['c']);
+				$q=htmlspecialchars(CHARSET=='utf-8' ? $q : mb_convert_encoding($q,CHARSET,'utf-8'),ELENT,CHARSET,false);
+				$R=Eleanor::$Db->Query('SELECT `id`,`uri`,`ldate`,`lcats`,`title` FROM `'.$mc['tl'].'` WHERE `title` LIKE \''.Eleanor::$Db->Escape($q,false).'%\' AND `lstatus`=1 AND `language`IN(\'\',\''.Language::$main.'\') LIMIT 5');
+				while($a=$R->fetch_assoc())
+				{
+					$a['_cat']=$a['lcats'] && $Eleanor->Url->furl ? (int)ltrim($a['lcats'],',') : false;
+					if($a['_cat'] and $Eleanor->Url->furl and !isset($cats[$a['_cat']]) and isset($Eleanor->Categories->dump[$a['_cat']]))
+						$cats[$a['_cat']]=$Eleanor->Categories->GetUri($a['_cat']);
+
+					$items[]=addcslashes($a['title'],"\n\r\t\"\\");
+					$dates[]=addcslashes(Eleanor::$Language->Date($a['ldate'],'fdt'),"\n\r\t\"\\");
+
+					$u=array('u'=>array($a['uri'],'id'=>$a['id']));
+					$urls[]=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($a['_cat'] && isset($cats[$a['_cat']]) ? $cats[$a['_cat']]+$u : $u);
+				}
+			}
+			Eleanor::$content_type='text/plain';
+			Start();
+			echo'["'.addcslashes($q,"\n\r\t\"\\").'",['.($items ? '"'.join('","',$items).'"' : '').'],['.($dates ? '"'.join('","',$dates).'"' : '').'],['.($urls ? '"'.join('","',$urls).'"' : '').']]';
+		break;
+		case'searchsuggesions':
 			$q=isset($_GET['query']) ? htmlspecialchars((string)$_GET['query'],ELENT,CHARSET,false) : false;
 			$items=array();
 			if($q)
-			{				$R=Eleanor::$Db->Query('SELECT `title` FROM `'.$mc['tl'].'` WHERE MATCH(`title`,`text`) AGAINST ('.Eleanor::$Db->Escape($q).' IN BOOLEAN MODE) AND `lstatus`=1 LIMIT 5');
+			{
+				$R=Eleanor::$Db->Query('SELECT `uri`,`title`,`ldate` FROM `'.$mc['tl'].'` WHERE `title` LIKE \''.Eleanor::$Db->Escape($q,false).'%\' AND `lstatus`=1 AND `language`IN(\'\',\''.Language::$main.'\') LIMIT 5');
 				while($a=$R->fetch_assoc())
 					$items[]=addcslashes($a['title'],"\n\r\t\"\\");
 			}
 			Eleanor::$content_type='text/plain';
 			Start();
-			echo'{query:"'.addcslashes($q,"\n\r\t\"\\").'",suggestions:['.($items ? '"'.join('","',$items).'"' : '').']}';	}}
+			echo'{query:"'.addcslashes($q,"\n\r\t\"\\").'",suggestions:['.($items ? '"'.join('","',$items).'"' : '').']}';
+	}
+}
 else
 {
 	$ev=isset($_POST['event']) ? (string)$_POST['event'] : '';
 	switch($ev)
-	{		case'tags':
+	{
+		case'tags':
 			$q=isset($_POST['query']) ? Url::Decode($_POST['query']) : '';
 			$l=isset($_POST['lang']) ? Url::Decode($_POST['lang']) : '';
 			$s=array();
@@ -40,7 +72,8 @@ else
 			Eleanor::$content_type='application/json';
 			Start();
 			echo'{query:"'.$q.'",suggestions:['.($s ? '"'.join('","',$s).'"' : '').'],data:[]}';
-		break;		case'archive':
+		break;
+		case'archive':
 			BeAs('user');
 			$m=isset($_POST['month']) ? (int)$_POST['month'] : idate('n');
 			$y=isset($_POST['year']) ? (int)$_POST['year'] : idate('Y');
@@ -76,8 +109,10 @@ else
 			$can=!Eleanor::$vars['publ_mark_users'] && Eleanor::$vars['publ_remark'] || $uid;
 
 			if($can)
-			{				$TCH=new TimeCheck($Eleanor->module['id'],false,$uid);
-				$can=!$TCH->Check($id);			}
+			{
+				$TCH=new TimeCheck($Eleanor->module['id'],false,$uid);
+				$can=!$TCH->Check($id);
+			}
 
 			$mark=isset($_POST['mark']) ? (int)$_POST['mark'] : 0;
 			$marks=range(Eleanor::$vars['publ_lowmark'],Eleanor::$vars['publ_highmark']);

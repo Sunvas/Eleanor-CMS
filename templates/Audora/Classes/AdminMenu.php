@@ -11,10 +11,13 @@
 	Админка модуля меню
 */
 class TplAdminMenu
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Меню модуля
-	*/	protected static function Menu($act='')
+	*/
+	protected static function Menu($act='')
 	{
 		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$links=&$GLOBALS['Eleanor']->module['links'];
@@ -27,7 +30,8 @@ class TplAdminMenu
 			),
 		);
 	}
-	/*
+
+	/*
 		Страница отображения всех пунктов меню
 		$items - массив статических страниц. Формат: ID=>array(), ключи внутреннего массива:
 			title - заголовок пункта меню
@@ -61,7 +65,9 @@ class TplAdminMenu
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links)
-	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
+	{
+		static::Menu('list');
+		$GLOBALS['jscripts'][]='js/checkboxes.js';
 
 		$qs+=array(''=>array());
 		$qs['']+=array('fi'=>array());
@@ -86,10 +92,12 @@ class TplAdminMenu
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			$posasc=!$qs['sort'] || $qs['sort']=='pos' && $qs['so']=='asc';
 			foreach($items as $k=>&$v)
-			{				$subs='';
+			{
+				$subs='';
 				if(isset($subitems[$k]))
 					foreach($subitems[$k] as $kk=>&$vv)
 						$subs.='<a href="'.$vv['_aedit'].'">'.$vv['title'].'</a>, ';
@@ -138,7 +146,8 @@ $(function(){
 			.'<form id="checks-form" action="'.$links['form_items'].'" method="post" onsubmit="return (CheckGroup(this) && confirm(\''.$ltpl['are_you_sure'].'\'))">'
 			.$Lst->end().'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
-		);	}
+		);
+	}
 
 	/*
 		Страница добавления/редактирования пункта меню
@@ -154,11 +163,14 @@ $(function(){
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEdit($id,$controls,$values,$errors,$back,$hasdraft,$links)
-	{		static::Menu($id ? '' : 'add');		$ltpl=Eleanor::$Language['tpl'];		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
+	{
+		static::Menu($id ? '' : 'add');
+		$ltpl=Eleanor::$Language['tpl'];
+		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 
 		if($back)

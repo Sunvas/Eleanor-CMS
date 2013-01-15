@@ -11,13 +11,16 @@
 	Админка управления смайлами
 */
 class TPLSmiles
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['smiles'];
+	{
+		$lang=Eleanor::$Language['smiles'];
 		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
@@ -29,7 +32,8 @@ class TPLSmiles
 			),
 		);
 	}
-	/*
+
+	/*
 		Страница отображения всех смайлов
 		$items - массив смайлов страниц. Формат: ID=>array(), ключи внутреннего массива:
 			path - путь к файлу-картинке смайла
@@ -55,8 +59,11 @@ class TPLSmiles
 			pp - фукнция-генератор ссылок на изменение количества смайлов отображаемых на странице
 			first_page - ссылка на первую страницу пагинатора
 			pages - функция-генератор ссылок на остальные страницы
-	*/	public static function SmilesList($items,$cnt,$page,$pp,$qs,$links)
-	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
+	*/
+	public static function SmilesList($items,$cnt,$page,$pp,$qs,$links)
+	{
+		static::Menu('list');
+		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$lang=Eleanor::$Language['smiles'];
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-list',6)
@@ -71,7 +78,8 @@ class TPLSmiles
 			);
 
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			$sasc=$qs['sort']=='pos' && $qs['so']=='asc';
 			foreach($items as $k=>&$v)
 			{
@@ -180,7 +188,7 @@ class TPLSmiles
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 
 		if($back)
@@ -211,8 +219,10 @@ class TPLSmiles
 				ch - флаг отмеченности смайла-кандидата для добавления (при повторном загрузке списка при возникновении ошибки)
 	*/
 	public static function AddGroupSmiles($values)
-	{		static::Menu('addg');
-		$lang=Eleanor::$Language['smiles'];		array_push($GLOBALS['jscripts'],'addons/autocomplete/jquery.autocomplete.js','js/checkboxes.js');
+	{
+		static::Menu('addg');
+		$lang=Eleanor::$Language['smiles'];
+		array_push($GLOBALS['jscripts'],'addons/autocomplete/jquery.autocomplete.js','js/checkboxes.js');
 		$GLOBALS['head'][__class__.__function__]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin()
@@ -235,7 +245,8 @@ $(function(){
 		.($values['added'] ? Eleanor::$Template->Message(static::$lang['smadded'],'info') : '');
 
 		if($values['smiles'])
-		{			$Lst=Eleanor::LoadListTemplate('table-list',5)
+		{
+			$Lst=Eleanor::LoadListTemplate('table-list',5)
 				->form(array('id'=>'checks-form'))
 				->begin(
 					array(static::$lang['smile'],'colspan'=>2),
@@ -252,8 +263,11 @@ $(function(){
 					array(Eleanor::Check('smiles['.$k.'][f]',$v['ch'],array('value'=>$v['v'])),'center')
 				);
 			$c.=$Lst->end().'<div class="submitline">'.Eleanor::Input('folder',$values['folder'],array('type'=>'hidden')).Eleanor::Button(static::$lang['addsels']).'</div></form>
-			<script type="text/javascript">/*<![CDATA[*/$(function(){One2AllCheckboxes("#checks-form","#mass-check","[name$=\"[f]\"]",true)});//]]></script>';		}
-		return Eleanor::$Template->Cover($c,$values['error'],'error');	}
+			<script type="text/javascript">/*<![CDATA[*/$(function(){One2AllCheckboxes("#checks-form","#mass-check","[name$=\"[f]\"]",true)});//]]></script>';
+		}
+
+		return Eleanor::$Template->Cover($c,$values['error'],'error');
+	}
 
 	/*
 		Страница удаления смайла

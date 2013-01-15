@@ -11,18 +11,20 @@
 	Шаблон для админки модуля обратной связи
 */
 class TplAdminContacts
-{	/*
+{
+	/*
 		Страница редактирование параметров обратной связи
 		$controls - перечень контролов в соответствии с классом контролов. Если какой-то элемент массива не является массивом, значит это заголовок подгруппы контролов
 		$values - результирующий HTML код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
 		$error - ошибка, если ошибка пустая - значит ее нет
-	*/	public static function Contacts($controls,$values,$error)
+	*/
+	public static function Contacts($controls,$values,$error)
 	{
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'descr'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 		return Eleanor::$Template->Cover((string)$Lst->button(Eleanor::Button())->end()->endform(),$error)
 			.'<script type="text/javascript">//<![CDATA[

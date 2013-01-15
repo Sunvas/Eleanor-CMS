@@ -11,12 +11,17 @@
 	Этот файл отвечает за оформление секции "главная" в админке
 */
 class TPLGeneral
-{	public static
-		$lang=array();	/*
+{
+	public static
+		$lang=array();
+	/*
 		Меню раздела
-	*/	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['general'];
-		$links=&$GLOBALS['Eleanor']->module['links'];
+	*/
+	protected static function Menu($act='')
+	{
+		$lang=Eleanor::$Language['general'];
+		$links=&$GLOBALS['Eleanor']->module['links'];
+
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['main'],Eleanor::$Language['main']['main page'],'act'=>$act=='main'),
 			array($links['server'],$lang['server_info'],'act'=>$act=='server'),
@@ -24,7 +29,8 @@ class TPLGeneral
 			array($links['license'],$lang['license_'],'act'=>$act=='license'),
 		);
 	}
-	/*
+
+	/*
 		Главная страница админки
 
 		$nums - массив, содержит ключи:
@@ -51,7 +57,9 @@ class TPLGeneral
 		$ck - логическое, характеризует очищен ли кэш
 	*/
 	public static function General($nums,$comments,$users,$groups,$mynotes,$conotes,$ck)
-	{		static::Menu('main');		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu('main');
+		$ltpl=Eleanor::$Language['tpl'];
 
 		$ULst=Eleanor::LoadListTemplate('table-list',7)->begin(static::$lang['name'],'E-mail',static::$lang['group'],static::$lang['reg'],static::$lang['lastw'],'IP',$ltpl['functs']);
 		$myuid=Eleanor::$Login->GetUserValue('id');
@@ -82,7 +90,8 @@ class TPLGeneral
 		$newsurl=array_keys($modules['ids'],1);#Новости
 		$newsurl=urlencode(reset($newsurl));
 
-		$pageurl=array_keys($modules['ids'],2);#Статические страницы		$pageurl=urlencode(reset($pageurl));
+		$pageurl=array_keys($modules['ids'],2);#Статические страницы
+		$pageurl=urlencode(reset($pageurl));
 
 		$menuurl=array_keys($modules['ids'],7);#Меню
 		$menuurl=urlencode(reset($menuurl));
@@ -104,7 +113,8 @@ class TPLGeneral
 </div>'.Eleanor::$Template->CloseTable();
 
 		if(file_exists(Eleanor::$root.'install'))
-			$c.=Eleanor::$Template->Message(static::$lang['install_nd'],'warning');
+			$c.=Eleanor::$Template->Message(static::$lang['install_nd'],'warning');
+
 		$GLOBALS['jscripts'][]='js/tabs.js';
 		$c.=Eleanor::$Template->Title($ltpl['info'])->OpenTable()
 	.'<ul id="stabs" class="reset linetabs">
@@ -130,14 +140,23 @@ class TPLGeneral
 <div id="conotes" class="tabcontent">'.static::Notes($conotes).'</div>
 <script type="text/javascript">//<![CDATA[
 $(function(){
-	$("#stabs a").Tabs({		OnBeforeSwitch:function(a){			if(a.data("rel")=="stab4" && !$("#stab4").html())
-			{				CORE.ShowLoading();				$.getJSON("http://eleanor-cms.ru/updates.php?ver=1&c=?",function(d){					$("#stab4").html(d.data);					CORE.HideLoading();
+	$("#stabs a").Tabs({
+		OnBeforeSwitch:function(a){
+			if(a.data("rel")=="stab4" && !$("#stab4").html())
+			{
+				CORE.ShowLoading();
+				$.getJSON("http://eleanor-cms.ru/updates.php?ver=1&c=?",function(d){
+					$("#stab4").html(d.data);
+					CORE.HideLoading();
 				});
 			}
-			return true;		}
+			return true;
+		}
 	});
-	$("#mynotes,#conotes").on("click",".submitline [type=button]",function(){		var p=$(this).closest(".tabcontent").attr("id"),
-			s=$(this).data("save");		CORE.Ajax(
+	$("#mynotes,#conotes").on("click",".submitline [type=button]",function(){
+		var p=$(this).closest(".tabcontent").attr("id"),
+			s=$(this).data("save");
+		CORE.Ajax(
 			{
 				direct:"admin",
 				file:"notes",
@@ -148,7 +167,8 @@ $(function(){
 			{
 				$("#"+p).html(r);
 			}
-		);	})
+		);
+	})
 });//]]></script>'.Eleanor::$Template->CloseTable()->Title(static::$lang['cachem']);
 
 		if($ck)
@@ -174,10 +194,12 @@ $(function(){
 			db - версия MySQL
 	*/
 	public static function Server($values)
-	{		static::Menu('server');
+	{
+		static::Menu('server');
 		$gdver='';
 		if($values['gd_info'])
-			foreach($values['gd_info'] as $k=>&$v)				$gdver.=is_bool($v) ? '<li><b>'.$k.'</b>: '.($v ? '<span style="color:green">Yes</span>' : '<span style="color:green">No</span>').'</li>' : '<li><b>'.$k.'</b>: '.$v.'</li>';
+			foreach($values['gd_info'] as $k=>&$v)
+				$gdver.=is_bool($v) ? '<li><b>'.$k.'</b>: '.($v ? '<span style="color:green">Yes</span>' : '<span style="color:green">No</span>').'</li>' : '<li><b>'.$k.'</b>: '.$v.'</li>';
 		$Lst=Eleanor::LoadListTemplate('table-form')
 			->begin()
 			->item('OS',$values['os'])
@@ -192,7 +214,8 @@ $(function(){
 			->item(static::$lang['get_value'],'<form method="post">'.Eleanor::Input('ini_get',$values['ini_get']).Eleanor::Button('?').'</form>');
 		if($values['ini_get_v'] or $values['ini_get'])
 			$Lst->item(htmlspecialchars($values['ini_get'],ELENT,CHARSET),$values['ini_get_v'] ? htmlspecialchars($values['ini_get_v'],ELENT,CHARSET) : '&mdash;');
-		return Eleanor::$Template->Cover(
+
+		return Eleanor::$Template->Cover(
 			$Lst->button('<a href="'.$GLOBALS['Eleanor']->Url->Prefix().'">'.Eleanor::$Language['tpl']['goback'].'</a>')->end()
 		);
 	}
@@ -209,7 +232,8 @@ $(function(){
 			adel - ссылка на удаление файла
 	*/
 	public static function Logs($logs)
-	{		static::Menu('logs');
+	{
+		static::Menu('logs');
 		$ltpl=Eleanor::$Language['tpl'];
 		$images=Eleanor::$Template->default['theme'].'images/';
 		if($logs)
@@ -232,7 +256,8 @@ $(function(){
 		}
 		else
 			$Lst=Eleanor::$Template->Message(static::$lang['nologs'],'info');
-		return Eleanor::$Template->Cover($Lst);	}
+		return Eleanor::$Template->Cover($Lst);
+	}
 
 	/*
 		Страница просмотра лог-файла
@@ -244,15 +269,19 @@ $(function(){
 			adel - ссылка на удаление файла
 	*/
 	public static function ShowLog($data,$file,$links)
-	{		static::Menu('logs');
-		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu('logs');
+		$ltpl=Eleanor::$Language['tpl'];
+
 		if(is_array($data))
 		{
 			$log='<div class="logs">';
 			switch($file)
-			{				case'errors':
+			{
+				case'errors':
 					foreach($data as $k=>&$v)
-					{						$page=htmlspecialchars($v['d']['p'],ELENT,CHARSET,false);
+					{
+						$page=htmlspecialchars($v['d']['p'],ELENT,CHARSET,false);
 						$p=strpos($v['d']['e'],':');
 
 						$v['d']['e']=substr_replace($v['d']['e'],'<span style="color:red">',$p+2,0);
@@ -278,7 +307,8 @@ $(function(){
 				break;
 				case'request_errors':
 					foreach($data as $k=>&$v)
-					{						$refs='';
+					{
+						$refs='';
 						if(isset($v['d']['r']))
 							foreach($v['d']['r'] as &$rv)
 							{
@@ -298,24 +328,34 @@ $(function(){
 					}
 			}
 			$log.='</div><script type="text/javascript">//<![CDATA[
-$(function(){	$(".logs a[href=#]").click(function(){		var div=$(this).closest(".warning");		CORE.Ajax(
-			{				direct:"admin",
+$(function(){
+	$(".logs a[href=#]").click(function(){
+		var div=$(this).closest(".warning");
+		CORE.Ajax(
+			{
+				direct:"admin",
 				file:"misc",
 				event:"fixed",
 				log:"'.$file.'",
-				id:div.data("id")			},
+				id:div.data("id")
+			},
 			function()
-			{				if($(".logs .warning").size()>1)					div.remove();
+			{
+				if($(".logs .warning").size()>1)
+					div.remove();
 				else
 					$(".submitline :button").click();
 			}
 		);
-		return false;	});});//]]></script>';
+		return false;
+	});
+});//]]></script>';
 		}
 		else
 			$logs=Eleanor::Text('text',$data,array('style'=>'width:100%;','readonly'=>'readonly','rows'=>30));
 
-		return Eleanor::$Template->Cover('<p class="function"><a href="'.$links['adown'].'" title="'.static::$lang['download_log'].'"><img src="'.Eleanor::$Template->default['theme'].'images/downloadfile.png" alt="" /></a><a href="'.$links['adel'].'" title="'.static::$lang['delete_log'].'" onclick="return confirm(\''.$ltpl['are_you_sure'].'\')"><img src="'.Eleanor::$Template->default['theme'].'images/delete.png" alt="" /></a></p><div style="margin:15px;max-width:807px;">'.$log.'</div><div class="submitline">'.Eleanor::Button($ltpl['goback'],'button',array('onclick'=>'window.location=\''.$GLOBALS['Eleanor']->Url->Prefix().'\'')).'</div>');	}
+		return Eleanor::$Template->Cover('<p class="function"><a href="'.$links['adown'].'" title="'.static::$lang['download_log'].'"><img src="'.Eleanor::$Template->default['theme'].'images/downloadfile.png" alt="" /></a><a href="'.$links['adel'].'" title="'.static::$lang['delete_log'].'" onclick="return confirm(\''.$ltpl['are_you_sure'].'\')"><img src="'.Eleanor::$Template->default['theme'].'images/delete.png" alt="" /></a></p><div style="margin:15px;max-width:807px;">'.$log.'</div><div class="submitline">'.Eleanor::Button($ltpl['goback'],'button',array('onclick'=>'window.location=\''.$GLOBALS['Eleanor']->Url->Prefix().'\'')).'</div>');
+	}
 
 	/*
 		Элемент шаблона: блокнот. Вызывается и из AJAX
@@ -324,7 +364,8 @@ $(function(){	$(".logs a[href=#]").click(function(){		var div=$(this).closest(
 		$edit признак того, редактируется блокнот или отображается
 	*/
 	public static function Notes($edt,$edit=false)
-	{		return'<div class="wbpad"><div class="brdbox">'.($edt ? $edt : '<div style="text-align:center;color:lightgray;font-size:1.5em">'.static::$lang['empty'].'</div>').'</div></div><div class="submitline">'.Eleanor::Button($edit ? 'OK' : Eleanor::$Language['tpl']['edit'],'button',$edit ? array('data-save'=>1) : array()).'</div>';
+	{
+		return'<div class="wbpad"><div class="brdbox">'.($edt ? $edt : '<div style="text-align:center;color:lightgray;font-size:1.5em">'.static::$lang['empty'].'</div>').'</div></div><div class="submitline">'.Eleanor::Button($edit ? 'OK' : Eleanor::$Language['tpl']['edit'],'button',$edit ? array('data-save'=>1) : array()).'</div>';
 	}
 
 	/*
@@ -334,7 +375,8 @@ $(function(){	$(".logs a[href=#]").click(function(){		var div=$(this).closest(
 		$s содержит текст санкций
 	*/
 	public static function License($l,$s)
-	{		static::Menu('license');
+	{
+		static::Menu('license');
 		return Eleanor::$Template->Title(static::$lang['license'])
 			->OpenTable()
 			.'<div class="textarea license" style="margin-left:5px">'.$l.'</div><a href="addons/license/license-'.Language::$main.'.html" target="_blank" style="margin-left:5px"><img src="'.Eleanor::$Template->default['theme'].'images/print.png" alt="" /> '.static::$lang['print'].'</a>'
@@ -343,5 +385,7 @@ $(function(){	$(".logs a[href=#]").click(function(){		var div=$(this).closest(
 			.Eleanor::$Template->Title(static::$lang['sanctions'])
 			->OpenTable()
 			.'<div class="textarea license" style="margin-left:5px">'.$s.'</div><a href="addons/license/sanctions-'.Language::$main.'.html" target="_blank" style="margin-left:5px"><img src="'.Eleanor::$Template->default['theme'].'images/print.png" alt="" /> '.static::$lang['print'].'</a>'
-			.Eleanor::$Template->CloseTable();	}}
+			.Eleanor::$Template->CloseTable();
+	}
+}
 TplGeneral::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/general-*.php',false);

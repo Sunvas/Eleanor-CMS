@@ -9,9 +9,11 @@
 	*Pseudonym
 */
 class TplUserAccount
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Шаблон страницы вывода всех групп пользователей
 		$groups - массив всех групп. Формат: id=>array(), ключи внутреннего массива:
 			title - название группы
@@ -134,7 +136,8 @@ class TplUserAccount
 			_candel - флаг возможности удаления сессии
 	*/
 	public static function AcMain($sessions)
-	{		$ltpl=Eleanor::$Language['tpl'];
+	{
+		$ltpl=Eleanor::$Language['tpl'];
 
 		$C=static::Menu('user','index','main')
 			->Title('Открытые сессии');
@@ -168,10 +171,12 @@ class TplUserAccount
 
 			$ua=htmlspecialchars($v[2],ELENT,CHARSET);
 			if($v['_candel'])
-			{				$del=$Lst('func',
+			{
+				$del=$Lst('func',
 					array('#',$ltpl['delete'],$images.'delete.png','extra'=>array('data-key'=>$k))
 				);
-				$del[1]='center';			}
+				$del[1]='center';
+			}
 			else
 				$del=array('<b title="'.static::$lang['csnd'].'">&mdash;</b>','center');
 
@@ -184,14 +189,25 @@ class TplUserAccount
 		}
 
 		return$C.$Lst->end().'<script type="text/javascript">//<![CDATA[
-$(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(this);
-		CORE.Ajax({				module:"'.$GLOBALS['Eleanor']->module['name'].'",
+$(function(){
+	$("#sessions").on("click","a[data-key]",function(){
+		var th=$(this);
+		CORE.Ajax({
+				module:"'.$GLOBALS['Eleanor']->module['name'].'",
 				event:"killsession",
-				key:th.data("key")			},
+				key:th.data("key")
+			},
 			function()
-			{				th.closest("tr").remove();			}
-		);		return false;	}).on("click","a[data-ua]",function(){		alert($(this).data("ua"));
-		return false;	});});//]]></script>';
+			{
+				th.closest("tr").remove();
+			}
+		);
+		return false;
+	}).on("click","a[data-ua]",function(){
+		alert($(this).data("ua"));
+		return false;
+	});
+});//]]></script>';
 	}
 
 	/*
@@ -206,11 +222,13 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 			login - ссылка на скрипт, обрабатывающий данные из формы входа
 	*/
 	public static function AcLogin($values,$back,$errors,$captcha,$links)
-	{		$ltpl=Eleanor::$Language['tpl'];
+	{
+		$ltpl=Eleanor::$Language['tpl'];
 
 		$C=static::Menu('guest','index','main');
 		if($errors)
-		{			foreach($errors as $k=>&$v)
+		{
+			foreach($errors as $k=>&$v)
 				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
 			$C->Message(join('<br />',$errors),'error');
@@ -268,16 +286,23 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$errname=$erremail=$errpass=$errpass2='';
 		if($errors)
-		{			foreach($errors as $k=>&$v)
-			{				if(is_int($k))
-				{					$code=$v;
-					$error=isset(static::$lang[$v]) ? static::$lang[$v] : $v;				}
+		{
+			foreach($errors as $k=>&$v)
+			{
+				if(is_int($k))
+				{
+					$code=$v;
+					$error=isset(static::$lang[$v]) ? static::$lang[$v] : $v;
+				}
 				else
-				{					$code=$k;
-					$error=$v;				}
+				{
+					$code=$k;
+					$error=$v;
+				}
 
 				switch($code)
-				{					case'PASSWORD_MISMATCH':
+				{
+					case'PASSWORD_MISMATCH':
 						$errpass2=$error;
 						unset($errors[$k]);
 					break;
@@ -299,7 +324,9 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 						unset($errors[$k]);
 					break;
 					default:
-						$v=$error;				}			}
+						$v=$error;
+				}
+			}
 
 			if($errors)
 				$C->Message(join('<br />',$errors),'error');
@@ -326,17 +353,24 @@ $(function(){	$("#sessions").on("click","a[data-key]",function(){		var th=$(th
 				true,false,'CORE.AcRegister.'
 		).$C.$Lst->item('',Eleanor::Button(static::$lang['do_reg'],'submit',array('tabindex'=>7)))->end()->endform()
 		.'<script type="text/javascript">//<![CDATA[
-$(function(){	var ef={//Error field		name:$("#name-error"),
+$(function(){
+	var ef={//Error field
+		name:$("#name-error"),
 		email:$("#email-error"),
 		p:$("#password-error"),
-		p2:$("#password2-error")	};	$("#regform [name=name]").on("check",function(){		var th=$(this),
+		p2:$("#password2-error")
+	};
+	$("#regform [name=name]").on("check",function(){
+		var th=$(this),
 			v=th.val();
-		if(v=="")		{
+		if(v=="")
+		{
 			th.removeClass("ok").addClass("error");
 			ef.name.html("'.static::$lang['EMPTY_NAME'].'").show();
 		}
 		else
-			CORE.AcRegister.CheckName(v,function(e){				if(e)
+			CORE.AcRegister.CheckName(v,function(e){
+				if(e)
 				{
 					th.removeClass("ok").addClass("error");
 					ef.name.html(e).show();
@@ -345,7 +379,8 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 				{
 					th.removeClass("error").addClass("ok");
 					ef.name.hide();
-				}			});
+				}
+			});
 	})'.($errname ? '.addClass("error");ef.name.show()' : '').';
 
 	$("#regform [name=email]").on("check",function(){
@@ -371,7 +406,10 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 		}
 	})'.($erremail ? '.addClass("error");ef.email.show()' : '').';
 
-	$("#name-error,#email-error").prev().click(function(){		$(this).prev().trigger("check");		return false;	});
+	$("#name-error,#email-error").prev().click(function(){
+		$(this).prev().trigger("check");
+		return false;
+	});
 
 	var p2=$("#regform [name=password2]"),
 		p1=$("#regform [name=password]").on("check",function(){
@@ -384,8 +422,10 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 			ef.p.hide();
 		}
 		else if(v.length<'.Eleanor::$vars['min_pass_length'].')
-		{			th.removeClass("ok").addClass("error");
-			ef.p.html(CORE.lang.PASS_TOO_SHORT('.Eleanor::$vars['min_pass_length'].',v.length)).show();		}
+		{
+			th.removeClass("ok").addClass("error");
+			ef.p.html(CORE.lang.PASS_TOO_SHORT('.Eleanor::$vars['min_pass_length'].',v.length)).show();
+		}
 		else
 		{
 			th.removeClass("error").addClass("ok");
@@ -398,29 +438,43 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 	p2.on("check",function(){
 		if(!ef.p.is(":visible"))
 			if(p2.val()!=p1.val())
-			{				p2.removeClass("ok").addClass("error");
+			{
+				p2.removeClass("ok").addClass("error");
 				ef.p2.html("'.static::$lang['PASSWORD_MISMATCH'].'").show();
 			}
 			else
-			{				ef.p2.hide();
-				p2.removeClass("error");				if(p2.val()=="")
+			{
+				ef.p2.hide();
+				p2.removeClass("error");
+				if(p2.val()=="")
 					p2.removeClass("ok");
 				else
 					p2.addClass("ok");
 			}
 	})'.($errpass2 ? '.addClass("error");ef.p2.show()' : '').';
 
-	$("#regform").submit(function(){		$(":input",this).trigger("check");		var errors="";
-		$.each(ef,function(k,v){			if(v.is(":visible"))
-				errors+=v.text()+"\n";		});
+	$("#regform").submit(function(){
+		$(":input",this).trigger("check");
+		var errors="";
+		$.each(ef,function(k,v){
+			if(v.is(":visible"))
+				errors+=v.text()+"\n";
+		});
 		if(errors)
-		{			alert($.trim(errors));			return false;		}
-		return true;	})
+		{
+			alert($.trim(errors));
+			return false;
+		}
+		return true;
+	})
 	.find("[name=name],[name=email],[name=password],[name=password2]").keyup(function(){
 		var th=$(this);
 		if(th.data("old")!=th.val())
 			th.removeClass("ok error");
-	}).blur(function(){		$(this).data("old",$(this).val()).trigger("check");	});});//]]></script>';
+	}).blur(function(){
+		$(this).data("old",$(this).val()).trigger("check");
+	});
+});//]]></script>';
 	}
 
 	/*
@@ -436,7 +490,8 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 		$byadmin - флаг активации учетной записи администратором
 	*/
 	public static function AcWaitActivate($byadmin)
-	{		$wat=static::$lang['wait_act_text'];
+	{
+		$wat=static::$lang['wait_act_text'];
 		return static::Menu('guest','register','main')->Message($byadmin ? static::$lang['wait_act_admin'] : $wat(round(Eleanor::$vars['reg_act_time']/3600)),'info');
 	}
 
@@ -473,8 +528,11 @@ $(function(){	var ef={//Error field		name:$("#name-error"),
 
 		$Lst->button(Eleanor::Button('OK','submit',array('tabindex'=>4)))->end()->endform();
 		return$C.$Lst.'<script type="text/javascript">//<![CDATA[
-$(function(){	$("#rpass a.small").click(function(){		$("#tr-email,#tr-name").toggle();
-		return false;	});
+$(function(){
+	$("#rpass a.small").click(function(){
+		$("#tr-email,#tr-name").toggle();
+		return false;
+	});
 })//]]></script>';
 	}
 
@@ -547,7 +605,8 @@ $(function(){	$("#rpass a.small").click(function(){		$("#tr-email,#tr-name").t
 
 		return$C.$Lst->button(Eleanor::Button('OK','submit',array('tabindex'=>4)))->end()->endform()
 			.'<script type="text/javascript">//<!CDATA[
-$(function(){	var ef={//Error field
+$(function(){
+	var ef={//Error field
 			p:$("#password-error"),
 			p2:$("#password2-error")
 		},
@@ -613,7 +672,8 @@ $(function(){	var ef={//Error field
 			th.removeClass("ok error");
 	}).blur(function(){
 		$(this).data("old",$(this).val()).trigger("check");
-	});})//]]></script>';
+	});
+})//]]></script>';
 	}
 
 	/*
@@ -664,7 +724,8 @@ $(function(){	var ef={//Error field
 			$C->Message(join('<br />',$errors),'error');
 		}
 		if($sent)
-		{			$wna=static::$lang['wait_new_act'];
+		{
+			$wna=static::$lang['wait_new_act'];
 			$C->Message($wna($hours),'info');
 		}
 		else
@@ -740,7 +801,8 @@ $(function(){	var ef={//Error field
 		Шаблон страницы изменения пароля
 	*/
 	public static function AcNewPass($success,$errors,$values)
-	{		$GLOBALS['jscripts'][]='js/module_account-'.Language::$main.'.js';
+	{
+		$GLOBALS['jscripts'][]='js/module_account-'.Language::$main.'.js';
 
 		Eleanor::LoadOptions('user-profile');
 		$C=static::Menu('user','changepass','main');
@@ -870,7 +932,9 @@ $(function(){
 		$im - индекс пункта меню
 	*/
 	protected static function Menu($section='',$ih='',$im='')
-	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];		$ltpl=Eleanor::$Language['tpl'];
+	{
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+		$ltpl=Eleanor::$Language['tpl'];
 
 		$menu=array();
 		foreach($GLOBALS['Eleanor']->module['handlers'] as $k=>&$v)
@@ -883,12 +947,15 @@ $(function(){
 
 		$actmess=false;
 		foreach($menu as $k=>&$v)
-		{			$rmenu[$k]=array();
+		{
+			$rmenu[$k]=array();
 			foreach($v as $kk=>&$vv)
 				if($vv)
-				{					$act=$k==$ih and $kk==$im;
+				{
+					$act=$k==$ih and $kk==$im;
 					switch(array($section,$k,$kk))
-					{						case array('user','index','main'):
+					{
+						case array('user','index','main'):
 							$t=static::$lang['main'];
 						break;
 						case array('user','settings','main'):
@@ -927,7 +994,8 @@ $(function(){
 
 		$menu=Eleanor::$Template->Menu(array('title'=>end($GLOBALS['title']),'menu'=>$rmenu));
 		if($actmess)
-		{			$pa=static::$lang['please_activate'];
+		{
+			$pa=static::$lang['please_activate'];
 			$menu->Message($pa(round($actmess['remain']/3600),$actmess['link']),'info');
 		}
 		return$menu;
@@ -1066,7 +1134,6 @@ $(function(){
 		$n=0;
 		$Lst->begin();
 		foreach($controls as $k=>&$v)
-		{
 			if(is_array($v))
 			{
 				$Lst->item(array($v['title'],$values[$k],'tip'=>$v['descr'],'td1'=>$n++ ? false : array('style'=>'width:130px')));
@@ -1074,13 +1141,14 @@ $(function(){
 			elseif($v)
 			{
 				if($head)
-				{					$tabs[]=array($head,(string)$Lst->end());
+				{
+					$tabs[]=array($head,(string)$Lst->end());
 					$Lst->begin();
 					$avatar='';
 				}
 				$head=$v;
 			}
-		}
+
 		$tabs[]=array($head,(string)$Lst->end());
 
 		$C=static::Menu('user','settings','main');
@@ -1118,7 +1186,8 @@ $(function(){
 			_main - флаг основной группы
 	*/
 	public static function AcUserInfo($groups)
-	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+	{
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$user=$GLOBALS['Eleanor']->module['user'];
 		$C=static::Menu('view','main','main');
 		$ogr=$mgr='';

@@ -9,13 +9,16 @@
 	*Pseudonym
 */
 class LoginModer extends BaseClass implements LoginClass
-{	/**
+{
+	/**
 	 * Аутентификация по определенным входящим параметрам, например, по логину и паролю
 	 *
 	 * @param array $data Массив с данными
 	 * @throws EE
-	 */	public static function Login(array $b)
-	{		return false;
+	 */
+	public static function Login(array $b)
+	{
+		return false;
 	}
 
 	/**
@@ -49,18 +52,20 @@ class LoginModer extends BaseClass implements LoginClass
 	 * Выход пользователя из учетной записи
 	 */
 	public static function Logout()
-	{		return false;
+	{
+		return false;
 	}
 
 	/**
 	 * Формирование ссылки на учётную запись пользователя
 	 *
-	 * @param string $name Имя пользователя
-	 * @param string $id ID пользователя
-	 * @return string|FALSE
+	 * @param string|array $name Имя пользователя
+	 * @param string|array $id ID пользователя
+	 * @return string|array|FALSE
 	 */
 	public static function UserLink($a,$b=0)
-	{		return false;
+	{
+		return false;
 	}
 
 	/**

@@ -11,9 +11,13 @@
 	Шаблон секции настроек
 */
 class TPLSettings
-{	public static
-		$lang;	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language['settings'];
+{
+	public static
+		$lang;
+
+	protected static function Menu($act='')
+	{
+		$lang=Eleanor::$Language['settings'];
 		$links=&$GLOBALS['Eleanor']->module['links_settings'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
@@ -38,7 +42,8 @@ class TPLSettings
 			'ex'=>$links['export'] ? array($links['export'],$lang['export'],'export','act'=>$act=='export') : false,
 		);
 	}
-	/*
+
+	/*
 		Шаблон страницы с группами настроек
 		$items - массив групп настроек. Формат: ID=>array(), ключи внутренних массивов:
 			title - название группы
@@ -57,12 +62,15 @@ class TPLSettings
 				delete - ссылка на удаление группы
 	*/
 	public static function SettGroupsCover($items,$links)
-	{		static::Menu('groups');		$trs='';
+	{
+		static::Menu('groups');
+		$trs='';
 		$ltpl=Eleanor::$Language['tpl'];
 		$h=Eleanor::$Template->default['theme'];
 		$lo=static::$lang['options'];
 		foreach($items as $k=>&$v)
-		{			$trs.='<tr><td style="width:80%" id="gr'.$k.'"><a href="'.$v['_buttons']['show'].'"><b>'.$v['title'].'</b></a><br /><span class="small"><b>'
+		{
+			$trs.='<tr><td style="width:80%" id="gr'.$k.'"><a href="'.$v['_buttons']['show'].'"><b>'.$v['title'].'</b></a><br /><span class="small"><b>'
 				.$lo($v['cnt'])
 				.'</b>&nbsp;&nbsp;&nbsp;'.$v['descr'].'</span></td><td class="function">';
 			if(isset($v['_buttons']['up']))
@@ -90,7 +98,8 @@ class TPLSettings
 		$err - текст ошибки
 	*/
 	public static function SettShowError($err)
-	{		static::Menu();
+	{
+		static::Menu();
 		return Eleanor::$Template->Cover('',$err,'error');
 	}
 
@@ -170,7 +179,9 @@ class TPLSettings
 			if(isset($crerrors[$k]))
 				$html=Eleanor::$Template->Message($crerrors[$k],'error');
 			else
-			{				$va=&$values[$k];				if($v['multilang'] and is_array($va))
+			{
+				$va=&$values[$k];
+				if($v['multilang'] and is_array($va))
 				{
 					$flags='';
 					$u=uniqid('l');
@@ -184,11 +195,14 @@ class TPLSettings
 					$html.='<div id="div-'.$u.'" class="langtabs">'.$flags.'</div><script type="text/javascript">/*<![CDATA[*/$("#div-'.$u.' a").Tabs();//]]></script>';
 				}
 				else
-					$html.=(isset($errors[$k]) ? Eleanor::$Template->Message($errors[$k],'error').'<br />' : '').$va;			}
+					$html.=(isset($errors[$k]) ? Eleanor::$Template->Message($errors[$k],'error').'<br />' : '').$va;
+			}
 
 			if($v['titles']['descr'])
-			{				$tip=true;
-				$descr='<span class="labinfo" title="'.htmlspecialchars($v['titles']['descr'],ELENT,CHARSET).'">(?)</span>';			}
+			{
+				$tip=true;
+				$descr='<span class="labinfo" title="'.htmlspecialchars($v['titles']['descr'],ELENT,CHARSET).'">(?)</span>';
+			}
 			else
 				$descr='';
 			$descr.=$v['titles']['title'];
@@ -284,7 +298,9 @@ $(function(){
 		$error - сообщение об ошибке
 	*/
 	public static function SettImport($info,$error)
-	{		$rilang=static::$lang['import_result'];		static::Menu('import');
+	{
+		$rilang=static::$lang['import_result'];
+		static::Menu('import');
 		return Eleanor::$Template->Cover('<form method="post" enctype="multipart/form-data">'
 			.($info===false || $error ? '' : Eleanor::$Template->Message($info ? $rilang(count($info['gdel']),count($info['odel']),count($info['groups_ins']),count($info['groups_upd']),count($info['options_ins']),count($info['options_upd'])) : $rilang(),'info'))
 			.'<table class="tabstyle tabform"><tr class="tabletrline1"><td class="label">'.static::$lang['select_file_im'].'</td><td>'.Eleanor::Input('import',false,array('tabindex'=>1,'type'=>'file')).'</td></tr></table><div class="submitline">'.Eleanor::Button(static::$lang['do_import'],'submit',array('tabindex'=>2)).'</div></form>',$error);
@@ -337,9 +353,11 @@ $(function(){
 		$back - URL возврата
 	*/
 	public static function SettAddEditGroup($id,$values,$links,$errors,$bypost,$back)
-	{		static::Menu($id ? '' : 'addg');
+	{
+		static::Menu($id ? '' : 'addg');
 		if(Eleanor::$vars['multilang'])
-		{			$ml=array();
+		{
+			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
 			{
 				$ml['title'][$k]=Eleanor::Input('title['.$k.']',Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1));
@@ -351,7 +369,8 @@ $(function(){
 				'title'=>Eleanor::Input('title',$values['title'],array('tabindex'=>1)),
 				'descr'=>Eleanor::Text('descr',$values['descr'],array('tabindex'=>2)),
 			);
-		$extra=$id && $values['protected'] ? array('disabled'=>true) : array();
+
+		$extra=$id && $values['protected'] ? array('disabled'=>true) : array();
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()
 			->begin()
@@ -406,7 +425,8 @@ $(function(){
 		$back - URL возврата
 	*/
 	public static function SettAddEditOption($id,$values,$groups,$control,$links,$bypost,$back,$errors)
-	{		static::Menu($id ? '' : 'addo');
+	{
+		static::Menu($id ? '' : 'addo');
 		if(Eleanor::$vars['multilang'])
 		{
 			$ml=array();
@@ -508,7 +528,8 @@ $(function(){
 			Multilangs.Click();
 		}
 		else
-		{			Multilangs.opts.where=$("#tab0");//.add($("#tab2 tr.temp").slice(1));
+		{
+			Multilangs.opts.where=$("#tab0");//.add($("#tab2 tr.temp").slice(1));
 			Multilangs.opts.Switch(["'.Language::$main.'"],['.join(',',$langs).'],$("#edit-control-preview").add($("#tab2 tr.temp").slice()));
 		}
 	}).triggerHandler("click");

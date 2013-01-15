@@ -11,14 +11,19 @@
 	Админка системного модуля статических страниц
 */
 class TPLAdminStatic
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Меню модуля
-	*/	protected static function Menu($act='')
-	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+	*/
+	protected static function Menu($act='')
+	{
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$links=&$GLOBALS['Eleanor']->module['links'];
 
-		$options=isset($GLOBALS['Eleanor']->module['navigation']['options']) ? $GLOBALS['Eleanor']->module['navigation']['options'] : false;		$GLOBALS['Eleanor']->module['navigation']=array(
+		$options=isset($GLOBALS['Eleanor']->module['navigation']['options']) ? $GLOBALS['Eleanor']->module['navigation']['options'] : false;
+		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
 					array($links['parent_add'] ? $links['parent_add'] : $links['add'],static::$lang['add'],'act'=>$act=='add'),
@@ -26,8 +31,10 @@ class TPLAdminStatic
 			),
 			array($links['files'],$lang['fp'],'act'=>$act=='files'),
 			$options ? $options : array($links['options'],Eleanor::$Language['main']['options'],'act'=>$act=='options'),
-		);	}
-	/*
+		);
+	}
+
+	/*
 		Страница отображения всех статических страниц
 		$items - массив статических страниц. Формат: ID=>array(), ключи внутреннего массива:
 			title - заголовок статической страницы
@@ -61,7 +68,9 @@ class TPLAdminStatic
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links)
-	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
+	{
+		static::Menu('list');
+		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$nav=array();
@@ -84,11 +93,13 @@ class TPLAdminStatic
 				array(Eleanor::Check('mass',false,array('id'=>'mass-check')),20)
 			);
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 
 			$posasc=!$qs['sort'] || $qs['sort']=='pos' && $qs['so']=='asc';
 			foreach($items as $k=>&$v)
-			{				$subs='';
+			{
+				$subs='';
 				if(isset($subitems[$k]))
 					foreach($subitems[$k] as $kk=>&$vv)
 						$subs.='<a href="'.$vv['_aedit'].'">'.$vv['title'].'</a>, ';
@@ -138,7 +149,8 @@ $(function(){
 			.$Lst->end()
 			.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['to_pages'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k')).Eleanor::Button('Ok').'</div></form>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
-		);	}
+		);
+	}
 
 	/*
 		Страница добавления/редактирования статической страницы
@@ -155,11 +167,14 @@ $(function(){
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEdit($id,$controls,$values,$errors,$back,$uploader,$hasdraft,$links)
-	{		static::Menu($id ? '' : 'add');		$ltpl=Eleanor::$Language['tpl'];		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
+	{
+		static::Menu($id ? '' : 'add');
+		$ltpl=Eleanor::$Language['tpl'];
+		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
+			elseif($v)
 				$Lst->head($v);
 
 		if($back)
@@ -195,7 +210,8 @@ $(function(){
 $(function(){
 	$("#showb-").hide().click().parent().remove();
 	FI.Open=function(url)
-	{		url=encodeURIComponent(FI.Get("realpath").replace(/^.+?DIRECT\//,"")+url).replace(/!/g,"%21").replace(/\'/g,"%27").replace(/\(/g,"%28").replace(/\)/g,"%29").replace(/\*/g,"%2A").replace(/%20/g,"+")
+	{
+		url=encodeURIComponent(FI.Get("realpath").replace(/^.+?DIRECT\//,"")+url).replace(/!/g,"%21").replace(/\'/g,"%27").replace(/\(/g,"%28").replace(/\)/g,"%29").replace(/\*/g,"%2A").replace(/%20/g,"+")
 		window.open(window.location.protocol+"//"+window.location.hostname+CORE.site_path+"'.Eleanor::$services['download']['file'].'?'.Url::Query(array('module'=>$GLOBALS['Eleanor']->module['name']),array('delim'=>'&')).'&f="+url);
 		return false;
 	}
@@ -209,15 +225,19 @@ $(function(){
 		$back - URL возврата
 	*/
 	public static function Delete($a,$back)
-	{		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back));	}
+	{
+		static::Menu();
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back));
+	}
 
 	/*
 		Обертка для настроек
 		$c - интерфейс настроек
 	*/
 	public static function Options($c)
-	{		static::Menu('options');
-		return$c;	}
+	{
+		static::Menu('options');
+		return$c;
+	}
 }
 TplAdminStatic::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/static-*.php',false);

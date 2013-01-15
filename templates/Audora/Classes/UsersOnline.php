@@ -11,8 +11,10 @@
 	Шаблоны для отображения информации о пользователях онлайн
 */
 class TplUsersOnline
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Содержимое блока "Кто онлайн"
 		$sess - массив формата сервис=>users|bots|guests=>array(), внутренний массив - данные о сессии пользователя, ключи:
 			user_id - ID пользователя
@@ -29,11 +31,14 @@ class TplUsersOnline
 			сессий для каждого сервиса
 		$sscnt - если в sess переданы не все сессии (передается 30 самых свежих), в этом массиве в формате сервис=>(user|bot|guest)=>число сессий будет
 			содержаться число сессий сгруппированных по пользователям, ботам и гостям
-	*/	public static function BlockOnline($sess,$scnt,$sscnt)
-	{		$t=time();
+	*/
+	public static function BlockOnline($sess,$scnt,$sscnt)
+	{
+		$t=time();
 		$c='';
 		foreach($sess as $k=>&$v)
-		{			#Чтобы избегать проверок if(isset($v['users'|'bots'|'guests']))
+		{
+			#Чтобы избегать проверок if(isset($v['users'|'bots'|'guests']))
 			$v+=array('users'=>array(),'guests'=>array(),'bots'=>array());
 
 			foreach($v['users'] as &$vv)
@@ -78,15 +83,18 @@ class TplUsersOnline
 			_gend - HTML окончание группы пользователя
 	*/
 	public static function SessionDetail($data)
-	{		$GLOBALS['title'][]=static::$lang['user_info'];
+	{
+		$GLOBALS['title'][]=static::$lang['user_info'];
 		$c='';
 		$t=time();
 		if($data)
-		{			$ip=$data['ip_guest'] ? $data['ip_guest'] : $data['ip_user'];
+		{
+			$ip=$data['ip_guest'] ? $data['ip_guest'] : $data['ip_user'];
 			$loc=PROTOCOL.Eleanor::$domain.Eleanor::$site_path.htmlspecialchars($data['location'],ELENT,CHARSET,false);
 
 			if($data['name'])
-				$c.='<h1>'.$data['_gpref'].htmlspecialchars($data['name'],ELENT,CHARSET).$data['_gend'].'</h1><hr />';
+				$c.='<h1>'.$data['_gpref'].htmlspecialchars($data['name'],ELENT,CHARSET).$data['_gend'].'</h1><hr />';
+
 			$c.='<ul style="list-style-type:none">
 <li><b>IP</b> <a href="http://eleanor-cms.ru/whois/'.$ip.'" target="_blank">'.$ip.'</a></li>
 <li><b>'.static::$lang['activity'].'</b> '.call_user_func(static::$lang['min_left'],floor(($t-strtotime($data['enter']))/60)).'</li>
@@ -96,7 +104,8 @@ class TplUsersOnline
 
 			foreach($data['info'] as $k=>&$v)
 				if($v)
-				{					if($k!='ips')
+				{
+					if($k!='ips')
 						$v=htmlspecialchars($v,ELENT,CHARSET);
 					$c.='<li><b>'.static::$lang[$k].'</b> ';
 					switch($k)
@@ -121,5 +130,6 @@ class TplUsersOnline
 		else
 			$c.='<div style="text-align:center"><b>'.static::$lang['session_nf'].'</b></div>';
 		return Eleanor::$Template->SimplePage($c);
-	}}
+	}
+}
 TplUsersOnline::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/users-*.php',false);

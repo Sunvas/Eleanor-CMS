@@ -12,9 +12,11 @@
 	переменные языка и прочее. Описание методов этого класса можно узнать, открыв файл core/others/votingmanager.php
 */
 class TplVotingManager
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Элемент шаблона: добавление/редактирование опроса
 		$id - идентификатор редактируемого опроса, если $id==0 значит опрос добавляется
 		$controls - перечень контролов в соответствии с классом контролов. Если какой-то элемент массива не является массивом, значит это заголовок подгруппы контролов
@@ -29,7 +31,7 @@ class TplVotingManager
 			if($k!='_questions' and $values[$k])
 				if(is_array($v))
 					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'descr'=>$v['descr']));
-				else
+				elseif($v)
 					$Lst->head($v);
 
 		$u=uniqid('vo-');
@@ -51,7 +53,7 @@ class TplVotingManager
 				if(!empty($values[$k]))
 					if(is_array($v))
 						$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'descr'=>$v['descr']));
-					else
+					elseif($v)
 						$Lst->head($v);
 
 			$Lst->button(Eleanor::Button(static::$lang['addq'],'button',array('class'=>'addquestion')).' '.Eleanor::Button(static::$lang['delq'],'button',array('class'=>'deletequestion')))->end();

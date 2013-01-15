@@ -13,7 +13,8 @@ if(!class_exists('LoginBase',false))
 	include dirname(__file__).'/base.php';
 
 class LoginAdmin extends LoginBase implements LoginClass
-{	const
+{
+	const
 		MAX_SESSIONS=1,#Максимальное число сессий
 		UNIQUE='admin';
 
@@ -50,7 +51,8 @@ class LoginAdmin extends LoginBase implements LoginClass
 	 * @return bool
 	 */
 	public static function IsUser($hard=false)
-	{		if(isset(static::$login) and !$hard)
+	{
+		if(isset(static::$login) and !$hard)
 			return static::$login;
 
 		if(!$cookie=Eleanor::GetCookie(self::UNIQUE))
@@ -62,7 +64,8 @@ class LoginAdmin extends LoginBase implements LoginClass
 			return static::$login=false;
 
 		if(!static::CheckPermission())
-		{			static::Logout();
+		{
+			static::Logout();
 			return static::$login=false;
 		}
 		return static::$login=true;
@@ -71,9 +74,9 @@ class LoginAdmin extends LoginBase implements LoginClass
 	/**
 	 * Формирование ссылки на учётную запись пользователя
 	 *
-	 * @param string $name Имя пользователя
-	 * @param string $id ID пользователя
-	 * @return string|FALSE
+	 * @param string|array $name Имя пользователя
+	 * @param string|array $id ID пользователя
+	 * @return string|array|FALSE
 	 */
 	public static function UserLink($username,$uid=0)
 	{

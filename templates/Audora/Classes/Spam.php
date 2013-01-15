@@ -11,12 +11,15 @@
 	Шаблоны админки рассылок
 */
 class TPLSpam
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],Eleanor::$Language['spam']['list'],'act'=>$act=='list',
@@ -27,7 +30,8 @@ class TPLSpam
 			array($links['options'],Eleanor::$Language['main']['options'],'act'=>$act=='options'),
 		);
 	}
-	/*
+
+	/*
 		Страница отображения всех рассылок
 		$items - массив рассылок. Формат: ID=>array(), ключи внутреннего массива:
 			title - название рассылки
@@ -61,10 +65,14 @@ class TPLSpam
 			pp - фукнция-генератор ссылок на изменение количества рассылок отображаемых на странице
 			first_page - ссылка на первую страницу пагинатора
 			pages - функция-генератор ссылок на остальные страницы
-	*/	public static function ShowList($items,$cnt,$pp,$page,$qs,$links)
-	{		static::Menu('list');		$GLOBALS['jscripts'][]='js/checkboxes.js';
+	*/
+	public static function ShowList($items,$cnt,$pp,$page,$qs,$links)
+	{
+		static::Menu('list');
+		$GLOBALS['jscripts'][]='js/checkboxes.js';
 		$ltpl=Eleanor::$Language['tpl'];
-		$Lst=Eleanor::LoadListTemplate('table-list',4)
+
+		$Lst=Eleanor::LoadListTemplate('table-list',4)
 			->begin(
 				array($ltpl['name'],'sort'=>$qs['sort']=='innertitle' ? $qs['so'] : false,'href'=>$links['sort_innertitle']),
 				array(static::$lang['condition'],250,'sort'=>$qs['sort']=='status' ? $qs['so'] : false,'href'=>$links['sort_status']),
@@ -73,12 +81,16 @@ class TPLSpam
 			);
 
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
 			foreach($items as $k=>&$v)
-			{				switch($v['status'])
-				{					case'runned':
+			{
+				switch($v['status'])
+				{
+					case'runned':
 						$status='<progress data-id="'.$v['id'].'" style="width:100%" value="'.$v['sent'].'" max="'.$v['total'].'" title="'.($pers=$v['total']>0 ? round($v['sent']/$v['total']*100,2) : 0).'%"><span>'.$pers.'</span>%</progress><br /><a href="'.$v['_astop'].'">'.static::$lang['stop'].'</a> <a href="'.$v['_apause'].'">'.static::$lang['pause'].'</a>';
-					break;					case'paused':
+					break;
+					case'paused':
 						$status=static::$lang['paused'].' '.$v['statusdate'].'<br /><a href="'.$v['_astop'].'">'.static::$lang['stop'].'</a> <a href="'.$v['_arun'].'">'.static::$lang['run'].'</a>';
 					break;
 					case'finished':
@@ -108,7 +120,8 @@ class TPLSpam
 			.'<div class="submitline" style="text-align:right"><div style="float:left">'.sprintf(static::$lang['spp'],$Lst->perpage($pp,$links['pp'])).'</div>'.$ltpl['with_selected'].Eleanor::Select('op',Eleanor::Option($ltpl['delete'],'k'))
 			.Eleanor::Button('Ok').'</div></form><script type="text/javascript">/*<![CDATA[*/$(function(){One2AllCheckboxes("#checks-form","#mass-check","[name=\"mass[]\"]",true);new ProgressList("'.$GLOBALS['Eleanor']->module['name'].'","'.Eleanor::$services['cron']['file'].'");})//]]></script>'
 			.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page']))
-		);	}
+		);
+	}
 
 	/*
 		Шаблон создания/редактирования рассылки
@@ -147,7 +160,9 @@ class TPLSpam
 		$back - URL возврата
 	*/
 	public static function AddEdit($id,$values,$runned,$uploader,$links,$errors,$bypost,$back)
-	{		static::Menu($id ? '' : 'add');		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu($id ? '' : 'add');
+		$ltpl=Eleanor::$Language['tpl'];
 		if($back)
 			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
@@ -201,7 +216,9 @@ function TryUsers(page)
 		}
 	);
 }
-$("#hide").click(function(){	$("#tryusers").empty().add("#hideres").hide();});//]]></script>';
+$("#hide").click(function(){
+	$("#tryusers").empty().add("#hideres").hide();
+});//]]></script>';
 
 		$Lst->begin()
 			->item(array(static::$lang['per_run'],'descr'=>static::$lang['per_run_'],Eleanor::Input('per_run',$values['per_run'],array('tabindex'=>14))))
@@ -255,7 +272,8 @@ $("#hide").click(function(){	$("#tryusers").empty().add("#hideres").hide();});
 		$cnt - количество пользователей всего
 	*/
 	public static function UsersList($items,$groups,$pp,$page,$cnt)
-	{		$ltpl=Eleanor::$Language['tpl'];
+	{
+		$ltpl=Eleanor::$Language['tpl'];
 
 		$Lst=Eleanor::LoadListTemplate('table-list',4)
 			->begin(static::$lang['username'],static::$lang['groups'],static::$lang['last_visit'],$ltpl['functs']);
@@ -304,7 +322,9 @@ $("#hide").click(function(){	$("#tryusers").empty().add("#hideres").hide();});
 		$c - интерфейс настроек
 	*/
 	public static function Options($c)
-	{		static::Menu('options');
-		return$c;	}
+	{
+		static::Menu('options');
+		return$c;
+	}
 }
 TplSpam::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/spam-*.php',false);

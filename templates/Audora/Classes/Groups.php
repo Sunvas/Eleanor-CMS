@@ -11,12 +11,15 @@
 	Шаблоны управления группами пользователей в админке
 */
 class TplGroups
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Меню модуля
 	*/
 	protected static function Menu($act='')
-	{		$links=&$GLOBALS['Eleanor']->module['links'];
+	{
+		$links=&$GLOBALS['Eleanor']->module['links'];
 
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],Eleanor::$Language['g']['list'],'act'=>$act=='list',
@@ -27,7 +30,8 @@ class TplGroups
 		);
 	}
 
-	/*
+
+	/*
 		Страница отображения всех групп пользователей
 		$items - массив групп пользователей. Формат: ID=>array(), ключи внутреннего массива (если какое-то значение равно null, значит свойство наследуется):
 			title - название группы
@@ -48,10 +52,14 @@ class TplGroups
 		$navi - массив, хлебные крошки навигации. Формат ID=>array(), ключи:
 			title - заголовок крошки
 			_a - ссылка подпункта данной крошки. Может быть равно false
-	*/	public static function ShowList($items,$subitems,$navi)
-	{		static::Menu('list');		$ltpl=Eleanor::$Language['tpl'];
+	*/
+	public static function ShowList($items,$subitems,$navi)
+	{
+		static::Menu('list');
+		$ltpl=Eleanor::$Language['tpl'];
 		$lang=Eleanor::$Language['g'];
-		$nav=array();
+
+		$nav=array();
 		foreach($navi as &$v)
 			$nav[]=$v['_a'] ? '<a href="'.$v['_a'].'">'.$v['title'].'</a>' : $v['title'];
 
@@ -66,7 +74,9 @@ class TplGroups
 			);
 
 		if($items)
-		{			$images=Eleanor::$Template->default['theme'].'images/';			foreach($items as $k=>&$v)
+		{
+			$images=Eleanor::$Template->default['theme'].'images/';
+			foreach($items as $k=>&$v)
 			{
 				$subs='';
 				if(isset($subitems[$k]))
@@ -89,8 +99,10 @@ class TplGroups
 		}
 		else
 			$Lst->empty(static::$lang['subgnf']);
-		return Eleanor::$Template->Cover(($nav ? '<table class="filtertable"><tr><td style="font-weight:bold">'.join(' &raquo; ',$nav).'</td></tr></table>' : '').$Lst->end());	}
-	/*
+		return Eleanor::$Template->Cover(($nav ? '<table class="filtertable"><tr><td style="font-weight:bold">'.join(' &raquo; ',$nav).'</td></tr></table>' : '').$Lst->end());
+	}
+
+	/*
 		Страница добавления/редактирования группы
 		$id - идентификатор группы, если $id==0 значит группа добавляется
 		$controls - перечень контролов в соответствии с классом контролов. Если какой-то элемент массива не является массивом, значит это заголовок подгруппы контролов
@@ -103,7 +115,9 @@ class TplGroups
 			delete - ссылка на удаление категории или false
 	*/
 	public static function AddEdit($id,$controls,$values,$inherit,$errors,$back,$links)
-	{		static::Menu($id ? '' : 'add');		$ltpl=Eleanor::$Language['tpl'];
+	{
+		static::Menu($id ? '' : 'add');
+		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin(array('id'=>'tg'))
 			->item(static::$lang['parent'],Eleanor::Select('_parent',Eleanor::Option('&mdash;',0,!$values['_parent'],array(),2).UserManager::GroupsOpts($values['_parent'],$id ? $id : array()),array('id'=>'parent')));
 		foreach($controls as $k=>&$v)
@@ -113,7 +127,7 @@ class TplGroups
 					'<div>'.Eleanor::$Template->LangEdit($values[$k],null).'</div>',
 					'tip'=>$v['descr']
 				));
-			else
+			elseif($v)
 				$Lst->head($v);
 
 		if($back)
@@ -178,7 +192,9 @@ $(function(){
 		$back - URL возврата
 	*/
 	public static function Delete($a,$back)
-	{		static::Menu();		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['html_pref'].$a['title'].$a['html_end']),$back));
+	{
+		static::Menu();
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['html_pref'].$a['title'].$a['html_end']),$back));
 	}
 }
 TplGroups::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/groups-*.php',false);

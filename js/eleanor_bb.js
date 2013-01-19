@@ -12,16 +12,22 @@
 	http://forum.vingrad.ru/forum/topic-84449.html
 */
 CORE.BBEditor=function(opts)
-{	opts=$.extend({id:"",service:false,smiles:false,ownbb:false,Preview:function(){}},opts);	var th=this,
-		div=$("#ed-"+opts.id),		textarea=div.find("textarea:first");
-	div.find("a").each(function(){		var m=$(this).prop("className").match(/bb_([a-z0-9\-]+)/),
+{
+	opts=$.extend({id:"",service:false,smiles:false,ownbb:false,Preview:function(){}},opts);
+	var th=this,
+		div=$("#ed-"+opts.id),
+		textarea=div.find("textarea:first");
+	div.find("a").each(function(){
+		var m=$(this).prop("className").match(/bb_([a-z0-9\-]+)/),
 			f;
 		if(!m)
 			return;
 		switch(m[1])
-		{			case "bold":
+		{
+			case "bold":
 				f=function(){th.Bold();return false}
-			break;			case "italic":
+			break;
+			case "italic":
 				f=function(){th.Italic();return false}
 			break;
 			case "uline":
@@ -88,7 +94,8 @@ CORE.BBEditor=function(opts)
 				f=function(){th.Minus();return false}
 			break;
 			case "font":
-				new DropDown({					selector:this,
+				new DropDown({
+					selector:this,
 					left:true,
 					top:false,
 					rel:"#ed-"+opts.id+" .bb_fonts",
@@ -98,7 +105,8 @@ CORE.BBEditor=function(opts)
 		}
 		if(f)
 			$(this).click(f);
-	}).end().find("select").each(function(){		var m=$(this).prop("className").match(/bb_([a-z0-9\-]+)/),
+	}).end().find("select").each(function(){
+		var m=$(this).prop("className").match(/bb_([a-z0-9\-]+)/),
 			f;
 		if(!m)
 			return;
@@ -118,7 +126,8 @@ CORE.BBEditor=function(opts)
 			break;
 		}
 		if(f)
-			$(this).change(f);	});
+			$(this).change(f);
+	});
 
 	this.GetSelectedText=function()
 	{
@@ -130,13 +139,15 @@ CORE.BBEditor=function(opts)
 
 		//Хак для оперы :(
 		if(CORE.browser.opera)
-		{			var cnt=0,
+		{
+			var cnt=0,
 				left=textarea.val().substring(0,start),
 				overflow=start-left.length;
 
 			for(var i=0;i<left.length;i++)
 				if(left.charCodeAt(i)==10)
-				{					cnt++;
+				{
+					cnt++;
 					if(overflow>0)
 						overflow--;
 					else
@@ -147,7 +158,10 @@ CORE.BBEditor=function(opts)
 			left=textarea.val().substring(0,end-cnt);
 			for(;i<left.length;i++)
 				if(left.charCodeAt(i)==10)
-				{					cnt++;					left=left.substr(0,left.length-1);				}
+				{
+					cnt++;
+					left=left.substr(0,left.length-1);
+				}
 			end-=cnt;
 		}
 		return textarea.val().substring(start,end);
@@ -157,7 +171,8 @@ CORE.BBEditor=function(opts)
 		scorl и scorr - Корректировка выделения
 	*/
 	this.SetSelectedText=function(tag,secondtag,F,scorl,scorr)
-	{		return SetSelectedText(textarea,tag,secondtag,F,scorl,scorr);
+	{
+		return SetSelectedText(textarea,tag,secondtag,F,scorl,scorr);
 	}
 
 	this.GetText=function()
@@ -171,7 +186,8 @@ CORE.BBEditor=function(opts)
 	}
 
 	this.Bold=function()
-	{		this.SetSelectedText("[b]","[/b]");
+	{
+		this.SetSelectedText("[b]","[/b]");
 	}
 
 	this.Strike=function()
@@ -294,7 +310,8 @@ CORE.BBEditor=function(opts)
 	}
 
 	this.Color=function(cn)
-	{		if(cn)
+	{
+		if(cn)
 			this.SetSelectedText("[color="+cn+"]","[/color]");
 	}
 
@@ -318,11 +335,16 @@ CORE.BBEditor=function(opts)
 
 
 	this.Plus=function()
-	{		textarea.stop(true,true).animate({			height:"+=75"
-		});	}
+	{
+		textarea.stop(true,true).animate({
+			height:"+=75"
+		});
+	}
 
 	this.Minus=function()
-	{		var h=textarea.height();		if(h-75>100)
+	{
+		var h=textarea.height();
+		if(h-75>100)
 			h=75;
 		else if(h>100)
 			h-=100;
@@ -330,13 +352,17 @@ CORE.BBEditor=function(opts)
 			return;
 		textarea.stop(true,true).animate({
 			height:"-="+h
-		});	}
+		});
+	}
 
 	this.Preview=function()
-	{		var req={type:"preview",text:this.GetText(),editor:"bb"}
-		if(opts.service)			req.service=opts.service;
+	{
+		var req={type:"preview",text:this.GetText(),editor:"bb"}
+		if(opts.service)
+			req.service=opts.service;
 		if(opts.smiles)
-			req.smiles=true;		if(opts.ownbb)
+			req.smiles=true;
+		if(opts.ownbb)
 			req.ownbb=true;
 		CORE.Ajax(req,opts.Preview);
 	}
@@ -352,7 +378,8 @@ CORE.BBEditor=function(opts)
 		opts.id,
 		{
 			Embed:function(type,data)
-			{				if(type=="image")
+			{
+				if(type=="image")
 					th.SetSelectedText("[img]"+data.src+"[/img]");
 			},
 			Insert:function(pre,after,F){ th.SetSelectedText(pre,after,F); },
@@ -363,7 +390,8 @@ CORE.BBEditor=function(opts)
 }
 
 function SetSelectedText(textarea,tag,secondtag,F,scorl,scorr)
-{	textarea.focus();
+{
+	textarea.focus();
 	scorl=scorl||0;
 	scorr=scorr||0;
 	tag=tag||"";
@@ -373,7 +401,7 @@ function SetSelectedText(textarea,tag,secondtag,F,scorl,scorr)
 		if(typeof(secondtag)=="string")
 		{
 			var text=$.isFunction(F) ? F(iesel.text) : iesel.text,
-				l=text.replace(/\n/g,'').length;
+				l=text.replace(/\n/g,"").length;
 			iesel.text=tag+text+secondtag;
 			iesel.moveEnd("character",-secondtag.length);
 			iesel.moveStart("character",-l);
@@ -419,7 +447,8 @@ function SetSelectedText(textarea,tag,secondtag,F,scorl,scorr)
 			right=textarea.val().substring(left.length+content.length);
 		}
 		else
-		{			content=textarea.val().substring(start,end);
+		{
+			content=textarea.val().substring(start,end);
 			right=textarea.val().substring(end);
 		}
 
@@ -448,11 +477,13 @@ function SetSelectedText(textarea,tag,secondtag,F,scorl,scorr)
 }
 
 (function()
-{	var iekeys={"1":65,"2":66,"4":68,"12":76,"16":80,"19":83,"20":84,"21":85,"26":90},
+{
+	var iekeys={"1":65,"2":66,"4":68,"12":76,"16":80,"19":83,"20":84,"21":85,"26":90},
 		keys=
 		{
 			"b":function()
-			{				if(EDITOR.activebb)
+			{
+				if(EDITOR.activebb)
 					EDITOR.activebb.Bold();
 			},
 			"i":function()

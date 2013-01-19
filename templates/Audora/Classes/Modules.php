@@ -228,7 +228,7 @@ function AppyDragAndDrop()
 			title - название удаляемого модуля
 		$back - URL возврата
 	*/
-	public static function Delete($t,$back)
+	public static function Delete($a,$back)
 	{
 		static::Menu('');
 		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],$a['title']),$back));

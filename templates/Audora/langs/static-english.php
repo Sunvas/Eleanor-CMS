@@ -6,6 +6,5 @@ return array(
 	'to_pages'=>'Per page: %s',
 	'subpages'=>'Subpages:',
 	'addsubpage'=>'Add subpage',
-	'delc'=>'Confirm delete',
 	'deleting'=>'Do you really want to delete a static page &quot;%s&quot;?',
 );

@@ -112,7 +112,7 @@ class TPLSettings
 	public static function SettGrDefault($a,$back)
 	{
 		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['settings']['make_o_def_c'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['make_o_def_c'],$a['title']),$back));
 	}
 
 	/*
@@ -124,7 +124,7 @@ class TPLSettings
 	public static function SettGrReset($a,$back)
 	{
 		static::Menu();
-		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(Eleanor::$Language['settings']['ays_to_rg'],$a['title']),$back));
+		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['ays_to_rg'],$a['title']),$back));
 	}
 
 	/*

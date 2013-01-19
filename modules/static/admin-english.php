@@ -13,4 +13,5 @@ return array(
 	'editing'=>'Editing a static page',
 	'empty_title'=>function($l){return'Title not given'.($l ? ' (for '.$l.')' : '');},
 	'empty_text'=>function($l){return'Content not given'.($l ? ' (for '.$l.')' : '');},
+	'delc'=>'Confirm delete',
 );

@@ -10,19 +10,23 @@
 */
 
 class Modules
-{	/**
+{
+	/**
 	 * Запуск модуля
 	 *
 	 * @param string $p Путь к каталогу модуля
 	 * @param bool $us От "UseService", флаг указывающий на необходимость добавления к $p каталога с именем сервиса
 	 * @param string $f Файл, который будет проинклужен
-	 */	public static function Load($p,$us=true,$f='index.php')
-	{		Eleanor::$Template->paths[__class__]=$p.'Template/';
+	 */
+	public static function Load($p,$us=true,$f='index.php')
+	{
+		Eleanor::$Template->paths[__class__]=$p.'Template/';
 		if($us)
 			$p.=Eleanor::$service.DIRECTORY_SEPARATOR;
 		$p.=$f;
 		if(is_file($p))
-		{			ob_start();
+		{
+			ob_start();
 			register_shutdown_function(array(__class__,'FatalHandler'));
 			Eleanor::getInstance()->e_g_l=false;
 			$r=include$p;
@@ -36,13 +40,15 @@ class Modules
 	 * Перехват фатальной ошибки модуля, например PARSE_ERROR
 	 */
 	public static function FatalHandler()
-	{		$e=error_get_last();
+	{
+		$e=error_get_last();
 		if($e && $e!=Eleanor::getInstance()->e_g_l && ($e['type'] & (E_ERROR|E_PARSE|E_COMPILE_ERROR|E_CORE_ERROR)))
-		{			$c=ob_get_contents();
+		{
+			$c=ob_get_contents();
 			if($c!==false)
 				ob_end_clean();
 			Eleanor::ErrorHandle($e['type'],$e['message'],$e['file'],$e['line']);
-			Error($c);
+			Error($c ? $c : $e['message']);
 			Eleanor::getInstance()->e_g_l=$e;
 		}
 		elseif(ob_get_contents()!==false)
@@ -69,13 +75,15 @@ class Modules
 			$na=$sa=array();
 			$R=Eleanor::$Db->Query('SELECT `id`,`services`,`sections` FROM `'.P.'modules` WHERE `active`=1');
 			while($a=$R->fetch_assoc())
-			{				$sections=$a['sections'] ? (array)unserialize($a['sections']) : false;
+			{
+				$sections=$a['sections'] ? (array)unserialize($a['sections']) : false;
 				if($a['services'] and strpos($a['services'],','.Eleanor::$service.',')===false or !$sections)
 					continue;
 				foreach($sections as $k=>&$v)
 				{
 					if(isset($v['']))
-					{						$na+=array_combine($v[''],array_fill(0,count($v['']),$a['id']));
+					{
+						$na+=array_combine($v[''],array_fill(0,count($v['']),$a['id']));
 						$sa+=array_combine($v[''],array_fill(0,count($v['']),$k));
 					}
 					if(isset($v[$l]))
@@ -88,4 +96,5 @@ class Modules
 			Eleanor::$Cache->Put('modules_'.$s,$m=array('ids'=>$na,'sections'=>$sa),false);
 		}
 		return$m;
-	}}
+	}
+}

@@ -111,7 +111,7 @@ class Categories extends BaseClass
 					$parent=$v['id'];
 				}
 		}
-		if(isset($this->dump[$id]))
+		if(is_scalar($id) and isset($this->dump[$id]))
 		{
 			$this->dump[$id]['description']=OwnBB::Parse($this->dump[$id]['description']);
 			return$this->dump[$id];

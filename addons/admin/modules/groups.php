@@ -41,7 +41,7 @@ $Eleanor->gp=array(
 		'type'=>'input',
 		'bypost'=>&$Eleanor->gp_post,
 		'options'=>array(
-			'htmlsafe'=>true,#Только для текстовых данных
+			'htmlsafe'=>false,#Только для текстовых данных
 		),
 	),
 	'html_end'=>array(
@@ -50,7 +50,7 @@ $Eleanor->gp=array(
 		'type'=>'input',
 		'bypost'=>&$Eleanor->gp_post,
 		'options'=>array(
-			'htmlsafe'=>true,#Только для текстовых данных
+			'htmlsafe'=>false,#Только для текстовых данных
 		),
 	),
 	'descr_l'=>array(
@@ -132,7 +132,9 @@ if(isset($_GET['do']))
 			ShowList();
 	}
 elseif(isset($_GET['edit']))
-{	$id=(int)$_GET['edit'];	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
+{
+	$id=(int)$_GET['edit'];
+	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 		Save($id);
 	else
 		AddEdit($id);
@@ -175,15 +177,20 @@ function LLoad($a)
 }
 
 function LSave($a,$Obj)
-{	$v=(array)$a['value'];
+{
+	$v=(array)$a['value'];
 	if(isset($a['field']))
-	{		$lang=Eleanor::$Language['g'];
+	{
+		$lang=Eleanor::$Language['g'];
 		foreach($v as $k=>&$vv)
 			if($vv=='')
-			{				$er=$a['multilang'] ? '_'.strtoupper($k) : '';
+			{
+				$er=$a['multilang'] ? '_'.strtoupper($k) : '';
 				$Obj->errors['EMPTY_TITLE'.$er]=$lang['notitle']($k);
-			}	}
-	return$a['multilang'] ? serialize($v) : serialize(array(''=>$a['value']));}
+			}
+	}
+	return$a['multilang'] ? serialize($v) : serialize(array(''=>$a['value']));
+}
 
 function ShowList()
 {global$Eleanor,$title;
@@ -211,7 +218,8 @@ function ShowList()
 
 	$R=Eleanor::$Db->Query('SELECT `id`,`title_l` `title`,`html_pref`,`html_end`,`protected`,`access_cp`,`captcha`,`moderate`,`parents` FROM `'.P.'groups` WHERE `parents`=\''.$parents.'\'');
 	while($a=$R->fetch_assoc())
-	{		$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
+	{
+		$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
 		$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['id']));
 		$a['_adel']=$a['protected'] ? false : $Eleanor->Url->Construct(array('delete'=>$a['id']));
 		$a['_aparent']=$Eleanor->Url->Construct(array('parent'=>$a['id']));
@@ -219,14 +227,16 @@ function ShowList()
 
 		$titles[$a['id']]=$a['title'];
 		$subitems[]=$a['parents'].$a['id'].',';
-		$temp[$a['id']]=array_slice($a,1);	}
+		$temp[$a['id']]=array_slice($a,1);
+	}
 
 	if($subitems)
 	{
 		$R=Eleanor::$Db->Query('SELECT `id`,`parents`,`title_l` FROM `'.P.'groups` WHERE `parents`'.Eleanor::$Db->In($subitems));
 		$subitems=array();
 		while($a=$R->fetch_assoc())
-		{			$p=ltrim(strrchr(','.rtrim($a['parents'],','),','),',');
+		{
+			$p=ltrim(strrchr(','.rtrim($a['parents'],','),','),',');
 			$subitems[$p][$a['id']]=array(
 				'title'=>$a['title_l'] ? Eleanor::FilterLangValues((array)unserialize($a['title_l'])) : '',
 				'_aedit'=>$Eleanor->Url->Construct(array('edit'=>$a['id']))
@@ -249,11 +259,13 @@ function AddEdit($id,$errors=array())
 	$lang=Eleanor::$Language['g'];
 	$inherit=array();
 	if($id)
-	{		$R=Eleanor::$Db->Query('SELECT * FROM `'.P.'groups` WHERE `id`='.$id.' LIMIT 1');
+	{
+		$R=Eleanor::$Db->Query('SELECT * FROM `'.P.'groups` WHERE `id`='.$id.' LIMIT 1');
 		if(!$a=$R->fetch_assoc())
 			return GoAway(true);
 		if(!$errors)
-		{			$a['_parent']=ltrim(strrchr(','.rtrim($a['parents'],','),','),',');
+		{
+			$a['_parent']=ltrim(strrchr(','.rtrim($a['parents'],','),','),',');
 			foreach($a as $k=>&$v)
 				if(isset($Eleanor->gp[$k]))
 					if($v===null)
@@ -313,7 +325,8 @@ function Save($id)
 	$values=array('parents'=>'');
 	$parent=isset($_POST['_parent']) ? (int)$_POST['_parent'] : 0;
 	if($parent>0)
-	{		$R=Eleanor::$Db->Query('SELECT `parents` FROM `'.P.'groups` WHERE `id`='.$parent.' LIMIT 1');
+	{
+		$R=Eleanor::$Db->Query('SELECT `parents` FROM `'.P.'groups` WHERE `id`='.$parent.' LIMIT 1');
 		if(list($p)=$R->fetch_row())
 			$values['parents']=$p.$parent.',';
 	}
@@ -332,11 +345,14 @@ function Save($id)
 		$values+=$Eleanor->Controls->SaveControls($gp);
 	}
 	catch(EE$E)
-	{		return AddEdit($id,array('ERROR'=>$E->getMessage()));	}
+	{
+		return AddEdit($id,array('ERROR'=>$E->getMessage()));
+	}
 	$errors=$Eleanor->Controls->errors;
 
 	if(!$values['access_cp'] and $id)
-	{		$R=Eleanor::$Db->Query('SELECT `id` FROM `'.P.'groups` WHERE `access_cp`=1 AND `id`!='.$id.' LIMIT 1');
+	{
+		$R=Eleanor::$Db->Query('SELECT `id` FROM `'.P.'groups` WHERE `access_cp`=1 AND `id`!='.$id.' LIMIT 1');
 		if($R->num_rows==0)
 			$errors[]='NO_ADMIN';
 	}

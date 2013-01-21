@@ -24,8 +24,12 @@ switch($event)
 		if(!file_exists(Eleanor::$root.'templates/'.$theme))
 			return Error(sprintf($lang['no_ish_thm'],$theme));
 		$res=Files::Copy(Eleanor::$root.'templates/'.$theme,Eleanor::$root.'templates/'.$newtpl);
-		if(file_exists(Eleanor::$root.'templates/'.$theme.'.php'))
-			Files::Copy(Eleanor::$root.'templates/'.$theme.'.php',Eleanor::$root.'templates/'.$newtpl.'.php');
+
+		$files=glob(Eleanor::$root.'templates/'.$theme.'.*');
+		if($files)
+			foreach($files as &$v)
+				Files::Copy($v,dirname($v).DIRECTORY_SEPARATOR.preg_replace('#^[^\.]+\.#',$newtpl.'.',basename($v)));
+
 		if($res)
 			return Result(true);
 		Error();

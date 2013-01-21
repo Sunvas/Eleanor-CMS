@@ -67,7 +67,7 @@ class TplThemes
 				.($v['_ainfo'] ? '<a href="'.$v['_ainfo'].'">'.$ltpl['info'].'</a> | ' : '')
 				.'<a href="'.$v['_afiles'].'">'.static::$lang['file_work'].'</a></div>'
 				.$setto.'<div class="thm_btn"><a href="#" title="'.static::$lang['copy'].'" class="copy" data-n="'.$k.'"><img src="'.$images.'thm_copy.png" alt="" /></a>'
-				.($v['_adel'] ? '' : '<a href="'.$v['_adel'].'" title="'.$ltpl['delete'].'"><img src="'.$images.'thm_del.png" alt="" /></a>')
+				.($v['_adel'] ? '<a href="'.$v['_adel'].'" title="'.$ltpl['delete'].'"><img src="'.$images.'thm_del.png" alt="" /></a>' : '')
 				.'</div></div></div><div class="thm_cont"><span class="thm_img"><img src="'.($v['image'] ? $v['image'] : $images.'default_theme.png').'" alt="" title="'.$title.'" /></span><div class="thm_mcont"><div class="thm_heading"><h3>'.$title.'</h3>'
 				.($v['used'] ? '<b>'.sprintf(static::$lang['services'],join(', ',$v['used'])).'</b>' : '').'</div><div class="thm_info">'.($v['author'] ? '<p>'.sprintf(static::$lang['author'],$v['author']).'</p>' : '')
 				.($v['creation'] ? '<p>'.sprintf(static::$lang['cr_date'],$v['creation']).'</p>' : '').'</div></div></div></div></div></td>';

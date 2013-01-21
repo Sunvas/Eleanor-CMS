@@ -213,12 +213,14 @@ class Settings extends BaseClass
 						return GoAway();
 					$word=isset($_POST['search']) ? (string)Eleanor::$POST['search'] : '';
 					if(strlen($word)<3)
-					{						$GLOBALS['title'][]=$lang['error'];
+					{
+						$GLOBALS['title'][]=$lang['error'];
 						return Eleanor::$Template->SettShowError($lang['s_phrase_len'],$back);
 					}
 					$R=Eleanor::$Db->Query('SELECT `c`.*,`cl`.*,`gl`.`title` `gtitle` FROM `'.P.'config` `c` INNER JOIN `'.P.'config_l` `cl` USING(`id`) LEFT JOIN `'.P.'config_groups_l` `gl` ON `c`.`group`=`gl`.`id` AND `gl`.`language` IN(\'\',\''.Language::$main.'\') WHERE `c`.`id` IN(SELECT `id` FROM `'.P.'config_l` WHERE `language`IN(\'\',\''.Language::$main.'\') AND MATCH(`title`,`descr`) AGAINST(\''.Eleanor::$Db->Escape($word,false).'\' IN BOOLEAN MODE))');
 					if($R->num_rows==0)
-					{						$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
+					{
+						$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
 						$GLOBALS['title'][]=$lang['error'];
 						return Eleanor::$Template->SettShowError(sprintf($lang['ops_not_found'],$word),$back);
 					}
@@ -259,7 +261,6 @@ class Settings extends BaseClass
 										'protected'=>$temp['protected'],
 										'keyword'=>$temp['keyword'],
 										'onexists'=>$update,
-										'pos'=>$temp['pos'],
 										'title'=>array($temp['language']=>$temp['title']),
 										'descr'=>array($temp['language']=>$temp['descr']),
 									);
@@ -375,7 +376,6 @@ class Settings extends BaseClass
 								$GR=$O->addChild('group');
 								$GR->addAttribute('name',$name);
 								$GR->addAttribute('protected',$gr['protected']);
-								$GR->addAttribute('pos',$gr['pos']);
 								$GR->addAttribute('keyword',$gr['keyword']);
 								$GR->addAttribute('onexists',$gr['onexists']);
 								if(is_array($gr['title']))
@@ -770,7 +770,8 @@ class Settings extends BaseClass
 	 * @param string $gid ID группы настроек
 	 */
 	protected function DoNavigation($gid=false)
-	{		$El=Eleanor::getInstance();
+	{
+		$El=Eleanor::getInstance();
 		$El->module['links_settings']=array(
 			'opts'=>$gid ? $El->Url->Construct(array($this->pp.'sg'=>$gid)) : false,
 			'grs'=>$El->Url->Prefix(),
@@ -787,7 +788,8 @@ class Settings extends BaseClass
 	 * @param int|string $id Идентификатор группы. Если $id число - это ID группы, нет - имя. Если равно -1, то настройки будут браться из $allowed_opts
 	 */
 	public function ShowGroup($id=0)
-	{		$lang=Eleanor::$Language['settings'];
+	{
+		$lang=Eleanor::$Language['settings'];
 		$show_grs=false;
 		if($id==-1)
 		{
@@ -887,7 +889,9 @@ class Settings extends BaseClass
 		$El=Eleanor::getInstance();
 		$cnt=count($a);
 		foreach($a as &$v)
-		{			$reset=$v['value']!=$v['default'];			$controls[$v['name']]=array(
+		{
+			$reset=$v['value']!=$v['default'];
+			$controls[$v['name']]=array(
 				'titles'=>array(
 					'title'=>$v['title'],
 					'descr'=>$v['descr'],
@@ -1018,7 +1022,8 @@ class Settings extends BaseClass
 	 * @param string $text Содержимое xml файла импорта
 	 */
 	public function ProcessImport($text)
-	{		$lang=Eleanor::$Language['settings'];
+	{
+		$lang=Eleanor::$Language['settings'];
 		try
 		{
 			$S=new SimpleXMLElement($text,LIBXML_NOCDATA | LIBXML_NOERROR);
@@ -1046,8 +1051,19 @@ class Settings extends BaseClass
 				foreach($S->delete->group as $v)
 					$gdel[]=(string)$v;
 		}
+
 		if(isset($S->group))
 		{
+			$exgrs=array();
+			$nextpos=0;
+			$R=Eleanor::$Db->Query('SELECT `id`,`name`,`protected`,`pos` FROM `'.P.'config_groups`');
+			while($a=$R->fetch_assoc())
+			{
+				$exgrs[$a['name']]=array($a['id'],$a['protected']);
+				if($a['pos']>$nextpos);
+					$nextpos=$a['pos'];
+			}
+
 			#Да. Нужны такие извращения, чтобы получить значения. $grs=(array)$S->group - не канает, поскольку в случае если содержимого $S->group больше, чем 1 то мы получим только первый элемент
 			$grs=array();
 			foreach($S->group as $v)
@@ -1064,7 +1080,7 @@ class Settings extends BaseClass
 					'protected'=>0,
 					'keyword'=>$attrs['name'],
 					'onexists'=>'ignore',
-					'pos'=>0,
+					'pos'=>++$nextpos,
 				);
 				foreach(array('title','descr') as $need)
 					if(!isset($G->{$need}))
@@ -1206,14 +1222,7 @@ class Settings extends BaseClass
 			Eleanor::$Db->Delete(P.'config_groups_l','`id`'.Eleanor::$Db->In($todel));
 			$res['gdel']=$todel;
 		}
-		$exgrs=array();
-		$grspos=array(-1);
-		$R=Eleanor::$Db->Query('SELECT `id`,`name`,`protected`,`pos` FROM `'.P.'config_groups`');
-		while($a=$R->fetch_assoc())
-		{
-			$exgrs[$a['name']]=array($a['id'],$a['protected']);
-			$grspos[$a['id']]=$a['pos'];
-		}
+
 		foreach($groups as &$v)
 		{
 			$isat=is_array($v['title']);
@@ -1264,11 +1273,10 @@ class Settings extends BaseClass
 			}
 			else
 			{
-				$id=Eleanor::$Db->Insert(P.'config_groups',$ins=array('name'=>$v['name'],'protected'=>$v['protected'],'keyword'=>$v['keyword'],'pos'=>in_array($v['pos'],$grspos) && max($grspos)>$v['pos'] ? $v['pos'] : max($grspos)+1));
+				$id=Eleanor::$Db->Insert(P.'config_groups',$ins=array('name'=>$v['name'],'protected'=>$v['protected'],'keyword'=>$v['keyword'],'pos'=>$v['pos']));
 				if($id)
 				{
 					$exgrs[$v['name']]=array($id,$v['protected']);
-					$grspos[$v['name']]=$ins['pos'];
 					foreach(Eleanor::$langs as $lng=>&$_)
 					{
 						if(Eleanor::$vars['multilang'] and $isat and isset($v['title'][LANGUAGE]) and $lng!=LANGUAGE)
@@ -1315,7 +1323,8 @@ class Settings extends BaseClass
 		}
 		foreach($options as $grn=>&$gr)
 			foreach($gr as &$v)
-			{				$isat=is_array($v['title']);
+			{
+				$isat=is_array($v['title']);
 				if(isset($exopts[$grn][$v['name']]))
 				{
 					switch($v['onexists'])

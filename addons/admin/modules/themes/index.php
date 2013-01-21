@@ -69,7 +69,8 @@ elseif(isset($_GET['files']))
 	echo$c;
 }
 elseif(isset($_GET['config']))
-{	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
+{
+	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 	{
 		$theme=preg_replace('#[^a-z0-9\-_\.]+#i','',(string)$_GET['config']);
 		$f=Eleanor::$root.'templates/'.$theme.'.settings.php';
@@ -128,7 +129,8 @@ elseif(isset($_GET['settpl'],$_GET['to']))
 		return GoAway(empty($_POST['back']) ? true : $_POST['back']);
 	}
 	elseif(!$nolic)
-	{		$f=Eleanor::$root.'templates/'.$theme.'.settings.php';
+	{
+		$f=Eleanor::$root.'templates/'.$theme.'.settings.php';
 		$info=is_file($f) ? (array)include$f : array();
 		$title[]=$lang['agreement'];
 		if(isset($_GET['noback']))
@@ -204,7 +206,7 @@ else
 			'_aopts'=>isset($info['options']) ? $Eleanor->Url->Construct(array('config'=>$theme)) : false,
 			'_ainfo'=>isset($info['info']) ? $Eleanor->Url->Construct(array('info'=>$theme)) : false,
 			'_afiles'=>$Eleanor->Url->Construct(array('files'=>$theme)),
-			'_adel'=>$tpl['used'] ? $Eleanor->Url->Construct(array('delete'=>$theme)) : false,
+			'_adel'=>$tpl['used'] ? false : $Eleanor->Url->Construct(array('delete'=>$theme)),
 		);
 	}
 	$c=Eleanor::$Template->TemplatesGeneral($tpls);

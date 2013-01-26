@@ -8,36 +8,47 @@
 	*Pseudonym
 */
 function AddEditUser(id)
-{	//Автозаполнение полного имени
-	$("#full-name").focus(function(){		if($(this).val()=="")
+{
+	//Автозаполнение полного имени
+	$("#full-name").focus(function(){
+		if($(this).val()=="")
 			$(this).val($("#name").val())
 	});
 
 	//Пароли не совпадают
-	$("#form").submit(function(){		var p1=$("#pass").val(),
+	$("#form").submit(function(){
+		var p1=$("#pass").val(),
 			p2=$("#pass2").val();
 		if(p1 && p1!=p2)
-		{			alert($(this).data("pmm"));
+		{
+			alert($(this).data("pmm"));
 			$("a:first",this).trigger("Switch");//Tabs
 			$("#pass2").focus();
 			return false;
-		}	});
+		}
+	});
 
 	//Перезагрузка параметров группы
-	$("select[name^=\"_overskip\"]").change(function(){		var oi=$(this).closest("tr"),
+	$("select[name^=\"_overskip\"]").change(function(){
+		var oi=$(this).closest("tr"),
 			o=oi.find(".overload"),
-			i=oi.find(".inherit");		if($(this).val()=="inherit")
-		{			o.hide();
+			i=oi.find(".inherit");
+		if($(this).val()=="inherit")
+		{
+			o.hide();
 			i.show();
 		}
 		else
-		{			i.hide();
+		{
+			i.hide();
 			o.show();
 		}
 	});
 
 	//External login
-	$(".exl").next("a").click(function(){		var th=$(this);		CORE.Ajax(
+	$(".exl").next("a").click(function(){
+		var th=$(this);
+		CORE.Ajax(
 			{
 				direct:"admin",
 				file:"users",
@@ -53,22 +64,28 @@ function AddEditUser(id)
 					td.closest("tr").remove();
 			}
 		);
-		return false;	});
+		return false;
+	});
 
 	if(id)
 	{
 		var slntr=$("#slname").closest("tr").hide();
-		$("#name").change(function(){			if($(this).val()==$(this).prop("defaultValue"))
+		$("#name").change(function(){
+			if($(this).val()==$(this).prop("defaultValue"))
 				slntr.hide();
 			else
-				slntr.show();		});
+				slntr.show();
+		});
 
 		var slptr=$("#slpass").closest("tr").hide();
-		$("#pass,#pass2").change(function(){			if($(this).val())
+		$("#pass,#pass2").change(function(){
+			if($(this).val())
 				slptr.show();
 			else
-				slptr.hide();		});
-	}
+				slptr.hide();
+		});
+	}
+
 	//Avatar
 	var ai=$("#avatar-input").val();
 	if(ai)
@@ -83,7 +100,7 @@ function AddEditUser(id)
 	$("#atype").change(function(){
 		if($(this).val()=="upload")
 		{
-			$("#avatar-view").hide();
+			$("#avatar-view,#avatar-select").hide();
 			$("#avatar-upload").show();
 		}
 		else
@@ -119,10 +136,14 @@ function AddEditUser(id)
 
 	var galleries=[];
 	$("#form")
-	.on("click",".cancelavatar",function(){		$("#avatar-select").hide();
+	.on("click",".cancelavatar",function(){
+		$("#avatar-select").hide();
 		$("#avatar-view").show();
-		return false;	})
-	.on("click",".gallery",function(){		var v=$(this).data("gallery")		if(galleries[v])
+		return false;
+	})
+	.on("click",".gallery",function(){
+		var v=$(this).data("gallery")
+		if(galleries[v])
 			$("#avatar-select").html(galleries[v]);
 		else
 			CORE.Ajax(
@@ -138,11 +159,15 @@ function AddEditUser(id)
 					galleries[v]=r;
 				}
 			);
-		return false;	})
-	.on("click",".applyavatar",function(){		var f=$("img",this).attr("src");		$("#avatar-input").val(f);
+		return false;
+	})
+	.on("click",".applyavatar",function(){
+		var f=$("img",this).attr("src");
+		$("#avatar-input").val(f);
 		$("#avatar-image").attr("src",f).add("#avatar-delete,#avatar-view").show();
 		$("#avatar-no,#avatar-select").hide();
-		return false;	});
+		return false;
+	});
 
 	$("#avatar-delete").click(function(){
 		$("#avatar-input").val("");

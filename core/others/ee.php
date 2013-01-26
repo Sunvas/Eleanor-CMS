@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class EE extends Exception
-{	public
+{
+	public
 		$code,#Код исключения
 		$extra;#Массив с дополнительными параметрами
 
@@ -28,13 +29,19 @@ class EE extends Exception
 	 * @param exception $PO Предыдущее перехваченное исключение, что послужило "родителем" для текущего
 	 */
 	public function __construct($mess,$code=self::USER,array$extra=array(),$PO=null)
-	{		if(isset($PO,$PO->extra))
+	{
+		if(isset($PO,$PO->extra))
 			$extra+=$PO->extra;
 
 		if(!empty($extra['lang']))
-		{			$le=Eleanor::$Language['exceptions'];
+		{
+			$le=Eleanor::$Language['exceptions'];
 			if(isset($le[$mess]))
-			{				$extra['code']=$mess;				$mess=is_callable($le[$mess]) ? $le[$mess]($extra) : $le[$mess];			}		}
+			{
+				$extra['code']=$mess;
+				$mess=is_callable($le[$mess]) ? $le[$mess]($extra) : $le[$mess];
+			}
+		}
 
 		if(isset($extra['file']))
 			$this->file=$extra['file'];
@@ -42,6 +49,11 @@ class EE extends Exception
 			$this->line=$extra['line'];
 		$this->extra=$extra;
 		parent::__construct($mess,$code,$PO);
+	}
+
+	public function __toString()
+	{
+		return$this->getMessage();
 	}
 
 	/**
@@ -56,7 +68,8 @@ class EE extends Exception
 	 * Должна вернуть массив из двух элементов 0 - запись в лог файл, 1 - служебные данные, которые при следущем исключении будут переданы ей первым параметром.
 	 */
 	protected function LogWriter($fn,$id,$F)
-	{		if($fn==='' or Eleanor::$nolog)
+	{
+		if($fn==='' or Eleanor::$nolog)
 			return;
 		$path=Eleanor::$root.'addons/logs/'.$fn.'.log';
 		$hpath=$path.'.inc';
@@ -79,8 +92,10 @@ class EE extends Exception
 		}
 
 		if($ish)
-		{			$help=file_get_contents($hpath);
-			$help=$help ? (array)unserialize($help) : array();		}
+		{
+			$help=file_get_contents($hpath);
+			$help=$help ? (array)unserialize($help) : array();
+		}
 		else
 			$help=array();
 
@@ -91,17 +106,21 @@ class EE extends Exception
 		list($data,$log)=$data;
 
 		if($change and !isset($help[$id]['o'],$help[$id]['l']))
-		{			$change=false;
-			unset($help[$id]);		}
+		{
+			$change=false;
+			unset($help[$id]);
+		}
 
 		if($change)
-		{			$offset=$help[$id]['o'];
+		{
+			$offset=$help[$id]['o'];
 			$length=$help[$id]['l'];
 			unset($help[$id]);
 
 			$size=$isf ? filesize($path) : 0;
 			if($size<$offset+$length)
-			{				$change=false;
+			{
+				$change=false;
 				foreach($help as &$v)
 					if($size<$v['o']+$v['l'])
 						unset($v['o'],$v['l']);
@@ -109,27 +128,33 @@ class EE extends Exception
 		}
 
 		if($change)
-		{			$fh=fopen($path,'rb+');
+		{
+			$fh=fopen($path,'rb+');
 			if(flock($fh,LOCK_EX))
 				$diff=Files::FReplace($fh,$log,$offset,$length);
 			else
-			{				fclose($fh);
-				return false;			}
+			{
+				fclose($fh);
+				return false;
+			}
 			$length+=$diff;
 			foreach($help as &$v)
 				if($v['o']>$offset)
 					$v['o']+=$diff;
 		}
 		else
-		{			$fh=fopen($path,'a');
+		{
+			$fh=fopen($path,'a');
 			if(flock($fh,LOCK_EX))
-			{				$size=fstat($fh);
+			{
+				$size=fstat($fh);
 				$offset=$size['size'];
 				$length=strlen($log);
 				fwrite($fh,$log.PHP_EOL.PHP_EOL);
 			}
 			else
-			{				fclose($fh);
+			{
+				fclose($fh);
 				return false;
 			}
 		}
@@ -145,16 +170,21 @@ class EE extends Exception
 	 * Команда залогировать исключение
 	 */
 	public function Log()
-	{		$THIS=$this;#PHP 5.4 убрать рудмиент
+	{
+		$THIS=$this;#PHP 5.4 убрать рудмиент
 		switch($this->code)
-		{			case self::USER:
+		{
+			case self::USER:
 				#Пока логируются только ошибочные запросы
 				if(isset($this->extra['code'],$this->extra['back']))
 					$this->LogWriter(
 						'request_errors',
 						md5($this->extra['code'].Url::$curpage),
 						function($data)use($THIS)
-						{							$uinfo=Eleanor::$Login->GetUserValue(array('id','name'));							$data['n']=isset($data['n']) ? $data['n']+1 : 1;
+						{
+							$uinfo=Eleanor::$Login->GetUserValue(array('id','name'));
+
+							$data['n']=isset($data['n']) ? $data['n']+1 : 1;
 							$data['p']=Url::$curpage;
 							$data['ip']=Eleanor::$ip;
 							$data['d']=date('Y-m-d H:i:s');
@@ -198,7 +228,8 @@ class EE extends Exception
 						);
 					}
 				);
-		}	}
+		}
+	}
 
 	/**
 	 * Создание архива лог файла для экономии места.

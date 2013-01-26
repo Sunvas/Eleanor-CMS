@@ -48,7 +48,7 @@ if(Eleanor::$vars['multilang'])
 	if(!$isu and $l=Eleanor::GetCookie('lang') and isset(Eleanor::$langs[$l]) and $l!=LANGUAGE)
 	{
 		Language::$main=$l;
-		Eleanor::$Language->Change($gl);
+		Eleanor::$Language->Change($l);
 	}
 	#Попробуем определить основной язык пользователя
 	elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))

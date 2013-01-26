@@ -554,6 +554,9 @@ elseif($cid or $curls)
 	$d=FormatList($R);
 	if(!$d)
 		return;
+
+	if($Eleanor->module['links']['add'])
+		$Eleanor->module['links']['add']=$Eleanor->Url->Construct(array('do'=>'add',''=>array('def'=>array('category'=>$category['id']))),true,'');
 	$cu=$Eleanor->Categories->GetUri($category['id']);
 	$links=array(
 		'first_page'=>$Eleanor->Url->Construct($cu,true,false),

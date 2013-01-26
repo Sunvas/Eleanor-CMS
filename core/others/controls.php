@@ -163,8 +163,10 @@ class Controls extends BaseClass
 						continue;
 				}
 				catch(EE$E)
-				{					if($this->throw)
-						throw$E;				}
+				{
+					if($this->throw)
+						throw$E;
+				}
 				$ret[$k]=$tmp;
 			}
 		}
@@ -225,9 +227,18 @@ class Controls extends BaseClass
 					if(isset($v['default']))
 						$al['default']=Eleanor::FilterLangValues($v['default'],$l,'');
 					$v['name']['lang']=$l ? $l : Language::$main;
-					if(null===$tmp=$this->DisplayControl($al+$v,$ret))
-						continue;
-					$ret[$k][$l]=$tmp;
+					try
+					{
+						if(null===$tmp=$this->DisplayControl($al+$v,$ret))
+							continue;
+						$ret[$k][$l]=$tmp;
+					}
+					catch(EE$E)
+					{
+						if($this->throw)
+							throw$E;
+						$this->errors[$k][$l]=$E;
+					}
 				}
 			}
 			else
@@ -246,8 +257,11 @@ class Controls extends BaseClass
 					$ret[$k]=$tmp;
 				}
 				catch(EE$E)
-				{					if($this->throw)
-						throw$E;				}
+				{
+					if($this->throw)
+						throw$E;
+					$this->errors[$k]=$E;
+				}
 			}
 		}
 		return$ret;
@@ -329,8 +343,10 @@ class Controls extends BaseClass
 						continue;
 				}
 				catch(EE$E)
-				{					if($this->throw)
-						throw$E;				}
+				{
+					if($this->throw)
+						throw$E;
+				}
 				$ret[$k]=$tmp;
 			}
 		}
@@ -352,7 +368,9 @@ class Controls extends BaseClass
 			/*
 			2 ключа, отвечающих за обработку данных при загрузке контрола. Пример:
 			function($control - текущий контрол,$Obj - $this,$controls)
-			{				return array('value'=>$control['value']+1);			}
+			{
+				return array('value'=>$control['value']+1);
+			}
 			Эти же переменные получает и load_eval.
 			*/
 			'load'=>null,
@@ -583,7 +601,8 @@ class Controls extends BaseClass
 					if($k=='type' and $v==-1)
 						continue;
 					elseif($k=='imgalt')
-						$E->imgalt=is_array($v) ? Eleanor::FilterLangValues($v,isset($co['name']['lang']) ? $co['name']['lang'] : false) : $v;					elseif(property_exists($E,$k))
+						$E->imgalt=is_array($v) ? Eleanor::FilterLangValues($v,isset($co['name']['lang']) ? $co['name']['lang'] : false) : $v;
+					elseif(property_exists($E,$k))
 						$E->$k=$v;
 				$res=$E->GetHTML($this->GetPostVal($co['name'],$co['default']),true);
 			break;
@@ -775,7 +794,8 @@ class Controls extends BaseClass
 							$res[]=$co['options']['options'][$v];
 				}
 				else
-					$res=isset($co['options']['options'][ $co['value'] ]) ? $co['options']['options'][ $co['value'] ] : null;			break;
+					$res=isset($co['options']['options'][ $co['value'] ]) ? $co['options']['options'][ $co['value'] ] : null;
+			break;
 			default:
 				if(!isset(self::$controls))
 					self::ScanControls();

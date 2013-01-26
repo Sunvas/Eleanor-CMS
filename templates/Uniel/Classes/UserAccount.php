@@ -1049,7 +1049,7 @@ $(function(){
 					$("#atype").change(function(){
 						if($(this).val()=="upload")
 						{
-							$("#avatar-view").hide();
+							$("#avatar-view,#avatar-select").hide();
 							$("#avatar-upload").show();
 						}
 						else

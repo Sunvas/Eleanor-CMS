@@ -54,7 +54,8 @@ function AddEdit($id,$errors=array(),$gn=array())
 						$values[$tk][$temp['language']]=$tv;
 
 			if(Eleanor::$vars['multilang'])
-			{				if(!isset($values['_onelang']))
+			{
+				if(!isset($values['_onelang']))
 					$values['_onelang']=false;
 				$values['_langs']=array_keys($values['title']);
 			}
@@ -88,7 +89,7 @@ function AddEdit($id,$errors=array(),$gn=array())
 	{
 		$dv=Eleanor::$vars['multilang'] ? array(''=>'') : '';
 		$values=array(
-			'cats'=>array(),
+			'cats'=>isset($_GET['def'],$_GET['def']['category']) ? explode(',',(string)$_GET['def']['category']) : array(),
 			'show_detail'=>true,
 			'show_sokr'=>false,
 			'tags'=>array(''=>''),
@@ -319,8 +320,10 @@ function Save($id,$gn=array())
 
 	foreach($emp['title'] as $k=>&$v)
 		if($v)
-		{			$er='EMPTY_TITLE'.strtoupper($k ? '_'.$k : '');
-			$errors[$er]=$lang['EMPTY_TITLE']($k);		}
+		{
+			$er='EMPTY_TITLE'.strtoupper($k ? '_'.$k : '');
+			$errors[$er]=$lang['EMPTY_TITLE']($k);
+		}
 
 	foreach($emp['announcement'] as $k=>&$v)
 		if($v and $emp['text'][$k])

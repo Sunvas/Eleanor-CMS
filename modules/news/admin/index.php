@@ -1045,7 +1045,7 @@ function Save($id)
 		catch(EE$E)
 		{
 			Eleanor::$Db->Rollback();
-			return AddEdit(false,$E->getMessage());
+			return AddEdit(false,array('UPLOAD_ERROR'=>$E->getMessage()));
 		}
 		$values=array('id'=>array(),'language'=>array(),'uri'=>array(),'title'=>array(),'announcement'=>array(),'text'=>array(),'meta_title'=>array(),'meta_descr'=>array());
 		foreach($langs as &$v)

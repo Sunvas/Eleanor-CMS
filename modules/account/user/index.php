@@ -25,7 +25,7 @@ Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
 if($Eleanor->Url->is_static)
 {
 	$str=$Eleanor->Url->GetEnding(array($Eleanor->Url->ending,$Eleanor->Url->delimiter),true);
-	$user=$Eleanor->module['section']=='user' ? $Eleanor->Url->ParseToValue('user',true) : false;
+	$user=$Eleanor->module['section']=='user' ? $Eleanor->Url->ParseToValue('user',true,false) : false;
 	$do=$Eleanor->Url->ParseToValue('do',true);
 }
 else
@@ -57,15 +57,18 @@ function GetHandlers($type)
 }
 
 if($user or $id)
-{	$handlers=GetHandlers('view');
+{
+	$handlers=GetHandlers('view');
 	if(Eleanor::$Db===Eleanor::$UsersDb)
-	{		if($id)
+	{
+		if($id)
 			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`forum_id`,`groups`,`u`.`register`,`u`.`last_visit`,`u`.`language`,`u`.`timezone`,`e`.* FROM `'.USERS_TABLE.'` `u` INNER JOIN `'.P.'users_extra` `e` USING (`id`) INNER JOIN `'.P.'users_site` `s` USING(`id`) WHERE `id`='.$id.' LIMIT 1');
 		else
 			$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`forum_id`,`groups`,`u`.`register`,`u`.`last_visit`,`u`.`language`,`u`.`timezone`,`e`.* FROM `'.USERS_TABLE.'` `u` INNER JOIN `'.P.'users_extra` `e` USING (`id`) INNER JOIN `'.P.'users_site` `s` USING(`id`) WHERE `u`.`name`='.Eleanor::$Db->Escape($user).' LIMIT 1');
 	}
 	else
-	{		if($id)
+	{
+		if($id)
 			$R=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`language`,`timezone` FROM `'.USERS_TABLE.'` WHERE `id`='.$id.' LIMIT 1');
 		else
 			$R=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`language`,`timezone` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($user).' LIMIT 1',array($user));
@@ -79,7 +82,8 @@ if($user or $id)
 		return ExitPage();
 }
 elseif(Eleanor::$Login->IsUser())
-	$handlers=GetHandlers('user');else
+	$handlers=GetHandlers('user');
+else
 	$handlers=GetHandlers('guest');
 
 $Eleanor->module['handlers']=$handlers;

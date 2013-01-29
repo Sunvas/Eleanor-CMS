@@ -397,7 +397,7 @@ class Categories_Manager extends Categories
 		$sort=isset($_GET[$this->pp.'sort']) ? $_GET[$this->pp.'sort'] : '';
 		if(!in_array($sort,array('id','title','pos')))
 			$sort='';
-		$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET[$this->pp.'so']) ? $_GET[$this->pp.'so'] : 'desc';
+		$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET[$this->pp.'so']) ? $_GET[$this->pp.'so'] : 'asc';
 		if($so!='desc')
 			$so='asc';
 		if($sort)
@@ -414,8 +414,8 @@ class Categories_Manager extends Categories
 				$a['_aedit']=$El->Url->Construct(array($this->pp.'edit'=>$a['id']));
 				$a['_adel']=$El->Url->Construct(array($this->pp.'delete'=>$a['id']));
 				$a['_aparent']=$El->Url->Construct(array($this->pp.'parent'=>$a['id']));
-				$a['_aup']=$a['pos']<$cnt ? $El->Url->Construct(array($this->pp.'up'=>$a['id'])) : false;
-				$a['_adown']=$a['pos']>1 ? $El->Url->Construct(array($this->pp.'down'=>$a['id'])) : false;
+				$a['_aup']=$a['pos']>1 ? $El->Url->Construct(array($this->pp.'up'=>$a['id'])) : false;
+				$a['_adown']=$a['pos']<$cnt ? $El->Url->Construct(array($this->pp.'down'=>$a['id'])) : false;
 				$a['_aaddp']=$El->Url->Construct(array($this->pp.'do'=>'add',$this->pp.'parent'=>$a['id']));
 
 				if($a['image'])

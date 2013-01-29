@@ -212,7 +212,7 @@ $(function(){
 	FI.Open=function(url)
 	{
 		url=encodeURIComponent(FI.Get("realpath").replace(/^.+?DIRECT\//,"")+url).replace(/!/g,"%21").replace(/\'/g,"%27").replace(/\(/g,"%28").replace(/\)/g,"%29").replace(/\*/g,"%2A").replace(/%20/g,"+")
-		window.open(window.location.protocol+"//"+window.location.hostname+CORE.site_path+"'.Eleanor::$services['download']['file'].'?'.Url::Query(array('module'=>$GLOBALS['Eleanor']->module['name']),array('delim'=>'&')).'&f="+url);
+		window.open(window.location.protocol+"//"+window.location.hostname+CORE.site_path+"'.Eleanor::$services['download']['file'].'?'.Url::Query(array('module'=>$GLOBALS['Eleanor']->module['name']),'&').'&f="+url);
 		return false;
 	}
 })//]]></script>';

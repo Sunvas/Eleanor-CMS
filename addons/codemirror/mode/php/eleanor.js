@@ -7,4 +7,4 @@
 	=====
 	*Pseudonym
 */
-CORE.AddScript(["addons/codemirror/lib/util/matchbrackets.js","addons/codemirror/mode/htmlmixed/htmlmixed.js","addons/codemirror/mode/xml/xml.js","addons/codemirror/mode/javascript/javascript.js","addons/codemirror/mode/css/css.js","addons/codemirror/mode/clike/clike.js"]);
+CORE.AddScript(["addons/codemirror/addon/edit/matchbrackets.js","addons/codemirror/mode/htmlmixed/htmlmixed.js","addons/codemirror/mode/xml/xml.js","addons/codemirror/mode/javascript/javascript.js","addons/codemirror/mode/css/css.js","addons/codemirror/mode/clike/clike.js"]);

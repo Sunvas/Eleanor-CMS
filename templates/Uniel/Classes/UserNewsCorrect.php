@@ -11,12 +11,16 @@
 	Шаблон по умолчанию для пользователей модуля "Новости". Редактирование новостей.
 */
 class TplUserNewsCorrect
-{	public static
+{
+	public static
 		$lang,
-		$tpl=array();	/*
+		$tpl=array();
+	/*
 		Внутенний метод. Важный момент Cron
-	*/	protected static function TopMenu($tit=false)
-	{		$GLOBALS['jscripts'][]='js/module_publications.js';
+	*/
+	protected static function TopMenu($tit=false)
+	{
+		$GLOBALS['jscripts'][]=Eleanor::$Template->default['theme'].'js/publications.js';
 		#Cron
 		if(isset(Eleanor::$services['cron']))
 		{
@@ -29,8 +33,10 @@ class TplUserNewsCorrect
 		#[E] Cron
 
 		if(isset($GLOBALS['Eleanor']->module['general']))
-			return$task;		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-		$links=&$GLOBALS['Eleanor']->module['links'];		return Eleanor::$Template->Menu(array(
+			return$task;
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+		$links=&$GLOBALS['Eleanor']->module['links'];
+		return Eleanor::$Template->Menu(array(
 			'menu'=>array(
 				array($links['base'],static::$lang['all']),
 				$links['categories'] ? array($links['categories'],$lang['categs']) : false,
@@ -80,12 +86,15 @@ class TplUserNewsCorrect
 		$captcha - captcha при создании новости
 	*/
 	public static function AddEdit($id,$values,$errors,$uploader,$voting,$bypost,$hasdraft,$back,$links,$captcha)
-	{		$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
+	{
+		$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
 		$GLOBALS['head']['autocomplete']='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
 		if(Eleanor::$vars['multilang'])
-		{			$ml=array();
+		{
+			$ml=array();
 			foreach(Eleanor::$langs as $k=>&$v)
-			{				$ml['title'][$k]=Eleanor::Input('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
+			{
+				$ml['title'][$k]=Eleanor::Input('title['.$k.']',$GLOBALS['Eleanor']->Editor->imgalt=Eleanor::FilterLangValues($values['title'],$k),array('tabindex'=>1,'id'=>'title-'.$k));
 				$ml['announcement'][$k]=$GLOBALS['Eleanor']->Editor->Area('announcement['.$k.']',Eleanor::FilterLangValues($values['announcement'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>6,'rows'=>10)));
 				$ml['text'][$k]=$GLOBALS['Eleanor']->Editor->Area('text['.$k.']',Eleanor::FilterLangValues($values['text'],$k),array('bypost'=>$bypost,'no'=>array('tabindex'=>7,'rows'=>15)));
 				$ml['uri'][$k]=Eleanor::Input('uri['.$k.']',Eleanor::FilterLangValues($values['uri'],$k),array('onfocus'=>'if(!$(this).val())$(this).val($(\'#title-'.$k.'\').val())','tabindex'=>2));
@@ -110,7 +119,8 @@ class TplUserNewsCorrect
 		$Lst->item(static::$lang['title'],Eleanor::$Template->LangEdit($ml['title'],null))
 			->item('URI',Eleanor::$Template->LangEdit($ml['uri'],null));
 		if($GLOBALS['Eleanor']->Categories->dump)
-		{			$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+		{
+			$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 			$Lst->item($lang['categs'],Eleanor::Items('cats',$GLOBALS['Eleanor']->Categories->GetOptions($values['cats']),array('id'=>'cs','tabindex'=>3,'size'=>10)))
 				->item(static::$lang['maincat'],Eleanor::Select('_maincat',$GLOBALS['Eleanor']->Categories->GetOptions($values['_maincat']),array('id'=>'mc','tabindex'=>4)));
 		}
@@ -151,11 +161,18 @@ class TplUserNewsCorrect
 			)
 			->endform()
 			.'<script type="text/javascript">//<![CDATA[
-$(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each(function(i){			if($("option:eq("+i+")",cs).prop("selected"))
+$(function(){
+	$("#cs").change(function(){
+		var cs=this;
+		$("#mc option").each(function(i){
+			if($("option:eq("+i+")",cs).prop("selected"))
 				$(this).prop("disabled",false);
 			else
-				$(this).prop({disabled:true,selected:false});		});	}).change();
-	$("input[name^=\"tags\"]").each(function(){		var m=$(this).prop("name").match(/tags\[([a-z]+)\]/),
+				$(this).prop({disabled:true,selected:false});
+		});
+	}).change();
+	$("input[name^=\"tags\"]").each(function(){
+		var m=$(this).prop("name").match(/tags\[([a-z]+)\]/),
 			p={
 				module:"'.$GLOBALS['Eleanor']->module['name'].'",
 				event:"tags",
@@ -167,9 +184,13 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 				delimiter:/,\s*/,
 				params:p
 			});
-		$("input[name=\"_onelang\"]").change(function(){			p.lang=(m && !$(this).prop("checked")) ? m[1] : "";
-			a.setOptions({params:p})		});
-	});})//]]></script>';	}
+		$("input[name=\"_onelang\"]").change(function(){
+			p.lang=(m && !$(this).prop("checked")) ? m[1] : "";
+			a.setOptions({params:p})
+		});
+	});
+})//]]></script>';
+	}
 
 	/*
 		Страница с информацией об успешном создании/сохранении новости
@@ -181,14 +202,18 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 		$mod - флаг того, что сохранненная/созданная новость подлежит модерации
 	*/
 	public static function AddEditComplete($back,$url,$edited,$status,$title,$mod)
-	{		if($status)
-		{			if($mod)
+	{
+		if($status)
+		{
+			if($mod)
 				$text=$edited ? static::$lang['modedit'] : static::$lang['modadd'];
 			else
-				$text=$edited ? static::$lang['nomodedit'] : static::$lang['nomodadd'];		}
+				$text=$edited ? static::$lang['nomodedit'] : static::$lang['nomodadd'];
+		}
 		else
 			$text=$edited ? static::$lang['statusedit'] : static::$lang['statusadd'];
-		return static::TopMenu(reset($GLOBALS['title']))->Message(sprintf($text,$title).'<br /><br />'.sprintf(static::$lang['goto'],'<a href="'.$url.'">'.$title.'</a>'.($back ? ' | <a href="'.$back.'">'.static::$lang['pagewg'].'</a>' : '')),'info');	}
+		return static::TopMenu(reset($GLOBALS['title']))->Message(sprintf($text,$title).'<br /><br />'.sprintf(static::$lang['goto'],'<a href="'.$url.'">'.$title.'</a>'.($back ? ' | <a href="'.$back.'">'.static::$lang['pagewg'].'</a>' : '')),'info');
+	}
 
 	/*
 		Страница удаления новости
@@ -197,7 +222,9 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 		$back - URL возврата
 	*/
 	public static function Delete($a,$back)
-	{		return static::TopMenu()->Confirm(sprintf(static::$lang['submit_del'],$a['title']),$back);	}
+	{
+		return static::TopMenu()->Confirm(sprintf(static::$lang['submit_del'],$a['title']),$back);
+	}
 
 	/*
 		Страница завершения удаления новости
@@ -206,8 +233,11 @@ $(function(){	$("#cs").change(function(){		var cs=this;		$("#mc option").each
 		$back - URL возврата
 	*/
 	public static function DelSuccess($a,$back)
-	{		$u=$back ? $back : $GLOBALS['Eleanor']->Url->Prefix();		return static::TopMenu(reset($GLOBALS['title']))
+	{
+		$u=$back ? $back : $GLOBALS['Eleanor']->Url->Prefix();
+		return static::TopMenu(reset($GLOBALS['title']))
 			->RedirectScreen($u,30)
-			->Message(sprintf(static::$lang['deleting'],$a['title']).($back ? '<br />'.sprintf(static::$lang['goto'],'<a href="'.$back.'">'.static::$lang['pagewg'].'</a>') : ''),'info');	}
+			->Message(sprintf(static::$lang['deleting'],$a['title']).($back ? '<br />'.sprintf(static::$lang['goto'],'<a href="'.$back.'">'.static::$lang['pagewg'].'</a>') : ''),'info');
+	}
 }
 TplUserNewsCorrect::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/news-*.php',false);

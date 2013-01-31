@@ -10,12 +10,15 @@
 */
 
 class Files
-{	/**
+{
+	/**
 	 * Преобразования числа байт в приблизительный читаемый формат
 	 *
 	 * @param int $b Число байт
-	 */	public static function BytesToSize($b)
-	{		/*
+	 */
+	public static function BytesToSize($b)
+	{
+		/*
 		if($b>1152921504606846976)
 			return round($b/1152921504606846976,2).' eb';
 		elseif($b>1125899906842624)
@@ -29,7 +32,8 @@ class Files
 		elseif($b>=1024)
 			return round($b/1024,2).' kb';
 		return $b.' b';
-		#b bk mb gb tb pb eb	}
+		#b bk mb gb tb pb eb
+	}
 
 	/**
 	 * Преобразование приблизительного читаемого размера файла в количество байт
@@ -37,10 +41,13 @@ class Files
 	 * @param string $b Приблизительный читаем формат
 	 */
 	public static function SizeToBytes($b)
-	{		$bytes=(int)$b;
+	{
+		$bytes=(int)$b;
 		if(isset($b[1]))
 			switch(preg_match('#([a-z]+)\s*$#i',$b,$m)>0 ? strtolower($m[1]) : '')
-			{				/*				case 'eb':
+			{
+				/*
+				case 'eb':
 				case 'e':
 					return $bytes*1152921504606846976;
 				case 'pb':
@@ -52,7 +59,8 @@ class Files
 				*/
 				case'gb':
 				case'g':
-					return $bytes*1073741824;				case'mb':
+					return $bytes*1073741824;
+				case'mb':
 				case'm':
 					return $bytes*1048576;
 				case'kb':
@@ -68,7 +76,8 @@ class Files
 	 * @param array $a Опции передачи. Детальнее смотрите в теле метода
 	 */
 	public static function OutputStream(array$a)
-	{		$a+=array(
+	{
+		$a+=array(
 			'data'=>'',#Данные, которые необходимо передать
 			'file'=>'',#Файл, который будет прочитан и передан пользователю. Имеет приоритет над data
 			'filename'=>false,#Имя файла, которое будет отображено пользователю
@@ -115,20 +124,27 @@ class Files
 			$ifr=false;
 
 		if($a['multithread'] and isset($_SERVER['HTTP_RANGE']) and !$ifr)
-		{			#Поддержка мультипромежуточного запроса
+		{
+			#Поддержка мультипромежуточного запроса
 			$range=array();
 			$m=preg_match('/^bytes=((?:\d*-\d*,?\s?)+)/',$_SERVER['HTTP_RANGE'],$m)>0 ? explode(',',$m[1]) : array();
 			foreach($m as $v)
-			{				$v=explode('-',trim($v),2);
+			{
+				$v=explode('-',trim($v),2);
 				if($v[0])
-				{					#Если первый предел выходит за рамки размера					if($v[0]>$zsize or ($v[1] and $v[0]>$v[1]))
+				{
+					#Если первый предел выходит за рамки размера
+					if($v[0]>$zsize or ($v[1] and $v[0]>$v[1]))
 						continue;
 					if(!$v[1] or $v[1]>$zsize)
-						$v[1]=$zsize;				}
+						$v[1]=$zsize;
+				}
 				elseif($v[1])
-				{					if(0>$v[0]=$zsize-$v[1])
+				{
+					if(0>$v[0]=$zsize-$v[1])
 						continue;
-					$v[1]=$zsize;				}
+					$v[1]=$zsize;
+				}
 				else
 					continue;
 				$range[]=$v;
@@ -149,7 +165,8 @@ class Files
 				header('HTTP/1.1 416 Requested range not satisfiable');
 				die;
 			}
-			$s='';
+
+			$s='';
 			$total=0;
 			foreach($range as &$v)
 			{
@@ -175,7 +192,8 @@ class Files
 				flush();
 			}
 		else
-		{			$f=fopen($a['file'],'rb');
+		{
+			$f=fopen($a['file'],'rb');
 			foreach($range as &$r)
 			{
 				fseek($f,$r[0],SEEK_SET);
@@ -200,7 +218,8 @@ class Files
 	 * @param string $dest Назначени: путь, куда будет происходить копирование
 	 */
 	public static function Copy($source,$dest)
-	{		if(!file_exists($source))
+	{
+		if(!file_exists($source))
 			return false;
 		if(is_file($source))
 		{
@@ -211,10 +230,14 @@ class Files
 			return symlink(readlink($source),$dest);
 		$Dir=dir($source);
 		$f=__function__;
+		$dots=2;
 		while($entry=$Dir->read())
 		{
-			if($entry=='.' or $entry == '..')
+			if($dots and ($entry=='.' or $entry=='..'))
+			{
+				$dots--;
 				continue;
+			}
 			self::$f($source.DIRECTORY_SEPARATOR.$entry,$dest.DIRECTORY_SEPARATOR.$entry);
 		}
 		$Dir->close();
@@ -248,10 +271,14 @@ class Files
 		{
 			$f=__function__;
 			$Dir=dir($path);
+			$dots=2;
 			while($entry=$Dir->read())
 			{
-				if($entry=='.' or $entry=='..')
+				if($dots and ($entry=='.' or $entry=='..'))
+				{
+					$dots--;
 					continue;
+				}
 				if(!self::$f($path.DIRECTORY_SEPARATOR.$entry))
 					return true;
 			}
@@ -269,16 +296,22 @@ class Files
 	 * @return int Возвращает СУММУ размеров всех внутрилежащих файлов, а не реальное занимаемое место на диске
 	 */
 	public static function GetSize($path,$filter=false)
-	{		if(is_link($path))
+	{
+		if(is_link($path))
 			return 0;
 		if(is_dir($path))
-		{			$size=0;
+		{
+			$size=0;
 			$f=__function__;
 			$Dir=dir($path);
+			$dots=2;
 			while($entry=$Dir->read())
 			{
-				if($entry=='.' or $entry=='..')
+				if($dots and ($entry=='.' or $entry=='..'))
+				{
+					$dots--;
 					continue;
+				}
 				$size+=self::$f($path.DIRECTORY_SEPARATOR.$entry,$filter);
 			}
 			$Dir->close();

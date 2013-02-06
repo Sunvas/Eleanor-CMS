@@ -359,13 +359,12 @@ final class Eleanor extends BaseClass
 				{
 					$task=DEBUG ? false : self::$Cache->Get('nextrun',true);
 					$t=time();
-					$task=$task===false || $task<=$t ? '<img src="'.self::$services['cron']['file'].'?rand='.$t.'" style="width:1px;height1px;" />' : '';
+					$task=$task===false || $task<=$t ? '<img src="'.self::$services['cron']['file'].'?rand='.$t.'" style="width:1px;height1px;" alt="" />' : '';
 				}
 				if(defined('ELEANOR_COPYRIGHT'))
 					die('Copyright defined!');
 				else
-					#Внимание! САМОВОЛЬНОЕ УБИРАНИЕ КОПИРАЙТОВ ЧРЕВАТО БЛОКИРОВКОЙ НА ОФИЦИАЛЬНОМ САЙТЕ СИСТЕМЫ И ПРЕСЛЕДУЕТСЯ ПО ЗАКОНУ!
-					#КОПИРАЙТЫ МЕНЯТЬ/ПРАВИТЬ НЕЛЬЗЯ! СОВСЕМ!! ОНИ ДОЛЖНЫ ОСТАВАТЬСЯ НЕИЗМЕННЫМИ ДО БИТА!
+					#Пожалуйста, не удаляйте и не изменяйте наши копирайты, если, конечно, у вас есть хоть немного уважения к разработчикам.
 					define('ELEANOR_COPYRIGHT','<!-- ]]></script> --><a href="http://eleanor-cms.ru/" target="_blank">CMS Eleanor</a> © <!-- Eleanor CMS Team http://eleanor-cms.ru/copyright.php -->'.idate('Y').$task);
 
 				$r=getenv('HTTP_REFERER');

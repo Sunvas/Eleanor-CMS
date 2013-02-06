@@ -39,7 +39,8 @@ function ArchiveDays($y,$m,$conf,$mname,$dates=false)
 				$data+=$a;
 		}
 		if($data['min'])
-		{			#Поскольку мы можем запросить август 2012го, но минимальная новость датирована лишь 20м августа, сбрасываем "минимальный" день с 20го на 1й
+		{
+			#Поскольку мы можем запросить август 2012го, но минимальная новость датирована лишь 20м августа, сбрасываем "минимальный" день с 20го на 1й
 			if(!is_int($data['min']))
 				$data['min']=strtotime(substr($data['min'],0,8).'01');
 
@@ -53,18 +54,18 @@ function ArchiveDays($y,$m,$conf,$mname,$dates=false)
 		Eleanor::$Cache->Put($conf['n'].'_archivedates_'.$y.$m,$data,3600);
 	}
 
+	$m2=sprintf('%02d',$m);
 	$calendar=Dates::BuildCalendar($y,$m,false);
 	foreach($calendar as &$week)
 		foreach($week as $k=>&$day)
 			if($day)
 			{
 				$day=sprintf('%02d',$day);
-				$m=sprintf('%02d',$m);
-				if(isset($data['dates'][$y.$m.$day]))
+				if(isset($data['dates'][$y.$m2.$day]))
 					$day=array(
 						'day'=>$day,
-						'cnt'=>$data['dates'][$y.$m.$day],
-						'a'=>$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>$mname,'do'=>$y.'-'.$m.'-'.$day),false,''),
+						'cnt'=>$data['dates'][$y.$m2.$day],
+						'a'=>$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>$mname,'do'=>$y.'-'.$m2.'-'.$day),false,''),
 					);
 			}
 
@@ -72,8 +73,10 @@ function ArchiveDays($y,$m,$conf,$mname,$dates=false)
 	$py=$y-1;
 	$ny=$y+1;
 	if($nm==12)
-	{		$ny++;
-		$nm=1;	}
+	{
+		$ny++;
+		$nm=1;
+	}
 	else
 		$nm++;
 
@@ -85,11 +88,12 @@ function ArchiveDays($y,$m,$conf,$mname,$dates=false)
 	else
 		$pm--;
 
-	if(mktime(0,0,0,$pm,1)<$data['min'])
-		$pm=$py=false;	elseif(mktime(0,0,0,idate('m'),$pm,$py)<$data['min'])
+	if(mktime(0,0,0,$pm,1,$pm==12 ? $py : $y)<$data['min'])
+		$pm=$py=false;
+	elseif(mktime(0,0,0,idate('m'),$pm,$py)<$data['min'])
 		$py=false;
 
-	if(mktime(0,0,0,$nm,1)>$data['max'])
+	if(mktime(0,0,0,$nm,1,$nm==1 ? $ny : $y)>$data['max'])
 		$nm=$ny=false;
 	elseif(mktime(0,0,0,idate('m'),$nm,$ny)>$data['max'])
 		$ny=false;
@@ -102,6 +106,6 @@ function ArchiveDays($y,$m,$conf,$mname,$dates=false)
 		'nm'=>$nm,
 		'py'=>$py,
 		'ny'=>$ny,
-		'a'=>$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>$mname,'do'=>$Eleanor->Url->Filter($y.'-'.$m)),false,''),
+		'a'=>$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>$mname,'do'=>$Eleanor->Url->Filter($y.'-'.$m2)),false,''),
 	);
 }

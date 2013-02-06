@@ -93,7 +93,7 @@ else
 			include$Eleanor->module['path'].'block_archive_funcs.php';
 			$lang=Eleanor::$Language->Load($Eleanor->module['path'].'blocks-*.php',false);
 			$days=ArchiveDays($y,$m,$mc,$Eleanor->module['name']);
-			Result(array('month'=>$m,'year'=>$y,'archive'=>Eleanor::$Template->BlockArchive($days,$lang,$Eleanor->module['name'],true)));
+			Result(array('month'=>$days['m'],'year'=>$days['y'],'archive'=>Eleanor::$Template->BlockArchive($days,$lang,$Eleanor->module['name'],true)));
 		break;
 		case'rating':
 			if(!Eleanor::$vars['publ_rating'])

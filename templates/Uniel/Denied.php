@@ -30,8 +30,7 @@ h1 { font-weight: normal; font-size: 18px; color: #4f4f4f;}
 <?php echo (empty(Eleanor::$vars['site_close_mes']) ? '<h1>'.$ltpl['site_close_text'].'</h1>' : OwnBB::Parse(Eleanor::$vars['site_close_mes']))?>
 </div>
 <div class="syscopyright"><?php
-	#Внимание! САМОВОЛЬНОЕ УБИРАНИЕ КОПИРАЙТОВ ЧРЕВАТО БЛОКИРОВКОЙ НА ОФИЦИАЛЬНОМ САЙТЕ СИСТЕМЫ И ПРЕСЛЕДУЕТСЯ ПО ЗАКОНУ!
-	#КОПИРАЙТЫ МЕНЯТЬ/ПРАВИТЬ НЕЛЬЗЯ! СОВСЕМ!! ОНИ ДОЛЖНЫ ОСТАВАТЬСЯ НЕИЗМЕННЫМИ ДО БИТА! Также недопустимо и их скрытие!
-	echo'Powered by '.ELEANOR_COPYRIGHT?></div>
+#Пожалуйста, не удаляйте и не изменяйте наши копирайты, если, конечно, у вас есть хоть немного уважения к разработчикам.
+echo'Powered by '.ELEANOR_COPYRIGHT?></div>
 </body>
 </html>

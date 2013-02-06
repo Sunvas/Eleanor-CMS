@@ -10,12 +10,15 @@
 */
 $suser=Eleanor::$service=='user';
 if($suser)
-{	$users=$bots=array();
+{
+	$users=$bots=array();
 	$g=$u=$b=0;
 	$limit=30;
 	$R=Eleanor::$Db->Query('SELECT `s`.`type`,`s`.`user_id`,`s`.`enter`,`s`.`name` `botname`,`us`.`groups`,`us`.`name` FROM `'.P.'sessions` `s` INNER JOIN `'.P.'users_site` `us` ON `s`.`user_id`=`us`.`id` WHERE `s`.`expire`>\''.date('Y-m-d H:i:s').'\' AND `s`.`service`=\''.Eleanor::$service.'\' ORDER BY `s`.`expire` DESC LIMIT '.$limit);
 	while($a=$R->fetch_assoc())
-	{		$limit--;
+	{
+		$limit--;
+
 		if($a['user_id']>0 and $a['type']=='user')
 		{
 			if($a['groups'])
@@ -36,7 +39,8 @@ if($suser)
 			$u++;
 		}
 		elseif($a['name'] and Eleanor::$vars['bots_enable'])
-		{			if(isset($bots[$a['name']]))
+		{
+			if(isset($bots[$a['name']]))
 				$bots[$a['name']]['cnt']++;
 			else
 				$bots[$a['name']]=array(
@@ -57,16 +61,18 @@ if($suser)
 		if(isset($ucnt['guest']))
 			$g=$ucnt['guest'];
 		if(isset($ucnt['user']))
-			$u=$ucnt['guesuser'];
+			$u=$ucnt['user'];
 		if(isset($ucnt['bot']))
 			$b=$ucnt['bot'];
 	}
 }
 
 try
-{	if($suser)
+{
+	if($suser)
 		return Eleanor::$Template->BlockWhoOnline($users,$bots,$u,$b,$g);
-	return Eleanor::$Template->BlockWhoOnline();}
+	return Eleanor::$Template->BlockWhoOnline();
+}
 catch(EE$E)
 {
 	return'Template BlockWhoOnline does not exists.';

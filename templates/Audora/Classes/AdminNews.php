@@ -366,8 +366,8 @@ $(function(){
 		$hasdraft - признак наличия черновика
 		$back - URL возврата
 		$links - перечень необходимых ссылок, массив с ключами:
-			delete - ссылка на удаление категории или false
-			nodraft - ссылка на правку/добавление категории без использования черновика или false
+			delete - ссылка на удаление новости или false
+			nodraft - ссылка на правку/добавление новости без использования черновика или false
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEdit($id,$values,$errors,$uploader,$voting,$bypost,$hasdraft,$back,$links)

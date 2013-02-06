@@ -489,7 +489,7 @@ function LangNewUrl($url,$l)
 	$url=preg_replace('#^'.preg_quote($base,'#').'('.preg_quote(Eleanor::$filename,'#').')?#i','',$url);
 
 	if(rtrim($url,'?')=='')
-		return$l!=LANGUAGE ? $base : $Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[$l]['uri']),true,!$Eleanor->Url->furl);
+		return$l==LANGUAGE ? $base : $Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[$l]['uri']),true,!$Eleanor->Url->furl);
 
 	if(0!==$p=strpos($url,'?'))
 		$Eleanor->Url->__construct('!'.($p===false ? $url.'!&' : str_replace('?','!&',$url)));

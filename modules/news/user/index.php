@@ -338,6 +338,12 @@ if(isset($_GET['do']))
 		default:
 			if(preg_match('#^(\d{4})\D(\d{1,2})(?:\D(\d{1,2}))?$#',$d,$ma)>0)
 			{
+				$d=preg_split('#\D#',$d);
+				$d[1]=sprintf('%02d',$d[1]);
+				if(isset($d[2]))
+					$d[2]=sprintf('%02d',$d[2]);
+				$d=join('-',$d);
+
 				if(strtotime($d)>time())
 					return GoAway(true);
 				$title[]=sprintf($lang['for'],Eleanor::$Language->Date($d,strlen($d)>7 ? 'fd' : 'my',array('lowercase'=>true)));
@@ -367,7 +373,7 @@ if(isset($_GET['do']))
 					'pages'=>function($n) use ($d){ return$GLOBALS['Eleanor']->Url->Construct(array('do'=>$d,''=>array('page'=>$n)),true,''); },
 				);
 				$c=Eleanor::$Template->DateList($d,$data,$cnt,-$page,$pages,Eleanor::$vars['publ_per_page'],$links);
-				$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct(array('do'=>$d,''=>array('page'=>$page)),true,'');
+				$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct(array('do'=>$d,''=>array('page'=>$page==$pages ? false : $page)),true,'');
 				Start();
 				echo$c;
 			}

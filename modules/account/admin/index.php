@@ -244,7 +244,8 @@ if(isset($_GET['do']))
 			$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
 			$c=$Eleanor->Settings->GetInterface('group','user-profile');
 			if($c)
-			{				$c=Eleanor::$Template->Options($c);
+			{
+				$c=Eleanor::$Template->Options($c);
 				Start();
 				echo$c;
 			}
@@ -488,7 +489,7 @@ function InactiveUsers()
 	if($cnt and $offset>=$cnt)
 		$offset=max(0,$cnt-$pp);
 	$sort=isset($_GET['sort']) ? $_GET['sort'] : '';
-	if(!in_array($sort,array('id','name','email','group','full_name','last_visit')))
+	if(!in_array($sort,array('id','ip','name','email','group','full_name','last_visit')))
 		$sort='';
 	$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? $_GET['so'] : 'desc';
 	if($so!='asc')
@@ -500,11 +501,13 @@ function InactiveUsers()
 	$qs+=array('sort'=>false,'so'=>false);
 
 	if($cnt)
-	{		$upref=$Eleanor->Url->file.'?section=management&amp;module=users&amp;';
+	{
+		$upref=$Eleanor->Url->file.'?section=management&amp;module=users&amp;';
 		$myuid=Eleanor::$Login->GetUserValue('id');
 		$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`email`,`ip` FROM `'.$table.'` `u` INNER JOIN `'.P.'users_extra` USING(`id`)'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
 		while($a=$R->fetch_assoc())
-		{			$a['_aact']=$Eleanor->Url->Construct(array('activate'=>$a['id']));
+		{
+			$a['_aact']=$Eleanor->Url->Construct(array('activate'=>$a['id']));
 			$a['_aedit']=$upref.'edit='.$a['id'];
 			if($myuid==$a['id'])
 				$a['_adel']=$a['_adelr']=false;

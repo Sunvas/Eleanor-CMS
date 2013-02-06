@@ -17,11 +17,15 @@ $ltpl=Eleanor::$Language['tpl'];?><!DOCTYPE html>
 	<span><?php echo$ltpl['loading']?></span>
 </div><script type="text/javascript">//<![CDATA[
 $(function(){
-	$("#loading").on("show",function(){		$(this).css({			left:Math.round(($(window).width()-$(this).width())/2),
+	$("#loading").on("show",function(){
+		$(this).css({
+			left:Math.round(($(window).width()-$(this).width())/2),
 			top:Math.round(($(window).height()-$(this).height())/2)
 		});
 	}).triggerHandler("show");
-	$(window).resize(function(){		$("#loading").triggerHandler("show");	});
+	$(window).resize(function(){
+		$("#loading").triggerHandler("show");
+	});
 });//]]></script>
 <?php
 if(Eleanor::$Permissions->IsAdmin())
@@ -98,9 +102,8 @@ echo'<div id="maincol',$blocks['right'] ? 'R' : '','">
 <div id="syscopyright">
 	<span class="centroarts"><a href="http://centroarts.com" title="Шаблон разработан студией CENTROARTS.com">Designed by CENTROARTS.com</a></span>
 	<div><?php
-	#Внимание! САМОВОЛЬНОЕ УБИРАНИЕ КОПИРАЙТОВ ЧРЕВАТО БЛОКИРОВКОЙ НА ОФИЦИАЛЬНОМ САЙТЕ СИСТЕМЫ И ПРЕСЛЕДУЕТСЯ ПО ЗАКОНУ!
-	#КОПИРАЙТЫ МЕНЯТЬ/ПРАВИТЬ НЕЛЬЗЯ! СОВСЕМ!! ОНИ ДОЛЖНЫ ОСТАВАТЬСЯ НЕИЗМЕННЫМИ ДО БИТА! Также недопустимо и их скрытие!
-	echo'Powered by '.ELEANOR_COPYRIGHT?></div>
+#Пожалуйста, не удаляйте и не изменяйте наши копирайты, если, конечно, у вас есть хоть немного уважения к разработчикам.
+echo'Powered by '.ELEANOR_COPYRIGHT?></div>
 [page status]	<div>{page status}</div>
 [/page status][debug]	<div>{debug}</div>
 [/debug]</div>

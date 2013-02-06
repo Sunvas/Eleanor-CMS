@@ -51,7 +51,8 @@ if(Eleanor::$vars['multilang'])
 								<div class="wpmid">
 <?php
 if($errors)
-{	foreach($errors as $k=>&$v)
+{
+	foreach($errors as $k=>&$v)
 		if(is_int($k) and is_string($v) and isset($lang[$v]))
 			$v=$lang[$v];
 	echo Eleanor::$Template->Message($errors,'error');
@@ -70,7 +71,7 @@ if($errors)
 															<span><?php echo$ltpl['pass'],'</span>',
 																		Eleanor::Input('login[password]',$password,array('type'=>'password','size'=>10,'tabindex'=>2)),
 																		'</p>',
-																		$captcha ? '<p><span title="'.$lang['captcha_'].'">'.$lang['captcha'].'</span>'.Eleanor::Input('check','',array('tabindex'=>3)).'<br />'.$captcha.'</p>' : ''?>
+																		$captcha ? '<p><span title="'.$lang['captcha_'].'">'.$lang['captcha'].'</span>'.Eleanor::Input('check','',array('tabindex'=>3,'autocomplete'=>'off')).'<br />'.$captcha.'</p>' : ''?>
 												</div>
 											</div>
 											<div class="wpbtm"><b><span>&nbsp;</span></b></div>
@@ -81,7 +82,8 @@ if($errors)
 										</form>
 <?php if($GLOBALS['Eleanor']->multisite):?>
 <script type="text/javascript">//<![CDATA[
-CORE.MSQueue.done(function(qw){	var al=$(".submitline");
+CORE.MSQueue.done(function(qw){
+	var al=$(".submitline");
 	$.each(qw,function(k,v){
 		var a=$("<a>").prop({
 			href:"#",

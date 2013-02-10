@@ -643,8 +643,9 @@ final class Eleanor extends BaseClass
 				header('Cache-Control: no-store');
 			header('Content-Type: '.self::$content_type.'; charset='.self::$charset);
 			header('Content-Language: '.self::$langs[Language::$main]['d']);
-			header('Content-Encoding: '.(self::$gzip ? 'gzip' : 'none'),false,$code);
-			header('X-Powered-CMS: Eleanor CMS http://eleanor-cms.ru');
+			if(self::$gzip)
+				header('Content-Encoding: gzip');
+			header('X-Powered-CMS: Eleanor CMS http://eleanor-cms.ru',false,$code);
 		}
 
 		if($cb===false)

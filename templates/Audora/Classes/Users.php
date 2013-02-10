@@ -646,6 +646,7 @@ $(function(){
 	*/
 	public static function FindUsers($users,$groups,$total,$pp,$page,$values,$links)
 	{
+		$lang=Eleanor::$Language['users'];
 		$n=($page-1)*$pp;
 		foreach($users as $k=>&$v)
 		{
@@ -660,7 +661,7 @@ $(function(){
 				$t=$p=$e='';
 			$v=++$n.'. <a href="'.$v['_a'].'" data-id="'.$k.'"'.($t ? ' title="'.$t.'"' : '').'>'.$p.htmlspecialchars($v['name'],ELENT,CHARSET).$e.'</a>';
 		}
-		return'<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset='.DISPLAY_CHARSET.'" /><title>'.static::$lang['list'].'</title>
+		return'<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset='.DISPLAY_CHARSET.'" /><title>'.$lang['list'].'</title>
 <style type="text/css">
 	:link, :visited { color: #ff5a00; text-decoration: none; }
 	:link:hover, :visited:hover { color: #ff9600; text-decoration: none; }
@@ -687,12 +688,12 @@ $(function(){
 	})
 });//]]></script>
 <table><tr>
-	<td colspan="3"><h2>'.static::$lang['list'].'</h2><hr /></td>
+	<td colspan="3"><h2>'.$lang['list'].'</h2><hr /></td>
 	</tr>'.($total==0 ? '<tr><td colspan="3" aling="center"><b>'.static::$lang['unf'].'</b></td></tr>' : '
 	<tr>
-	<td><ul><li>'.implode('</li><li>',array_splice($users,0,10)).'</li></ul></td>
-	<td><ul><li>'.implode('</li><li>',array_splice($users,0,10)).'</li></ul></td>
-	<td><ul><li>'.implode('</li><li>',$users).'</li></ul></td>
+	<td><ul><li>'.join('</li><li>',array_splice($users,0,10)).'</li></ul></td>
+	<td><ul><li>'.join('</li><li>',array_splice($users,0,10)).'</li></ul></td>
+	<td><ul><li>'.join('</li><li>',$users).'</li></ul></td>
 	</tr>').'<tr><td colspan="3">'.Eleanor::$Template->Pages($total,$pp,$page,array($links['pages'],$links['first_page'])).'<div class="clr"></div><hr /><form method="post">'.Eleanor::Input('name',$values['name'],array('tabindex'=>1)).Eleanor::Button(static::$lang['find'],'submit',array('tabindex'=>2)).'</form></td></tr></table></body></html>';
 	}
 

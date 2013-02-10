@@ -304,11 +304,16 @@ elseif(isset($_GET['deleteg']))
 	$id=(int)$_GET['deleteg'];
 	$tpl=isset($_GET['tpl']) ? (string)$_GET['tpl'] : false;
 	if($tpl and preg_match('#^[a-z0-9_\-]+$#i')>0)
-	{		$f=Eleanor::$root.'templates/'.$tpl.'.settings.php';		$sett=is_file($f) ? (array)include$f : array();
+	{
+		$f=Eleanor::$root.'templates/'.$tpl.'.settings.php';
+		$sett=is_file($f) ? (array)include$f : array();
 		if(isset($sett['places']))
-		{			$places=array_keys($sett['places']);			$R=Eleanor::$Db->Query('SELECT `id`,`blocks`,`places`,`extra` FROM `'.P.'blocks_groups` WHERE `id`='.$id.' LIMIT 1');
+		{
+			$places=array_keys($sett['places']);
+			$R=Eleanor::$Db->Query('SELECT `id`,`blocks`,`places`,`extra` FROM `'.P.'blocks_groups` WHERE `id`='.$id.' LIMIT 1');
 			if($a=$R->fetch_assoc())
-			{				$a['blocks']=$a['blocks'] ? (array)unserialize($a['blocks']) : array();
+			{
+				$a['blocks']=$a['blocks'] ? (array)unserialize($a['blocks']) : array();
 				$a['places']=$a['places'] ? (array)unserialize($a['places']) : array();
 				$a['extra']=$a['extra'] ? (array)unserialize($a['extra']) : array();
 				foreach($places as $v)
@@ -322,7 +327,8 @@ elseif(isset($_GET['deleteg']))
 				if($a['extra'] or $a['places'] or $a['blocks'])
 					Eleanor::$Db->Replace(P.'blocks_groups',$a);
 				else
-					Eleanor::$Db->Delete(P.'blocks_groups','`id`='.$id);			}
+					Eleanor::$Db->Delete(P.'blocks_groups','`id`='.$id);
+			}
 		}
 	}
 	else
@@ -363,6 +369,7 @@ else
 
 			if($old['blocks'])
 				$values['blocks']+=(array)unserialize($old['blocks']);
+			$values['blocks']=$values['blocks'] ? serialize($values['blocks']) : '';
 
 			if($old['places'])
 				$values['places']+=(array)unserialize($old['places']);
@@ -384,7 +391,8 @@ else
 			Eleanor::$Db->Replace(P.'blocks_groups',$values);
 		}
 		else
-		{			$old=Eleanor::$Cache->Get('blocks-'.$gid,true);
+		{
+			$old=Eleanor::$Cache->Get('blocks-'.$gid,true);
 			$tpls=GetTemplates($gid);
 
 			if($old['blocks'])
@@ -419,7 +427,9 @@ else
 }
 
 function GetTemplates($service)
-{	$res=array();	$files=glob(Eleanor::$root.'templates/*.settings.php');
+{
+	$res=array();
+	$files=glob(Eleanor::$root.'templates/*.settings.php');
 	if($files)
 		foreach($files as $f)
 		{
@@ -429,7 +439,8 @@ function GetTemplates($service)
 			if(in_array($service,(array)$a['service']) and preg_match('#/(.+)\.settings\.php$#',$f,$m)>0)
 				$res[]=$m[1];
 		}
-	return$res;}
+	return$res;
+}
 
 function ShowGroup($gid,$tpl='',$errors=array(),$saved=false)
 {global$Eleanor,$title;
@@ -510,7 +521,8 @@ function ShowGroup($gid,$tpl='',$errors=array(),$saved=false)
 	$blocks=$tosort=$preids=array();
 	$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.P.'blocks` INNER JOIN `'.P.'blocks_l` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') ORDER BY `title` ASC');
 	while($a=$R->fetch_assoc())
-	{		$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['id']));
+	{
+		$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['id']));
 		$a['_adel']=$Eleanor->Url->Construct(array('delete'=>$a['id']));
 
 		$blocks[$a['id']]=array_slice($a,1);
@@ -523,7 +535,8 @@ function ShowGroup($gid,$tpl='',$errors=array(),$saved=false)
 	$service=is_string($gid) ? $gid : false;
 	$R=Eleanor::$Db->Query('SELECT `i`.`id`,`i`.`service`,`i`.`title_l` `title`,`g`.`id` `gid` FROM `'.P.'blocks_ids` `i` LEFT JOIN `'.P.'blocks_groups` `g` USING(`id`)');
 	while($a=$R->fetch_assoc())
-	{		$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
+	{
+		$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
 
 		if(!$service and $a['id']==$gid)
 			$service=$a['service'];
@@ -541,11 +554,13 @@ function ShowGroup($gid,$tpl='',$errors=array(),$saved=false)
 	$files=glob(Eleanor::$root.'templates/*.settings.php');
 	if($files)
 		foreach($files as $f)
-		{			$a=include$f;
+		{
+			$a=include$f;
 			if(!is_array($a))
 				continue;
 			if(in_array($service,(array)$a['service']) and preg_match('#/([A-Za-z0-9\-_\.]+)\.settings\.php$#',$f,$m)>0)
-			{				$isour=($m[1]==$tpl or $tpl=='' and $deftheme==$m[1]);
+			{
+				$isour=($m[1]==$tpl or $tpl=='' and $deftheme==$m[1]);
 				if($isour and isset($a['places']))
 					foreach($a['places'] as $k=>&$v)
 						$places[$k]=array(
@@ -615,8 +630,8 @@ function AddEdit($id,$errors=array())
 			if((int)$values['showto']==0)
 				$values['showto']='';
 
-			$R2=Eleanor::$Db->Query('SELECT `language`,`title`,`text`,`config` FROM `'.P.'blocks_l` WHERE `id`='.$id);
-			while($temp=$R2->fetch_assoc())
+			$R=Eleanor::$Db->Query('SELECT `language`,`title`,`text`,`config` FROM `'.P.'blocks_l` WHERE `id`='.$id);
+			while($temp=$R->fetch_assoc())
 			{
 				$temp['config']=$temp['config'] ? (array)unserialize($temp['config']) : array();
 				if(!Eleanor::$vars['multilang'] and (!$temp['language'] or $temp['language']==Language::$main))
@@ -726,33 +741,30 @@ function AddEdit($id,$errors=array())
 	if($values['file'] and false!==$p=strrpos($values['file'],'.'))
 	{
 		$conf=substr_replace($values['file'],'.config',$p,0);
-		$conf=Eleanor::FormatPath($values['_config']);
+		$conf=Eleanor::FormatPath($conf);
 		if(is_file($conf))
 		{
 			$values['_config']=include$conf;
 			if(!is_array($values['_config']))
 				$values['_config']=false;
 			elseif($bypost)
-			{
 				foreach($values['_config'] as &$v)
 					if(is_array($v))
 						$v['bypost']=$bypost;
 
-				$cvals=array();
-				foreach($values['config'] as $l=>&$kv)
-				{
-					foreach($kv as $k=>&$v)
-						if(isset($values['_config'][$k]))
-						{
-							if(!empty($values['_config'][$k]['multilang']))
-								$cvals[$k][$l]=array('value'=>$v);
-							elseif(!isset($cvals[$k]) or $l==Language::$main)
-								$cvals[$k]=array('value'=>$v);
-						}
-				}
-				$Eleanor->Controls->arrname=array('config');
-				$values['config']=$Eleanor->Controls->DisplayControls($values['_config'],$cvals);
-			}
+			$cvals=array();
+			foreach($values['config'] as $l=>&$kv)
+				foreach($kv as $k=>&$v)
+					if(isset($values['_config'][$k]))
+					{
+						if(!empty($values['_config'][$k]['multilang']))
+							$cvals[$k][$l]=array('value'=>$v);
+						elseif(!isset($cvals[$k]) or $l==Language::$main)
+							$cvals[$k]=array('value'=>$v);
+					}
+
+			$Eleanor->Controls->arrname=array('config');
+			$values['config']=$Eleanor->Controls->DisplayControls($values['_config'],$cvals);
 		}
 	}
 
@@ -992,7 +1004,8 @@ function SaveId($id)
 	$errors=array();
 	foreach($values['title_l'] as $k=>&$v)
 		if($v=='')
-		{			$er=$k ? strtoupper('_'.$k) : '';
+		{
+			$er=$k ? strtoupper('_'.$k) : '';
 			$errors['NOTITLE'.$er]=$lang['notitle']($k);
 		}
 

@@ -260,7 +260,12 @@ class Url extends BaseClass
 	public function Prefix($e=true)
 	{
 		if($this->furl)
+		{
+			#Не возвращаем ссылки вида .html
+			if($this->sp=='' and $e===true)
+				$e='';
 			return$e===false ? $this->sp : preg_replace('#'.preg_quote($this->delimiter,'#').'$#','',$this->sp).($e===true ? $this->ending : $e);
+		}
 
 		$p=$this->file.$this->dp;
 		return$e===false ? $p : preg_replace('#(&amp;|&|\?)$#','',$p).($e===true ? '' : $e);

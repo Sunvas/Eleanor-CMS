@@ -8,7 +8,9 @@
 	*Pseudonym
 */
 function BlocksList()
-{	$(document).on("mousedown","div.fieldedit a",function(e){		if(e.which==1)
+{
+	$(document).on("mousedown","div.fieldedit a",function(e){
+		if(e.which==1)
 			var a=$(this).data("to",setTimeout(function(){
 				$("<input type=\"text\">").val(a.text()).insertAfter(a).width("100%").focus();
 				a.parent().data("a",a.detach());
@@ -49,29 +51,39 @@ function BlocksList()
 		var to=$(this).data("to");
 		if(to)
 			clearTimeout(to);
-	})}
+	})
+}
 
 function AddEditBlock()
-{	var file=$("input[name=file]"),
+{
+	var file=$("input[name=file]"),
 		tfch=$("input[name=textfile]"),
 		files=[],
 		configs=[],
 		fval=file.val(),
 		Detach=function(k)
-		{			if(k!=-1)
-				configs[k]=$("#block tr.trconf").find("script").remove().end().detach();		},
+		{
+			if(k!=-1)
+				configs[k]=$("#block tr.trconf").find("script").remove().end().detach();
+		},
 		canchange=true,
-		ChangeFile=function(){			if(!canchange)
-				return;			var v=file.val(),
+		ChangeFile=function(){
+			if(!canchange)
+				return;
+			var v=file.val(),
 				ok=$.inArray(fval,files),
 				k=fval==v ? ok : $.inArray(v,files);
 			if(!v || tfch.prop("checked"))
-			{				Detach(ok);
+			{
+				Detach(ok);
 				fval=v;
 			}
 			else if(v!=fval || k==-1)
-			{				if(k==-1)
-				{					setTimeout(function(){						if(!canchange)
+			{
+				if(k==-1)
+				{
+					setTimeout(function(){
+						if(!canchange)
 							return;
 						CORE.Ajax(
 							{
@@ -81,7 +93,8 @@ function AddEditBlock()
 								f:v
 							},
 							function(r)
-							{								Detach(ok);
+							{
+								Detach(ok);
 								configs.push(1);
 								files.push(v);
 								if(r)
@@ -100,7 +113,8 @@ function AddEditBlock()
 					},100);
 				}
 				else
-				{					Detach(ok);
+				{
+					Detach(ok);
 					if(configs[k])
 						configs[k].insertAfter("#block tr.preconf");
 					fval=v;
@@ -110,13 +124,16 @@ function AddEditBlock()
 				configs[k].insertAfter("#block tr.preconf");
 		}
 	tfch.change(ChangeFile);
-	file.change(ChangeFile).change().autocomplete({
+	file.change(ChangeFile).autocomplete({
 		serviceUrl:CORE.ajax_file,
 		minChars:2,
 		delimiter: null,
-		onSelect: function(value,data){			canchange=false;
-			setTimeout(function(){				canchange=true;
-				tfch.change();			},100);
+		onSelect: function(value,data){
+			canchange=false;
+			setTimeout(function(){
+				canchange=true;
+				tfch.change();
+			},100);
 		},
 		params:{
 			direct:"admin",
@@ -125,49 +142,66 @@ function AddEditBlock()
 		}
 	});
 	if(file.val())
-	{		configs.push(1);
+	{
+		configs.push(1);
 		files.push(file.val());
 		if(tfch.prop("checked"))
-			Detach(0);	}
+			Detach(0);
+	}
 
-	$("input[name=notemplate]:checkbox").change(function(){		var tr=$("input[name=template]").closest("tr");		if($(this).prop("checked"))
+	$("input[name=notemplate]:checkbox").change(function(){
+		var tr=$("input[name=template]").closest("tr");
+		if($(this).prop("checked"))
 			tr.hide();
 		else
-			tr.show();	}).change();
+			tr.show();
+	}).change();
 
-	$("[name=ctype]").change(function(){		if($(this).val()=="file")
-		{			$(".trfile").show();			$(".trtext").hide();
+	$("[name=ctype]").change(function(){
+		if($(this).val()=="file")
+		{
+			$(".trfile").show();
+			$(".trtext").hide();
 		}
 		else
-		{			$(".trfile").hide();
-			$(".trtext").show();		}	}).change();
+		{
+			$(".trfile").hide();
+			$(".trtext").show();
+		}
+	}).change();
 
 	$("#vars").on("click",".sb-plus",function(){
 		var tr=$(this).closest("tr");
 		tr.clone(false).find("input[type=text],textarea").val("").end().insertAfter(tr);
-	}).on("click",".sb-minus",function(){		var tr=$(this).closest("tr");
+	}).on("click",".sb-minus",function(){
+		var tr=$(this).closest("tr");
 		if($("#vars tr").size()>2)
 			tr.remove();
 		else
 			tr.find("input[type=text],textarea").val("");
-	})}
+	})
+}
 
 function GetScrollWidth()
-{	var d=$("<div style=\"position:absolute;height:50px;overflow-y:hidden;width:50px;visibility:hidden\">")
+{
+	var d=$("<div style=\"position:absolute;height:50px;overflow-y:hidden;width:50px;visibility:hidden\">")
 		.html("<div style=\"height:100px\"></div>")
 		.appendTo("body"),
 		w1=d.children(":first").prop("offsetWidth"),
 		w2=d.css("overflowY","scroll").children(":first").prop("offsetWidth");
 	d.remove();
-	return w1-w2;}
+	return w1-w2;
+}
 
 //http://weblog.bocoup.com/using-datatransfer-with-jquery-events/
 $.event.props.push('dataTransfer');
 
 //http://blog.kron0s.com/drag-n-drop-in-html5
 $.fn.EleanorVisualBlocks=function(opts)
-{	opts=$.extend(
-		{			//unique selector
+{
+	opts=$.extend(
+		{
+			//unique selector
 			block:".block",//Селектор блоков в местах
 			container:".bcontainer",//Селектор контейнера для блоков в месте
 			moveblock:".block",//Селектор контрола для перемещения блока
@@ -231,13 +265,19 @@ $.fn.EleanorVisualBlocks=function(opts)
 					PlaceParams(actplace,"z-index",zindex);
 				}
 			},
-			Recount=function(){				var blocks=[];				site.find(opts.block).find(opts.blockinput).each(function(){					var v=$(this).val();
-					blocks[v]=typeof blocks[v]=="undefined" ? 1 : blocks[v]+1;				});
+			Recount=function(){
+				var blocks=[];
+				site.find(opts.block).find(opts.blockinput).each(function(){
+					var v=$(this).val();
+					blocks[v]=typeof blocks[v]=="undefined" ? 1 : blocks[v]+1;
+				});
 				opts.Recount(blocks);
 			},
-			Delete=function(e){				$(this).remove();
+			Delete=function(e){
+				$(this).remove();
 				e.stopPropagation();
-				Recount();			};
+				Recount();
+			};
 
 		site
 		.on("delete",opts.block,Delete)//Событие удаление блока
@@ -357,13 +397,15 @@ $.fn.EleanorVisualBlocks=function(opts)
 			var i,a=[];
 			for(i=zindex;i>0;i--)
 				a.push(i);
-			site.children(opts.place).each(function(){				var pl=$(this),
+			site.children(opts.place).each(function(){
+				var pl=$(this),
 					inp=pl.find(opts.placeinput),
 					val=inp.val().split(","),
 					z=false;
 
 				if(val.length==5)
-				{					pl.css({left:val[0]+"px",top:val[1]+"px"}).width(val[2]+"px").height(val[3]+"px");
+				{
+					pl.css({left:val[0]+"px",top:val[1]+"px"}).width(val[2]+"px").height(val[3]+"px");
 					z=$.inArray(a,val[4]);
 					if(z!=-1)
 					{
@@ -386,9 +428,11 @@ $.fn.EleanorVisualBlocks=function(opts)
 		}
 
 		var dragged=false,
-			DragOver=function(e){				var can=false;
+			DragOver=function(e){
+				var can=false;
 				if(dragged)
-				{					var ne=dragged.next(opts.block);
+				{
+					var ne=dragged.next(opts.block);
 					if(this!=dragged.get(0) && (ne.size()>0 && this!=ne.get(0) || ne.size()==0 && this!=dragged.closest(opts.place).get(0)))
 					{
 						e.dataTransfer.dropEffect=e.ctrlKey ? "copy" : "move";
@@ -402,7 +446,8 @@ $.fn.EleanorVisualBlocks=function(opts)
 				}
 
 				if(can)
-				{					$(this).addClass("dragenter");
+				{
+					$(this).addClass("dragenter");
 					Activate.call($(this).is(opts.place) ? this : $(this).closest(opts.place).get(0));
 				}
 				else
@@ -413,7 +458,9 @@ $.fn.EleanorVisualBlocks=function(opts)
 			DragLeave=function(e){
 				$(this).removeClass("dragenter");
 			},
-			DragDrop=function(e){				var b;				if(dragged)
+			DragDrop=function(e){
+				var b;
+				if(dragged)
 				{
 					b=e.ctrlKey ? dragged.clone() : dragged;
 					b.fadeTo("fast",1);
@@ -453,7 +500,8 @@ $.fn.EleanorVisualBlocks=function(opts)
 			if(opts.dragimg)
 				e.dataTransfer.setDragImage($("<img>").prop("src",opts.dragimg).get(0),opts.dragimgx,opts.dragimgy);
 			Activate.call(dragged.closest(opts.place).get(0));
-		}).on("dragend",opts.moveblock,function(e){			var block=$(this).is(opts.block) ? $(this) : $(this).closest(opts.block);
+		}).on("dragend",opts.moveblock,function(e){
+			var block=$(this).is(opts.block) ? $(this) : $(this).closest(opts.block);
 			block.fadeTo("fast",1);
 			dragged=false;
 		})
@@ -473,7 +521,8 @@ $.fn.EleanorVisualBlocks=function(opts)
 }
 
 function BlocksMain(Change)
-{	$(".blocks .available li").prop("draggable",true);
+{
+	$(".blocks .available li").prop("draggable",true);
 
 	var av=$(".blocks .available"),
 		all=$(".blocks .all"),
@@ -481,9 +530,11 @@ function BlocksMain(Change)
 		site=$(".blocks .site-c"),
 		hora=$(".blocks .hor"),
 		deffalliw=all.innerWidth(),
-		GSW=function(){			return deffalliw//длина всего места
+		GSW=function(){
+			return deffalliw//длина всего места
 				-(av.is(":visible") ? av.outerWidth(true) : 0)-ver.outerWidth(true)//ширина доступных блоков и вертикального скрола
-				-site.outerWidth(true)+site.width();//border		},
+				-site.outerWidth(true)+site.width();//border
+		},
 		pp=$("#verhor"),
 		pps=pp.val().split(","),
 		PlaceParams=function(k,v){
@@ -500,9 +551,11 @@ function BlocksMain(Change)
 		cancl=true;
 
 	if(pps[0])
-	{		pps[0]=parseInt(pps[0]);
+	{
+		pps[0]=parseInt(pps[0]);
 		if(pps[0]>0 && pps[0]<deffalliw-100)
-			av.width(pps[0]);	}
+			av.width(pps[0]);
+	}
 	if(pps[1])
 	{
 		pps[1]=parseInt(pps[1]);
@@ -521,41 +574,61 @@ function BlocksMain(Change)
 		site.scrollTop(pps[6]);
 	site.width(GSW());
 
-	$(".blocks .ver").mousedown(function(e){		if(!av.is(":visible"))
+	$(".blocks .ver").mousedown(function(e){
+		if(!av.is(":visible"))
 			return;
-		cancl=true;		var avw=av.width(),
+		cancl=true;
+		var avw=av.width(),
 			sw=GSW(),
-			MM=function(em){				cancl=false;				var diff=em.pageX-e.pageX,
+			MM=function(em){
+				cancl=false;
+				var diff=em.pageX-e.pageX,
 					navw=avw+diff;
 				if(navw<0)
-				{					diff=-avw;					navw=0;				}
-				else if(navw>deffalliw-100)
-				{					navw=deffalliw-100;					diff=navw-avw;
+				{
+					diff=-avw;
+					navw=0;
 				}
-				av.width(navw);
+				else if(navw>deffalliw-100)
+				{
+					navw=deffalliw-100;
+					diff=navw-avw;
+				}
+
+				av.width(navw);
 				site.width(sw-diff);
 				PlaceParams("width",navw);
 			};
 		e.stopPropagation();
 		e.preventDefault();
 
-		$(document).mousemove(MM).mouseup(function(eu){			$(this).off("mousemove",MM).off(eu);
-		})	}).click(function(){		if(cancl)
-		{			av.toggle();
+		$(document).mousemove(MM).mouseup(function(eu){
+			$(this).off("mousemove",MM).off(eu);
+		})
+	}).click(function(){
+		if(cancl)
+		{
+			av.toggle();
 			site.width(GSW());
 			PlaceParams("hidden",av.is(":visible") ? 0 : 1);
 		}
 	});
 
-	$(".blocks .hor").mousedown(function(e){		var allh=all.height(),
+	$(".blocks .hor").mousedown(function(e){
+		var allh=all.height(),
 			MM=function(em){
 				var nallh=allh+em.pageY-e.pageY;
 				if(nallh<100)
 					nallh=100;
 
 				if(deffalliw!=all.innerWidth())
-				{					var diff=deffalliw-all.innerWidth();
-					deffalliw-=diff;					site.width(function(i,w){						return w-diff;					});				}
+				{
+					var diff=deffalliw-all.innerWidth();
+					deffalliw-=diff;
+					site.width(function(i,w){
+						return w-diff;
+					});
+				}
 				all.height(nallh);
 				PlaceParams("height",nallh);
 			};
@@ -569,13 +642,16 @@ function BlocksMain(Change)
 
 	var toav=false,
 		tosite=false;
-	av.scroll(function(){		if(!toav)
-			toav=setTimeout(function(){				PlaceParams("scrollaw",av.scrollLeft());
+	av.scroll(function(){
+		if(!toav)
+			toav=setTimeout(function(){
+				PlaceParams("scrollaw",av.scrollLeft());
 				PlaceParams("scrollah",av.scrollTop());
 				toav=false;
 			},100);
 	});
-	site.scroll(function(){		if(!tosite)
+	site.scroll(function(){
+		if(!tosite)
 			tosite=setTimeout(function(){
 				PlaceParams("scrollsw",site.scrollLeft());
 				PlaceParams("scrollsh",site.scrollTop());

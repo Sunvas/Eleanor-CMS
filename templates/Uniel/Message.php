@@ -18,7 +18,7 @@ if($isa and count($v_0)>1 and $type=='error')
 $title=isset(Eleanor::$Language['tpl'][$type]) ? Eleanor::$Language['tpl'][$type] : 'warning';
 echo$title;?>" />
 			<h4><?php echo$title?></h4>
-			<?php echo is_array($v_0) ? join('<br />',$v_0) : $v_0;?>
+			<?php echo$isa ? join('<br />',$v_0) : $v_0;?>
 			<div class="clr"></div>
 		</div>
 	</div>

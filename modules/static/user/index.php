@@ -122,7 +122,7 @@ else
 			OwnBB::$opts['alt']=$data['title'];
 			$data['text']=OwnBB::Parse($data['text']);
 			if(!$pr=$Eleanor->Url->Prefix())
-				$pr=$Eleanor->Url->Construct(array('module'=>$Eleanor->module['name']));
+				$pr=$Eleanor->Url->Construct(array('module'=>$Eleanor->module['name']),true,false);
 			$data['navi'][]=array($l['substance'],$pr);
 			if($data['parents'])
 			{

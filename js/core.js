@@ -16,7 +16,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 	c_time:"",
 	site_path:"",
 	ajax_file:"",
-	site_host:window.location.protocol+"//"+window.location.host,
+	site_host:location.protocol+"//"+location.host,
 
 	//Языки
 	language:"",
@@ -227,7 +227,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 		if(typeof result=="function")
 			result(s);
 		else
-			window.location.href=result.replace('{page}',s);
+			location.href=result.replace('{page}',s);
 	},
 
 	//Добавляем стиль
@@ -296,7 +296,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 	//Для манипуляции с историей
 	history:false,
 	//Opera bug :-(
-	OB:function(){ if(CORE.browser.opera) with(window.location){ $("head base").prop("href",protocol+"//"+hostname+(port ? ":"+port : "")+CORE.site_path) } },
+	OB:function(){ if(CORE.browser.opera) with(location){ $("head base").prop("href",protocol+"//"+hostname+(port ? ":"+port : "")+CORE.site_path) } },
 	HistoryInit:function(F,data)
 	{
 		CORE.history=[];
@@ -309,7 +309,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 		}
 		try
 		{
-			history.replaceState({f:F ? CORE.history.length-1 : false,data:data||false},"",window.location.href);
+			history.replaceState({f:F ? CORE.history.length-1 : false,data:data||false},"",location.href);
 			CORE.OB();
 		}catch(e){}
 
@@ -368,7 +368,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 					function(r)
 					{
 						if(r)
-							window.location.reload();
+							location.reload();
 					}
 				);
 		});
@@ -505,7 +505,7 @@ $(function(){
 
 	//Подсветим активные пункты меню
 	var now="";
-	with(window.location)
+	with(location)
 	{
 		now+=protocol+"//"+hostname+(port ? ":"+port : "")+CORE.site_path;
 		now=href.substr(now.length);

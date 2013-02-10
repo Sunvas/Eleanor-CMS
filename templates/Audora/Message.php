@@ -18,7 +18,7 @@ $title=isset(Eleanor::$Language['tpl'][$type]) ? Eleanor::$Language['tpl'][$type
 echo$title?>" />
 		<div>
 			<h4><?php echo$title;?></h4>
-			<?php echo is_array($v_0) ? join('<br />',$v_0) : $v_0;?>
+			<?php echo$isa ? join('<br />',$v_0) : $v_0;?>
 		</div>
 		<div class="clr"></div>
 	</div>

@@ -177,7 +177,7 @@ class Controls extends BaseClass
 	 * Массовое получение контролов
 	 *
 	 * @param array $co Массив входящих контролов, формат имя=>данные
-	 * @param array $lco Массив языковых параметров контрола, формат имя=>язык=>данные
+	 * @param array $lco Массив языковых параметров контрола, формат имя=>параметр=>(язык=>)данные
 	 */
 	public function DisplayControls(array$co,array$lco=array())
 	{

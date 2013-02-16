@@ -13,7 +13,8 @@ global$Eleanor;
 $event=isset($_POST['event']) ? (string)$_POST['event'] : '';
 Eleanor::$Template->queue[]='Blocks';
 switch($event)
-{	case'settitle':
+{
+	case'settitle':
 		$id=isset($_POST['id']) ? (int)$_POST['id'] : 0;
 		$title=isset($_POST['title']) ? (string)Eleanor::$POST['title'] : '';
 		Eleanor::$Db->Update(P.'blocks_l',array('title'=>$title),'`id`='.$id.' AND `language` IN (\'\',\''.Language::$main.'\')');
@@ -37,16 +38,10 @@ switch($event)
 		else
 			$conf=false;
 		if(!$conf)
-			return Result(false);
-		$Lst=Eleanor::LoadListTemplate('table-form');
+			return Result(false);
+
 		$Eleanor->Controls->arrname=array('config');
-		$a=$Eleanor->Controls->DisplayControls($conf);
-		$c='';
-		foreach($conf as $k=>&$v)
-			if(is_array($v))
-				$c.=$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($a[$k],null),'tip'=>isset($v['descr']) ? $v['descr'] : '','tr'=>array('class'=>'trfile trconf')));
-			else
-				$c.=$Lst->head(array($v,'tr'=>array('class'=>'trfile trconf infolabel first')));
-		Result($c);
+		$values=$Eleanor->Controls->DisplayControls($conf);
+		Result( Eleanor::$Template->AjaxBlocksConf($conf,$values) );
 	break;
 }

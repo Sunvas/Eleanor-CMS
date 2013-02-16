@@ -511,7 +511,7 @@ $(function(){
 		now=href.substr(now.length);
 	}
 	$("nav a").filter(function(){
-		return $(this).attr("href")==now;
+		return $(this).attr("href")==now && now!="#";
 	}).addClass("active");
 
 	//Определим какие скрипты подключены

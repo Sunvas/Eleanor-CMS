@@ -8,22 +8,26 @@
 	*Pseudonym
 */
 CORE.DRAFT=function(opts)
-{	opts=$.extend({			url:"",//URL для сохранения
+{
+	opts=$.extend({
+			url:"",//URL для сохранения
 			interval:10,//Интеревал сохранения в секундах
 			form:false,//Форма, которую нужно сохранять
 			enabled:true,//Флаг включенности
 			OnSave:false,//Событие после сохранения
-			OnChange:false,//Событие после изменения какого-нибудь контрола		},
+			OnChange:false,//Событие после изменения какого-нибудь контрола
+		},
 		opts
 	);
 	opts.url=$("<textarea>").html(opts.url).val();
 
 	var th=this,
 		to=false,
-		id=false,
+		fn=false,
 		inload=false,
 		ClearTO=function()
-		{			if(to)
+		{
+			if(to)
 				clearInterval(to);
 			to=false;
 		},
@@ -48,21 +52,25 @@ CORE.DRAFT=function(opts)
 	}
 
 	this.Save=function()//Функция насильного сохранения черновика
-	{		ClearTO();
+	{
+		ClearTO();
 		if(inload)
 			return;
-
-		var f=$(opts.form);		if(!id)
-		{			id=new Date().getTime();
-			frame=$("<iframe name=\"f"+id+"\">").css({"position":"absolute","left":"-1000px","top":"-1000px"}).width("1px").height("1px").appendTo("body").load(function(){				inload=false;
-				th.OnSave.fire($(this.contentWindow.document.body).text());
-				frame.remove();
-			});
+		var f=$(opts.form);
+		if(!fn)
+		{
+			fn="f"+(new Date().getTime());
+			frame=$("<iframe>").css({position:"absolute",left:"-100px","top":"-100px"})
+				.attr("name",fn).width("1px").height("1px").appendTo("html body")
+				.load(function(){
+					inload=false;
+					th.OnSave.fire($(this.contentWindow.document.body).text());
+				});
 			oa=f.attr("action")||"";
 			ot=f.attr("target")||"";
 			f.submit(ClearTO);
 		}
-		f.prop({action:opts.url,target:"f"+id}).submit().prop({action:oa,target:ot});
+		f.prop({action:opts.url,target:fn}).submit().prop({action:oa,target:ot});
 	}
 
 	opts.form.on("change",":input",th.Change);

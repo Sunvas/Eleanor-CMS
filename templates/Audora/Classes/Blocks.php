@@ -534,6 +534,17 @@ $(function(){
 		return Eleanor::$Template->Cover($c,$errors,'error').'<script type="text/javascript">/*<![CDATA[*/AddEditBlock()//]]></script>';
 	}
 
+	public static function AjaxBlocksConf($co,$values)
+	{
+		$Lst=Eleanor::LoadListTemplate('table-form');
+		foreach($conf as $k=>&$v)
+			if(is_array($v))
+				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($a[$k],null),'tip'=>isset($v['descr']) ? $v['descr'] : '','tr'=>array('class'=>'trfile trconf')));
+			elseif(is_string($v))
+				$Lst->head(array($v,'tr'=>array('class'=>'trfile trconf infolabel first')));
+		return$Lst;
+	}
+
 	/*
 		Страница добавления/редактирования статической страницы
 		$id Идентификатор редактируемого идентификатора, если $id==0 значит идентификатор добавляется

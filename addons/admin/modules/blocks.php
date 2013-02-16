@@ -360,9 +360,12 @@ else
 		$values['extra']=array($tpl=>$values['extra']);
 		if(is_int($gid))
 		{
-			$R=Eleanor::$Db->Query('SELECT `id`,`blocks`,`places`,`extra`,`service` FROM `'.P.'blocks_groups` INNER JOIN `'.P.'blocks_ids` USING(`id`) WHERE `id`='.$gid.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `id`,`service` FROM `'.P.'blocks_ids` WHERE `id`='.$gid.' LIMIT 1');
 			if(!$old=$R->fetch_assoc())
 				return ShowGroup($gid,$tpl,array('UNCREATABLE'));
+
+			$R=Eleanor::$Db->Query('SELECT `blocks`,`places`,`extra` FROM `'.P.'blocks_groups` WHERE `id`='.$gid.' LIMIT 1');
+			$old+=$R->num_rows>0 ? $R->fetch_assoc() : array('blocks'=>false,'places'=>false,'extra'=>false);
 
 			$tpls=GetTemplates($old['service']);
 			$values['id']=$gid;
@@ -482,8 +485,8 @@ function ShowGroup($gid,$tpl='',$errors=array(),$saved=false)
 			if($group)
 				break;
 
-			$similar=isset($_GET['similar']) ? (string)$_GET['similar'] : 'user';
-			if(!isset(Eleanor::$services[$similar]))
+			$similar=isset($_GET['similar']) ? (string)$_GET['similar'] : false;
+			if($similar and !isset(Eleanor::$services[$similar]))
 				$similar=(int)$similar;
 			if($similar)
 				if(is_int($similar))
@@ -512,7 +515,7 @@ function ShowGroup($gid,$tpl='',$errors=array(),$saved=false)
 			else
 				return FatalError('UNCREATABLE');
 		}while(false);
-		$group['places']=$group['places'] ? Eleanor::FilterLangValues(is_array($group['places']) ? $group['places'] : (array)unserialize($group['places']),$tpl,array()) : array();
+		$group['places']=empty($group['places']) ? array() : Eleanor::FilterLangValues(is_array($group['places']) ? $group['places'] : (array)unserialize($group['places']),$tpl,array());
 		$group['extra']=empty($group['extra']) ? '' : Eleanor::FilterLangValues(is_array($group['extra']) ? $group['extra'] : (array)unserialize($group['extra']),$tpl,'');
 	}
 

@@ -270,7 +270,7 @@ $(function(){
 				$Lst->item(
 					'<a id="it'.$k.'" href="'.$v['_aedit'].'">'.$v['title'].'</a>',
 					$cats ? rtrim($cats,', ') : array('--','center'),
-					array($v['date'],'center'),
+					array(Eleanor::$Language->Date($v['date'],'fd'),'center'),
 					$v['author_id'] ? '<a href="'.Eleanor::$Login->UserLink(htmlspecialchars_decode($v['author'],ELENT),$v['author_id']).'">'.$v['author'].'</a>' : $v['author'],
 					$Lst('func',
 						$v['_aswap'] ? array($v['_aswap'],$v['status']<=0 ? $ltpl['activate'] : $ltpl['deactivate'],$v['status']<0 ? $images.'waiting.png' : $images.($v['status']==0 ? 'inactive.png' : 'active.png')) : '<img src="'.$images.'inactive.png'.'" alt="" title="'.static::$lang['endeddate'].'" />',

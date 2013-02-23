@@ -113,7 +113,7 @@ class TplUsers
 					'<a href="'.$v['_aedit'].'">'.htmlspecialchars($v['name'],ELENT,CHARSET).'</a>'.($v['name']==$v['full_name'] ? '' : '<br /><i>'.$v['full_name'].'</i>'),
 					array($v['email'],'center'),
 					rtrim($grs,' ,'),
-					array(substr($v['last_visit'],0,-3),'center'),
+					array(Eleanor::$Language->Date($v['last_visit'],'fdt'),'center'),
 					array($v['ip'],'center','href'=>'http://eleanor-cms.ru/whois/'.$v['ip'],'hrefextra'=>array('target'=>'_blank')),
 					$Lst('func',
 						array($v['_aedit'],$ltpl['edit'],$images.'edit.png'),
@@ -342,8 +342,8 @@ $(function(){
 
 			$Lst->begin()
 				->item(static::$lang['fla'],Eleanor::Text('',$fla,array('readonly'=>'readonly','style'=>'width:95%')).'<br /><label>'.Eleanor::Check('_cleanfla',$values['_cleanfla']).' '.static::$lang['clean'].'</label>')
-				->item(static::$lang['register'],$values['register'])
-				->item(static::$lang['last_visit'],$values['last_visit']);
+				->item(static::$lang['register'],Eleanor::$Language->Date($values['register'],'fdt'))
+				->item(static::$lang['last_visit'],Eleanor::$Language->Date($values['last_visit'],'fdt'));
 			if($axauth)
 				$Lst->item(static::$lang['externals'],$axauth);
 

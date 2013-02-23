@@ -67,5 +67,5 @@ if(is_array($aid))
 else
 	$aidn='author_id';
 
-return'<div class="author">'.Eleanor::Input($an,$a,array('tabindex'=>$ti ? $ti : false)).Eleanor::Input($aidn,$aid,array('title'=>'ID','style'=>'width: 25px','tabindex'=>$ti ? ++$ti : false))
+return'<div class="author">'.Eleanor::Input($an==='' ? false : $an,$a,array('style'=>'width:100px','tabindex'=>$ti ? $ti : false)).Eleanor::Input($aidn,$aid,array('title'=>'ID','style'=>'width:25px','tabindex'=>$ti ? ++$ti : false))
 	.'<a href="#" title="'.Eleanor::$Language['tpl']['select_user'].'"> <img src="'.Eleanor::$Template->default['theme'].'images/select_users.png" alt="" /></a></div>';

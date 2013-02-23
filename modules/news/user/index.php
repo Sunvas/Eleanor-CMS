@@ -111,9 +111,9 @@ if(isset($_GET['do']))
 			{
 				case'edit':
 					if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
-						Save((int)$id,$gn);
+						Save($id,$gn);
 					else
-						AddEdit((int)$id,array(),$gn);
+						AddEdit($id,array(),$gn);
 				break;
 				case'delete':
 					$uid=(int)Eleanor::$Login->GetUserValue('id');
@@ -385,7 +385,7 @@ elseif(isset($_GET['tag']))#Для динамических страниц
 	ShowTag((string)$_GET['tag']);
 elseif($id or $puri)
 {
-	$where=$id ? '`id`='.(int)$id : '`uri`=\''.Eleanor::$Db->Escape($puri,false).'\'';
+	$where=$id ? '`id`='.$id : '`uri`=\''.Eleanor::$Db->Escape($puri,false).'\'';
 	$uid=(int)Eleanor::$Login->GetUserValue('id');
 	$gn=$uid==0 ? GetGN() : array();
 
@@ -437,7 +437,6 @@ elseif($id or $puri)
 	{
 		Eleanor::$last_mod=$a['last_mod'];
 		$etag=Eleanor::$etag;
-		$uid=Eleanor::$Login->GetUserValue('id');
 		Eleanor::$etag=md5($uid.'-'.$a['id'].'-'.$mc['n'].$Eleanor->module['etag']);
 		if(Eleanor::$modified and Eleanor::$last_mod and Eleanor::$last_mod<=Eleanor::$modified and $etag and $etag==Eleanor::$etag)
 			return Start();

@@ -453,7 +453,7 @@ final class Eleanor extends BaseClass
 		if(class_exists('EE'))#Заплатка на случай отключенного автолоадера
 		{
 			$E=new EE((isset($ae[$num]) ? $ae[$num].': ' : '').$str,EE::DEV,array('file'=>$f,'line'=>$l));
-			if(DEBUG and !E_PARSE&$num)
+			if(DEBUG and !(E_PARSE&$num))
 				throw$E;
 			$E->Log();
 		}
@@ -873,7 +873,7 @@ final class Eleanor extends BaseClass
 	 */
 	public static function ExecBBLogic($s,array$r)
 	{
-		foreach($r as $k=>&$v)
+		foreach($r as $k=>$v)
 		{
 			$fp=0;
 			while(false!==$fp=strpos($s,'['.$k,$fp))
@@ -919,6 +919,20 @@ final class Eleanor extends BaseClass
 						$cont=call_user_func(array(Language::$main,'Plural'),$v,explode('|',$cont));
 					break;
 					default:
+						if(isset($ps[1]))
+							switch($ps[0])
+							{
+								case'=':
+									$v=$v==substr($ps,1);
+								break;
+								case'>':
+									$v=$ps[1]=='=' ? $v>=(int)substr($ps,2) : $v>(int)substr($ps,1);
+								break;
+								case'<':
+									$v=$ps[1]=='=' ? $v<=(int)substr($ps,2) : $v<(int)substr($ps,1);
+								break;
+							}
+
 						$cont=explode('[-'.$k.']',$cont,2)+array(1=>'');
 						$cont=$v ? $cont[0] : $cont[1];
 				}
@@ -1251,12 +1265,10 @@ final class Eleanor extends BaseClass
 
 	/**
 	 * Получение разрешений пользователя с учетом воможного членства в нескольких группах и перезагрузки настроек индивидуальными параметрами
-	 *
 	 * @param string $p Параметр группы, по которому необходимо получить разрешения. Выбор лучшего или худшего разрешения вы определяете самостоятельно.
 	 * @param string|Login_class $l Логин
-	 * @param string $t Название таблицы с разрешениями групп
+	 * @param bool|string $t Название таблицы с разрешениями групп
 	 * @param string $go Название пользовательского параметра с массивом перегрузки параметров групп
-	 * @return array
 	 */
 	public static function GetPermission($p,$L=false,$t=false,$go='groups_overload')
 	{
@@ -1422,16 +1434,16 @@ final class Eleanor extends BaseClass
 				$m=explode('.',str_replace('*',0,$m[0]),4);
 				$ip=explode('.',$ip,4);
 				foreach($m as &$v)
-					$v=str_pad($v,3,0,STR_PAD_LEFT);
-				$m=ltrim(join($m),0);
+					$v=str_pad($v,3,'0',STR_PAD_LEFT);
+				$m=ltrim(join($m),'0');
 				foreach($mto as &$v)
-					$v=str_pad($v,3,0,STR_PAD_LEFT);
-				$mto=ltrim(join($mto),0);
+					$v=str_pad($v,3,'0',STR_PAD_LEFT);
+				$mto=ltrim(join($mto),'0');
 				foreach($ip as &$v)
-					$v=str_pad($v,3,0,STR_PAD_LEFT);
-				$ip=ltrim(join($ip),0);
+					$v=str_pad($v,3,'0',STR_PAD_LEFT);
+				$ip=ltrim(join($ip),'0');
 			}
-			return(bccomp($ip,$m)>=0 and bccomp($mto,$ip)>=0);
+			return bccomp($ip,$m)>=0 && bccomp($mto,$ip)>=0;
 		}
 	}
 }

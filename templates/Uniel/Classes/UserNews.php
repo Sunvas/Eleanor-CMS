@@ -301,10 +301,16 @@ class TplUserNews
 	*/
 	public static function ShowAllTags()
 	{
-		$tags=clone Eleanor::$Template;
-		foreach($GLOBALS['Eleanor']->module['tags'] as &$v)
-			$tags->Tag($v);
-		return static::TopMenu().Eleanor::$Template->OpenTable().'<span class="alltags">'.$tags.'</span>'.Eleanor::$Template->CloseTable();
+		if(isset($GLOBALS['Eleanor']->module['tags']))
+		{
+			$tags=clone Eleanor::$Template;
+			foreach($GLOBALS['Eleanor']->module['tags'] as &$v)
+				$tags->Tag($v);
+		}
+		else
+			$tags=false;
+		return static::TopMenu()
+			.($tags ? Eleanor::$Template->OpenTable().'<span class="alltags">'.$tags.'</span>'.Eleanor::$Template->CloseTable() : '');
 	}
 
 	/*

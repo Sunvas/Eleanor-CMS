@@ -28,6 +28,4 @@ echo'<label>',
 	($name ? 'var '.$name.';' : ''),
 	'$(function(){',
 	($name ? $name.'=' : ''),
-	'new MultilangChecks({mainlang:"',
-	Language::$main,
-	'"});});//]]></script>';
+	'new MultilangChecks(); });//]]></script>';

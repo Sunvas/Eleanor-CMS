@@ -9,14 +9,17 @@
 */
 
 function MultilangChecks(opts)
-{	this.opts=$.extend(
+{
+	this.opts=$.extend(
 		{
-			mainlang:"russian",
+			mainlang:CORE.language,
 			general:"input[name=\"_onelang\"]:first",
 			langs:"input[name=\"_langs[]\"]",
 			where:document,
-			Switch:function(show,hide,where){				for(var i in show)
-					show[i]="."+show[i];				for(var i in hide)
+			Switch:function(show,hide,where){
+				for(var i in show)
+					show[i]="."+show[i];
+				for(var i in hide)
 					hide[i]="."+hide[i];
 				$(show.join(","),where).show().filter(show[0]).each(function(){
 					try
@@ -32,36 +35,40 @@ function MultilangChecks(opts)
 
 	var th=this;
 	this.Click=function()
-	{		var arr=[],
+	{
+		var act=[],
 			deac=[],
 			mainch=$(th.opts.general).prop("checked");
 
 		$(th.opts.langs).each(function(){
 			if(!mainch && this.checked)
-				arr.push(this.value);
+				act.push(this.value);
 			else
 				deac.push(this.value);
 		});
 
-		if(arr.length==0 || arr.length==1 && $.inArray(th.opts.mainlang,arr)!=-1)
+		if(act.length==0 || act.length==1 && $.inArray(th.opts.mainlang,act)!=-1)
 			$(th.opts.langs).filter("[value="+th.opts.mainlang+"]").prop("disabled",true).prop("checked",true);
 		else
 			$(th.opts.langs).filter("[value="+th.opts.mainlang+"]").prop("disabled",false);
 
-		if(arr.length==0)
+		if(act.length==0)
 		{
 			if(!mainch)
 				deac.splice( $.inArray(th.opts.mainlang,deac) ,1);
 			th.opts.Switch([th.opts.mainlang],deac,th.opts.where);
 		}
 		else
-			th.opts.Switch(arr,deac,th.opts.where);
+			th.opts.Switch(act,deac,th.opts.where);
 	};
 	$(th.opts.langs).click(th.Click);
-	$(th.opts.general).click(function(){		th.Click();
+	$(th.opts.general).click(function(){
+		th.Click();
 		if(this.checked)
 			$(th.opts.langs).parents("div:first").fadeOut("fast");
 		else
-			$(th.opts.langs).parents("div:first").fadeIn("fast");	});
-	th.Click();
+			$(th.opts.langs).parents("div:first").fadeIn("fast");
+	});
+	
+	setTimeout(th.Click,50);
 }

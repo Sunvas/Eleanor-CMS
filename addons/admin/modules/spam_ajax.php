@@ -12,7 +12,8 @@ global$Eleanor;
 $event=isset($_POST['event']) ? $_POST['event'] : '';
 Eleanor::$Template->queue[]='Spam';
 switch($event)
-{	case'search':
+{
+	case'search':
 		Eleanor::$Language->Load('addons/admin/langs/spam-*.php','spam');
 		$page=isset($_POST['page']) ? (int)$_POST['page'] : 1;
 		$pp=isset($_POST['pp']) ? (int)$_POST['pp'] : 1;
@@ -54,12 +55,15 @@ switch($event)
 			$where[]='`gender`='.(int)$_POST['figender'];
 		if(!empty($_POST['figroup']) and is_array($_POST['figroup']))
 			if(isset($_POST['figroupt']) and $_POST['figroupt']=='and')
-			{				$g='%,';
+			{
+				$g='%,';
 				foreach($_POST['figroup'] as &$v)
-					$g.=(int)$v.',%';				$where[]='`groups` LIKE \''.str_replace('*','%',$g).'\'';
+					$g.=(int)$v.',%';
+				$where[]='`groups` LIKE \''.str_replace('*','%',$g).'\'';
 			}
 			else
-			{				foreach($_POST['figroup'] as &$v);
+			{
+				foreach($_POST['figroup'] as &$v);
 					$v=(int)$v;
 				$where[]='`groups` REGEXP \',('.join('|',$_POST['figroup']).'),\'';
 			}
@@ -80,15 +84,18 @@ switch($event)
 			$offset=max(0,$cnt-$pp);
 
 		if($cnt>0)
-		{			$myuid=Eleanor::$Login->GetUserValue('id');
+		{
+			$myuid=Eleanor::$Login->GetUserValue('id');
 			$Eleanor->Url->SetPrefix(array('section'=>'management','module'=>'users'));
 			$R2=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`email`,`groups`,`ip`,`u`.`last_visit` FROM `'.$table.'` `u` INNER JOIN `'.P.'users_extra` `e` USING(`id`)'.$where.' LIMIT '.$offset.', '.$pp);
 			while($a=$R2->fetch_assoc())
-			{				$a['groups']=$a['groups'] ? explode(',',trim($a['groups'],',')) : array();
+			{
+				$a['groups']=$a['groups'] ? explode(',',trim($a['groups'],',')) : array();
 				$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['id']));
 				$a['_adel']=$myuid==$a['id'] ? false : $Eleanor->Url->Construct(array('delete'=>$a['id']));
 
-				if($a['groups'])					$groups=array_merge($groups,$a['groups']);
+				if($a['groups'])
+					$groups=array_merge($groups,$a['groups']);
 				$items[$a['id']]=array_slice($a,1);
 			}
 		}
@@ -99,7 +106,8 @@ switch($event)
 			$tosort=$groups=array();
 			$Eleanor->Url->SetPrefix(array('section'=>'management','module'=>'groups'));
 			while($a=$R3->fetch_assoc())
-			{				$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
+			{
+				$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
 				$tosort[$a['id']]=$a['title'];
 
 				$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['id']));
@@ -117,8 +125,8 @@ switch($event)
 		if(!$ids)
 			return Error();
 		$res=array();
-		$R4=Eleanor::$Db->Query('SELECT `id`,`sent`,`total`,`status` FROM `'.P.'spam` WHERE `id`'.Eleanor::$Db->In($ids));
-		while($a=$R4->fetch_assoc())
+		$R=Eleanor::$Db->Query('SELECT `id`,`sent`,`total`,`status` FROM `'.P.'spam` WHERE `id`'.Eleanor::$Db->In($ids));
+		while($a=$R->fetch_assoc())
 			$res[$a['id']]=array(
 				'done'=>$a['status']!='runned',
 				'percent'=>$a['total']>0 ? round($a['sent']/$a['total']*100) : 0,

@@ -8,7 +8,8 @@
 	*Pseudonym
 */
 $.fn.MainMenu=function(opts)
-{	opts=$.extend(
+{
+	opts=$.extend(
 		{
 			contents:[],
 			selclass:"selected",
@@ -24,28 +25,35 @@ $.fn.MainMenu=function(opts)
 		tabs=[],
 		contents=[],
 		GetRealN=function(to)
-		{			var realn;
+		{
+			var realn;
 			if(typeof to=="string" && -1<(realn=$.inArray(to,contents)))
 				return realn;
 
 			if(!contents[to])
 				return -1;
-			return to;		},
+			return to;
+		},
 		HideMenu=function(to)
-		{			to=GetRealN(to);
+		{
+			to=GetRealN(to);
 			if(to==-1)
 				return;
 			$(contents[to]).fadeOut("fast");
 			tabs[to].removeClass("selected");
 			if(to==act)
-				act=-1;		},
+				act=-1;
+		},
 		MenuLeave=function(to)
-		{			to=GetRealN(to);
+		{
+			to=GetRealN(to);
 			if(to==-1)
 				return;
-			entered=-1;		},
+			entered=-1;
+		},
 		AddMenu=function(obj)
-		{			var content=$(obj).data("rel");
+		{
+			var content=$(obj).data("rel");
 			if(opts.contents[n])
 				content=opts.contents[n];
 			else if(opts.contents[content])
@@ -53,7 +61,8 @@ $.fn.MainMenu=function(opts)
 			else if(!content)
 				return;
 			contents[n]=content;
-			tabs[n]=$(obj).mouseenter(function(){				var to=GetRealN(this.n);
+			tabs[n]=$(obj).mouseenter(function(){
+				var to=GetRealN(this.n);
 				if(to==-1)
 					return;
 				if(timers[to])
@@ -72,10 +81,14 @@ $.fn.MainMenu=function(opts)
 					$(contents[to]).fadeIn("fast");
 				tabs[to].addClass("selected");
 				act=to;
-			}).mouseleave(function(){				var to=GetRealN(this.n);
+			}).mouseleave(function(){
+				var to=GetRealN(this.n);
 				if(to==entered)
 					return;
-				timers[to]=setTimeout(function(){					HideMenu(to);				},opts.delay);			});
+				timers[to]=setTimeout(function(){
+					HideMenu(to);
+				},opts.delay);
+			});
 			$(content).mouseenter(function(){
 				var to=GetRealN(this.n);
 				if(to==-1)
@@ -86,23 +99,30 @@ $.fn.MainMenu=function(opts)
 					timers[to]=false;
 				}
 				entered=to;
-			}).mouseleave(function(){				var to=GetRealN(this.n);
+			}).mouseleave(function(){
+				var to=GetRealN(this.n);
 				if(to==-1)
 					return;
 				if(entered==to)
-					entered=-1;				timers[to]=setTimeout(function(){
+					entered=-1;
+				timers[to]=setTimeout(function(){
 					HideMenu(to);
 				},opts.delay);
 			}).get(0).n=n;
 
 			tabs[n].get(0).n=n++;
-			$(content).hide();		}
-	this.each(function(){
+			$(content).hide();
+		}
+
+	this.each(function(){
 		AddMenu(this);
-	});	return this;}
+	});
+	return this;
+}
 
 function ProgressList(m,cron)
-{	var progr={},
+{
+	var progr={},
 		ids=[];
 	$("progress[data-id]").each(function(){
 		progr[$(this).data("id")]=$(this);
@@ -124,7 +144,7 @@ function ProgressList(m,cron)
 			{
 				if(!res)
 				{
-					window.location.reload();
+					location.reload();
 					return;
 				}
 				var emp=true;
@@ -140,7 +160,7 @@ function ProgressList(m,cron)
 				}
 				if(emp)
 				{
-					window.location.reload();
+					location.reload();
 					return;
 				}
 				setTimeout(
@@ -151,4 +171,5 @@ function ProgressList(m,cron)
 				);
 			}
 		);
-	}).attr("src",cron+"?rand="+Math.random());}
+	}).attr("src",cron+"?rand="+Math.random());
+}

@@ -181,7 +181,7 @@ function Error($e=false,$extra=array())
 	else
 	{
 		Eleanor::$content_type='text/html';
-		Eleanor::HookOutPut(false,isset($adoon['httpcode']) ? (int)$extra['httpcode'] : 503,$e);
+		Eleanor::HookOutPut(false,isset($extra['httpcode']) ? (int)$extra['httpcode'] : 503,$e);
 		die;
 	}
 }

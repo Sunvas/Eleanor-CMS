@@ -599,7 +599,7 @@ CREATE TABLE `{$prefix}tasks` (
 `locked` tinyint NOT NULL,
 `nextrun` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 `lastrun` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-`ondone` varchar(20) NOT NULL,
+`ondone` ENUM('delete','deactivate') NOT NULL,
 `maxrun` smallint unsigned NOT NULL,
 `alreadyrun` smallint unsigned NOT NULL,
 `status` tinyint NOT NULL,

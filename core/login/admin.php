@@ -40,7 +40,7 @@ class LoginAdmin extends LoginBase implements LoginClass
 			new Settings;
 
 		$data+=array('rememberme'=>true);
-		Eleanor::SetCookie(self::UNIQUE,base64_encode((isset(static::$user['login_key']) ? static::$user['login_key'] : '').'|'.static::$user['id']),$data['rememberme'] ? false : 0,true);
+		Eleanor::SetCookie(static::UNIQUE,base64_encode((isset(static::$user['login_key']) ? static::$user['login_key'] : '').'|'.static::$user['id']),$data['rememberme'] ? false : 0,true);
 		static::$login=true;
 	}
 
@@ -55,7 +55,7 @@ class LoginAdmin extends LoginBase implements LoginClass
 		if(isset(static::$login) and !$hard)
 			return static::$login;
 
-		if(!$cookie=Eleanor::GetCookie(self::UNIQUE))
+		if(!$cookie=Eleanor::GetCookie(static::UNIQUE))
 			return static::$login=false;
 
 		list($k,$id)=explode('|',base64_decode($cookie),2);

@@ -190,7 +190,7 @@ function Start($tpl='index',$code=200)
 
 	$Lst=Eleanor::LoadListTemplate('headfoot')
 		->metahttp('text/html; charset='.DISPLAY_CHARSET)
-		->base(PROTOCOL.$_SERVER['HTTP_HOST'].Eleanor::$site_path)
+		->base(PROTOCOL.getenv('HTTP_HOST').Eleanor::$site_path)
 		->title(is_array($title) ? join(' &raquo; ',$title) : $title)
 		->meta('robots','noindex, nofollow');
 

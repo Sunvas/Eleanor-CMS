@@ -92,7 +92,7 @@ echo'<div id="maincol',$blocks['right'] ? 'R' : '','">
 		<span style="width: 88px;"><!-- кнопка, счетчик --></span>
 		<span style="width: 88px;"><!-- кнопка, счетчик --></span>
 		<span style="width: 88px;"><!-- кнопка, счетчик --></span>
-		<span style="width: 60px;">  <a href="http://validator.w3.org/check?uri=referer"><img src="<?php echo$theme?>images/html5_valid.png" alt="Valid HTML 5" title="Valid HTML 5" width="60" height="31" /></a></span>
+		<span style="width: 60px;">  <a href="http://validator.w3.org/check?uri=referer" rel="nofollow"><img src="<?php echo$theme?>images/html5_valid.png" alt="Valid HTML 5" title="Valid HTML 5" width="60" height="31" /></a></span>
 
 	</div>
 	<!-- КОПИРАЙТЫ -->
@@ -100,7 +100,7 @@ echo'<div id="maincol',$blocks['right'] ? 'R' : '','">
 	<div class="clr"></div>
 </div></div></div>
 <div id="syscopyright">
-	<span class="centroarts"><a href="http://centroarts.com" title="Шаблон разработан студией CENTROARTS.com">Designed by CENTROARTS.com</a></span>
+	<span class="centroarts"><a href="http://centroarts.com" rel="nofollow" title="Шаблон разработан студией CENTROARTS.com">Designed by CENTROARTS.com</a></span>
 	<div><?php
 #Пожалуйста, не удаляйте и не изменяйте наши копирайты, если, конечно, у вас есть хоть немного уважения к разработчикам.
 echo'Powered by '.ELEANOR_COPYRIGHT?></div>

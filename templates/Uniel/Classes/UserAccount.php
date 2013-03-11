@@ -140,7 +140,7 @@ class TplUserAccount
 		$ltpl=Eleanor::$Language['tpl'];
 
 		$C=static::Menu('user','index','main')
-			->Title('Открытые сессии');
+			->Title(static::$lang['sessions']);
 
 		$Lst=Eleanor::LoadListTemplate('table-list',3)
 			->begin(

@@ -46,6 +46,7 @@ else
 			Eleanor::$vars['site_name']=$_SESSION['sitename'];#Заплаточка для маилера
 			$path=preg_replace('#install/$#','',Eleanor::$site_path);
 			$from=array(
+				'[timezone]',
 				'[language]',
 				'[version]',
 				'[db_host]',
@@ -59,6 +60,7 @@ else
 				'#[users_db]',
 			);
 			$to=array(
+				$_SESSION['timezone'],
 				Language::$main,
 				ELEANOR_VERSION,
 				$_SESSION['host'],
@@ -280,7 +282,8 @@ else
 			$email=isset($_POST['email']) ? (string)$_POST['email'] : '';
 			$furl=$_SERVER['REQUEST_METHOD']=='POST' ? isset($_POST['furl']) : $canurl;
 			if(isset($_SESSION['tzo'],$_SESSION['dst']))
-			{				$tzo=array();
+			{
+				$tzo=array();
 				$tal=timezone_abbreviations_list();
 				foreach($tal as &$tv)
 					foreach($tv as &$v)

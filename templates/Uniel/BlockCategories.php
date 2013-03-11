@@ -12,12 +12,12 @@ $(function(){
 		var img=$("<img>").css({cursor:"pointer","margin-right":"3px"}).prop({src:"'.$theme.'images/minus.gif",title:"+"}).prependTo(this).click(function(){
 			if(localStorage.getItem("bc"+i))
 			{
-				$(this).prop({src:"'.$theme.'images/plus.gif",title:"+"}).next().next().hide();
+				$(this).prop({src:"'.$theme.'images/plus.gif",title:"+"}).next().next().fadeOut("fast");
 				localStorage.removeItem("bc"+i);
 			}
 			else
 			{
-				$(this).prop({src:"'.$theme.'images/minus.gif",title:"&minus;"}).next().next().show();
+				$(this).prop({src:"'.$theme.'images/minus.gif",title:"&minus;"}).next().next().fadeIn("fast");
 				try
 				{
 					localStorage.setItem("bc"+i,"1");

@@ -147,7 +147,7 @@ function Start($ch=array())
 			.($ch['image']['description'] ? '<description>'.htmlspecialchars($ch['image']['description'],ELENT,CHARSET,false).'</description>' : '')
 			.'</image>'
 		: '';
-	echo'<?xml version="1.0" encoding="'.DISPLAY_CHARSET.'"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>'.$ch['title'].'</title><description>'.$ch['description'].'</description><link>'.$ch['link'].'</link><language>'.$ch['language'].'</language><generator>Eleanor RSS Generator</generator><atom:link href="'.PROTOCOL.$_SERVER['HTTP_HOST'].htmlspecialchars(getenv('REQUEST_URI')).'" rel="self" type="application/rss+xml" />'
+	echo'<?xml version="1.0" encoding="'.DISPLAY_CHARSET.'"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>'.$ch['title'].'</title><description>'.$ch['description'].'</description><link>'.$ch['link'].'</link><language>'.$ch['language'].'</language><generator>Eleanor RSS Generator</generator><atom:link href="'.PROTOCOL.getenv('HTTP_HOST').htmlspecialchars(getenv('REQUEST_URI')).'" rel="self" type="application/rss+xml" />'
 	.($ch['copyright'] ? '<copyright>'.htmlspecialchars($ch['copyright'],ELENT,CHARSET,false).'</copyright>' : '')
 	.($ch['managingEditor'] ? '<managingEditor>'.htmlspecialchars($ch['managingEditor'],ELENT,CHARSET,false).'</managingEditor>' : '')
 	.($ch['webMaster'] ? '<webMaster>'.htmlspecialchars($ch['webMaster'],ELENT,CHARSET,false).'</webMaster>' : '')

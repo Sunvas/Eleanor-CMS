@@ -11,7 +11,7 @@
 define('CMS',true);
 require dirname(__file__).'/core/core.php';
 $Eleanor=Eleanor::getInstance();
-Eleanor::LoadOptions('site');
+Eleanor::LoadOptions(array('site','users-on-site'));
 Eleanor::$service='xml';#ID сервиса
 Eleanor::InitService();
 

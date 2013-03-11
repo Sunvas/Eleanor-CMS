@@ -47,7 +47,7 @@ class LoginBase extends BaseClass implements LoginClass
 		if(isset(static::$login) and !$hard)
 			return static::$login;
 
-		if(!$cookie=Eleanor::GetCookie(self::UNIQUE))
+		if(!$cookie=Eleanor::GetCookie(static::UNIQUE))
 			return static::$login=false;
 
 		list($k,$id)=explode('|',base64_decode($cookie),2);
@@ -71,7 +71,7 @@ class LoginBase extends BaseClass implements LoginClass
 			if($a=$R->fetch_assoc())
 			{
 				$lks=$a['login_keys'] ? (array)unserialize($a['login_keys']) : array();
-				$cl=get_class();
+				$cl=get_called_class();
 
 				if($alls)
 					unset($lks[$cl]);
@@ -99,14 +99,14 @@ class LoginBase extends BaseClass implements LoginClass
 	{
 		#ToDo! Input array
 		$El=Eleanor::getInstance();
-		if(!self::$ma)
+		if(!static::$ma)
 		{
-			self::$ma=array_keys($El->modules['sections'],'user');
-			if(!self::$ma)
+			static::$ma=array_keys($El->modules['sections'],'user');
+			if(!static::$ma)
 				return false;
-			self::$ma=reset(self::$ma);
+			static::$ma=reset(static::$ma);
 		}
-		$a=array('module'=>self::$ma);
+		$a=array('module'=>static::$ma);
 		if($name and $id)
 			$a['user']=html_entity_decode($name);
 		elseif($id)
@@ -172,7 +172,7 @@ class LoginBase extends BaseClass implements LoginClass
 					{
 						if(Eleanor::$vars['antibrute']==2)
 						{
-							Eleanor::SetCookie('Captcha_'.get_class(),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
+							Eleanor::SetCookie('Captcha_'.get_called_class(),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
 							throw new EE('CAPTCHA',EE::UNIT,array('remain'=>$atime-$lt));
 						}
 						throw new EE('TEMPORARILY_BLOCKED',EE::UNIT,array('remain'=>$atime-$lt));
@@ -198,7 +198,7 @@ class LoginBase extends BaseClass implements LoginClass
 							throw new EE('TEMPORARILY_BLOCKED',EE::UNIT,array('remain'=>$atime-$lt));
 						else
 						{
-							Eleanor::SetCookie('Captcha_'.get_class(),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
+							Eleanor::SetCookie('Captcha_'.get_called_class(),$fls[$acnt-1][0]+$atime,($atime-$lt).'s');
 							throw new EE('WRONG_PASSWORD',EE::UNIT,array('captcha'=>true,'remain'=>$atime-$lt));
 						}
 				}
@@ -230,17 +230,17 @@ class LoginBase extends BaseClass implements LoginClass
 		}
 		else
 		{
-			$R2=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`banned_until`,`ban_explain`,`language`,`timezone`,`staticip` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' AND `temp`=0 LIMIT 1');
-			if(!$user=$R2->fetch_assoc())
+			$R=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`banned_until`,`ban_explain`,`language`,`timezone`,`staticip` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' AND `temp`=0 LIMIT 1');
+			if(!$user=$R->fetch_assoc())
 				return false;
 			UserManager::Sync(array($user['id']=>array('full_name'=>$user['full_name'],'name'=>$user['name'],'register'=>$user['register'],'language'=>$user['language'])));
-			$R3=Eleanor::$Db->Query('SELECT `id`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.P.'users_site` INNER JOIN `'.P.'users_extra` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
-			$user+=$R3->fetch_assoc();
+			$R=Eleanor::$Db->Query('SELECT `id`,`forum_id`,`email`,`groups`,`groups_overload`,`login_keys`,`ip`,`theme`,`avatar_location`,`avatar_type`,`editor` FROM `'.P.'users_site` INNER JOIN `'.P.'users_extra` USING(`id`) WHERE `id`='.(int)$id.' LIMIT 1');
+			$user+=$R->fetch_assoc();
 		}
 		$lks=$user['login_keys'] ? (array)unserialize($user['login_keys']) : array();
 		$user['groups_overload']=$user['groups_overload'] ? unserialize($user['groups_overload']) : array();
 		$user['groups']=$user['groups'] ? explode(',,',trim($user['groups'],',')) : array();
-		$cl=get_class();
+		$cl=get_called_class();
 		if(!isset($lks[$cl][$k]) or $user['staticip'] and $lks[$cl][$k][1]!=Eleanor::$ip)
 			return false;
 		$t=time();
@@ -303,7 +303,7 @@ class LoginBase extends BaseClass implements LoginClass
 		$user['login_key']=md5(uniqid($user['id']));
 		$user['groups_overload']=$user['groups_overload'] ? unserialize($user['groups_overload']) : array();
 		$user['groups']=$user['groups'] ? explode(',,',trim($user['groups'],',')) : array();
-		$cl=get_class();
+		$cl=get_called_class();
 		$lks[$cl][$user['login_key']]=array(Eleanor::$vars['time_online'][$cl]+time(),Eleanor::$ip,getenv('HTTP_USER_AGENT'));
 		if(count($lks[$cl])>static::MAX_SESSIONS)
 			array_splice($lks[$cl],0,static::MAX_SESSIONS);
@@ -312,7 +312,7 @@ class LoginBase extends BaseClass implements LoginClass
 		Eleanor::$Db->Delete(P.'sessions','`ip_guest`=\''.Eleanor::$ip.'\'');
 		unset($user['failed_logins'],$user['pass_salt'],$user['pass_hash'],$user['login_keys']);
 		if(Eleanor::$vars['antibrute']==2)
-			Eleanor::SetCookie('Captcha_'.get_class(),false);
+			Eleanor::SetCookie('Captcha_'.get_called_class(),false);
 		static::$user=$user;
 	}
 

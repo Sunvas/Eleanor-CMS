@@ -204,7 +204,6 @@ function ShowList()
 		$R=Eleanor::$Db->Query('SELECT `parents` FROM `'.P.'groups` WHERE `id`='.$parent.' LIMIT 1');
 		list($parents)=$R->fetch_row();
 		$parents.=$parent;
-		$temp=array();
 		$R=Eleanor::$Db->Query('SELECT `id`,`title_l` FROM `'.P.'groups` WHERE `id` IN ('.$parents.')');
 		while($a=$R->fetch_assoc())
 			$temp[$a['id']]=$a['title_l'] ? Eleanor::FilterLangValues((array)unserialize($a['title_l'])) : '';

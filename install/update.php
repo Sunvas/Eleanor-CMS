@@ -102,13 +102,16 @@ switch($step)
 			$percent=75+$p;
 
 			if($cnt==0)
-			{				$_SESSION['done']=true;				Eleanor::$Db->Insert(P.'upgrade_hist',array('version'=>ELEANOR_VERSION,'!date'=>'NOW()','build'=>ELEANOR_BUILD,'uid'=>$_SESSION['uid']));
+			{
+				$_SESSION['done']=true;
+				Eleanor::$Db->Insert(P.'upgrade_hist',array('version'=>ELEANOR_VERSION,'!date'=>'NOW()','build'=>ELEANOR_BUILD,'uid'=>$_SESSION['uid']));
 				header('location: update.php?step=5&s='.session_id());
 				die;
 			}
 			$udir=reset($_SESSION['range']);
 			if(is_file(Eleanor::$root.'install/data_update/'.$udir.'/index.php'))
-			{				$substep=isset($_GET['substep']) ? (int)$_GET['substep'] : 0;
+			{
+				$substep=isset($_GET['substep']) ? (int)$_GET['substep'] : 0;
 				include Eleanor::$root.'install/data_update/'.$udir.'/index.php';
 				$cl='Update_'.$udir;
 				if(class_exists($cl,false) and is_subclass_of($cl,'UpdateClass'))
@@ -141,7 +144,8 @@ switch($step)
 			Install::IncludeDb();
 			$R=Eleanor::$Db->Query('SELECT `version`,`build` FROM `'.P.'upgrade_hist` ORDER BY `id` DESC LIMIT 1');
 			if(!$a=$R->fetch_assoc() or $a['build']>=ELEANOR_BUILD)
-			{				$percent=100;
+			{
+				$percent=100;
 				$navi=$title=$lang['finish'];
 
 				$text='<div class="wpbox wpbwhite"><div class="wptop"><b>&nbsp;</b></div>
@@ -149,7 +153,8 @@ switch($step)
 				</div></div><div class="wpbtm"><b>&nbsp;</b></div></div>';
 			}
 			else
-			{				$navi=$title=$lang['uready'];
+			{
+				$navi=$title=$lang['uready'];
 				$percent=70;
 				$_SESSION['build']=$a['build'];
 
@@ -186,7 +191,8 @@ switch($step)
 					Eleanor::$Db=new Db($a);
 				}
 				catch(EE$E)
-				{					$error=$E->getMessage();
+				{
+					$error=$E->getMessage();
 					break;
 				}
 				if(!Install::CheckMySQLVersion())
@@ -217,15 +223,21 @@ switch($step)
 				break;
 		}
 		elseif(is_file(Eleanor::$root.'config_general.php') and (!is_file(Eleanor::$root.'config_general.bak') or isset($_GET['igbak'])))
-		{			Install::IncludeDb();
+		{
+			Install::IncludeDb();
 			$percent=65;
 			$navi=$lang['enter_pass'];
 			if(isset($_POST['login'],$_POST['pass']))
-			{				$values=array('login'=>(string)$_POST['login'],'pass'=>(string)$_POST['pass']);
+			{
+				$values=array('login'=>(string)$_POST['login'],'pass'=>(string)$_POST['pass']);
 				$R=Eleanor::$UsersDb->Query('SELECT `id`,`name`,`pass_salt`,`pass_hash` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$UsersDb->Escape($values['login']).' LIMIT 1');
 				do
-				{					if(!$a=$R->fetch_assoc())
-					{						$error=$lang['WRONG_LOGIN'];						break;					}
+				{
+					if(!$a=$R->fetch_assoc())
+					{
+						$error=$lang['WRONG_LOGIN'];
+						break;
+					}
 
 					$R=Eleanor::$UsersDb->Query('SELECT `groups`,`groups_overload` FROM `'.P.'users_site` WHERE `id`='.(int)$a['id'].' LIMIT 1');
 					if($R->num_rows==0)
@@ -236,10 +248,13 @@ switch($step)
 					$a+=$R->fetch_assoc();
 
 					if($a['pass_hash']!=UserManager::PassHash($a['pass_salt'],$values['pass']))
-					{						$error=$lang['WRONG_PASSWORD'];
-						break;					}
+					{
+						$error=$lang['WRONG_PASSWORD'];
+						break;
+					}
 
-					$over=$a['groups_overload'] ? (array)unserialize($a['groups_overload']) : array();
+					$over=$a['groups_overload'] ? (array)unserialize($a['groups_overload']) : array();
+
 					if(!isset($over['method']['access_cp'],$over['value']['access_cp']) or $over['method']['access_cp']=='inherit')
 						$acp=Eleanor::Permissions(explode(',,',trim($a['groups'],',')),'access_cp');
 					else
@@ -286,6 +301,7 @@ switch($step)
 			if(is_file(Eleanor::$root.'config_general.bak') and !is_file(Eleanor::$root.'config_general.php'))
 			{
 				$from=array(
+					'[timezone]',
 					'[language]',
 					'[version]',
 					'[db_host]',
@@ -299,6 +315,7 @@ switch($step)
 					'#[users_db]',
 				);
 				$to=array(
+					'Europe/Moscow',
 					Language::$main,
 					ELEANOR_VERSION,
 					$_SESSION['host'],
@@ -344,11 +361,13 @@ switch($step)
 				$error=$lang['unwbak'];
 			if(is_file(Eleanor::$root.'config_general.php'))
 				if(is_writeable(Eleanor::$root.'config_general.php'))
-				{					Eleanor::$nolog=true;
+				{
+					Eleanor::$nolog=true;
 					$conf=include(Eleanor::$root.'config_general.php');
 					Eleanor::$nolog=false;
 					rename(Eleanor::$root.'config_general.php',Eleanor::$root.'config_general_old.php');
 					$from=array(
+						'[timezone]',
 						'[charset]',
 						'[display_charset]',
 						'[db_charset]',
@@ -361,6 +380,7 @@ switch($step)
 						'[db_pass]',
 					);
 					$to=array(
+						'Europe/Moscow',
 						CHARSET,
 						DISPLAY_CHARSET,
 						DB_CHARSET,

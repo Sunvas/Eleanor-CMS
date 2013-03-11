@@ -10,6 +10,7 @@ define('GROUP_WAIT',5);#Группа ожидающих активации
 define('USERS_TABLE',P.'users');#Таблица пользователей
 define('ELEANOR_VERSION','[version]');#Огромная просьба: НЕ изменять самостоятельно!
 define('LANGUAGE','[language]');#Основной язык системы
+date_default_timezone_set('[timezone]');#Мало ли, что на сервере стоит
 
 return array(
 	'db_host'=>'[db_host]',

@@ -75,10 +75,11 @@ class Email
 				'content'=>$c,
 			);
 		}
+		foreach($a as $k=>&$v)
+			if(!in_array($k,array('type','files','copy','hidden')) and $v!==false)
+				$Email->$k=$v;
 		$Email->subject=$subj;
 		$Email->Send(array('to'=>$to,'cc'=>$a['copy'],'bcc'=>$a['hidden']));
-		/*$Email->subject='';
-		$Email->parts=array();*/
 	}
 
 	/**
@@ -108,9 +109,11 @@ class Email
 	 * @param array $a Параметры отправки письма
 	 */
 	public function Send(array$a=array())
-	{		if(empty($a['to']))
+	{
+		if(empty($a['to']))
 			return;
-		$a+=array(			'bcc'=>array(),#Копия (может быть строкой или массивом)
+		$a+=array(
+			'bcc'=>array(),#Копия (может быть строкой или массивом)
 			'cc'=>array(),#Скрытая (может быть строкой или массивом)
 		);
 		foreach($a as &$av)
@@ -136,7 +139,9 @@ class Email
 			.'X-Priority: '.$this->pr.$d.self::DoHeaders($this->parts);
 
 		switch($this->method)
-		{			case'mail':				if(!mail(join(', ',$a['to']),$subject,null,$headers))
+		{
+			case'mail':
+				if(!mail(join(', ',$a['to']),$subject,null,$headers))
 					throw new EE('MAIL',EE::UNIT);
 			break;
 			case'smtp':
@@ -185,7 +190,8 @@ class Email
 					fclose($socket);
 				}while(false);
 				if($error)
-				{					fclose($socket);
+				{
+					fclose($socket);
 					throw new EE('SMTP',EE::UNIT);
 				}
 			break;

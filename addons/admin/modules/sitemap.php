@@ -46,7 +46,9 @@ if(isset($_GET['do']))
 			ShowList();
 	}
 elseif(isset($_GET['edit']))
-{	$id=(int)$_GET['edit'];	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
+{
+	$id=(int)$_GET['edit'];
+	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 		Save($id);
 	else
 		AddEdit($id);
@@ -165,13 +167,16 @@ function ShowList()
 	{
 		$R=Eleanor::$Db->Query('SELECT `s`.`id`,`s`.`title_l` `title`,`s`.`modules`,`s`.`taskid`,`s`.`total`,`s`.`already`,`s`.`file`,`s`.`compress`,`s`.`status`,`t`.`lastrun`,`t`.`nextrun`,`t`.`free` FROM `'.P.'sitemaps` `s` LEFT JOIN `'.P.'tasks` `t` ON `t`.`id`=`s`.`taskid`'.$where.' ORDER BY `s`.`'.$sort.'` '.$so.' LIMIT '.$offset.','.$pp);
 		while($a=$R->fetch_assoc())
-		{			$a['modules']=$a['modules'] ? explode(',,',trim($a['modules'],',')) : array();
+		{
+			$a['modules']=$a['modules'] ? explode(',,',trim($a['modules'],',')) : array();
 			if($a['modules'])
 				$modules=array_merge($modules,$a['modules']);
 			if(!$a['modules'] or $a['lastrun']===null)
-			{				Eleanor::$Db->Update(P.'sitemaps',array('status'=>0),'`id`='.$a['id'].' LIMIT 1');
+			{
+				Eleanor::$Db->Update(P.'sitemaps',array('status'=>0),'`id`='.$a['id'].' LIMIT 1');
 				Eleanor::$Db->Update(P.'tasks',array('status'=>0),'`id`='.$a['taskid'].' LIMIT 1');
-				$a['status']=0;			}
+				$a['status']=0;
+			}
 			$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
 			$a['file'].=$a['compress'] ? '.gz' : '.xml';
 			if($sot)
@@ -189,13 +194,16 @@ function ShowList()
 		}
 	}
 	if($sot and $tosort)
-	{		asort($tosort,SORT_STRING);
+	{
+		asort($tosort,SORT_STRING);
 		$newit=array();
 		foreach($tosort as $k=>&$v)
 			$newit[]=$items[$k];
-		$items=$newit;	}
+		$items=$newit;
+	}
 	if($modules)
-	{		$modules=array_unique($modules);
+	{
+		$modules=array_unique($modules);
 		$R=Eleanor::$Db->Query('SELECT `id`,`title_l` FROM `'.P.'modules` WHERE `id`'.Eleanor::$Db->In($modules));
 		$modules=array();
 		while($a=$R->fetch_assoc())
@@ -213,11 +221,13 @@ function ShowList()
 	);
 	$c=Eleanor::$Template->ShowList($items,$cnt,$modules,$page,$pp,$qs,$links);
 	Start();
-	echo$c;}
+	echo$c;
+}
 
 function AddEdit($id,$errors=array())
 {global$Eleanor,$title;
-	$lang=Eleanor::$Language['sitemap'];	if($id)
+	$lang=Eleanor::$Language['sitemap'];
+	if($id)
 	{
 		if(!$errors)
 		{
@@ -272,7 +282,9 @@ function AddEdit($id,$errors=array())
 	}
 	$bypost=false;
 	if($errors)
-	{		$bypost=true;		if($errors===true)
+	{
+		$bypost=true;
+		if($errors===true)
 			$errors=array();
 		$values['modules']=isset($_POST['modules']) ? (array)$_POST['modules'] : array();
 		$values['file']=isset($_POST['file']) ? (string)$_POST['file'] : '';
@@ -301,7 +313,8 @@ function AddEdit($id,$errors=array())
 	$C=new Controls;
 	$R=Eleanor::$Db->Query('SELECT `id`,`title_l`,`descr_l`,`path`,`api` FROM `'.P.'modules` WHERE `api`!=\'\'');
 	while($a=$R->fetch_assoc())
-	{		$api=Eleanor::FormatPath($a['api'],$a['path']);
+	{
+		$api=Eleanor::FormatPath($a['api'],$a['path']);
 		$class='Api'.basename(dirname($api));
 		do
 		{
@@ -320,7 +333,8 @@ function AddEdit($id,$errors=array())
 		$a['title_l']=$a['title_l'] ? Eleanor::FilterLangValues((array)unserialize($a['title_l'])) : '';
 		$modules[$a['id']]=$a['title_l'];
 		if(method_exists($class,'SitemapConfigure') and in_array($a['id'],$values['modules']))
-		{			$a['descr_l']=$a['descr_l'] ? Eleanor::FilterLangValues((array)unserialize($a['descr_l'])) : '';
+		{
+			$a['descr_l']=$a['descr_l'] ? Eleanor::FilterLangValues((array)unserialize($a['descr_l'])) : '';
 
 			$Api=new$class;
 			$conf=$Api->SitemapConfigure($bypost);
@@ -333,9 +347,13 @@ function AddEdit($id,$errors=array())
 
 			$error=false;
 			try
-			{				$sett=$C->DisplayControls($conf,$ovalues);			}
+			{
+				$sett=$C->DisplayControls($conf,$ovalues);
+			}
 			catch(EE$E)
-			{				$error=$E->getMessage();			}
+			{
+				$error=$E->getMessage();
+			}
 
 			$settings[]=array(
 				'id'=>$a['id'],
@@ -364,7 +382,8 @@ function AddEdit($id,$errors=array())
 
 function Save($id)
 {global$Eleanor;
-	$lang=Eleanor::$Language['sitemap'];	$values=array(
+	$lang=Eleanor::$Language['sitemap'];
+	$values=array(
 		'modules'=>isset($_POST['modules']) ? (array)$_POST['modules'] : false,
 		'file'=>isset($_POST['file']) ? (string)$_POST['file'] : '',
 		'compress'=>isset($_POST['compress']),
@@ -380,7 +399,7 @@ function Save($id)
 	if($values['file']=='')
 		$errors[]='NOFILE';
 	if(!is_writeable(Eleanor::$root))
-		$errors['UNABLE_CREATE_FILE']=sprintf($lang['unacr'],$values['file'].($values['compress'] ? '.gz' : '.xml'));
+		$errors['UNABLE_CREATE_FILE']=sprintf($lang['unacr'],$values['file'].($values['compress'] ? '.xml.gz' : '.xml'));
 
 	if(Eleanor::$vars['multilang'])
 		$values['title_l']=isset($_POST['title_l']) ? (array)Eleanor::$POST['title_l'] : array();
@@ -422,6 +441,10 @@ function Save($id)
 	{
 		$tvalues['data']='';
 		$values['total']=$values['already']=0;
+		$f=Eleanor::$root.$values['file'].'.xml';
+		Files::Delete($f);
+		if($values['compress'])
+			Files::Delete($f.'.gz');
 	}
 
 	$R=Eleanor::$Db->Query('SELECT `id`,`path`,`api` FROM `'.P.'modules` WHERE `api`!=\'\' AND `id`'.Eleanor::$Db->In($values['modules']));

@@ -169,6 +169,7 @@ final class GlobalsWrapper implements ArrayAccess
 			unset($v);
 			return$s;
 		}
+		$s=str_replace(array("\r\n","\n\r","\r"),"\n",$s);
 		return htmlspecialchars($s,ELENT,CHARSET,false);
 	}
 }

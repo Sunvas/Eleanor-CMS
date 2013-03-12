@@ -15,7 +15,9 @@ $lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php','contacts')
 Eleanor::$Template->queue[]='UserContacts';
 
 if($_SERVER['REQUEST_METHOD']=='POST')
-{	$isu=Eleanor::$Login->IsUser();	$Eleanor->Editor->ownbb=$Eleanor->Editor->smiles=$Eleanor->Editor->antilink=false;
+{
+	$isu=Eleanor::$Login->IsUser();
+	$Eleanor->Editor->ownbb=$Eleanor->Editor->smiles=$Eleanor->Editor->antilink=false;
 	$values=array(
 		'subject'=>isset($_POST['subject']) ? trim((string)Eleanor::$POST['subject']) : '',
 		'message'=>$Eleanor->Editor_result->GetHtml('message'),
@@ -26,15 +28,20 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 	$whom=Eleanor::FilterLangValues($config['whom']);
 	$errors=array();
 	do
-	{		#Защита от F5
+	{
+		#Защита от F5
 		if($values['sess'])
 			Eleanor::StartSession($values['sess']);
 		if(empty($_SESSION['can']))
-			break;		if(!$whom)
+			break;
+
+		if(!$whom)
 			break;
 
 		if($values['from'])
-		{			if(!Strings::CheckEmail($values['from'],false))				$errors[]='WRONG_EMAIL';
+		{
+			if(!Strings::CheckEmail($values['from'],false))
+				$errors[]='WRONG_EMAIL';
 		}
 		else
 			$values['from']=$isu ? Eleanor::$Login->GetUserValue('email',false) : false;
@@ -55,7 +62,8 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 
 		$files=array();
 		if($canupload and isset($_FILES['file']) and is_uploaded_file($_FILES['file']['tmp_name']))
-			if($canupload!==true and $_FILES['file']['size']>$canupload)				$errors['FILE_TOO_BIG']=sprintf($lang['FILE_TOO_BIG'],Files::BytesToSize($canupload),Files::BytesToSize($_FILES['file']['size']));
+			if($canupload!==true and $_FILES['file']['size']>$canupload)
+				$errors['FILE_TOO_BIG']=sprintf($lang['FILE_TOO_BIG'],Files::BytesToSize($canupload),Files::BytesToSize($_FILES['file']['size']));
 			else
 				$files=array($_FILES['file']['name']=>file_get_contents($_FILES['file']['tmp_name']));
 
@@ -85,8 +93,11 @@ else
 function Contacts($config,$errors=array())
 {global$Eleanor,$title;
 	$isu=Eleanor::$Login->IsUser();
-	$bypost=false;	if($errors)
-	{		$bypost=true;		if($errors===true)
+	$bypost=false;
+	if($errors)
+	{
+		$bypost=true;
+		if($errors===true)
 			$errors=array();
 		$values=array(
 			'subject'=>isset($_POST['subject']) ? (string)$_POST['subject'] : '',
@@ -119,6 +130,8 @@ function Contacts($config,$errors=array())
 	$_SESSION['can']=true;
 	$values['sess']=session_id();
 
+	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Prefix(true);
 	$s=Eleanor::$Template->Contacts($canupload,OwnBB::Parse($info),$whom,$values,$bypost,$errors,$isu,$Eleanor->Captcha->disabled ? false : $Eleanor->Captcha->GetCode());
 	Start();
-	echo$s;}
+	echo$s;
+}

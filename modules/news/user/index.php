@@ -569,7 +569,7 @@ elseif($cid or $curls)
 	);
 
 	$c=Eleanor::$Template->CategoryList($category,$d,$cnt,-$page,$pages,Eleanor::$vars['publ_per_page'],$links);
-	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($cu+array('page'=>array('page'=>$page==$pages ? false : $page)),true,false);
+	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($cu+array('page'=>array('page'=>$page==$pages ? false : $page)),true,!$Eleanor->Url->furl);
 
 	#Поддержка соцсетей:
 	$Lst=Eleanor::LoadListTemplate('headfoot')

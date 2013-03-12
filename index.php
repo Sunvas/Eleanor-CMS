@@ -248,7 +248,7 @@ function Start($tpl='index',$code=200)
 		$Lst->meta('description',htmlspecialchars($descr,ELENT,CHARSET,false));
 
 	if(false!==$mn=array_search(6,$Eleanor->modules['ids']))
-		$Lst->link(array('rel'=>'search','href'=>$Eleanor->Url->Construct(array('module'=>$mn),false)))
+		$Lst->link(array('rel'=>'search','href'=>$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>$mn),false)))
 			->link(array(
 				'rel'=>'search',
 				'type'=>'application/opensearchdescription+xml',
@@ -262,10 +262,13 @@ function Start($tpl='index',$code=200)
 	elseif(isset($Eleanor->origurl))
 	{
 		$u=isset($Eleanor->module['general']) ? PROTOCOL.Eleanor::$punycode.Eleanor::$site_path : $Eleanor->origurl;
+		$du=Url::Decode($u);
+		$du=str_replace('&amp;','&',$du);
+
 		$ru=PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'];
 		$ru=Url::Decode($ru);
-		$u=Url::Decode($u);
-		if(strcasecmp($u,$ru)!=0)
+
+		if(strcasecmp($du,$ru)!=0)
 			$Lst->link(array('rel'=>'canonical','href'=>$u));
 	}
 
@@ -492,9 +495,13 @@ function LangNewUrl($url,$l)
 		return$l==LANGUAGE ? $base : $Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[$l]['uri']),true,!$Eleanor->Url->furl);
 
 	if(0!==$p=strpos($url,'?'))
+	{
+		parse_str(substr($url,$p+1),$dynamic);
 		$Eleanor->Url->__construct('!'.($p===false ? $url.'!&' : str_replace('?','!&',$url)));
+	}
 	else
 	{
+		$dynamic=array();
 		$url=ltrim($url,'?');
 		$Eleanor->Url->is_static=false;
 	}
@@ -523,7 +530,7 @@ function LangNewUrl($url,$l)
 					return$base.$special;
 				break;
 			}
-		$q=true;
+		$q=$dynamic;
 	}
 	else
 	{
@@ -561,10 +568,6 @@ function LangNewUrl($url,$l)
 	if(!$a=$R->fetch_assoc())
 		return$base.$special.$url;
 
-	$path=Eleanor::FormatPath($a['path']).DIRECTORY_SEPARATOR;
-	if(!$a['api'] or !is_file($path.$a['api']))
-		return$base.$special.$url;
-
 	$a['sections']=unserialize($a['sections']);
 	foreach($a['sections'] as &$v)
 		if(Eleanor::$vars['multilang'] and isset($v[$l]))
@@ -578,23 +581,43 @@ function LangNewUrl($url,$l)
 		$m=reset($m);
 	}
 
-	$c='Api'.basename($a['path']);
-	if(!class_exists($c,false))
-		include$path.$a['api'];
-
 	$Eleanor->Url->SetPrefix($special);
 	if($m)
 		$Eleanor->Url->SetPrefix(array('module'=>$m),true);
-	$Plug=new$c;
-	$Plug->module=array(
-		'sections'=>$a['sections'],
-		'path'=>$path,
-		'name'=>$m,
-		'section'=>$s,
-		'id'=>$mid,
-	);
 
-	if(method_exists($Plug,'LangUrl') and $r=$Plug->LangUrl($q,$l))
-		return$base.$r;
-	return$base.$special.$url;
+	$path=Eleanor::FormatPath($a['path']).DIRECTORY_SEPARATOR;
+	if($a['api'] and is_file($path.$a['api']))
+	{
+		$c='Api'.basename($a['path']);
+		if(!class_exists($c,false))
+			include$path.$a['api'];
+
+		$Plug=new$c;
+		$Plug->module=array(
+			'sections'=>$a['sections'],
+			'path'=>$path,
+			'name'=>$m,
+			'section'=>$s,
+			'id'=>$mid,
+		);
+
+		$olds=$Eleanor->Url->string;
+		if(method_exists($Plug,'LangUrl') and $r=$Plug->LangUrl($q,$l))
+			return$base.$r;
+		$Eleanor->Url->string=$olds;
+	}
+
+	if($Eleanor->Url->furl and !$Eleanor->Url->string or !$q)
+		return$base.$Eleanor->Url->Prefix($Eleanor->Url->ending);
+
+	if($Eleanor->Url->furl)
+	{
+		$s=explode('/',$Eleanor->Url->string);
+		foreach($s as &$v)
+			$v=Url::Encode($v);
+		return$base.$Eleanor->Url->Prefix(false)
+			.join('/',$s).$Eleanor->Url->ending
+			.($dynamic ? '?'.Url::Query($dynamic) : '');
+	}
+	return$base.Url::Query($q);
 }

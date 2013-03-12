@@ -71,7 +71,7 @@ class ApiNews extends BaseClass
 		$puri=false;
 		$curls=array();
 		$El=Eleanor::getInstance();
-		if(!is_array($q))
+		if($El->Url->furl)
 		{
 			$q=$El->Url->Parse($El->Url->ending ? array() : array('do'),true);
 			if($El->Url->ending)

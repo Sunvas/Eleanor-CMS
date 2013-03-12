@@ -83,7 +83,7 @@ class Url extends BaseClass
 					$r[]=static::Encode($pv);
 
 			if($pr===true)
-				$pr=$this->sp;
+				$pr=$this->sp ? $this->sp.$this->delimiter : '';
 			$r=$r ? $pr.join($this->delimiter,$r).$e : $pr;
 
 			if($suf)
@@ -104,12 +104,24 @@ class Url extends BaseClass
 			if($suf)
 				$r[]=$suf;
 			if($pr===true)
-				$pr=$this->file.$this->dp;
+			{
+				$pr=$this->file;
+				if($this->dp!=='')
+				{
+					$pr.='?'.$this->dp;
+					if($r)
+						$pr.='&amp;';
+				}
+				elseif($r)
+					$pr.='?';
+				elseif($e===false)
+					$e='?';
+			}
 
 			if($e===true)
 				$e='';
 
-			$r=$r ? $pr.join('&amp;',$r).($e===false ? '&amp;' : $e) : ($e===false ? $pr : preg_replace('#(&amp;|&|\?)$#','',$pr).$e);
+			$r=$r ? $pr.join('&amp;',$r).($e===false ? '&amp;' : $e) : ($e===false ? $pr.'&amp;' : $pr.$e);
 		}
 		return$r;
 	}
@@ -261,14 +273,18 @@ class Url extends BaseClass
 	{
 		if($this->furl)
 		{
-			#Не возвращаем ссылки вида .html
-			if($this->sp=='' and $e===true)
+			#Не возвращаем ссылки вида .html и /
+			if($this->sp=='' and $e===true or $this->sp==='')
 				$e='';
-			return$e===false ? $this->sp : preg_replace('#'.preg_quote($this->delimiter,'#').'$#','',$this->sp).($e===true ? $this->ending : $e);
+			return$e===false ? $this->sp.$this->delimiter : $this->sp.($e===true ? $this->ending : $e);
 		}
 
-		$p=$this->file.$this->dp;
-		return$e===false ? $p : preg_replace('#(&amp;|&|\?)$#','',$p).($e===true ? '' : $e);
+		$p=$this->file;
+		if($this->dp!=='')
+			$p.='?'.$this->dp;
+		elseif($e===false)
+			$e='?';
+		return$e===false ? $p.'&amp;' : $p.($e===true ? '' : $e);
 	}
 
 	/**
@@ -282,27 +298,42 @@ class Url extends BaseClass
 		if($p and is_array($p))
 		{
 			$f=$this->furl;
+
 			$this->furl=true;
-			$this->sp=($a ? $this->sp : '').$this->Construct($p,false,false);
+			$ap=$this->Construct($p,false,'');
+			if($a && $this->sp && $ap)
+				$this->sp.=$this->delimiter;
+			else
+				$this->sp='';
+			$this->sp.=$ap;
+
 			$this->furl=false;
-			$this->dp=($a ? $this->dp : '?').$this->Construct($p,false,false);
+			$ap=$this->Construct($p,false);
+			if($a && $this->dp && $ap)
+				$this->dp.='&amp;';
+			else
+				$this->dp='';
+			$this->dp.=$ap;
+
 			$this->furl=$f;
 		}
 		elseif($this->furl)
 		{
 			$p=preg_replace('#('.preg_quote($this->delimiter,'#').'|'.preg_quote($this->ending,'#').')+$#','',$p);
-			if($p)
-				$p.=$this->delimiter;
-			$this->sp=$a ? $this->sp.$p : $p;
+			if($p!=='')
+				$this->sp=$a ? $this->sp.$this->delimiter.$p : $p;
+			elseif(!$a)
+				$this->sp='';
 		}
 		else
 		{
-			$p=preg_replace('#(&amp;)+$#','',$p);
+			$p=preg_replace('#(&amp;|&)+$#','',$p);
 			if(false!==$qp=strpos($p,'?'))
 				$p=substr($p,$qp+1);
-			if($p)
-				$p.='&amp;';
-			$this->dp=$a ? $this->dp.$p : '?'.$p;
+			if($p!=='')
+				$this->dp=$a ? $this->dp.'&amp;'.$p : $p;
+			elseif(!$a)
+				$this->dp='';
 		}
 	}
 

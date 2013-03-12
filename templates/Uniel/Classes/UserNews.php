@@ -211,7 +211,7 @@ class TplUserNews
 			foreach($way as $k=>&$v)
 				if(isset($dump[$v]))
 					$v=array(
-						$GLOBALS['Eleanor']->Url->Construct($GLOBALS['Eleanor']->Categories->GetUri($v),true,false),
+						$GLOBALS['Eleanor']->Url->Construct($GLOBALS['Eleanor']->Categories->GetUri($v),true,!$GLOBALS['Eleanor']->Url->furl),
 						$dump[$v]['title'],
 					);
 				else
@@ -264,7 +264,7 @@ class TplUserNews
 
 					$c.='<td style="width:'.$w.'%"><table><tr>'
 						.($v['image'] ? '<td><img src="'.$GLOBALS['Eleanor']->Categories->imgfolder.$v['image'].'" alt="'.$v['title'].'" title="'.$v['title'].'" /></td>' : '')
-						.'<td><a href="'.$GLOBALS['Eleanor']->Url->Construct($GLOBALS['Eleanor']->Categories->GetUri($k),true,false).'"><strong>'.$v['title'].'</strong></a></td></tr></table>';
+						.'<td><a href="'.$GLOBALS['Eleanor']->Url->Construct($GLOBALS['Eleanor']->Categories->GetUri($k),true,!$GLOBALS['Eleanor']->Url->furl).'"><strong>'.$v['title'].'</strong></a></td></tr></table>';
 
 					$subcat=$k;
 					$subcatsb=true;
@@ -276,7 +276,7 @@ class TplUserNews
 						$c.='<ul>';
 						$subcatsb=false;
 					}
-					$c.='<li><a href="'.$GLOBALS['Eleanor']->Url->Construct($GLOBALS['Eleanor']->Categories->GetUri($k),true,false).'">'.$v['title'].'</a></li>';
+					$c.='<li><a href="'.$GLOBALS['Eleanor']->Url->Construct($GLOBALS['Eleanor']->Categories->GetUri($k),true,!$GLOBALS['Eleanor']->Url->furl).'">'.$v['title'].'</a></li>';
 				break;
 			}
 		if(!$iscats)

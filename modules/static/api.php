@@ -98,7 +98,7 @@ class ApiStatic extends BaseClass
 	public function LangUrl($q,$lang)
 	{
 		$El=Eleanor::getInstance();
-		if(is_array($q))
+		if($El->Url->furl)
 			$trace=false;
 		else
 		{
@@ -139,7 +139,7 @@ class ApiStatic extends BaseClass
 			}
 		}
 		$u=$this->GetUrl($id,$lang);
-		return $u ? $El->Url->Construct($u) : $El->Url->Prefix();
+		return $u ? $El->Url->Construct($u) : false;
 	}
 
 	public function GetUrl($id,$lang=false)

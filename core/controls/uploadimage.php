@@ -525,7 +525,7 @@ $(function(){
 				$value=isset($_POST['image']) ? (string)$_POST['image'] : false;
 				if($value and (strpos($value,'://')!==false or is_file($f=Eleanor::FormatPath($value))))
 				{
-					if($sess['types'] and !in_array(substr(strrchr($sess['new'],'.'),1),$sess['types']))
+					if($sess['types'] and !in_array(substr(strrchr($value,'.'),1),$sess['types']))
 						return Error(sprintf(static::$Language['only_types'],join(', ',$sess['types'])));
 
 					if(isset($f))

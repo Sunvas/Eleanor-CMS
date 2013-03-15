@@ -489,18 +489,19 @@ $(function(){
 		{
 			$prev=min($marks);
 			$newa=0;
-			foreach($marks as &$v)
-			{
-				if($v>$average)
+			if($average>=$prev)#На случай, когда оценки 1..5, а средняя пока ноль (никто не ставил оценок)
+				foreach($marks as &$v)
 				{
-					$newa+=($average-$prev)/($v-$prev);
-					break;
+					if($v>$average and $v>$prev)
+					{
+						$newa+=($average-$prev)/($v-$prev);
+						break;
+					}
+					$newa++;
+					if($v==$average)
+						break;
+					$prev=$v;
 				}
-				$newa++;
-				if($v==$average)
-					break;
-				$prev=$v;
-			}
 			$width=round($newa/count($marks)*100,1);
 		}
 		else

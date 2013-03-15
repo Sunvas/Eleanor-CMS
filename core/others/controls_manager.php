@@ -168,7 +168,7 @@ class Controls_Manager extends Controls
 					$result['preview']=isset($result['preview']['preview']) ? $result['preview']['preview'] : '';
 				}
 				else
-					$result['preview']=$this->DisplayControl(array('type'=>$co['type'],'name'=>'preview','bypost'=>$co['bypost'],'options'=>$co['options'],'value'=>$co['default'],'load_eval'=>$co['load_eval']));
+					$result['preview']=$this->DisplayControl(array('type'=>$co['type'],'name'=>'preview','bypost'=>$co['bypost'],'options'=>$co['options'],'value'=>$co['default'],'load_eval'=>$co['load_eval'],'multilang'=>false));
 			}
 			catch(EE $E)
 			{
@@ -302,9 +302,12 @@ class Controls_Manager extends Controls
 				}
 			},
 			'save'=>function($co)
-			{				if($co['multilang'])
-				{					foreach($co['value'] as &$v)
-					{						$value=$v ? Strings::ParseParams($v) : array();
+			{
+				if($co['multilang'])
+				{
+					foreach($co['value'] as &$v)
+					{
+						$value=$v ? Strings::ParseParams($v) : array();
 						$v=$value;
 					}
 					return$co['value'];

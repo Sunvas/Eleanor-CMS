@@ -356,9 +356,9 @@ if($furl)
 	$ac_p_r=$p.'%D0%B0%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82/lostpass';
 
 	$p=Language::$main=='ukrainian' ? '' : '%D1%83%D0%BA%D1%80/';
-	$ac_a_u=$p.'%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82.html';
-	$ac_r_u=$p.'%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82/register';
-	$ac_p_u=$p.'%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82/lostpass';
+	$ac_a_u=$p.'%D0%B0%D0%BA%D0%B0%D1%83%D0%BD%D1%82.html';
+	$ac_r_u=$p.'%D0%B0%D0%BA%D0%B0%D1%83%D0%BD%D1%82/register';
+	$ac_p_u=$p.'%D0%B0%D0%BA%D0%B0%D1%83%D0%BD%D1%82/lostpass';
 
 	$p=Language::$main=='english' ? '' : 'eng/';
 	$ac_a_e=$p.'account.html';
@@ -427,6 +427,7 @@ $ser=array(
 		'GetSmart'=>'Get Smart Bot',
 		'grub-client'=>'Grub Client Bot',
 		'Vampire'=>'Net Vampire Bot',
+		'panopta'=>'Panopta Bot',
 	)),
 	'templates'=>'include Eleanor::$root.\'\'addons/admin/options/templates.php\'\'',
 	'tz'=>'include Eleanor::$root.\'\'addons/admin/options/tz.php\'\'',

@@ -195,7 +195,8 @@ if(isset($_GET['do']))
 			$values=array();
 			$multilang=Eleanor::$vars['multilang'] ? array_keys(Eleanor::$langs) : array(Language::$main);
 			if($_SERVER['REQUEST_METHOD']=='POST')
-			{				$post=true;
+			{
+				$post=true;
 				$letter=$Eleanor->Controls->SaveControls($controls);
 				if(Eleanor::$vars['multilang'])
 					foreach($multilang as &$lng)
@@ -279,7 +280,8 @@ else
 
 function ShowList()
 {global$Eleanor,$title;
-	$title=Eleanor::$Language[$Eleanor->module['config']['n']]['list'];
+	$mc=$Eleanor->module['config'];
+	$title=Eleanor::$Language[$mc['n']]['list'];
 	$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
 	$where=$qs=array();
 	if(isset($_REQUEST['fi']) and is_array($_REQUEST['fi']))
@@ -306,12 +308,12 @@ function ShowList()
 		{
 			case'k':
 				$in=Eleanor::$Db->In($_POST['mass']);
-				Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`'.$in);
-				Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$in);
+				Eleanor::$Db->Delete($mc['t'],'`id`'.$in);
+				Eleanor::$Db->Delete($mc['tl'],'`id`'.$in);
 				foreach($_POST['mass'] as &$v)
-					Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$v);
+					Files::Delete(Eleanor::$root.Eleanor::$uploads.DIRECTORY_SEPARATOR.$mc['n'].DIRECTORY_SEPARATOR.$v);
 		}
-	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$Eleanor->module['config']['t'].'` `s` INNER JOIN `'.$Eleanor->module['config']['tl'].'` `l` USING(`id`)'.$where);
+	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$mc['t'].'` `s` INNER JOIN `'.$mc['tl'].'` `l` USING(`id`)'.$where);
 	list($cnt)=$R->fetch_row();
 	if($page<=0)
 		$page=1;
@@ -339,9 +341,10 @@ function ShowList()
 	$items=array();
 	if($cnt>0)
 	{
-		$R=Eleanor::$Db->Query('SELECT `id`,`mail`,`log`,`uri`,`title` FROM `'.$Eleanor->module['config']['t'].'` `s` INNER JOIN `'.$Eleanor->module['config']['tl'].'` `l` USING(`id`)'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
+		$R=Eleanor::$Db->Query('SELECT `id`,`mail`,`log`,`uri`,`title` FROM `'.$mc['t'].'` `s` INNER JOIN `'.$mc['tl'].'` `l` USING(`id`)'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
 		while($a=$R->fetch_assoc())
-		{			$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['id']));
+		{
+			$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['id']));
 			$a['_adel']=$Eleanor->Url->Construct(array('delete'=>$a['id']));
 
 			$items[$a['id']]=array_slice($a,1);
@@ -365,19 +368,20 @@ function ShowList()
 
 function AddEdit($id,$errors=array())
 {global$Eleanor,$title;
-	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
+	$mc=$Eleanor->module['config'];
+	$lang=Eleanor::$Language[$mc['n']];
 	$values=array();
 	if($id)
 	{
 		if(!$errors)
 		{
-			$R=Eleanor::$Db->Query('SELECT * FROM `'.$Eleanor->module['config']['t'].'` WHERE id='.$id.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT * FROM `'.$mc['t'].'` WHERE id='.$id.' LIMIT 1');
 			if(!$a=$R->fetch_assoc())
 				return GoAway(true);
 			foreach($a as $k=>&$v)
 				if(isset($Eleanor->sc[$k]))
 					$values[$k]['value']=$v;
-			$R=Eleanor::$Db->Query('SELECT `language`,`uri`,`title`,`text`,`meta_title`,`meta_descr` FROM `'.$Eleanor->module['config']['tl'].'` WHERE `id`='.$id);
+			$R=Eleanor::$Db->Query('SELECT `language`,`uri`,`title`,`text`,`meta_title`,`meta_descr` FROM `'.$mc['tl'].'` WHERE `id`='.$id);
 			while($temp=$R->fetch_assoc())
 				if(!Eleanor::$vars['multilang'] and (!$temp['language'] or $temp['language']==Language::$main))
 				{
@@ -418,7 +422,7 @@ function AddEdit($id,$errors=array())
 	$hasdraft=false;
 	if(!$errors and !isset($_GET['nodraft']))
 	{
-		$R=Eleanor::$Db->Query('SELECT `value` FROM `'.P.'drafts` WHERE `key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
+		$R=Eleanor::$Db->Query('SELECT `value` FROM `'.P.'drafts` WHERE `key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
 		if($draft=$R->fetch_row() and $draft[0])
 		{
 			$hasdraft=true;
@@ -444,7 +448,7 @@ function AddEdit($id,$errors=array())
 	else
 		$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
 
-	$u=$Eleanor->Uploader->Show($id ? $Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id : false);
+	$u=$Eleanor->Uploader->Show($id ? $mc['n'].DIRECTORY_SEPARATOR.$id : false);
 	$values=$Eleanor->Controls->DisplayControls($Eleanor->sc,$values)+$values;
 	$links=array(
 		'delete'=>$id ? $Eleanor->Url->Construct(array('delete'=>$id,'noback'=>1)) : false,
@@ -480,7 +484,8 @@ function Save($id)
 		return AddEdit($id,array('ERROR'=>$E->getMessage()));
 	}
 	$errors=$C->errors;
-	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
+	$mc=$Eleanor->module['config'];
+	$lang=Eleanor::$Language[$mc['n']];
 
 	if(Eleanor::$vars['multilang'])
 		$lvalues=array(
@@ -517,16 +522,16 @@ function Save($id)
 		if($v=='')
 			$v=htmlspecialchars_decode($lvalues['title'][$k],ELENT);
 		$v=$Eleanor->Url->Filter($v,$k);
-		$R=Eleanor::$Db->Query('SELECT `id` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `uri`='.Eleanor::$Db->Escape($v).' AND `language`'.($k ? 'IN(\'\',\''.$k.'\')' : '=\'\'').($id ? ' AND `id`!='.$id : '').' LIMIT 1');
+		$R=Eleanor::$Db->Query('SELECT `id` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `uri`='.Eleanor::$Db->Escape($v).' AND `language`'.($k ? 'IN(\'\',\''.$k.'\')' : '=\'\'').($id ? ' AND `id`!='.$id : '').' LIMIT 1');
 		if($R->num_rows>0)
 			$v='';
 	}
 
-	Eleanor::$Db->Delete(P.'drafts','`key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
+	Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
 	if($id)
 	{
-		Eleanor::$Db->Update($Eleanor->module['config']['t'],$values,'id='.$id.' LIMIT 1');
-		Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`='.$id.' AND `language`'.Eleanor::$Db->In($langs,true));
+		Eleanor::$Db->Update($mc['t'],$values,'id='.$id.' LIMIT 1');
+		Eleanor::$Db->Delete($mc['tl'],'`id`='.$id.' AND `language`'.Eleanor::$Db->In($langs,true));
 		$values=array();
 		foreach($langs as &$v)
 			$values[]=array(
@@ -539,15 +544,15 @@ function Save($id)
 				'meta_descr'=>isset($lvalues['meta_descr'][$lng]) ? $lvalues['meta_descr'][$lng] : '',
 				'last_mod'=>date('Y-m-d H:i:s'),
 			);
-		Eleanor::$Db->Replace($Eleanor->module['config']['tl'],$values);
+		Eleanor::$Db->Replace($mc['tl'],$values);
 	}
 	else
 	{
 		Eleanor::$Db->Transaction();#Все ради аплоадера
-		$id=Eleanor::$Db->Insert($Eleanor->module['config']['t'],$values);
+		$id=Eleanor::$Db->Insert($mc['t'],$values);
 		try
 		{
-			$ft=$Eleanor->Uploader->MoveFiles($Eleanor->module['config']['n'].DIRECTORY_SEPARATOR.$id);
+			$ft=$Eleanor->Uploader->MoveFiles($mc['n'].DIRECTORY_SEPARATOR.$id);
 		}
 		catch(EE $E)
 		{
@@ -566,7 +571,7 @@ function Save($id)
 			$values['meta_title'][]=isset($lvalues['meta_title'][$v]) ? $lvalues['meta_title'][$v] : '';
 			$values['meta_descr'][]=isset($lvalues['meta_descr'][$v]) ? $lvalues['meta_descr'][$v] : '';
 		}
-		Eleanor::$Db->Insert($Eleanor->module['config']['tl'],$values);
+		Eleanor::$Db->Insert($mc['tl'],$values);
 		Eleanor::$Db->Commit();
 	}
 	GoAway(empty($_POST['back']) ? true : $_POST['back']);

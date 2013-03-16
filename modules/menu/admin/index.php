@@ -11,9 +11,9 @@
 if(!defined('CMS'))die;
 
 global$Eleanor,$title;
-$Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-Eleanor::$Template->queue[]=$Eleanor->module['config']['admintpl'];
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php',$Eleanor->module['config']['n']);
+$Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
+Eleanor::$Template->queue[]=$mc['admintpl'];
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php',$mc['n']);
 
 $Eleanor->module['links']=array(
 	'list'=>$Eleanor->Url->Prefix(),
@@ -35,7 +35,7 @@ $Eleanor->sc=array(
 		},
 		'save'=>function($a)
 		{global$Eleanor;
-			$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.(int)$a['value'].' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$mc['t'].'` WHERE `id`='.(int)$a['value'].' LIMIT 1');
 			if($a=$R->fetch_assoc())
 				return$a['parents'] ? $a['parents'].$a['id'].',' : $a['id'].',';
 			return'';
@@ -45,9 +45,9 @@ $Eleanor->sc=array(
 			'callback'=>function($a)
 			{global$Eleanor;
 				$sel=Eleanor::Option('&mdash;',0,in_array('',$a['value']),array(),2);
-				if(!class_exists($Eleanor->module['config']['api'],false))
+				if(!class_exists($mc['api'],false))
 					include$Eleanor->module['path'].'api.php';
-				$Plug=new$Eleanor->module['config']['api']($Eleanor->module['config']);
+				$Plug=new$mc['api']($mc);
 				$items=$Plug->GetOrderedList(false,false);
 				foreach($items as $k=>&$v)
 				{
@@ -175,7 +175,7 @@ if(isset($_GET['do']))
 			$p='';
 			if(isset($_GET['parent']))
 			{
-				$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.(int)$_GET['parent'].' LIMIT 1');
+				$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$mc['t'].'` WHERE `id`='.(int)$_GET['parent'].' LIMIT 1');
 				if(list($id,$p)=$R->fetch_row())
 					$p.=$id.',';
 			}
@@ -185,7 +185,7 @@ if(isset($_GET['do']))
 		case'draft':
 			$id=isset($_POST['_draft']) ? (int)$_POST['_draft'] : 0;
 			unset($_POST['_draft'],$_POST['back']);
-			Eleanor::$Db->Replace(P.'drafts',array('key'=>$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id,'value'=>serialize($_POST)));
+			Eleanor::$Db->Replace(P.'drafts',array('key'=>$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id,'value'=>serialize($_POST)));
 			Eleanor::$content_type='text/plain';
 			Start('');
 			echo'ok';
@@ -204,19 +204,19 @@ elseif(isset($_GET['edit']))
 elseif(isset($_GET['delete']))
 {
 	$id=(int)$_GET['delete'];
-	$R=Eleanor::$Db->Query('SELECT `parents`,`pos` FROM `'.$Eleanor->module['config']['t'].'` LEFT JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `id`='.$id.' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `parents`,`pos` FROM `'.$mc['t'].'` LEFT JOIN `'.$mc['tl'].'` USING(`id`) WHERE `id`='.$id.' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
 	if(!$a=$R->fetch_assoc() or !Eleanor::$our_query)
 		return GoAway();
 	$ids=array($id);
-	$R=Eleanor::$Db->Query('SELECT `id` FROM `'.$Eleanor->module['config']['t'].'` WHERE `parents` LIKE \''.$a['parents'].$id.',%\'');
+	$R=Eleanor::$Db->Query('SELECT `id` FROM `'.$mc['t'].'` WHERE `parents` LIKE \''.$a['parents'].$id.',%\'');
 	while($temp=$R->fetch_assoc())
 		$ids[]=$temp['id'];
 	$ids=Eleanor::$Db->In($ids);
-	Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`'.$ids);
-	Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$ids);
-	Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`-1'),'`pos`>'.$a['pos'].' AND `parents`=\''.$a['parents'].'\'');
-	Eleanor::$Db->Delete(P.'drafts','`key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
-	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
+	Eleanor::$Db->Delete($mc['t'],'`id`'.$ids);
+	Eleanor::$Db->Delete($mc['tl'],'`id`'.$ids);
+	Eleanor::$Db->Update($mc['t'],array('!pos'=>'`pos`-1'),'`pos`>'.$a['pos'].' AND `parents`=\''.$a['parents'].'\'');
+	Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
+	Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 	GoAway();
 }
 elseif(isset($_GET['swap']))
@@ -224,8 +224,8 @@ elseif(isset($_GET['swap']))
 	$id=(int)$_GET['swap'];
 	if(Eleanor::$our_query)
 	{
-		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`='.$id.' LIMIT 1');
-		Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
+		Eleanor::$Db->Update($mc['t'],array('!status'=>'NOT `status`'),'`id`='.$id.' LIMIT 1');
+		Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 	}
 	$back=getenv('HTTP_REFERER');
 	GoAway($back ? $back.'#it'.$id : true);
@@ -233,22 +233,22 @@ elseif(isset($_GET['swap']))
 elseif(isset($_GET['up']))
 {
 	$id=(int)$_GET['up'];
-	$R=Eleanor::$Db->Query('SELECT `parents`,`pos` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.' LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `parents`,`pos` FROM `'.$mc['t'].'` WHERE `id`='.$id.' LIMIT 1');
 	if($R->num_rows==0 or !Eleanor::$our_query)
 		return GoAway();
 	list($parents,$posit)=$R->fetch_row();
-	$R=Eleanor::$Db->Query('SELECT COUNT(`parents`),`pos` FROM `'.$Eleanor->module['config']['t'].'` WHERE `pos`=(SELECT MAX(`pos`) FROM `'.$Eleanor->module['config']['t'].'` WHERE `pos`<'.$posit.' AND `parents`=\''.$parents.'\') AND `parents`=\''.$parents.'\'');
+	$R=Eleanor::$Db->Query('SELECT COUNT(`parents`),`pos` FROM `'.$mc['t'].'` WHERE `pos`=(SELECT MAX(`pos`) FROM `'.$mc['t'].'` WHERE `pos`<'.$posit.' AND `parents`=\''.$parents.'\') AND `parents`=\''.$parents.'\'');
 	list($cnt,$np)=$R->fetch_row();
 	if($cnt>0)
 	{
 		if($cnt>1 or $np+1!=$posit)
 		{
 			Resort($parents);
-			$R=Eleanor::$Db->Query('SELECT `pos` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `pos` FROM `'.$mc['t'].'` WHERE `id`='.$id.' LIMIT 1');
 			list($posit)=$R->fetch_row();
 		}
-		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`+1'),'`pos`='.--$posit.' AND `parents`=\''.$parents.'\' LIMIT 1');
-		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`-1'),'`id`='.$id.' AND `parents`=\''.$parents.'\' LIMIT 1');
+		Eleanor::$Db->Update($mc['t'],array('!pos'=>'`pos`+1'),'`pos`='.--$posit.' AND `parents`=\''.$parents.'\' LIMIT 1');
+		Eleanor::$Db->Update($mc['t'],array('!pos'=>'`pos`-1'),'`id`='.$id.' AND `parents`=\''.$parents.'\' LIMIT 1');
 	}
 	GoAway(false,301,'it'.$id);
 }
@@ -257,22 +257,22 @@ elseif(isset($_GET['down']))
 	$id=(int)$_GET['down'];
 	if(!Eleanor::$our_query)
 		return GoAway();
-	$R=Eleanor::$Db->Query('SELECT `parents`,`pos` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.' LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `parents`,`pos` FROM `'.$mc['t'].'` WHERE `id`='.$id.' LIMIT 1');
 	if($R->num_rows==0 or !Eleanor::$our_query)
 		return GoAway();
 	list($parents,$posit)=$R->fetch_row();
-	$R=Eleanor::$Db->Query('SELECT COUNT(`parents`),`pos` FROM `'.$Eleanor->module['config']['t'].'` WHERE `pos`=(SELECT MIN(`pos`) FROM `'.$Eleanor->module['config']['t'].'` WHERE `pos`>'.$posit.' AND `parents`=\''.$parents.'\') AND `parents`=\''.$parents.'\'');
+	$R=Eleanor::$Db->Query('SELECT COUNT(`parents`),`pos` FROM `'.$mc['t'].'` WHERE `pos`=(SELECT MIN(`pos`) FROM `'.$mc['t'].'` WHERE `pos`>'.$posit.' AND `parents`=\''.$parents.'\') AND `parents`=\''.$parents.'\'');
 	list($cnt,$np)=$R->fetch_row();
 	if($cnt>0)
 	{
 		if($cnt>1 or $np-1!=$posit)
 		{
 			Resort($parents);
-			$R=Eleanor::$Db->Query('SELECT `pos` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `pos` FROM `'.$mc['t'].'` WHERE `id`='.$id.' LIMIT 1');
 			list($posit)=$R->fetch_row();
 		}
-		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`-1'),'`pos`='.++$posit.' AND `parents`=\''.$parents.'\' LIMIT 1');
-		Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`+1'),'`id`='.$id.' AND `parents`=\''.$parents.'\' LIMIT 1');
+		Eleanor::$Db->Update($mc['t'],array('!pos'=>'`pos`-1'),'`pos`='.++$posit.' AND `parents`=\''.$parents.'\' LIMIT 1');
+		Eleanor::$Db->Update($mc['t'],array('!pos'=>'`pos`+1'),'`id`='.$id.' AND `parents`=\''.$parents.'\' LIMIT 1');
 	}
 	GoAway(false,301,'it'.$id);
 }
@@ -281,7 +281,8 @@ else
 
 function ShowList()
 {global$Eleanor,$title;
-	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
+	$mc=$Eleanor->module['config'];
+	$lang=Eleanor::$Language[$mc['n']];
 	$title=$lang['list'];
 	$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
 	$navi=$where=$qs=array();
@@ -299,12 +300,12 @@ function ShowList()
 
 	if(isset($_REQUEST['parent']) and 0<$qs['parent']=(int)$_REQUEST['parent'])
 	{
-		$R=Eleanor::$Db->Query('SELECT `parents` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$qs['parent'].' LIMIT 1');
+		$R=Eleanor::$Db->Query('SELECT `parents` FROM `'.$mc['t'].'` WHERE `id`='.$qs['parent'].' LIMIT 1');
 		list($parents)=$R->fetch_row();
 		$parents.=$qs['parent'];
 		$where[]='`parents`='.Eleanor::$Db->Escape($parents.',');
 		$temp=array();
-		$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.$Eleanor->module['config']['t'].'` `s` INNER JOIN `'.$Eleanor->module['config']['tl'].'` `l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id` IN ('.$parents.')');
+		$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.$mc['t'].'` `s` INNER JOIN `'.$mc['tl'].'` `l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id` IN ('.$parents.')');
 		while($a=$R->fetch_assoc())
 			$temp[$a['id']]=$a['title'];
 		$navi[0]=array('title'=>$lang['list'],'_a'=>$Eleanor->Url->Prefix());
@@ -318,34 +319,35 @@ function ShowList()
 	$where[]='`language` IN (\'\',\''.Language::$main.'\')';
 	$where=' WHERE '.join(' AND ',$where);
 	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
-	{		$in=Eleanor::$Db->In($_POST['mass']);
+	{
+		$in=Eleanor::$Db->In($_POST['mass']);
 		switch($_POST['op'])
 		{
 			case'k':
 				$ids=array();
-				$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`'.$in);
+				$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$mc['t'].'` WHERE `id`'.$in);
 				while($a=$R->fetch_assoc())
 				{
 					$ids[]=$a['id'];
-					$R2=Eleanor::$Db->Query('SELECT `id` FROM `'.$Eleanor->module['config']['t'].'` WHERE `parents` LIKE \''.$a['parents'].$a['id'].',%\'');
+					$R2=Eleanor::$Db->Query('SELECT `id` FROM `'.$mc['t'].'` WHERE `parents` LIKE \''.$a['parents'].$a['id'].',%\'');
 					while($temp=$R2->fetch_assoc())
 						$ids[]=$temp['id'];
 				}
 				$ids_=Eleanor::$Db->In($ids);
-				Eleanor::$Db->Delete($Eleanor->module['config']['t'],'`id`'.$ids_);
-				Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`'.$ids_);
+				Eleanor::$Db->Delete($mc['t'],'`id`'.$ids_);
+				Eleanor::$Db->Delete($mc['tl'],'`id`'.$ids_);
 			break;
 			case'a':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>1),'`id`'.$in);
+				Eleanor::$Db->Update($mc['t'],array('status'=>1),'`id`'.$in);
 			break;
 			case'd':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('status'=>0),'`id`'.$in);
+				Eleanor::$Db->Update($mc['t'],array('status'=>0),'`id`'.$in);
 			break;
 			case's':
-				Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!status'=>'NOT `status`'),'`id`'.$in);
+				Eleanor::$Db->Update($mc['t'],array('!status'=>'NOT `status`'),'`id`'.$in);
 		}
 	}
-	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`)'.$where);
+	$R=Eleanor::$Db->Query('SELECT COUNT(`id`) FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`)'.$where);
 	list($cnt)=$R->fetch_row();
 	if($page<=0)
 		$page=1;
@@ -373,7 +375,7 @@ function ShowList()
 	$items=$subitems=array();
 	if($cnt>0)
 	{
-		$R=Eleanor::$Db->Query('SELECT `id`,`parents`,`pos`,`status`,`title` FROM `'.$Eleanor->module['config']['t'].'` `s` INNER JOIN `'.$Eleanor->module['config']['tl'].'` `l` USING(`id`)'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
+		$R=Eleanor::$Db->Query('SELECT `id`,`parents`,`pos`,`status`,`title` FROM `'.$mc['t'].'` `s` INNER JOIN `'.$mc['tl'].'` `l` USING(`id`)'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
 		while($a=$R->fetch_assoc())
 		{
 			$subitems[]=$a['parents'].$a['id'].',';
@@ -392,7 +394,7 @@ function ShowList()
 
 	if($subitems)
 	{
-		$R=Eleanor::$Db->Query('SELECT `id`,`parents`,`title` FROM `'.$Eleanor->module['config']['t'].'` `s` INNER JOIN `'.$Eleanor->module['config']['tl'].'` `l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `parents`'.Eleanor::$Db->In($subitems).' ORDER BY `pos` ASC');
+		$R=Eleanor::$Db->Query('SELECT `id`,`parents`,`title` FROM `'.$mc['t'].'` `s` INNER JOIN `'.$mc['tl'].'` `l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `parents`'.Eleanor::$Db->In($subitems).' ORDER BY `pos` ASC');
 		$subitems=array();
 		while($a=$R->fetch_assoc())
 		{
@@ -429,20 +431,21 @@ function ShowList()
 
 function AddEdit($id,$errors=array())
 {global$Eleanor,$title;
-	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
+	$mc=$Eleanor->module['config'];
+	$lang=Eleanor::$Language[$mc['n']];
 	$values=array('parents'=>array('value'=>isset($_GET['parent']) ? (int)$_GET['parent'] : 0));
 	if($id)
 	{
 		$Eleanor->sc['parents']['options']['exclude']=$id;
 		if(!$errors)
 		{
-			$R=Eleanor::$Db->Query('SELECT * FROM `'.$Eleanor->module['config']['t'].'` WHERE id='.$id.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT * FROM `'.$mc['t'].'` WHERE id='.$id.' LIMIT 1');
 			if(!$a=$R->fetch_assoc())
 				return GoAway(true);
 			foreach($a as $k=>&$v)
 				if(isset($Eleanor->sc[$k]))
 					$values[$k]['value']=$v;
-			$R=Eleanor::$Db->Query('SELECT `language`,`title`,`url`,`eval_url`,`params` FROM `'.$Eleanor->module['config']['tl'].'` WHERE `id`='.$id);
+			$R=Eleanor::$Db->Query('SELECT `language`,`title`,`url`,`eval_url`,`params` FROM `'.$mc['tl'].'` WHERE `id`='.$id);
 			while($temp=$R->fetch_assoc())
 				if(!Eleanor::$vars['multilang'] and (!$temp['language'] or $temp['language']==Language::$main))
 				{
@@ -483,7 +486,7 @@ function AddEdit($id,$errors=array())
 	$hasdraft=false;
 	if(!$errors and !isset($_GET['nodraft']))
 	{
-		$R=Eleanor::$Db->Query('SELECT `value` FROM `'.P.'drafts` WHERE `key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
+		$R=Eleanor::$Db->Query('SELECT `value` FROM `'.P.'drafts` WHERE `key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
 		if($draft=$R->fetch_row() and $draft[0])
 		{
 			$hasdraft=true;
@@ -543,7 +546,8 @@ function Save($id)
 		return AddEdit($id,array('ERROR'=>$E->getMessage()));
 	}
 	$errors=$C->errors;
-	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
+	$mc=$Eleanor->module['config'];
+	$lang=Eleanor::$Language[$mc['n']];
 
 	if(Eleanor::$vars['multilang'])
 		$lvalues=array(
@@ -586,10 +590,10 @@ function Save($id)
 	if($errors)
 		return AddEdit($id,$errors);
 
-	Eleanor::$Db->Delete(P.'drafts','`key`=\''.$Eleanor->module['config']['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
+	Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-'.$id.'\' LIMIT 1');
 	if($id)
 	{
-		$R=Eleanor::$Db->Query('SELECT `parents`,`pos` FROM `'.$Eleanor->module['config']['t'].'` WHERE `id`='.$id.' LIMIT 1');
+		$R=Eleanor::$Db->Query('SELECT `parents`,`pos` FROM `'.$mc['t'].'` WHERE `id`='.$id.' LIMIT 1');
 		if(!list($parents,$pos)=$R->fetch_row())
 			return GoAway();
 
@@ -598,13 +602,13 @@ function Save($id)
 			$values['pos']=1;
 		if($pos!=$values['pos'])
 		{
-			Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`-1'),'`pos`>'.$pos.' AND `parents`=\''.$parents.'\'');
-			Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`+1'),'`pos`>='.$values['pos'].' AND `parents`=\''.$values['parents'].'\'');
+			Eleanor::$Db->Update($mc['t'],array('!pos'=>'`pos`-1'),'`pos`>'.$pos.' AND `parents`=\''.$parents.'\'');
+			Eleanor::$Db->Update($mc['t'],array('!pos'=>'`pos`+1'),'`pos`>='.$values['pos'].' AND `parents`=\''.$values['parents'].'\'');
 		}
 		if($parents!=$values['parents'])
-			Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!parents'=>'REPLACE(`parents`,\''.$parents.'\',\''.$values['parents'].'\')'),'`parents` LIKE \''.$parents.$id.',%\'');
-		Eleanor::$Db->Update($Eleanor->module['config']['t'],$values,'id='.$id.' LIMIT 1');
-		Eleanor::$Db->Delete($Eleanor->module['config']['tl'],'`id`='.$id.' AND `language`'.Eleanor::$Db->In($langs,true));
+			Eleanor::$Db->Update($mc['t'],array('!parents'=>'REPLACE(`parents`,\''.$parents.'\',\''.$values['parents'].'\')'),'`parents` LIKE \''.$parents.$id.',%\'');
+		Eleanor::$Db->Update($mc['t'],$values,'id='.$id.' LIMIT 1');
+		Eleanor::$Db->Delete($mc['tl'],'`id`='.$id.' AND `language`'.Eleanor::$Db->In($langs,true));
 		$values=array();
 		foreach($langs as &$v)
 			$values[]=array(
@@ -616,13 +620,13 @@ function Save($id)
 				'params'=>isset($lvalues['params'][$v]) ? $lvalues['params'][$v] : '',
 			);
 
-		Eleanor::$Db->Replace($Eleanor->module['config']['tl'],$values);
+		Eleanor::$Db->Replace($mc['tl'],$values);
 	}
 	else
 	{
 		if($values['pos']=='')
 		{
-			$R=Eleanor::$Db->Query('SELECT MAX(`pos`) FROM `'.$Eleanor->module['config']['t'].'` WHERE `parents`=\''.$values['parents'].'\'');
+			$R=Eleanor::$Db->Query('SELECT MAX(`pos`) FROM `'.$mc['t'].'` WHERE `parents`=\''.$values['parents'].'\'');
 			list($pos)=$R->fetch_row();
 			$values['pos']=$pos===null ? 1 : $pos+1;
 		}
@@ -630,9 +634,9 @@ function Save($id)
 		{
 			if($values['pos']<=0)
 				$values['pos']=1;
-			Eleanor::$Db->Update($Eleanor->module['config']['t'],array('!pos'=>'`pos`+1'),'`pos`>='.(int)$values['pos'].' AND `parents`=\''.$values['parents'].'\'');
+			Eleanor::$Db->Update($mc['t'],array('!pos'=>'`pos`+1'),'`pos`>='.(int)$values['pos'].' AND `parents`=\''.$values['parents'].'\'');
 		}
-		$id=Eleanor::$Db->Insert($Eleanor->module['config']['t'],$values);
+		$id=Eleanor::$Db->Insert($mc['t'],$values);
 		$values=array('id'=>array(),'language'=>array(),'title'=>array(),'url'=>array(),'eval_url'=>array(),'params'=>array());
 		foreach($langs as &$v)
 		{
@@ -643,20 +647,21 @@ function Save($id)
 			$values['eval_url'][]=isset($lvalues['eval_url'][$v]) ? $lvalues['eval_url'][$v] : '';
 			$values['params'][]=isset($lvalues['params'][$v]) ? $lvalues['params'][$v] : '';
 		}
-		Eleanor::$Db->Insert($Eleanor->module['config']['tl'],$values);
+		Eleanor::$Db->Insert($mc['tl'],$values);
 	}
-	Eleanor::$Cache->Lib->DeleteByTag($Eleanor->module['config']['n']);
+	Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 	GoAway(empty($_POST['back']) ? true : $_POST['back']);
 }
 
 function Resort($p='')
 {global$Eleanor;
-	$R=Eleanor::$Db->Query('SELECT `id`,`pos` FROM `'.$Eleanor->module['config']['t'].'` WHERE `parents`=\''.$p.'\' ORDER BY `pos` ASC');
+	$mc=$Eleanor->module['config'];
+	$R=Eleanor::$Db->Query('SELECT `id`,`pos` FROM `'.$mc['t'].'` WHERE `parents`=\''.$p.'\' ORDER BY `pos` ASC');
 	$cnt=1;
 	while($a=$R->fetch_assoc())
 	{
 		if($a['pos']!=$cnt)
-			Eleanor::$Db->Update($Eleanor->module['config']['t'],array('pos'=>$cnt),'`id`='.$a['id'].' LIMIT 1');
+			Eleanor::$Db->Update($mc['t'],array('pos'=>$cnt),'`id`='.$a['id'].' LIMIT 1');
 		++$cnt;
 	}
 }

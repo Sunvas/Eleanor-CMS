@@ -10,10 +10,10 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor;
-$Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-$l=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$Eleanor->module['config']['n']);
-Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
-Eleanor::LoadOptions($Eleanor->module['config']['opts'],false);
+$Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
+$l=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$mc['n']);
+Eleanor::$Template->queue[]=$mc['usertpl'];
+Eleanor::LoadOptions($mc['opts'],false);
 
 $Lst=Eleanor::LoadListTemplate('headfoot');
 $u='?'.Url::Query(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
@@ -24,12 +24,12 @@ $GLOBALS['head']['rss']=$Lst->link(array(
 	'title'=>$l['rss'],
 ));
 
-if(!class_exists($Eleanor->module['config']['api'],false))
-	include $Eleanor->module['path'].'api.php';
-$Eleanor->Plug=new $Eleanor->module['config']['api']($Eleanor->module['config']);
+if(!class_exists($mc['api'],false))
+	include$Eleanor->module['path'].'api.php';
+$Eleanor->Plug=new$mc['api']($mc);
 if(!empty($Eleanor->module['general']))
 {
-	if(Eleanor::$vars[$Eleanor->module['config']['pv'].'general'])
+	if(Eleanor::$vars[$mc['pv'].'general'])
 		ShowGeneral();
 	else
 		Substance();
@@ -53,7 +53,7 @@ else
 		$uid=Eleanor::$Login->GetUserValue('id');
 		if($id>0)
 		{
-			$R=Eleanor::$Db->Query('SELECT `parents` FROM `'.$Eleanor->module['config']['t'].'` WHERE `status`=1 AND `id`='.$id.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `parents` FROM `'.$mc['t'].'` WHERE `status`=1 AND `id`='.$id.' LIMIT 1');
 			if(!list($parents)=$R->fetch_row())
 				return ExitPage();
 			$parents.=$id.',';
@@ -86,7 +86,7 @@ else
 			{
 				$uri=$parents='';
 				$requrl=reset($trace);
-				$R=Eleanor::$Db->Query('SELECT `id`,`parents`,`uri` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `uri`'.Eleanor::$Db->In($trace).' AND `status`=1 ORDER BY `parents` ASC');
+				$R=Eleanor::$Db->Query('SELECT `id`,`parents`,`uri` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `uri`'.Eleanor::$Db->In($trace).' AND `status`=1 ORDER BY `parents` ASC');
 				while($a=$R->fetch_assoc())
 					if($parents==$a['parents'])
 					{
@@ -104,21 +104,21 @@ else
 			return ExitPage();
 		if($id and !$data)
 		{
-			$R=Eleanor::$Db->Query('SELECT `title`,`text`,`parents`,`meta_title`,`meta_descr`,`last_mod` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`='.$id.' LIMIT 1');
+			$R=Eleanor::$Db->Query('SELECT `title`,`text`,`parents`,`meta_title`,`meta_descr`,`last_mod` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`='.$id.' LIMIT 1');
 			if(!$data=$R->fetch_assoc())
 				return ExitPage();
 			if(Eleanor::$caching)
 			{
 				Eleanor::$last_mod=strtotime($data['last_mod']);
 				$etag=Eleanor::$etag;
-				Eleanor::$etag=md5($uid.'-'.$Eleanor->module['config']['n'].$id);
+				Eleanor::$etag=md5($uid.'-'.$mc['n'].$id);
 				if(Eleanor::$modified and Eleanor::$last_mod and Eleanor::$last_mod<=Eleanor::$modified and $etag and $etag==Eleanor::$etag)
 					return Start();
 				else
 					Eleanor::$modified=false;
 			}
 
-			$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($Eleanor->Plug->GetUrl($id));
+			$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($id) : array('id'=>$id));
 			OwnBB::$opts['alt']=$data['title'];
 			$data['text']=OwnBB::Parse($data['text']);
 			if(!$pr=$Eleanor->Url->Prefix())
@@ -128,19 +128,19 @@ else
 			{
 				$in=explode(',',$data['parents']);
 				$tmp=array();
-				$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`'.Eleanor::$Db->In($in));
+				$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`'.Eleanor::$Db->In($in));
 				while($a=$R->fetch_assoc())
 					$tmp[$a['id']]=$a['title'];
 				foreach($in as &$v)
 					if(isset($tmp[$v]))
-						$data['navi'][]=array($tmp[$v],$Eleanor->Url->Construct($Eleanor->Plug->GetUrl($v)));
+						$data['navi'][]=array($tmp[$v],$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($v) : array('id'=>$v)));
 			}
 			$data['navi'][]=array($data['title'],false);
 
 			$data['seealso']=array();
-			$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `parents`=\''.$parents.'\' ORDER BY `pos` ASC');
+			$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `parents`=\''.$parents.'\' ORDER BY `pos` ASC');
 			while($a=$R->fetch_assoc())
-				$data['seealso'][]=array($a['title'],$Eleanor->Url->Construct($Eleanor->Plug->GetUrl($a['id'])));
+				$data['seealso'][]=array($a['title'],$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($a['id']) : array('id'=>$a['id'])));
 		}
 		if($data['meta_title'])
 			$title=$data['meta_title'];
@@ -171,11 +171,12 @@ else
 
 function ShowGeneral()
 {global$Eleanor;
-	if(!Eleanor::$vars[$Eleanor->module['config']['pv'].'general'])
+	$mc=$Eleanor->module['config'];
+	if(!Eleanor::$vars[$mc['pv'].'general'])
 		return Substance();
-	$ids=explode(',',Eleanor::$vars[$Eleanor->module['config']['pv'].'general']);
+	$ids=explode(',',Eleanor::$vars[$mc['pv'].'general']);
 	$res=$temp=array();
-	$R=Eleanor::$Db->Query('SELECT `id`,`title`,`text` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `id`'.Eleanor::$Db->In($ids).' AND `status`=1 AND `language`IN(\'\',\''.Language::$main.'\')');
+	$R=Eleanor::$Db->Query('SELECT `id`,`title`,`text` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `id`'.Eleanor::$Db->In($ids).' AND `status`=1 AND `language`IN(\'\',\''.Language::$main.'\')');
 	while($a=$R->fetch_assoc())
 	{
 		$a['text']=OwnBB::Parse($a['text']);
@@ -195,7 +196,7 @@ function Substance()
 	$title[]=Eleanor::$Language[$Eleanor->module['config']['n']]['substance'];
 	$ol=$Eleanor->Plug->GetOrderedList();
 	foreach($ol as $k=>&$v)
-		$v['_a']=$Eleanor->Url->Construct($Eleanor->Plug->GetUrl($k));
+		$v['_a']=$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($k) : array('id'=>$k));
 	$s=Eleanor::$Template->StaticSubstance($ol);
 	Start();
 	echo$s;

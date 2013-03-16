@@ -138,11 +138,11 @@ class ApiStatic extends BaseClass
 					return;
 			}
 		}
-		$u=$this->GetUrl($id,$lang);
-		return $u ? $El->Url->Construct($u) : false;
+		$u=$El->Url->furl ? $this->GetUri($id,$lang) : array('id'=>$id);
+		return$u ? $El->Url->Construct($u) : false;
 	}
 
-	public function GetUrl($id,$lang=false)
+	public function GetUri($id,$lang=false)
 	{
 		if(!$lang)
 			$lang=Language::$main;
@@ -161,12 +161,9 @@ class ApiStatic extends BaseClass
 		if(!isset($this->urls[$id]))
 			return;
 
-		$El=Eleanor::getInstance();
-		if(!isset($this->urls[$id]))
-			return $El->Url->Prefix();
 		$params=array();
 		$lastu=$this->urls[$id]['uri'];
-		if($El->Url->furl and $this->urls[$id]['parents'] and $lastu)
+		if($this->urls[$id]['parents'] and $lastu)
 		{
 			foreach(explode(',',rtrim($this->urls[$id]['parents'],',')) as $v)
 				if(isset($this->urls[$v]))
@@ -174,6 +171,7 @@ class ApiStatic extends BaseClass
 						$params[]=array($this->urls[$v]['uri']);
 					else
 					{
+						$params=array();
 						$lastu='';
 						break;
 					}
@@ -306,7 +304,7 @@ class ApiStatic extends BaseClass
 					call_user_func(
 						$opts['callback'],
 						array(
-							'loc'=>$Url->Construct($this->GetUrl($k,$lang)),
+							'loc'=>$Url->Construct($Url->furl ? $this->GetUri($k,$lang) : array('id'=>$k)),
 							'changefreq'=>'monthly',
 							'priority'=>$conf['pp'],
 						)

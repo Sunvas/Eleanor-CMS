@@ -10,9 +10,9 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor,$title;
-$Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$Eleanor->module['config']['n']);
-Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
+$Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$mc['n']);
+Eleanor::$Template->queue[]=$mc['usertpl'];
 
 $menu=Eleanor::$Cache->Get('menu_map_'.Language::$main);
 if($menu===false)

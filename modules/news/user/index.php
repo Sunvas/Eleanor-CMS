@@ -133,7 +133,7 @@ if(isset($_GET['do']))
 							Eleanor::$Db->Delete(P.'drafts','`key`=\''.$mc['n'].'-'.Eleanor::$Login->GetUserValue('id').'-n'.$id.'\' LIMIT 1');
 						Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 						$title[]=$lang['deleted'];
-						SetData($Eleanor->module['config']['usercorrecttpl']);
+						SetData($mc['usercorrecttpl']);
 						$c=Eleanor::$Template->DelSuccess($a,empty($_POST['back']) ? false : $_POST['back']);
 					}
 					else
@@ -143,7 +143,7 @@ if(isset($_GET['do']))
 							$back='';
 						else
 							$back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
-						SetData($Eleanor->module['config']['usercorrecttpl']);
+						SetData($mc['usercorrecttpl']);
 						$c=Eleanor::$Template->Delete($a,$back);
 					}
 					Start();
@@ -591,9 +591,10 @@ else
 
 function Main()
 {global$Eleanor,$title;
-	$title[]=Eleanor::$Language[$Eleanor->module['config']['n']]['n'];
+	$mc=$Eleanor->module['config'];
+	$title[]=Eleanor::$Language[$mc['n']]['n'];
 
-	$R=Eleanor::$Db->Query('SELECT COUNT(`lstatus`) FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `lstatus`=1 AND `language` IN (\'\',\''.Language::$main.'\')');
+	$R=Eleanor::$Db->Query('SELECT COUNT(`lstatus`) FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `lstatus`=1 AND `language` IN (\'\',\''.Language::$main.'\')');
 	list($cnt)=$R->fetch_row();
 
 	$np=$cnt % Eleanor::$vars['publ_per_page'];
@@ -611,7 +612,7 @@ function Main()
 	if($cnt and $offset>=$cnt)
 		$offset=max(0,$cnt-$limit);
 
-	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
+	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
 	$d=FormatList($R,empty($Eleanor->module['general']));
 	if(!$d)
 		return;
@@ -627,6 +628,7 @@ function Main()
 
 function FormatList($R,$caching=true,$anurl=array())
 {global$Eleanor;
+	$mc=$Eleanor->module['config'];
 	$items=$cats=$tags=$cus=array();
 	$lmod=0;
 	$ids=',';
@@ -681,7 +683,7 @@ function FormatList($R,$caching=true,$anurl=array())
 	{
 		Eleanor::$last_mod=$lmod;
 		$etag=Eleanor::$etag;
-		Eleanor::$etag=md5($uid.$ids.$Eleanor->module['config']['n'].$Eleanor->module['etag']);
+		Eleanor::$etag=md5($uid.$ids.$mc['n'].$Eleanor->module['etag']);
 		if(Eleanor::$modified and Eleanor::$last_mod and Eleanor::$last_mod<=Eleanor::$modified and $etag and $etag==Eleanor::$etag)
 			return Start();
 		else
@@ -700,7 +702,7 @@ function FormatList($R,$caching=true,$anurl=array())
 
 	if($tags)
 	{
-		$R=Eleanor::$Db->Query('SELECT `id`,`name`,`cnt` FROM `'.$Eleanor->module['config']['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id`'.Eleanor::$Db->In($tags));
+		$R=Eleanor::$Db->Query('SELECT `id`,`name`,`cnt` FROM `'.$mc['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `id`'.Eleanor::$Db->In($tags));
 		$tags=array();
 		while($a=$R->fetch_assoc())
 		{
@@ -713,18 +715,19 @@ function FormatList($R,$caching=true,$anurl=array())
 
 function ShowTag($tag)
 {global$Eleanor,$title;
+	$mc=$Eleanor->module['config'];
 	$tag=htmlspecialchars($tag,ELENT,CHARSET,true);
-	$R=Eleanor::$Db->Query('SELECT `id`,`name`,`cnt` FROM `'.$Eleanor->module['config']['tt'].'` WHERE `name`=\''.Eleanor::$Db->Escape($tag,false).'\' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `id`,`name`,`cnt` FROM `'.$mc['tt'].'` WHERE `name`=\''.Eleanor::$Db->Escape($tag,false).'\' AND `language` IN (\'\',\''.Language::$main.'\') LIMIT 1');
 	if(!$tag=$R->fetch_assoc())
 		return ExitPage();
-	$title[]=sprintf(Eleanor::$Language[$Eleanor->module['config']['n']]['wt'],$tag['name']);
+	$title[]=sprintf(Eleanor::$Language[ $mc['n'] ]['wt'],$tag['name']);
 
 	/*
-		$R=Eleanor::$Db->Query('SELECT COUNT(`tag`) FROM `'.$Eleanor->module['config']['rt'].'` WHERE `tag`='.$tag['id']);
+		$R=Eleanor::$Db->Query('SELECT COUNT(`tag`) FROM `'.$mc['rt'].'` WHERE `tag`='.$tag['id']);
 		list($cnt)=$R->fetch_row();
 
 		if($cnt!=$tag['cnt'])
-			Eleanor::$Db->Update($Eleanor->module['config']['tt'],array('cnt'=>$cnt),'`id`='.$tag['id'].' LIMIT 1');
+			Eleanor::$Db->Update($mc['tt'],array('cnt'=>$cnt),'`id`='.$tag['id'].' LIMIT 1');
 	*/
 
 	$np=$tag['cnt'] % Eleanor::$vars['publ_per_page'];
@@ -742,7 +745,7 @@ function ShowTag($tag)
 	if($tag['cnt'] and $offset>=$tag['cnt'])
 		$offset=max(0,$cnt-$limit);
 
-	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$Eleanor->module['config']['t'].'` INNER JOIN `'.$Eleanor->module['config']['tl'].'` USING(`id`) WHERE `id` IN (SELECT `id` FROM `'.$Eleanor->module['config']['rt'].'` WHERE `tag`='.$tag['id'].') AND `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
+	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `id` IN (SELECT `id` FROM `'.$mc['rt'].'` WHERE `tag`='.$tag['id'].') AND `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
 	$d=FormatList($R);
 	if(!$d)
 		return;
@@ -759,17 +762,19 @@ function ShowTag($tag)
 
 function GetGN()
 {global$Eleanor;
-	$gn=Eleanor::GetCookie($Eleanor->module['config']['n'].'-gn');
-	$gns=Eleanor::GetCookie($Eleanor->module['config']['n'].'-gns');
+	$mc=$Eleanor->module['config'];
+	$gn=Eleanor::GetCookie($mc['n'].'-gn');
+	$gns=Eleanor::GetCookie($mc['n'].'-gns');
 
-	if($gn and $gns and $gns===md5($gn.$Eleanor->module['config']['secret']))
+	if($gn and $gns and $gns===md5($gn.$mc['secret']))
 		return explode(',',$gn);
 	return array();
 }
 
 function SetData($tpl=false)
 {global$Eleanor,$head;
-	$lang=Eleanor::$Language[$Eleanor->module['config']['n']];
+	$mc=$Eleanor->module['config'];
+	$lang=Eleanor::$Language[$mc['n']];
 	$Lst=Eleanor::LoadListTemplate('headfoot');
 	$u='?'.Url::Query(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
 	$Eleanor->module['rss']=Eleanor::$services['rss']['file'].$u;
@@ -786,25 +791,25 @@ function SetData($tpl=false)
 		'href'=>Eleanor::$services['xml']['file'].$u,
 	));
 
-	Eleanor::$Template->queue[]=$tpl ? $tpl : $Eleanor->module['config']['usertpl'];
+	Eleanor::$Template->queue[]=$tpl ? $tpl : $mc['usertpl'];
 
-	$tags=Eleanor::$Cache->Get($Eleanor->module['config']['n'].'_tags_'.Language::$main);
+	$tags=Eleanor::$Cache->Get($mc['n'].'_tags_'.Language::$main);
 	if($tags===false)
 	{
 		$tags=array();
-		$R=Eleanor::$Db->Query('SELECT `name`,`cnt` FROM `'.$Eleanor->module['config']['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `cnt`>0 ORDER BY `cnt` DESC LIMIT 50');
+		$R=Eleanor::$Db->Query('SELECT `name`,`cnt` FROM `'.$mc['tt'].'` WHERE `language` IN (\'\',\''.Language::$main.'\') AND `cnt`>0 ORDER BY `cnt` DESC LIMIT 50');
 		while($a=$R->fetch_assoc())
 		{
 			$a['_a']=$Eleanor->Url->Construct(array('do'=>$Eleanor->Url->furl ? 'tags' : false,'tag'=>htmlspecialchars_decode($a['name'],ELENT)),true,'');
 			$tags[]=$a;
 		}
-		Eleanor::$Cache->Put($Eleanor->module['config']['n'].'_tags_'.Language::$main,$tags,3600);
+		Eleanor::$Cache->Put($mc['n'].'_tags_'.Language::$main,$tags,3600);
 	}
 
 	#Cron
 	if(isset(Eleanor::$services['cron']))
 	{
-		$cron=Eleanor::$Cache->Get($Eleanor->module['config']['n'].'_nextrun');
+		$cron=Eleanor::$Cache->Get($mc['n'].'_nextrun');
 		$t=time();
 		$cron=$cron===false && $cron<=$t ? Eleanor::$services['cron']['file'].'?'.Url::Query(array('module'=>$Eleanor->module['name'],'language'=>Language::$main==LANGUAGE ? false : Language::$main,'rand'=>$t)) : '';
 	}

@@ -10,9 +10,9 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor,$title;
-$Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
-$lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php',$Eleanor->module['config']['n']);
-Eleanor::$Template->queue[]=$Eleanor->module['config']['admintpl'];
+$Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
+$lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php',$mc['n']);
+Eleanor::$Template->queue[]=$mc['admintpl'];
 
 $Eleanor->module['links']=array(
 	'inactives'=>$Eleanor->Url->Prefix(),
@@ -311,7 +311,7 @@ else
 
 function InactiveUsers()
 {global$Eleanor,$title;
-	$title[]=Eleanor::$Language[$Eleanor->module['config']['n']]['inactives'];
+	$title[]=Eleanor::$Language[ $Eleanor->module['config']['n'] ]['inactives'];
 	$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
 	$items=$sletters=$where=$qs=array();
 	if(isset($_REQUEST['fi']) and is_array($_REQUEST['fi']))

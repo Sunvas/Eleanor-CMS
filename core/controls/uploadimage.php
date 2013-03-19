@@ -257,7 +257,8 @@ $(function(){
 	 * @param ControlsManager $Obj
 	 */
 	public static function Control($a,$Obj)
-	{		$a['options']+=array(
+	{
+		$a['options']+=array(
 			'types'=>array('jpg','png','gif','bmp','jpeg'),
 			'path'=>Eleanor::$uploads,
 			'max_size'=>false,
@@ -282,20 +283,29 @@ $(function(){
 			{
 				$sv=&$_SESSION[__class__][$a['controlname']];
 				if(isset($sv['moved']))
-				{					$temp=Eleanor::$uploads.'/'.uniqid().'/';
+				{
+					$temp=Eleanor::$uploads.'/'.uniqid().'/';
 					if(!is_dir($temp))
 						Files::MkDir($temp);
 					$a['value']=array();
 					foreach($sv['moved'] as $k=>&$v)
-					{						$bn=$temp.basename($v);						if(rename($v,Eleanor::$root.$bn))
-							$a['value'][$k]=$bn;					}
-					unset($sv['moved']);				}
+					{
+						$bn=$temp.basename($v);
+						if(rename($v,Eleanor::$root.$bn))
+							$a['value'][$k]=$bn;
+					}
+					unset($sv['moved']);
+				}
 
 				if(isset($sv['deleted']))
-				{					$path=Eleanor::FormatPath($a['options']['path']).DIRECTORY_SEPARATOR;
+				{
+					$path=Eleanor::FormatPath($a['options']['path']).DIRECTORY_SEPARATOR;
 					foreach($sv['deleted'] as &$v)
-					{						$bn=basename($v);
-						rename($v,$path.$bn);					}				}
+					{
+						$bn=basename($v);
+						rename($v,$path.$bn);
+					}
+				}
 
 			}
 		}
@@ -319,8 +329,10 @@ $(function(){
 		$writed=isset($a['value'][0]);
 		$uploaded=isset($full['image']) && is_file($full['image']);
 
-		array_walk_recursive($a['options'],function(&$v){			if(is_object($v))
-				$v=null;		});
+		array_walk_recursive($a['options'],function(&$v){
+			if(is_object($v))
+				$v=null;
+		});
 		$_SESSION[__class__][$a['controlname']]=$a['options'];
 
 		if($upload)
@@ -348,6 +360,7 @@ $(function(){
 	 */
 	public static function Save($a,$Obj)
 	{
+		$a+=array('value'=>'');
 		$a['options']+=array(
 			'path'=>Eleanor::$uploads,
 			'filename_eval'=>null,
@@ -376,14 +389,16 @@ $(function(){
 		$a['options']['path']=rtrim($a['options']['path'],'\\/');
 		$a['value']=$a['value'] ? (array)$a['value'] : array();
 		if($a['value'])
-		{			$u=uniqid();
+		{
+			$u=uniqid();
 			$temp=Eleanor::$root.Eleanor::$uploads.'/temp/'.$u.'/';
 			$delete=!is_dir($temp) && !Files::MkDir($temp);
 		}
 
 		foreach($a['value'] as $k=>&$v)
 			if(strpos($v,'://')===false)
-			{				if($v==basename($v))
+			{
+				if($v==basename($v))
 					$v=$a['options']['path'].'/'.$v;
 				elseif(dirname($v)!=$a['options']['path'])
 				{
@@ -394,7 +409,8 @@ $(function(){
 				if($delete)
 					Files::Delete($v);
 				else
-				{					$del=$temp.basename($v);
+				{
+					$del=$temp.basename($v);
 					if(rename($v,$del))
 						$sess['deleted'][]=$del;
 				}
@@ -457,13 +473,16 @@ $(function(){
 		}
 
 		if($a['options']['preview'])
-		{			$filename=substr_replace($filename,$a['options']['prevsuff'],strrpos($filename,'.'),0);			$f=Eleanor::$root.$sess['value']['preview'];
+		{
+			$filename=substr_replace($filename,$a['options']['prevsuff'],strrpos($filename,'.'),0);
+			$f=Eleanor::$root.$sess['value']['preview'];
 			$t=$path.$filename;
 			if(is_file($f) and Files::Delete($t) and rename($f,$t))
 			{
 				$sess['moved']['preview']=$t;
 				$r['preview']=$a['options']['path'].$filename;
-			}		}
+			}
+		}
 		return$a['options']['preview'] ? $r : reset($r);
 	}
 
@@ -480,7 +499,8 @@ $(function(){
 		if(!$a['value'])
 			return$a['options']['retempty'] ? null : '<span style="width:'.($a['options']['max_image_size'][0] ? $a['options']['max_image_size'][0] : '180').'px;height:'.($a['options']['max_image_size'][1] ? $a['options']['max_image_size'][1] : '145').'px;text-decoration:none;max-height:100%;max-width:100%;" class="screenblock"><b>'.static::$Language['noimage'].'</b></span>';
 		if(is_array($a['value']))
-		{			$image=isset($a['value']['image']) ? $a['value']['image'] : '';
+		{
+			$image=isset($a['value']['image']) ? $a['value']['image'] : '';
 			$preview=isset($a['value']['preview']) ? $a['value']['preview'] : '';
 		}
 		else

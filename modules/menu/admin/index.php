@@ -33,7 +33,7 @@ $Eleanor->sc=array(
 				$a['value']=substr($a['value'],$p+1);
 			return$a;
 		},
-		'save'=>function($a)
+		'save'=>function($a)use($mc)
 		{global$Eleanor;
 			$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.$mc['t'].'` WHERE `id`='.(int)$a['value'].' LIMIT 1');
 			if($a=$R->fetch_assoc())
@@ -42,7 +42,7 @@ $Eleanor->sc=array(
 		},
 		'options'=>array(
 			'exclude'=>0,
-			'callback'=>function($a)
+			'callback'=>function($a)use($mc)
 			{global$Eleanor;
 				$sel=Eleanor::Option('&mdash;',0,in_array('',$a['value']),array(),2);
 				if(!class_exists($mc['api'],false))

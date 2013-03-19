@@ -108,12 +108,12 @@ else
 					array(
 						'{full}',
 						'{shost}',
-						'{sprotocol}'
+						'#[-]',
 					),
 					array(
 						PROTOCOL.Eleanor::$punycode.$path,
 						preg_quote(Eleanor::$punycode),
-						preg_quote(PROTOCOL),
+						'',
 					),
 					file_get_contents(Eleanor::$root.'.htaccess')
 				)

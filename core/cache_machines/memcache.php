@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class CacheMachineMemCache implements CacheMachineInterface
-{	private
+{
+	private
 		$u,#Уникализация кэш машины
 		$n=array(''=>true),#Массив имен того, что у нас есть в кеше.
 		$M=false;#Объект MemCache-a
@@ -37,7 +38,8 @@ class CacheMachineMemCache implements CacheMachineInterface
 	}
 
 	public function __destruct()
-	{		$this->Put('',$this->n);
+	{
+		$this->Put('',$this->n);
 		if($this->M)
 			memcache_close($this->M);
 	}
@@ -50,7 +52,8 @@ class CacheMachineMemCache implements CacheMachineInterface
 	 * @param int $t Время жизни этой записи кэша в секундах
 	 */
 	public function Put($k,$v,$t=0)
-	{		$r=$this->M ? memcache_set($this->M,$this->u.$k,$v,is_bool($v) || is_int($v) || is_float($v) ? 0 : MEMCACHE_COMPRESSED,$t) : false;
+	{
+		$r=$this->M ? memcache_set($this->M,$this->u.$k,$v,is_bool($v) || is_int($v) || is_float($v) ? 0 : MEMCACHE_COMPRESSED,$t) : false;
 		if($r)
 			$this->n[$k]=$t+time();
 		return$r;

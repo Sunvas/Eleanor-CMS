@@ -11,17 +11,21 @@
 class AccountLogin
 {
 	public static function Menu()
-	{		return array(
+	{
+		return array(
 			'main'=>$GLOBALS['Eleanor']->Url->Prefix(),
 		);
 	}
 
 	public static function Content($master)
-	{		if($master)
-		{			$errors=array();
+	{
+		if($master)
+		{
+			$errors=array();
 			$captcha=Eleanor::$vars['antibrute']==2 && (isset($_POST['check']) || ($ct=Eleanor::GetCookie('Captcha_'.get_class(Eleanor::$Login)) and $ct>time()));
 			if($captcha and $_SERVER['REQUEST_METHOD']=='POST')
-			{				$pch=isset($_POST['check']);
+			{
+				$pch=isset($_POST['check']);
 				$GLOBALS['Eleanor']->Captcha->disabled=false;
 				$cach=$GLOBALS['Eleanor']->Captcha->Check($pch ? (string)$_POST['check'] : '');
 				$GLOBALS['Eleanor']->Captcha->Destroy();
@@ -40,7 +44,8 @@ class AccountLogin
 				catch(EE$E)
 				{
 					if(class_exists('AccountIndex',false))
-					{						$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+					{
+						$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 						$error=$E->getMessage();
 						switch($error)
 						{

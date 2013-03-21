@@ -10,7 +10,7 @@
 */
 
 if(!class_exists('LoginBase',false))
-	include dirname(__file__).'/base.php';
+	include __dir__.'/base.php';
 
 class LoginAdmin extends LoginBase implements LoginClass
 {

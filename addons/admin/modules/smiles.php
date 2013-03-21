@@ -39,8 +39,10 @@ $Eleanor->sm=array(
 		'bypost'=>&$Eleanor->sm_post,
 		'default'=>'images/smiles/',
 		'load'=>function()
-		{			$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
-			$GLOBALS['head'][]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';		},
+		{
+			$GLOBALS['jscripts'][]='addons/autocomplete/jquery.autocomplete.js';
+			$GLOBALS['head'][]='<link rel="stylesheet" type="text/css" href="addons/autocomplete/style.css" />';
+		},
 		'options'=>array(
 			'htmlsafe'=>true,
 			'extra'=>array(
@@ -49,10 +51,13 @@ $Eleanor->sm=array(
 		),
 		'append'=>'<script type="text/javascript">//<![CDATA[
 			$(function(){
-				$("#path-'.$u.'").each(function(){					var c=(this.value!="images/spacer.png" && this.value.match(/\.(png|jpe?g|gif|bmp)$/gi));
+				$("#path-'.$u.'").each(function(){
+					var c=(this.value!="images/spacer.png" && this.value.match(/\.(png|jpe?g|gif|bmp)$/gi));
 					$("#prev-'.$u.'").attr("src",c ? this.value : "images/spacer.png");
-				}).blur(function(){					var c=(this.value!="images/spacer.png" && this.value.match(/\.(png|jpe?g|gif|bmp)$/gi));
-					$("#prev-'.$u.'").attr("src",c ? this.value : "images/spacer.png");				}).autocomplete({
+				}).blur(function(){
+					var c=(this.value!="images/spacer.png" && this.value.match(/\.(png|jpe?g|gif|bmp)$/gi));
+					$("#prev-'.$u.'").attr("src",c ? this.value : "images/spacer.png");
+				}).autocomplete({
 					serviceUrl:CORE.ajax_file,
 					minChars:2,
 					delimiter:null,
@@ -117,18 +122,23 @@ if(isset($_GET['do']))
 			);
 			if(!empty($_POST['folder']) and is_string($_POST['folder']))
 				do
-				{					$data['folder']=$_POST['folder'];					$f=Eleanor::FormatPath($_POST['folder']);
+				{
+					$data['folder']=$_POST['folder'];
+					$f=Eleanor::FormatPath($_POST['folder']);
 					$f=realpath($f).'/';
 					if(!is_dir($f) or strpos($f,Eleanor::$root)!==0)
-					{						$data['error']=$lang['fdne'];
+					{
+						$data['error']=$lang['fdne'];
 						break;
 					}
 					$already=$emos=array();
 					$R=Eleanor::$Db->Query('SELECT `path`,`emotion` FROM `'.P.'smiles`');
 					while($a=$R->fetch_assoc())
-					{						$a['emotion']=explode(',,',trim($a['emotion'],','));
+					{
+						$a['emotion']=explode(',,',trim($a['emotion'],','));
 						$emos=array_merge($emos,$a['emotion']);
-						$already[]=$a['path'];					}
+						$already[]=$a['path'];
+					}
 
 					if(!empty($_POST['smiles']) and is_array($_POST['smiles']))
 					{
@@ -138,9 +148,11 @@ if(isset($_GET['do']))
 						$path=substr($f,$rl);
 						$path=str_replace(DIRECTORY_SEPARATOR,'/',$path);
 						foreach($_POST['smiles'] as $smv)
-						{							if(!isset($smv['f'],$smv['e']))
+						{
+							if(!isset($smv['f'],$smv['e']))
 								continue;
-							$sm=basename($smv['f']);
+
+							$sm=basename($smv['f']);
 							if(preg_match('#\.(png|gif|jpe?g|bmp)$#',$sm)==0 or !is_file($f.$sm))
 								continue;
 							$em=$smv['e'] ? explode(',',$smv['e']) : array();
@@ -165,7 +177,8 @@ if(isset($_GET['do']))
 							);
 						}
 						if($exemo)
-						{							$data['error']=$lang['emoexists']($exemo);
+						{
+							$data['error']=$lang['emoexists']($exemo);
 							break;
 						}
 						elseif($toinsert)
@@ -187,7 +200,8 @@ if(isset($_GET['do']))
 							if(in_array($v,$already))
 								unset($data['smiles'][$k]);
 							else
-							{								$bn=basename($v);
+							{
+								$bn=basename($v);
 								$v=array('f'=>$v,'e'=>':'.preg_replace('#\.([a-z]{3,4})$#','',$bn).':','s'=>false,'ch'=>false,'v'=>$bn);
 							}
 						}
@@ -206,7 +220,9 @@ if(isset($_GET['do']))
 			ShowList();
 	}
 elseif(isset($_GET['edit']))
-{	$id=(int)$_GET['edit'];	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
+{
+	$id=(int)$_GET['edit'];
+	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 		Save($id);
 	else
 		AddEdit($id);
@@ -297,7 +313,8 @@ function ShowList()
 	$title[]=Eleanor::$Language['smiles']['list'];
 
 	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']))
-	{		$in=Eleanor::$Db->In($_POST['mass']);
+	{
+		$in=Eleanor::$Db->In($_POST['mass']);
 		switch($_POST['op'])
 		{
 			case'd':
@@ -340,9 +357,12 @@ function ShowList()
 	$qs+=array('sort'=>false,'so'=>false);
 
 	if($cnt>0)
-	{		$sasc=$qs['sort']=='pos' && $qs['so']=='asc';		$R=Eleanor::$Db->Query('SELECT * FROM `'.P.'smiles` ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.','.$pp);
+	{
+		$sasc=$qs['sort']=='pos' && $qs['so']=='asc';
+		$R=Eleanor::$Db->Query('SELECT * FROM `'.P.'smiles` ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.','.$pp);
 		while($a=$R->fetch_assoc())
-		{			$a['emotion']=str_replace(',,',', ',trim($a['emotion'],','));
+		{
+			$a['emotion']=str_replace(',,',', ',trim($a['emotion'],','));
 
 			$a['_ok']=is_file(Eleanor::$root.$a['path']);
 			$a['_aswap']=$a['_ok'] && $a['status'] ? $Eleanor->Url->Construct(array('swap'=>$a['id'])) : false;
@@ -360,7 +380,8 @@ function ShowList()
 				Eleanor::$Db->Update(P.'smiles',array('status'=>0),'`id`='.$a['id'].' LIMIT 1');
 
 			$items[$a['id']]=array_slice($a,1);
-		}	}
+		}
+	}
 
 	$links=array(
 		'sort_id'=>$Eleanor->Url->Construct(array_merge($qs,array('sort'=>'id','so'=>$qs['sort']=='id' && $qs['so']=='asc' ? 'desc' : 'asc'))),

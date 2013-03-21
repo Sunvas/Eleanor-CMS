@@ -1,24 +1,24 @@
 <?php return array (
-  'info' => 
+  'info' =>
   array (
     'russian' => 'Информация для связи еще не заполнена',
     'english' => 'Contact Information has not been filled',
     'ukrainian' => 'Інформація для зв\'язку ще не заповнена',
   ),
-  'whom' => 
+  'whom' =>
   array (
-    'russian' => 
+    'russian' =>
     array (
       'zz@ya.ru' => '45454',
     ),
-    'english' => 
+    'english' =>
     array (
     ),
-    'ukrainian' => 
+    'ukrainian' =>
     array (
     ),
   ),
-  'subject' => 
+  'subject' =>
   array (
     'russian' => 'Обратная связь: {s}',
     'english' => 'Feedback: {s}',

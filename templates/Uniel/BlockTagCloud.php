@@ -18,7 +18,8 @@ $v_0+=array(
 );
 
 if(isset($GLOBALS['Eleanor']->module['tags']))
-{	$tags=$GLOBALS['Eleanor']->module['tags'];
+{
+	$tags=$GLOBALS['Eleanor']->module['tags'];
 	foreach($tags as &$v)
 		$v='<a href="'.$v['_a'].'" style="font-size:12px" rel="tag">'.$v['name'].'</a>';
 	$tags=join($tags);

@@ -122,11 +122,13 @@ $lang=Eleanor::$Language->Load($theme.'langs/bbeditor-*.php',false);
 </div>
 
 </div>
-<script type="text/javascript">/*<![CDATA[*/new CORE.BBEditor({id:"<?php echo$id,'"',$ownbb ? ',ownbb:true' : '',$smiles ? ',smiles:true' : '',',service:"',Eleanor::$service?>",Preview:function(html){	{
+<script type="text/javascript">/*<![CDATA[*/new CORE.BBEditor({id:"<?php echo$id,'"',$ownbb ? ',ownbb:true' : '',$smiles ? ',smiles:true' : '',',service:"',Eleanor::$service?>",Preview:function(html){
+	{
 		var pr=$("<div class=\"preview\">").width($("#ed-<?php echo$id?>").parent().width()).insertAfter($("#ed-<?php echo$id?>").parent().children("div.preview").remove().end().find("div.bb_yourpanel")),
 			hide=$("<div style=\"text-align:center\"><input type=\"button\" class=\"button\" value=\""+CORE.Lang('hide')+"\" /></div>").find("input").click(function(){
 				pr.remove();
 			}).end();
 		pr.html(html+"<br />").append(hide).show();
-	}}});//]]></script>
+	}
+}});//]]></script>
 <!-- END BB EDITOR TEXTAREA+PANEL -->

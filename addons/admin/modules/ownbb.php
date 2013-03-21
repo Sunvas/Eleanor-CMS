@@ -139,7 +139,9 @@ if(isset($_GET['do']))
 			ShowList();
 	}
 elseif(isset($_GET['edit']))
-{	$id=(int)$_GET['edit'];	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
+{
+	$id=(int)$_GET['edit'];
+	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 		Save($id);
 	else
 		AddEdit($id);
@@ -228,11 +230,13 @@ function GroupsOptions()
 	$items=array();
 	$R=Eleanor::$Db->Query('SELECT `id`,`title_l` FROM `'.P.'groups`');
 	while($a=$R->fetch_assoc())
-	{		$ret=$a['title_l'] ? unserialize($a['title_l']) : array();
+	{
+		$ret=$a['title_l'] ? unserialize($a['title_l']) : array();
 		$items[$a['id']]=Eleanor::FilterLangValues($ret);
 	}
 	asort($items,SORT_STRING);
-	return$items;}
+	return$items;
+}
 
 function ShowList()
 {global$Eleanor,$title;
@@ -243,7 +247,8 @@ function ShowList()
 	{
 		$R=Eleanor::$Db->Query('SELECT `id`,`pos`,`active`,`handler`,`tags`,`special`,`sp_tags` FROM `'.P.'ownbb` ORDER BY `pos` ASC');
 		while($a=$R->fetch_assoc())
-		{			if(in_array($a['handler'],$Eleanor->realown))
+		{
+			if(in_array($a['handler'],$Eleanor->realown))
 				$a['_aact']=$Eleanor->Url->Construct(array('swap'=>$a['id']));
 			else
 			{
@@ -270,7 +275,8 @@ function Resort()
 	$n=0;
 	$R=Eleanor::$Db->Query('SELECT `id`,`pos` FROM `'.P.'ownbb` ORDER BY `pos` ASC');
 	while($a=$R->fetch_assoc())
-	{		++$n;
+	{
+		++$n;
 		if($a['pos']!=$n)
 			Eleanor::$Db->Update(P.'ownbb',array('pos'=>$n),'`id`='.$a['id'].' LIMIT 1');
 	}
@@ -288,7 +294,8 @@ function AddEdit($id,$errors=array())
 			if(!$a=$R->fetch_assoc())
 				return GoAway(true);
 			foreach($a as $k=>$v)
-			{				if(in_array($k,array('gr_use','gr_see')))
+			{
+				if(in_array($k,array('gr_use','gr_see')))
 					$v=$v ? explode(',',$v) : array();
 				$values[$k]['value']=$v;
 			}
@@ -315,7 +322,8 @@ function AddEdit($id,$errors=array())
 	);
 	$c=Eleanor::$Template->AddEdit($id,$Eleanor->gp,$a,$errors,$links,$back);
 	Start();
-	echo$c;}
+	echo$c;
+}
 
 function Save($id)
 {global$Eleanor;
@@ -337,10 +345,13 @@ function Save($id)
 		$tags=explode(',',$values['tags']);
 		$ab=constant(Language::$main.'::ALPHABET');
 		foreach($tags as &$v)
-		{			$v=trim($v);
+		{
+			$v=trim($v);
 			if($v=='' or preg_match('#^[a-z0-9\-'.$ab.'_]+$#i',$v)==0)
-			{				$errors[]='ERROR_TAGS';
-				break;			}
+			{
+				$errors[]='ERROR_TAGS';
+				break;
+			}
 		}
 		$values['tags']=join(',',$tags);
 	}
@@ -371,7 +382,8 @@ function Save($id)
 	$values['gr_use']=$values['gr_use'] ? join(',',$values['gr_use']) : '';
 	$values['gr_see']=$values['gr_see'] ? join(',',$values['gr_see']) : '';
 	if($id)
-	{		$values['pos']=(int)$values['pos'];
+	{
+		$values['pos']=(int)$values['pos'];
 		$R=Eleanor::$Db->Query('SELECT `pos` FROM `'.P.'ownbb` WHERE `id`='.$id);
 		list($pos)=$R->fetch_row();
 		if($pos!=$values['pos'])

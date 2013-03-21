@@ -9,22 +9,29 @@
 	*Pseudonym
 */
 class HtmlParserContextLinks
-{	protected static
+{
+	protected static
 		$cl=array();
 
 	/**
 	 * Непосредственная обработка контекстных слов в тексте в ссылки
 	 *
 	 * @param string $s Обрабатываемый текст
-	 */	public static function Parse($s)
-	{		self::$cl=Eleanor::$Cache->Get('cl_'.Language::$main);
+	 */
+	public static function Parse($s)
+	{
+		self::$cl=Eleanor::$Cache->Get('cl_'.Language::$main);
 		if(self::$cl===false)
-		{			$last=86400;
+		{
+			$last=86400;
 			$t=time();
 			self::$cl=array();
-			$Eleanor=Eleanor::getInstance();			$R=Eleanor::$Db->Query('SELECT `from`,`regexp`,`to`,`url`,`eval_url`,`params`,`date_from`,`date_till` FROM `'.P.'context_links` INNER JOIN `'.P.'context_links_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1');
+			$Eleanor=Eleanor::getInstance();
+			$R=Eleanor::$Db->Query('SELECT `from`,`regexp`,`to`,`url`,`eval_url`,`params`,`date_from`,`date_till` FROM `'.P.'context_links` INNER JOIN `'.P.'context_links_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1');
 			while($a=$R->fetch_assoc())
-			{				$newlast=false;				if((int)$a['date_from']>0 and strtotime($a['date_from'])>$t or (int)$a['date_till']>0 and $t>$newlast=strtotime($a['date_till']))
+			{
+				$newlast=false;
+				if((int)$a['date_from']>0 and strtotime($a['date_from'])>$t or (int)$a['date_till']>0 and $t>$newlast=strtotime($a['date_till']))
 					continue;
 
 				if($a['eval_url'])
@@ -48,11 +55,14 @@ class HtmlParserContextLinks
 					$a['from']=str_replace(',','|',$a['from']);
 					$a['from']='#(^|[\b"\s])('.str_replace(array(' |','| '),'|',$a['from']).')([\b"\s\.,]|$)#i';
 				}
-				self::$cl[]=$a;			}
-			Eleanor::$Cache->Put('cl_'.Language::$main,self::$cl,$last);		}
+				self::$cl[]=$a;
+			}
+			Eleanor::$Cache->Put('cl_'.Language::$main,self::$cl,$last);
+		}
 
 		if(self::$cl)
-		{			$cp=0;
+		{
+			$cp=0;
 			$bl=strlen('<!-- CONTEXT LINKS -->');
 			$el=strlen('<!-- /CONTEXT LINKS -->');
 			$cnt=count(self::$cl)-1;
@@ -81,9 +91,11 @@ class HtmlParserContextLinks
 						$w=substr($w,$we+1);
 					}
 					if(count(array_intersect(array('a','textarea','script'),$op))==0)
-					{						$bounds=array(array(0,strlen($w)));
+					{
+						$bounds=array(array(0,strlen($w)));
 						foreach(self::$cl as $k=>&$v)
-						{							$offset=0;
+						{
+							$offset=0;
 							foreach($bounds as &$b)
 							{
 								$wrep=preg_replace($v['from'],'\1<a href="'.$v['url'].'"'.$v['params'].'>'.($v['to'] ? $v['to'] : '\2').'</a>\3',substr($w,$b[0]+$offset,$b[1]));
@@ -96,7 +108,9 @@ class HtmlParserContextLinks
 								$bw=0;
 								$ew=strpos($w,'<');
 								while($ew!==false)
-								{									if($ew!=$bw)										$bounds[]=array($bw,$ew-$bw);
+								{
+									if($ew!=$bw)
+										$bounds[]=array($bw,$ew-$bw);
 									$bw=strpos($w,'>',$ew);
 									if($bw===false)
 										break;
@@ -118,5 +132,7 @@ class HtmlParserContextLinks
 				$s=substr_replace($s,$r,$bp,$ep-$bp+$el);
 				$cp=$bp;
 			}
-		}		return$s;	}
+		}
+		return$s;
+	}
 }

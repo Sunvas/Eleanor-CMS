@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class Editor_Result extends BaseClass
-{	public
+{
+	public
 		$type='bb',#Тип редактора, выбор - см конструктор класса.
 
 		$smiles=true,#Разрещить использование смайлов
@@ -22,7 +23,8 @@ class Editor_Result extends BaseClass
 
 		$checkout=true,#Проверять корректность ссылок, мыл и т.п. Это полезно отключать, когда Вы хотите сохранить, допустим, формат письма. А потом просто заменять переменными текст.
 		$antilink,#(go|nofollow)Защита от прямых ссылок
-		#Запрещенные теги. Они будут вырезаны после парсинга!
+
+		#Запрещенные теги. Они будут вырезаны после парсинга!
 		$disabled=array('applet','meta','link','html','body','style','head','script','iframe','frame','frameset','base','!doctype'),#
 		$enabled=array();#Разрешенные теги! Все остальные будут вырезаны!
 
@@ -571,4 +573,5 @@ class Editor_Result extends BaseClass
 			Eleanor::$Cache->Put('smiles',$sm,0,false);
 		}
 		return$sm;
-	}}
+	}
+}

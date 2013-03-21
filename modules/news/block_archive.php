@@ -18,7 +18,7 @@ $limit=10;#Количество месяцев за которые брать а
 
 if(is_array($mname))
 	$mname=Eleanor::FilterLangValues($mname,Language::$main);
-$conf=include dirname(__file__).'/config.php';
+$conf=include __dir__.'/config.php';
 
 #Months
 $months=Eleanor::$Cache->Get($conf['n'].'_archivemonths');
@@ -27,7 +27,8 @@ if($months===false)
 	$months=array();
 	$R=Eleanor::$Db->Query('SELECT EXTRACT(YEAR_MONTH FROM IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `ym`, COUNT(`id`) `cnt` FROM `'.$conf['t'].'` WHERE `status`=1 GROUP BY `ym` ORDER BY `ym` DESC LIMIT '.$limit);
 	while($a=$R->fetch_assoc())
-	{		$a['ym']=substr_replace($a['ym'],'-',4,0);
+	{
+		$a['ym']=substr_replace($a['ym'],'-',4,0);
 		$months[$a['ym']]=array(
 			'cnt'=>$a['cnt'],
 			'a'=>$GLOBALS['Eleanor']->Url->Construct(array('module'=>$mname,'do'=>$a['ym']),false,''),
@@ -49,7 +50,7 @@ else
 	$m=idate('n');
 }
 
-include_once dirname(__file__).'/block_archive_funcs.php';
+include_once __dir__.'/block_archive_funcs.php';
 $days=ArchiveDays($y,$m,$conf,$mname);
 
 try
@@ -57,4 +58,6 @@ try
 	return Eleanor::$Template->BlockArchive($days,$mname,false,$months);
 }
 catch(EE$E)
-{	return'BlockArchive is missed';}
+{
+	return'BlockArchive is missed';
+}

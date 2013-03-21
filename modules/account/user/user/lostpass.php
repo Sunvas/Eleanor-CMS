@@ -9,7 +9,10 @@
 	*Pseudonym
 */
 class AccountLostPass
-{	public static function Content($master=true)
-	{		if($master)
+{
+	public static function Content($master=true)
+	{
+		if($master)
 			GoAway(true);
-	}}
+	}
+}

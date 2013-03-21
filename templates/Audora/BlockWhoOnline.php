@@ -22,7 +22,8 @@ $(function(){
 					service:$(this).data("s")
 				},
 				function(r)
-				{					win.document.open('text/html','replace');
+				{
+					win.document.open('text/html','replace');
 					win.document.write(r);
 					win.document.close();
 				}

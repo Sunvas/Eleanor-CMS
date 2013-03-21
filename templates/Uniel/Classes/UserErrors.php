@@ -11,8 +11,10 @@
 	Шаблон для пользователей системного модуля страниц ошибок
 */
 class TPLUserErrors
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Вывод страницы ошибки
 		$a - параметры ошибки, массив с ключами:
 			id - идентификатор ошибки в БД
@@ -32,11 +34,13 @@ class TPLUserErrors
 		$captcha - captcha при отправке письма
 	*/
 	public static function ShowError($a,$sent,$values,$errors,$back,$captcha)
-	{		if($errors)
+	{
+		if($errors)
 			foreach($errors as $k=>&$v)
 				if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 					$v=static::$lang[$v];
-		if($sent)
+
+		if($sent)
 			$tosend='<hr /><br />'.Eleanor::$Template->Message(static::$lang['sent'],'info');
 		elseif($a['mail'])
 			$tosend='<hr />'.($errors ? Eleanor::$Template->Message($errors,'error') : '')
@@ -49,12 +53,14 @@ class TPLUserErrors
 				.'<div style="text-align:center;"><a href="#" onclick="$(this).closest(\'form\').submit();return false;" class="button">'.static::$lang['send'].'</a></div></form>';
 		else
 			$tosend='';
-		return'<div class="base"><div class="heading2"><div class="binner"><h6>'.$a['title']
+
+		return'<div class="base"><div class="heading2"><div class="binner"><h6>'.$a['title']
 			.'</h6><div class="clr"></div></div></div><div class="maincont"><div class="binner">'
 			.($a['image'] ? '<img style="float:left;margin-right:10px;" src="images/errors/'.$a['image'].'" alt="'.$a['title'].'" title="'.$a['title'].'" />' : '')
 			.$a['text'].'<div class="clr"></div>'.$tosend
 			.'<div class="clr"></div></div></div><div class="morelink"><div class="binner">'
 			.($back ? '<a href="'.$back.'"><b>'.static::$lang['back'].'</b></a><br />' : '')
-			.'<div class="clr"></div></div></div></div>';	}
+			.'<div class="clr"></div></div></div></div>';
+	}
 }
 TPLUserErrors::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/errors-*.php',false);

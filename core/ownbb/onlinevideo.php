@@ -10,7 +10,8 @@
 */
 
 class OwnBbCode_onlinevideo extends OwnBbCode
-{	/**
+{
+	/**
 	 * Обработка информации перед показом на странице
 	 *
 	 * @param string $t Тег, который обрабатывается
@@ -64,7 +65,8 @@ class OwnBbCode_onlinevideo extends OwnBbCode
 
 		#PLAY.ukr.net
 		if(preg_match('#key/([a-f0-9]+)/#i',$c,$m)>0)
-		{			$w=isset($p['width']) ? (int)$p['width'] : 585;
+		{
+			$w=isset($p['width']) ? (int)$p['width'] : 585;
 			$h=isset($p['height']) ? (int)$p['height'] : 345;
 			return'<object width="'.$w.'" height="'.$h.'" align="middle" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,18,0" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"><param value="true" name="allowFullScreen"/><param name="allowScriptAccess" value="always" /><param name="FlashVars" value="StopAsking=0&self=0" /><param value="http://play.ukr.net/player.swf?key=key/'.$m[1].'" name="movie"/><embed name="player" allowScriptAccess="always" width="585" height="345" align="middle" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" allowfullscreen="true" src="http://play.ukr.net/player.swf?key=key/'.$m[1].'&amp;StopAsking=0&amp;self=0"/></object>';
 		}
@@ -78,7 +80,8 @@ class OwnBbCode_onlinevideo extends OwnBbCode
 		}
 
 		if(Strings::CheckUrl($c))
-		{			if(!isset(Eleanor::$vars['antidirectlink']))
+		{
+			if(!isset(Eleanor::$vars['antidirectlink']))
 				Eleanor::LoadOptions('editor');
 			$href=$c;
 			$rel=$pr='';

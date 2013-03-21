@@ -16,7 +16,8 @@ class AccountExternals
 		SECRET='';
 
 	public static function Content($master=true)
-	{		if(!$master)
+	{
+		if(!$master)
 			return;
 
 		if($GLOBALS['Eleanor']->Url->is_static)
@@ -32,7 +33,8 @@ class AccountExternals
 			$loginza=$_SESSION[__class__];
 			Eleanor::LoadOptions('user-profile');
 			if(isset($_POST['name']) and !Eleanor::$vars['reg_off'])
-			{				$errors=array();
+			{
+				$errors=array();
 				$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 				$cach=$GLOBALS['Eleanor']->Captcha->Check(isset($_POST['check']) ? (string)$_POST['check'] : '');
 				$GLOBALS['Eleanor']->Captcha->Destroy();
@@ -191,7 +193,9 @@ class AccountExternals
 		curl_close($cu);
 		$r=json_decode($r,true);
 		if(CHARSET!='utf-8')
-			array_walk_recursive($r,function(&$v){				$v=mb_convert_encoding($v,CHARSET,'utf-8');			});
+			array_walk_recursive($r,function(&$v){
+				$v=mb_convert_encoding($v,CHARSET,'utf-8');
+			});
 		if(!$r or isset($r['error_type']))
 			return Eleanor::$Template->LoginzaError($r);
 		$r['provider']=trim(strchr($r['provider'],'/'),'/');

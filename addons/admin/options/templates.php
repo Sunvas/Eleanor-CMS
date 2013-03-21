@@ -1,7 +1,8 @@
 <?php
 return array(
 	'callback'=>function()
-	{		$themes=array();
+	{
+		$themes=array();
 		$fs=glob(Eleanor::$root.'templates/*',GLOB_ONLYDIR);
 		if($fs)
 			foreach($fs as &$v)

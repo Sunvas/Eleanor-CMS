@@ -17,7 +17,8 @@ if(!defined('CMS'))die;?>
 		<h1><?php echo$title?></h1>
 <?php
 if(isset($top))
-{	echo'<div class="moreinfo">';
+{
+	echo'<div class="moreinfo">';
 	foreach($top as &$v)
 		if($v!==false)
 			echo'<span class="arg">'.$v.'</span>';
@@ -37,14 +38,16 @@ if(isset($bottom))
 	foreach($bottom as $k=>&$v)
 		if($v!==false)
 			switch($k)
-			{				case'rating':
+			{
+				case'rating':
 					echo'<div class="ratebase">'.$v.'</div>';
 				break;
 				case'readmore':
 					echo'<span class="argmore">'.$v.'</span>';
 				break;
 				default:
-					echo'<span class="arg">'.$v.'</span>';			}
+					echo'<span class="arg">'.$v.'</span>';
+			}
 	echo'<div class="clr"></div>
 	</div></div>';
 }

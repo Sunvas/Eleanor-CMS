@@ -11,7 +11,9 @@
 class AccountActivate
 {
 	public static function Content($master=true)
-	{		if($master)
-			return AccountIndex::Content($master);		ExitPage();
+	{
+		if($master)
+			return AccountIndex::Content($master);
+		ExitPage();
 	}
 }

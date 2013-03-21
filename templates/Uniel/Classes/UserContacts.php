@@ -11,8 +11,10 @@
 	Шаблон для пользователей модуля "обратная связь"
 */
 class TplUserContacts
-{	public static
-		$lang;	/*
+{
+	public static
+		$lang;
+	/*
 		Основная страница обратной связи
 
 		$canupload - флаг возможности загрузки файла
@@ -27,8 +29,10 @@ class TplUserContacts
 		$errors - массив ошибок
 		$isu - флаг пользователя (не гостя)
 		$captcha - captcha при отправке сообщения
-	*/	public static function Contacts($canupload,$info,$whom,$values,$bypost,$errors,$isu,$captcha)
-	{		$content=Eleanor::$Template->Menu(array(
+	*/
+	public static function Contacts($canupload,$info,$whom,$values,$bypost,$errors,$isu,$captcha)
+	{
+		$content=Eleanor::$Template->Menu(array(
 			'title'=>$GLOBALS['Eleanor']->module['title'],
 		));
 		if($info)
@@ -37,7 +41,8 @@ class TplUserContacts
 			$content.=$info.Eleanor::$Template->CloseTable();
 		}
 		if($whom)
-		{			if($errors)
+		{
+			if($errors)
 			{
 				foreach($errors as $k=>&$v)
 					if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
@@ -74,8 +79,10 @@ class TplUserContacts
 		Страница с информацией о том, что сообщение успешно отправлено
 	*/
 	public static function Sent()
-	{		return Eleanor::$Template->Menu(array(
+	{
+		return Eleanor::$Template->Menu(array(
 			'title'=>Eleanor::$Language['contacts']['st'],
-		))->Message(sprintf(static::$lang['sent'],$GLOBALS['Eleanor']->Url->Prefix()),'info');	}
+		))->Message(sprintf(static::$lang['sent'],$GLOBALS['Eleanor']->Url->Prefix()),'info');
+	}
 }
 TplUserContacts::$lang=Eleanor::$Language->Load(Eleanor::$Template->default['theme'].'langs/contacts-*.php',false);

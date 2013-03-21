@@ -11,9 +11,11 @@
 	Шаблоны отображения опроса, готового опрашивать людей
 */
 class TplVoting
-{	public static
+{
+	public static
 		$lang;
-	/*
+
+	/*
 		Вывод опроса
 		$voting - массив параметров опроса, ключи:
 			id - идентификатор опроса в БД
@@ -36,8 +38,11 @@ class TplVoting
 			guest - голосовать нельзя, потому что голосование только для пользователей
 			wait - ожидает открытия
 			finished - голосование завершено
-	*/	public static function Voting($voting,$qs,$status)
-	{		$r=sprintf(static::$lang['nums'],$voting['votes']).(!$status && (int)$voting['end']>0 ? '<br />'.sprintf(static::$lang['tlimit'],Eleanor::$Language->Date($voting['end'],'fdt')) : '');		foreach($qs as $k=>&$v)
+	*/
+	public static function Voting($voting,$qs,$status)
+	{
+		$r=sprintf(static::$lang['nums'],$voting['votes']).(!$status && (int)$voting['end']>0 ? '<br />'.sprintf(static::$lang['tlimit'],Eleanor::$Language->Date($voting['end'],'fdt')) : '');
+		foreach($qs as $k=>&$v)
 		{
 			$qid=$v['multiple'] && !$status ? uniqid() : false;
 
@@ -45,7 +50,11 @@ class TplVoting
 			$div=$sum==0 ? 1 : $sum;
 			$r.='<div class="question"><b>'.$v['title'].'</b><ul class="voting"'.($qid ? ' id="'.$qid.'"' : '').'>';
 			foreach($v['variants'] as $vk=>&$vv)
-			{				$percent=round($v['answers'][$vk]/$div*100,1);				$text=$vv.' - '.$percent.'% ('.$v['answers'][$vk].')';				if($status)					$variant=$text;
+			{
+				$percent=round($v['answers'][$vk]/$div*100,1);
+				$text=$vv.' - '.$percent.'% ('.$v['answers'][$vk].')';
+				if($status)
+					$variant=$text;
 				else
 					$variant='<label>'.($qid ? Eleanor::Check($k.'[]',false,array('value'=>$vk)) : Eleanor::Radio($k,$vk,false)).' '.$text.'</label>';
 				$r.='<li>'.$variant.($percent ? '<div style="width:'.$percent.'%;"><div><div></div></div></div>' : '').'</li>';
@@ -81,17 +90,24 @@ class TplVoting
 		Вывод формы опроса, включающей и сам опрос
 		Описание переменных $voting,$qs,$status смотрите в методе Voting
 		$request - параметры AJAX запроса
-	*/	public static function VotingCover($voting,$qs,$status,$request)
-	{		$q=static::Voting($voting,$qs,$status);		if($status=='voted')
+	*/
+	public static function VotingCover($voting,$qs,$status,$request)
+	{
+		$q=static::Voting($voting,$qs,$status);
+		if($status=='voted')
 			return$q;
 		$u=uniqid('v');
 
-		$GLOBALS['jscripts'][]='js/voting.js';		return'<form id="'.$u.'">'.$q.'</form><script type="text/javascript">//<![CDATA[
-$(function(){	new Voting({		form:"#'.$u.'",
+		$GLOBALS['jscripts'][]='js/voting.js';
+		return'<form id="'.$u.'">'.$q.'</form><script type="text/javascript">//<![CDATA[
+$(function(){
+	new Voting({
+		form:"#'.$u.'",
 		similar:".voting-'.$voting['id'].'",
 		type:"'.$status.'",
 		request:'.Eleanor::JsVars($request,false,true).',
-		qcnt:'.count($qs).'	});
+		qcnt:'.count($qs).'
+	});
 })//]]></script>';
 	}
 }

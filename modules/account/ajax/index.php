@@ -18,7 +18,7 @@ Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
 function GetHandlers($type)
 {
 	$h=array();
-	if($files=glob(dirname(__file__).DIRECTORY_SEPARATOR.$type.'/*.php',GLOB_MARK))
+	if($files=glob(__dir__.DIRECTORY_SEPARATOR.$type.'/*.php',GLOB_MARK))
 		foreach($files as &$f)
 			if(substr($f,-1)!=DIRECTORY_SEPARATOR)
 			{

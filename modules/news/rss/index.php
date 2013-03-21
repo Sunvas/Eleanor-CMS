@@ -17,14 +17,18 @@ $items=array();
 $lastmod=0;
 
 if(isset($_GET['nid']))
-{	$R=Eleanor::$Db->Query('SELECT `id`,`announcement`,`cats`,UNIX_TIMESTAMP(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `date`,`show_sokr`,`show_detail`,`uri`,`title`,`text`,`last_mod` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`='.(int)$_GET['nid'].' LIMIT 1');
+{
+	$R=Eleanor::$Db->Query('SELECT `id`,`announcement`,`cats`,UNIX_TIMESTAMP(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `date`,`show_sokr`,`show_detail`,`uri`,`title`,`text`,`last_mod` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`='.(int)$_GET['nid'].' LIMIT 1');
 	if($a=$R->fetch_assoc() and ($a['text'] or $a['show_detail']))
-	{		$a['text']=($a['show_sokr'] ? OwnBB::Parse($a['announcement']) : '').OwnBB::Parse($a['text']);
+	{
+		$a['text']=($a['show_sokr'] ? OwnBB::Parse($a['announcement']) : '').OwnBB::Parse($a['text']);
 		$lastmod=strtotime($a['last_mod']);
 		$items[$a['id']]=array_slice($a,2);
-	}}
+	}
+}
 else
-{	$page=empty($_GET['page']) ? 1 : (int)$_GET['page'];
+{
+	$page=empty($_GET['page']) ? 1 : (int)$_GET['page'];
 	if($page<=0)
 		$page=1;
 
@@ -43,7 +47,8 @@ else
 	if(isset($_GET['c'],$Eleanor->Categories->dump[$c=(int)$_GET['c']]))
 	{
 		if(Eleanor::$vars['publ_catsubcat'])
-		{			$cs=array($c);
+		{
+			$cs=array($c);
 			$p=$Eleanor->Categories->dump[$c]['parents'].$c.',';
 			foreach($Eleanor->Categories->dump as $k=>&$v)
 				if(strpos($v['parents'],$p)===0)
@@ -66,7 +71,8 @@ else
 
 	$R=Eleanor::$Db->Query('SELECT `id`,`announcement`,`cats`,UNIX_TIMESTAMP(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `date`,`show_detail`,`uri`,`title`,`text`,`last_mod` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `lstatus`=1 AND `ldate`<=\''.date('Y-m-d H:i:s').'\''.$lwhere.' ORDER BY `ldate` DESC LIMIT '.$offset.', '.$pp);
 	while($a=$R->fetch_assoc())
-	{		$lastmod=max($lastmod,strtotime($a['last_mod']));
+	{
+		$lastmod=max($lastmod,strtotime($a['last_mod']));
 		if($a['text'] or $a['show_detail'])
 			$a['text']=OwnBB::Parse($a['announcement']);
 		else
@@ -92,12 +98,15 @@ Start(array(
 ));
 
 foreach($items as $k=>&$v)
-{	$cu=$cats=array();
+{
+	$cu=$cats=array();
 	if($v['uri']===false)
 		$u=false;
 	else
-	{		if($v['cats'])
-		{			$cid=explode(',,',trim($v['cats'],','));
+	{
+		if($v['cats'])
+		{
+			$cid=explode(',,',trim($v['cats'],','));
 			foreach($cid as &$cv)
 				if(isset($Eleanor->Categories->dump[$cv]))
 					$cats[]=$Eleanor->Categories->dump[$cv]['title'];

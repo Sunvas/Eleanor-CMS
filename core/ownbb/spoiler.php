@@ -10,7 +10,8 @@
 */
 
 class OwnBbCode_spoiler extends OwnBbCode
-{	/**
+{
+	/**
 	 * Обработка информации перед показом на странице
 	 *
 	 * @param string $t Тег, который обрабатывается
@@ -19,17 +20,24 @@ class OwnBbCode_spoiler extends OwnBbCode
 	 * @param bool $cu Флаг возможности использования тега
 	 */
 	public static function PreDisplay($t,$p,$c,$cu)
-	{		$p=$p ? Strings::ParseParams($p,'t') : array();		if(isset($p['noparse']))
+	{
+		$p=$p ? Strings::ParseParams($p,'t') : array();
+		if(isset($p['noparse']))
 			return'['.$t.']'.$c.'[/'.$t.']';
 		if(!$cu)
 			return static::RestrictDisplay($t,$p,$c);
 		$ex=isset($p['ex']);
 		$GLOBALS['head']['spoiler']='<script type="text/javascript">//<![CDATA[
-$(function(){	$(this).on("click",".spoiler .top",function(e){		e.preventDefault();		var th=$(this).toggleClass("sp-expanded sp-contracted");
+$(function(){
+	$(this).on("click",".spoiler .top",function(e){
+		e.preventDefault();
+		var th=$(this).toggleClass("sp-expanded sp-contracted");
 		if(th.is(".sp-expanded"))
 			th.next().fadeIn("fast");
 		else
-			th.next().fadeOut("fast");	});});//]]></script>';
+			th.next().fadeOut("fast");
+	});
+});//]]></script>';
 		return'<div class="spoiler">
 <div class="top'.($ex ? ' sp-expanded' : ' sp-contracted').'">'.(isset($p['t']) ? $p['t'] : 'Spoiler').'</div>
 <div class="text"'.($ex ? '' : ' style="display:none"').'>'.$c.'</div>

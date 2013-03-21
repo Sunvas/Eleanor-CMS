@@ -38,7 +38,8 @@ if(isset($_GET['do']))
 			$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
 			$c=$Eleanor->Settings->GetInterface('group','comments');
 			if($c)
-			{				$c=Eleanor::$Template->Options($c);
+			{
+				$c=Eleanor::$Template->Options($c);
 				Start();
 				echo$c;
 			}
@@ -47,9 +48,11 @@ if(isset($_GET['do']))
 			CommentsList();
 	}
 elseif(isset($_GET['edit']))
-{	$id=(int)$_GET['edit'];
+{
+	$id=(int)$_GET['edit'];
 	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
-	{		$R=Eleanor::$Db->Query('SELECT `status` FROM `'.P.'comments` WHERE id='.$id.' LIMIT 1');
+	{
+		$R=Eleanor::$Db->Query('SELECT `status` FROM `'.P.'comments` WHERE id='.$id.' LIMIT 1');
 		if(!$a=$R->fetch_assoc())
 			return GoAway(true);
 		$values=array(
@@ -61,7 +64,8 @@ elseif(isset($_GET['edit']))
 		if($a['status']!=$status)
 			ChangeStatus($id,$status);
 		Eleanor::$Db->Update(P.'comments',$values,'`id`='.$id.' LIMIT 1');
-		GoAway(empty($_POST['back']) ? true : $_POST['back']);	}
+		GoAway(empty($_POST['back']) ? true : $_POST['back']);
+	}
 	else
 		Edit($id);
 }
@@ -72,7 +76,8 @@ elseif(isset($_GET['delete']))
 	if(!$a=$R->fetch_assoc() or !Eleanor::$our_query)
 		return GoAway(true);
 	if(isset($_POST['ok']))
-	{		ChangeStatus($id,0);
+	{
+		ChangeStatus($id,0);
 		$R=Eleanor::$Db->Query('SELECT `parents` FROM `'.P.'comments` WHERE `id`='.$id.' LIMIT 1');
 		if($a=$R->fetch_assoc())
 		{
@@ -92,14 +97,17 @@ elseif(isset($_GET['delete']))
 
 }
 elseif(isset($_GET['swap']))
-{	$id=(int)$_GET['swap'];
+{
+	$id=(int)$_GET['swap'];
 	if(Eleanor::$our_query)
 	{
 		$R=Eleanor::$Db->Query('SELECT `status` FROM `'.P.'comments` WHERE `id`='.$id.' LIMIT 1');
 		if($a=$R->fetch_assoc())
-			ChangeStatus($id,$a['status']<1 ? 1 : 0);	}
+			ChangeStatus($id,$a['status']<1 ? 1 : 0);
+	}
 	$back=getenv('HTTP_REFERER');
-	GoAway($back ? $back.'#comment'.$id : true);}
+	GoAway($back ? $back.'#comment'.$id : true);
+}
 else
 	CommentsList();
 
@@ -117,7 +125,8 @@ function CommentsList($ong=false)
 			$page=1;
 		$qs['']['fi']=array();
 		if(isset($_REQUEST['fi']['module']))
-		{			$m=(int)$_REQUEST['fi']['module'];
+		{
+			$m=(int)$_REQUEST['fi']['module'];
 			if(isset($modules[$m]))
 			{
 				$qs['']['fi']['module']=$m;
@@ -129,7 +138,8 @@ function CommentsList($ong=false)
 	$where=$where ? ' WHERE '.join(' AND ',$where) : '';
 	if(Eleanor::$our_query and isset($_POST['op'],$_POST['mass']) and is_array($_POST['mass']))
 		switch($_POST['op'])
-		{			case'a':
+		{
+			case'a':
 				ChangeStatus($_POST['mass'],1);
 			break;
 			case'd':
@@ -141,7 +151,8 @@ function CommentsList($ong=false)
 				ChangeStatus($_POST['mass'],0);
 				$R=Eleanor::$Db->Query('SELECT `id`,`parents` FROM `'.P.'comments` WHERE `id`'.Eleanor::$Db->In($_POST['mass']));
 				while($a=$R->fetch_assoc())
-				{					Eleanor::$Db->Delete(P.'comments','`parents` LIKE \''.$a['parents'].$a['id'].',%\'');
+				{
+					Eleanor::$Db->Delete(P.'comments','`parents` LIKE \''.$a['parents'].$a['id'].',%\'');
 					Eleanor::$Db->Delete(P.'comments','`id`='.$a['id'].' LIMIT 1');
 				}
 		}
@@ -175,7 +186,8 @@ function CommentsList($ong=false)
 	{
 		$R=Eleanor::$Db->Query('SELECT `id`,`module`,`contid`,`status`,`date`,`author`,`author_id`,`ip`,`text` FROM `'.P.'comments`'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
 		while($a=$R->fetch_assoc())
-		{			$mc[$a['module']][$a['contid']][]=$a['id'];
+		{
+			$mc[$a['module']][$a['contid']][]=$a['id'];
 
 			$a['_aswap']=$Eleanor->Url->Construct(array('swap'=>$a['id']));
 			$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['id']));
@@ -240,10 +252,14 @@ function Edit($id,$error='')
 	);
 	$c=Eleanor::$Template->Edit($id,reset($modules),reset($mapi),$values,$bypost,$error,$back,$links);
 	Start();
-	echo$c;}
+	echo$c;
+}
 
 function ChangeStatus($ids,$newst)
-{	$act=$newst==1;	$pars='';	$R=Eleanor::$Db->Query('SELECT `id`,`module`,`contid`,`status`,`parent`,`parents` FROM `'.P.'comments` WHERE `id`'.Eleanor::$Db->In($ids));
+{
+	$act=$newst==1;
+	$pars='';
+	$R=Eleanor::$Db->Query('SELECT `id`,`module`,`contid`,`status`,`parent`,`parents` FROM `'.P.'comments` WHERE `id`'.Eleanor::$Db->In($ids));
 	$ids=$sids=$pupd=$addids=$aff=$affids=array();
 	while($a=$R->fetch_assoc())
 	{
@@ -259,7 +275,8 @@ function ChangeStatus($ids,$newst)
 		$aff[$a['module']][$a['contid']]=0;
 		$affids[$a['id']]=&$aff[$a['module']][$a['contid']];
 	}
-	foreach($addids as &$v)
+
+	foreach($addids as &$v)
 	{
 		$R=Eleanor::$Db->Query('SELECT `id`,`module`,`contid`,`status`,`parent` FROM `'.P.'comments` WHERE `parents` LIKE \''.$v.'%\' AND `id`'.Eleanor::$Db->In($ids,true));
 		while($a=$R->fetch_assoc())
@@ -280,7 +297,8 @@ function ChangeStatus($ids,$newst)
 		if($k==-1)
 		{
 			if($act)
-			{				$in=Eleanor::$Db->In($v);
+			{
+				$in=Eleanor::$Db->In($v);
 				$R=Eleanor::$Db->Query('SELECT `date` FROM `'.P.'comments` WHERE `id`'.$in.' ORDER BY `sortdate` ASC LIMIT 1');
 				if($a=$R->fetch_assoc())
 					foreach($v as &$vv)
@@ -300,21 +318,27 @@ function ChangeStatus($ids,$newst)
 	list(,$mapi)=CommentsModules(array_keys($aff));
 	foreach($aff as $m=>&$cn)
 		if(isset($mapi[$m]) and method_exists($mapi[$m],'UpdateNumComments'))
-		{			if(!$act)
+		{
+			if(!$act)
 				foreach($cn as &$v)
-					$v=-$v;			$Api=new$mapi[$m];
+					$v=-$v;
+			$Api=new$mapi[$m];
 			try
 			{
 				$Api->UpdateNumComments($cn);
 			}
 			catch(EE$E)
-			{				$E->Log();			}		}
+			{
+				$E->Log();
+			}
+		}
 }
 
 function CommentsModules($ids=false)
 {static$r;
 	if(!isset($r))
-	{		$modules=$mapi=array();
+	{
+		$modules=$mapi=array();
 		$R=Eleanor::$Db->Query('SELECT `id`,`title_l`,`path`,`api` FROM `'.P.'modules` WHERE `api`!=\'\''.($ids ? ' AND `id`'.Eleanor::$Db->In($ids) : ''));
 		while($a=$R->fetch_assoc())
 		{
@@ -340,4 +364,5 @@ function CommentsModules($ids=false)
 		asort($modules,SORT_STRING);
 		$r=array($modules,$mapi);
 	}
-	return$r;}
+	return$r;
+}

@@ -17,7 +17,8 @@ return array(
 	'no'=>'Ні',
 	'yes'=>'Так',
 
-	#Для Denied.php	'site_close_text'=>'Сайт тимчасово недоступний! Проводяться цікаві роботи',
+	#Для Denied.php
+	'site_close_text'=>'Сайт тимчасово недоступний! Проводяться цікаві роботи',
 
 	#Для EditDelete.php
 	'delete'=>'Видалити',

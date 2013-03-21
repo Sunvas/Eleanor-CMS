@@ -14,7 +14,8 @@
 */
 
 class TplAdminMenu
-{	/*
+{
+	/*
 		Страница отображения всех пунктов меню
 		$items - массив статических страниц. Формат: ID=>array(), ключи внутреннего массива:
 			title - заголовок пункта меню
@@ -48,7 +49,9 @@ class TplAdminMenu
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница добавления/редактирования пункта меню
@@ -64,6 +67,7 @@ class TplAdminMenu
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEdit($id,$controls,$values,$errors,$back,$hasdraft,$links)
-	{
+	{
+
 	}
 }

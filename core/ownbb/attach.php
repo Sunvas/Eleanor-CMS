@@ -49,7 +49,9 @@ class OwnBbCode_attach extends OwnBbCode
 						<source type="video/'.$type.'" src="'.$p['file'].'" />
 					</video>
 				</div>'.(basename($_SERVER['SCRIPT_FILENAME'])==Eleanor::$services['ajax']['file'] ? '<script type="text/javascript">//<![CDATA[
-				$(function(){					$(".flowplayer").flowplayer();				})//]]></script>' : '');
+				$(function(){
+					$(".flowplayer").flowplayer();
+				})//]]></script>' : '');
 			case'flv':
 			case'mp3':
 				$p['width']=isset($p['width']) ? (int)$p['width'] : 400;

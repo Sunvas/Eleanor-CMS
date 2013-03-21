@@ -13,7 +13,8 @@ Eleanor::$Language->Load('addons/admin/langs/s_general-*.php','sg');
 Eleanor::$Template->queue[]='General';
 $event=isset($_POST['event']) ? (string)$_POST['event'] : '';
 switch($event)
-{	case'mynotesload':
+{
+	case'mynotesload':
 		$text=Eleanor::$Cache->Get('notes_'.Eleanor::$Login->GetUserValue('id'),true);
 		Result(Eleanor::$Template->Notes($Eleanor->Editor->Area('emynotes',$text),true));
 	break;

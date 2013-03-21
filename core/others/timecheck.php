@@ -39,23 +39,28 @@ class TimeCheck extends BaseClass
 	 * @param array|string $ids Идентификатор(ы) модуля
 	 */
 	public function Check($ids)
-	{		if(!$ids)
-			return false;		$isa=is_array($ids);
+	{
+		if(!$ids)
+			return false;
+		$isa=is_array($ids);
 		$r=array();
 
 		$ids=(array)$ids;
 		foreach($ids as $k=>&$v)
 			if(Eleanor::GetCookie($this->cp.$v))
-			{				$r[$v]=true;
+			{
+				$r[$v]=true;
 				unset($ids[$k]);
 			}
 
 		if($ids)
-		{			$t=time();
+		{
+			$t=time();
 			$R=Eleanor::$Db->Query('SELECT `contid`,`author_id`,`ip`,`value`,`timegone`,`date` FROM `'.$this->table.'` WHERE '.($this->mid ? '`mid`='.Eleanor::$Db->Escape($this->mid).' AND ' : '').'`contid`'.Eleanor::$Db->In($ids).' AND `author_id`='.(int)$this->uid.($this->uid ? '' : ' AND `ip`=\''.Eleanor::$ip.'\''));
 			while($a=$R->fetch_assoc())
 				if($t<$a['_datets']=strtotime($a['date']) or !$a['timegone'])
-				{					if(!isset($r[$a['contid']]))
+				{
+					if(!isset($r[$a['contid']]))
 						Eleanor::SetCookie($this->cp.$a['contid'],1,$a['_datets'].'t');
 					$r[$a['contid']]=array_slice($a,1);
 				}
@@ -72,11 +77,15 @@ class TimeCheck extends BaseClass
 	 * @param int|string $t Срок истечения, формат: \d+[mhdMys?] последняя буква определяет тип срока: минуты, часы, дни, месяцы, годы, секунды (в случае секунд букву s можно не указывать)
 	 */
 	public function Add($id,$value='',$timegone=false,$t=3)
-	{		$plus='';
+	{
+		$plus='';
 		if(!$this->uid)
-			$timegone=true;		if($timegone)
-		{			if((int)$t==0)
-				return;			$plus=' + INTERVAL ';
+			$timegone=true;
+		if($timegone)
+		{
+			if((int)$t==0)
+				return;
+			$plus=' + INTERVAL ';
 			switch(substr($t,-1))
 			{
 				case'm':
@@ -119,5 +128,7 @@ class TimeCheck extends BaseClass
 	 * @param string $id Идентификатор (контента) модуля
 	 */
 	public function Delete($id)
-	{		Eleanor::$Db->Delete($this->table,($this->mid ? '`mid`'.Eleanor::$Db->Escape($this->mid,true).' AND ' : '').'`contid`'.Eleanor::$Db->Escape($id,true).' AND `author_id`'.Eleanor::$Db->Escape($this->uid,true).($this->uid ? '' : ' AND `ip`='.Eleanor::$Db->Escape(Eleanor::$ip,true)));	}
+	{
+		Eleanor::$Db->Delete($this->table,($this->mid ? '`mid`'.Eleanor::$Db->Escape($this->mid,true).' AND ' : '').'`contid`'.Eleanor::$Db->Escape($id,true).' AND `author_id`'.Eleanor::$Db->Escape($this->uid,true).($this->uid ? '' : ' AND `ip`='.Eleanor::$Db->Escape(Eleanor::$ip,true)));
+	}
 }

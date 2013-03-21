@@ -53,7 +53,8 @@ class Editor extends BaseClass
 	public function GetEdit($text)
 	{
 		if($this->ownbb)
-		{			OwnBB::$opts['visual']=in_array($this->type,$this->visual);
+		{
+			OwnBB::$opts['visual']=in_array($this->type,$this->visual);
 			$text=OwnBB::Parse($text,OwnBB::EDIT);
 			$text=OwnBB::StoreNotParsed($text,OwnBB::SAVE);
 		}
@@ -118,15 +119,22 @@ class Editor extends BaseClass
 	var editor=CKEDITOR.replace("'.$id.'",{language:"'.substr(Language::$main,0,2).'"});
 	EDITOR.New(
 		editor.name,
-		{			Embed:function(type,data)
-			{				if(type=="image" && data.src)
+		{
+			Embed:function(type,data)
+			{
+				if(type=="image" && data.src)
 					editor.insertElement(CKEDITOR.dom.element.createFromHtml("<img src=\""+data.src+"\" title=\""+(data.title||"")+"\" alt=\""+(data.alt||data.title||"")+"\" />"));
 			},
-			Insert:function(pre,after,F){				var s=editor.getSelection().getSelectedText();
-				if($.isFunction(F))					s=F(s);				editor.insertHtml(pre+s+after);
-			},			Get:function(){ return editor.getData(); },
+			Insert:function(pre,after,F){
+				var s=editor.getSelection().getSelectedText();
+				if($.isFunction(F))
+					s=F(s);
+				editor.insertHtml(pre+s+after);
+			},
+			Get:function(){ return editor.getData(); },
 			Set:function(text){ editor.setData(text); },
-			Selection:function(){ return editor.getSelection().getSelectedText(); }		}
+			Selection:function(){ return editor.getSelection().getSelectedText(); }
+		}
 	);
 	editor.on("focus",function(){EDITOR.Active(this.name)});
 //});//]]></script>';
@@ -180,12 +188,14 @@ $(function(){
 		);
 		EDITOR.New(
 			"'.$id.'",
-			{				Embed:function(type,data)
+			{
+				Embed:function(type,data)
 				{
 					if(type=="image" && data.src)
 						editor.replaceSelection("<img src=\""+data.src+"\""+(data.title ? " title=\""+data.title+"\"" : "")+" />");
 				},
-				Insert:function(pre,after,F){					var s=editor.getSelection();
+				Insert:function(pre,after,F){
+					var s=editor.getSelection();
 					if($.isFunction(F))
 						s=F(s);
 					editor.replaceSelection(pre+s+after);
@@ -249,7 +259,8 @@ $(function(){
 			$sm=array();
 			$R=Eleanor::$Db->Query('SELECT `path`,`emotion`,`show` FROM `'.P.'smiles` WHERE `status`=1 ORDER BY `pos` ASC');
 			while($a=$R->fetch_assoc())
-			{				$a['emotion']=explode(',,',trim($a['emotion'],','));
+			{
+				$a['emotion']=explode(',,',trim($a['emotion'],','));
 				$sm[]=$a;
 			}
 			Eleanor::$Cache->Put('smiles',$sm,0,false);

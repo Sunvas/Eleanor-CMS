@@ -114,7 +114,8 @@ function SaveML($a)
 }
 
 function LoadML($a)
-{	if($a['multilang'])
+{
+	if($a['multilang'])
 		return array('value'=>(array)$a['value']);
 	return array('value'=>is_array($a['value']) ? Eleanor::FilterLangValues($a['value']) : $a['value']);
 }

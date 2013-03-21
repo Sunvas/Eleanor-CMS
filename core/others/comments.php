@@ -461,7 +461,8 @@ class Comments extends BaseClass
 			$this->baseurl=rtrim(preg_replace('#'.preg_quote($this->upref).'([a-z0-9]+)=.+?(&|$)#','',$this->baseurl),'?');
 		}
 		elseif(is_array($this->baseurl))
-		{			foreach($u as $k=>&$v)
+		{
+			foreach($u as $k=>&$v)
 				$v=array($k=>$v);
 			return Eleanor::getInstance()->Url->Construct($this->baseurl+$u,false);
 		}

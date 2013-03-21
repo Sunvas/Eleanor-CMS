@@ -13,7 +13,8 @@
 	В случае если такой файл уже существует - правьте его.
 */
 class TPLUserErrors
-{	/*
+{
+	/*
 		Вывод страницы ошибки
 		$a - параметры ошибки, массив с ключами:
 			id - идентификатор ошибки в БД
@@ -33,6 +34,7 @@ class TPLUserErrors
 		$captcha - captcha при отправке письма
 	*/
 	public static function ShowError($a,$sent,$values,$errors,$back,$captcha)
-	{
+	{
+
 	}
 }

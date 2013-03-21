@@ -8,8 +8,10 @@
 	*Pseudonym
 */
 
-$(function(){	AppyDragAndDrop();
-	$("input[name=multiservice]").change(function(){		if($(this).prop("checked"))
+$(function(){
+	AppyDragAndDrop();
+	$("input[name=multiservice]").change(function(){
+		if($(this).prop("checked"))
 		{
 			$("tr .multitrue").show();
 			$("tr .multifalse").hide();
@@ -18,9 +20,11 @@ $(function(){	AppyDragAndDrop();
 		{
 			$("tr .multifalse").show();
 			$("tr .multitrue").hide();
-		}	}).change();
+		}
+	}).change();
 
-	$("select[name=\"services[]\"]").change(function(){		if($("select[name=\"services[]\"] option:selected").size()==0)
+	$("select[name=\"services[]\"]").change(function(){
+		if($("select[name=\"services[]\"] option:selected").size()==0)
 		{
 			$("select[name=\"services[]\"] option").prop("selected",true);
 			$("#files li").show().find("input[type=\"text\"][name^=\"files[\"]").prop("disabled",false);
@@ -32,15 +36,19 @@ $(function(){	AppyDragAndDrop();
 					inp.prop("disabled",false).closest("li").show();
 				else
 					inp.prop("disabled",true).closest("li").hide();
-			});	}).change();
+			});
+	}).change();
 
-	$("#addsession").click(function(){		var n=prompt(CORE.Lang("modules_as"),"");
+	$("#addsession").click(function(){
+		var n=prompt(CORE.Lang("modules_as"),"");
 		if(!n)
 			return false;
 
 		if($("#sections input[name^=\"sections["+n+"]\"]").size()>0)
-		{			alert(CORE.Lang("modules_seex"));
-			return false;		}
+		{
+			alert(CORE.Lang("modules_seex"));
+			return false;
+		}
 
 		var newo=$("#sections li:first").clone(false),
 			spn=newo.find(".name");
@@ -71,19 +79,23 @@ $(function(){	AppyDragAndDrop();
 		catch(e){}
 		$("#sections .delete").show();
 		AppyDragAndDrop();
-		return false;	})
+		return false;
+	})
 
 	if($("#sections li").size()==1)
 		$("#sections .delete").hide();
 
-	$("#sections").on("click",".delete",function(){		if($("#sections li").size()==1)
+	$("#sections").on("click",".delete",function(){
+		if($("#sections li").size()==1)
 			return false;
 		$(this).closest("li").remove();
 		if($("#sections li").size()==1)
 			$("#sections .delete").hide();
 		AppyDragAndDrop();
-		return false;	})
-	.on("click",".name",function(){		var old=$(this).html(),
+		return false;
+	})
+	.on("click",".name",function(){
+		var old=$(this).html(),
 			n=prompt(CORE.Lang("modules_nn"),old);
 		if(!n || n==old)
 			return false;

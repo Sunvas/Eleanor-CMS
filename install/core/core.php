@@ -128,7 +128,9 @@ class Install
 	}
 
 	static function IncludeDb()
-	{		Eleanor::$nolog=true;		$c=include Eleanor::$root.'config_general.php';
+	{
+		Eleanor::$nolog=true;
+		$c=include Eleanor::$root.'config_general.php';
 		Eleanor::$nolog=false;
 		Eleanor::$Db=new Db(array(
 			'host'=>$c['db_host'],
@@ -156,7 +158,8 @@ abstract class UpdateClass
 }
 /*
 class Update_1 extends UpdateClass
-{	public static function Run($data)
+{
+	public static function Run($data)
 	{
 		#Тут - события.
 		return true - обновление завершено, false - нужно продолжать

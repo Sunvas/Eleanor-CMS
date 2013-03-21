@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class AccountIndex
-{	public static function Menu()
+{
+	public static function Menu()
 	{
 		return array(
 			'main'=>$GLOBALS['Eleanor']->Url->Prefix(),

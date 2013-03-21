@@ -10,13 +10,16 @@
 */
 
 class TaskInformer extends BaseClass implements Task
-{	private
+{
+	private
 		$data=array();
 
 	public function Run($data)
-	{		if(DEBUG)
+	{
+		if(DEBUG)
 			return;
-		if(!is_array($data))
+
+		if(!is_array($data))
 			$data=array();
 		if(!isset($data['t']))
 			$data['t']=time()-86400;
@@ -25,7 +28,8 @@ class TaskInformer extends BaseClass implements Task
 
 		$f=Eleanor::$root.'addons/logs/errors.log.inc';
 		if($vars['errors_code_users'] and is_file($f))
-		{			$vars['errors_code_users']=explode(',,',trim($vars['errors_code_users'],','));
+		{
+			$vars['errors_code_users']=explode(',,',trim($vars['errors_code_users'],','));
 			$users=array();
 			$R=Eleanor::$Db->Query('SELECT `email`,`name`,`language` FROM `'.P.'users_site` WHERE `id`'.Eleanor::$Db->In($vars['errors_code_users']));
 			while($a=$R->fetch_assoc())
@@ -36,24 +40,31 @@ class TaskInformer extends BaseClass implements Task
 			$f=$f ? (array)unserialize($f) : array();
 			foreach($f as &$v)
 				if(strtotime($v['d']['d'])>$data['t'])
-				{					$repl['cnt']++;
+				{
+					$repl['cnt']++;
 					$repl['errors'][]=($v['d']['n']>1 ? substr_replace($v['d']['e'],'('.$v['d']['n'].')',strpos($v['d']['e'],':'),0) : $v['d']['e']).PHP_EOL.'File: '.$v['d']['f'].'['.$v['d']['l'].']'.PHP_EOL.'URL: '.PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.($v['d']['p'] ? $v['d']['p'] : '').PHP_EOL.'Date: '.$v['d']['d'];
 				}
 
 			if($repl['cnt']>0)
-			{				$repl['errors']=join('<br /><br />',$repl['errors']);
+			{
+				$repl['errors']=join('<br /><br />',$repl['errors']);
 				$repl+=array(
 					'site'=>$vars['site_name'],
 					'link'=>PROTOCOL.Eleanor::$punycode.Eleanor::$site_path,
 				);
 				$vars['errors_code_text']=OwnBB::Parse($vars['errors_code_text']);
 				foreach($users as &$v)
-				{					Language::$main=$v['language'] ? $v['language'] : LANGUAGE;
-					$repl['name']=$v['name'];					Email::Simple(
+				{
+					Language::$main=$v['language'] ? $v['language'] : LANGUAGE;
+					$repl['name']=$v['name'];
+					Email::Simple(
 						$v['email'],
 						Eleanor::ExecBBLogic($vars['errors_code_title'],$repl),
 						Eleanor::ExecBBLogic($vars['errors_code_text'],$repl)
-					);				}			}		}
+					);
+				}
+			}
+		}
 
 		$f=Eleanor::$root.'addons/logs/db_errors.log.inc';
 		if($vars['errors_db_users'] and is_file($f))
@@ -73,14 +84,16 @@ class TaskInformer extends BaseClass implements Task
 					$repl['cnt']++;
 					$log=$v['d']['e'].PHP_EOL;
 					switch($v['d']['d'])
-					{						case'connect':
+					{
+						case'connect':
 							$log.='DB: '.$v['d']['db'].PHP_EOL.'File: '.$v['d']['f'].'['.$v['d']['l'].']'.PHP_EOL.'Date: '.$v['d']['d'].PHP_EOL.'Happend: '.$v['d']['n'];
 						break;
 						case'query':
 							$log.='Query: '.$v['d']['q'].PHP_EOL.'File: '.$v['d']['f'].'['.$v['d']['l'].']'.PHP_EOL.'Date: '.$v['d']['d'].PHP_EOL.'Happend: '.$v['d']['n'];
 						break;
 						default:
-							$log.='File: '.$v['d']['f'].'['.$v['d']['l'].']'.PHP_EOL.'Date: '.$v['d']['d'].PHP_EOL.'Happend: '.$v['d']['n'];					}
+							$log.='File: '.$v['d']['f'].'['.$v['d']['l'].']'.PHP_EOL.'Date: '.$v['d']['d'].PHP_EOL.'Happend: '.$v['d']['n'];
+					}
 					$repl['errors'][]=$log;
 				}
 
@@ -133,7 +146,8 @@ class TaskInformer extends BaseClass implements Task
 				);
 				$vars['errors_requests_text']=OwnBB::Parse($vars['errors_requests_text']);
 				foreach($users as &$v)
-				{					Language::$main=$v['language'] ? $v['language'] : LANGUAGE;
+				{
+					Language::$main=$v['language'] ? $v['language'] : LANGUAGE;
 					$repl['name']=$v['name'];
 					Email::Simple(
 						$v['email'],

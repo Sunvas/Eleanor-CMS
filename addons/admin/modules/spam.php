@@ -32,7 +32,8 @@ if(isset($_GET['do']))
 			$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
 			$c=$Eleanor->Settings->GetInterface('group','mailer');
 			if($c)
-			{				$c=Eleanor::$Template->Options($c);
+			{
+				$c=Eleanor::$Template->Options($c);
 				Start();
 				echo$c;
 			}
@@ -41,7 +42,8 @@ if(isset($_GET['do']))
 			ShowList();
 	}
 elseif(isset($_GET['edit']))
-{	$id=(int)$_GET['edit'];
+{
+	$id=(int)$_GET['edit'];
 	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 		Save($id);
 	else
@@ -320,7 +322,8 @@ function AddEdit($id,$errors=array())
 	}
 
 	if($errors and !$runned)
-	{		$bypost=true;
+	{
+		$bypost=true;
 		$values['per_run']=isset($_POST['per_run']) ? (int)$_POST['per_run'] : 25;
 		$values['finame']=isset($_POST['finame']) ? (string)$_POST['finame'] : '';
 		$values['finamet']=isset($_POST['finamet']) ? (string)$_POST['finamet'] : '';
@@ -428,7 +431,8 @@ function Save($id)
 			'text'=>array(),
 		);
 		foreach($langs as $l)
-		{			$lng=$l ? $l : Language::$main;
+		{
+			$lng=$l ? $l : Language::$main;
 			$lvalues['innertitle'][$l]=isset($_POST['innertitle'][$lng]) ? (string)Eleanor::$POST['innertitle'][$lng] : array();
 			$lvalues['title'][$l]=isset($_POST['title'][$lng]) ? (string)Eleanor::$POST['title'][$lng] : array();
 			$lvalues['text'][$l]=isset($_POST['text'][$lng]) ? $Eleanor->Editor_result->GetHtml((string)$_POST['text'][$lng],true) : '';
@@ -455,12 +459,14 @@ function Save($id)
 
 	$do=date_offset_get(date_create());
 	if($id)
-	{		$task=array('options'=>serialize(array('id'=>$id)),'ondone'=>$values['deleteondone'] ? 'delete' : 'deactivate');
+	{
+		$task=array('options'=>serialize(array('id'=>$id)),'ondone'=>$values['deleteondone'] ? 'delete' : 'deactivate');
 		switch($values['status'])
 		{
 			case'runned':
 				if(in_array($a['status'],array('','stopped','finished')))
-				{					$task+=array(
+				{
+					$task+=array(
 						'free'=>1,
 						'locked'=>0,
 						'!nextrun'=>'FROM_UNIXTIME('.Tasks::CalcNextRun(array(),$do).')',

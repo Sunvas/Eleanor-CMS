@@ -252,7 +252,8 @@ $(function(){
 		if($Obj->GetPostVal(array_merge($a['name'],array('type')),'w')=='w' and $text=$Obj->GetPostVal(array_merge($a['name'],array('text')),false))
 		{
 			if($a['options']['types'] and preg_match('#\.('.join('|',$a['options']['types']).')$#i',$text)==0)
-			{				if($Obj->throw)
+			{
+				if($Obj->throw)
 					throw new EE(static::$Language['error_ext'],EE::USER);
 				$Obj->errors[__class__]=static::$Language['error_ext'];
 				return;
@@ -323,7 +324,9 @@ $(function(){
 	 * @param ControlsManager $Obj
 	 */
 	public static function Result($a,$Obj,$co)
-	{		return Eleanor::$Template->ControlUploadFile('result',$a['value']);	}
+	{
+		return Eleanor::$Template->ControlUploadFile('result',$a['value']);
+	}
 }
 ControlUploadFile::$Language=new Language;
 ControlUploadFile::$Language->queue[]='uploadfile-*.php';

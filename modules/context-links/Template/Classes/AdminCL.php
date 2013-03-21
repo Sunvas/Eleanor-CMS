@@ -14,7 +14,8 @@
 */
 
 class TPLAdminCL
-{	/*
+{
+	/*
 		Страница отображения всех контексных ссылок
 		$items - массив контексных ссылок. Формат: ID=>array(), ключи внутреннего массива:
 			date_from - дата начала обработки
@@ -42,7 +43,9 @@ class TPLAdminCL
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$cnt,$pp,$qs,$page,$links)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница добавления/редактирования контексной ссылки
@@ -58,6 +61,7 @@ class TPLAdminCL
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEdit($id,$controls,$values,$errors,$back,$hasdraft,$links)
-	{
+	{
+
 	}
 }

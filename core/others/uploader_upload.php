@@ -9,10 +9,13 @@
 	*Pseudonym
 */
 class Uploader_Upload extends Uploader
-{	/**
+{
+	/**
 	 * Осуществление Upload запроса
-	 */	public function Process()
-	{		if(!isset($_POST['session']))
+	 */
+	public function Process()
+	{
+		if(!isset($_POST['session']))
 			return false;
 		Eleanor::LoadOptions('site');
 		Eleanor::StartSession((string)$_POST['session']);
@@ -27,16 +30,19 @@ class Uploader_Upload extends Uploader
 		$path=$this->GetPath(isset($_POST['path']) ? Url::Decode((string)$_POST['path']) : '');
 
 		if($this->max_size!==true or $this->max_files>0)
-		{			list($cursize,$cnt)=$this->FilesSize($path);
+		{
+			list($cursize,$cnt)=$this->FilesSize($path);
 			$cursize+=$_FILES[self::FILENAME]['size'];
 			if($this->max_size!==true and $cursize>$this->max_size or $this->max_files>0 and $this->max_files<++$cnt)
-				return false;		}
+				return false;
+		}
 		$path.=Files::Windows($fname);
 		if($this->types and !in_array($type,$this->types) or !move_uploaded_file($_FILES[self::FILENAME]['tmp_name'],$path))
 			return false;
 
 		if($this->vars['watermark_types'] and $this->vars['watermark'] and (!isset($this->watermark) and !empty($_POST['watermark']) or $this->watermark))
-		{			list($r,$g,$b,$s,$a)=explode(',',$this->vars['watermark_csa']);
+		{
+			list($r,$g,$b,$s,$a)=explode(',',$this->vars['watermark_csa']);
 			Image::WaterMark(
 				$path,
 				array(
@@ -60,7 +66,8 @@ class Uploader_Upload extends Uploader
 		}
 		if((!isset($this->previews) and !empty($_POST['dopreviews']) or $this->previews) and in_array(strtolower(pathinfo($path,PATHINFO_EXTENSION)),$this->preview))
 			try
-			{				Image::Preview(
+			{
+				Image::Preview(
 					$path,
 					array(
 						'width'=>$this->vars['thumb_width'],

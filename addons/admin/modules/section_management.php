@@ -15,7 +15,8 @@ if(!$m=isset($_GET['module']) ? (string)$_GET['module'] : false)
 	$m=isset($_POST['module']) ? (string)$_POST['module'] : false;
 $error='';
 if($m and isset($info[$m]))
-{	$Eleanor->module=array(
+{
+	$Eleanor->module=array(
 		'name'=>$m,
 		'title'=>$info[$m]['title'],
 		'descr'=>$info[$m]['descr'],
@@ -34,7 +35,9 @@ foreach($info as $name=>&$t)
 	$titles[$name]=$t['title'];
 asort($titles,SORT_STRING);
 foreach($titles as $name=>&$q)
-{	$a=$info[$name];	if(!isset($a['services'][Eleanor::$service]) or !empty($a['hidden']))
+{
+	$a=$info[$name];
+	if(!isset($a['services'][Eleanor::$service]) or !empty($a['hidden']))
 		continue;
 	$a['_a']=$Eleanor->Url->Construct(array('module'=>$name));
 	if(empty($a['main']))

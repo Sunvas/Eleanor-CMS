@@ -57,7 +57,8 @@ $titles=$preitems=$items=array();
 Eleanor::$Template->queue[]='Management';
 $R=Eleanor::$Db->Query('SELECT `sections`,`title_l` `title`,`descr_l` `descr`,`image`,`active` FROM `'.P.'modules` WHERE `services`=\'\' OR `services` LIKE \'%,'.Eleanor::$service.',%\'');
 while($a=$R->fetch_assoc())
-{	$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
+{
+	$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
 	$a['descr']=$a['descr'] ? Eleanor::FilterLangValues((array)unserialize($a['descr'])) : '';
 
 	$a['sections']=unserialize($a['sections']);

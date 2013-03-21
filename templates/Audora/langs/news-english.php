@@ -34,7 +34,7 @@ return array(
 	'maincat'=>'Main category',
 	'tags'=>'Tags',
 	'tags_'=>'Enter a comma-separated',
-	'announcement'=>'Анонс',
+	'announcement'=>'Announcement',
 	'announcement_'=>'Announcement of news is as annotation to book - must convince reader to read it',
 	'text'=>'News text',
 	'show_sokr'=>'Display a brief overview?',

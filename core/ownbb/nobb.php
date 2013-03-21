@@ -10,7 +10,8 @@
 */
 
 class OwnBbCode_nobb extends OwnBbCode
-{	/**
+{
+	/**
 	 * Обработка информации перед показом на странице
 	 *
 	 * @param string $t Тег, который обрабатывается
@@ -36,7 +37,8 @@ class OwnBbCode_nobb extends OwnBbCode
 	 * @param bool $cu Флаг возможности использования тега
 	 */
 	public static function PreSave($t,$p,$c,$cu)
-	{		$Ed=new Editor_Result;
+	{
+		$Ed=new Editor_Result;
 		$c=$Ed->SafeHtml($c);
 		return parent::PreSave($t,$p,$c,$cu);
 	}

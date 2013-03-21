@@ -1,6 +1,7 @@
 <?php
 return array(
-	'load'=>function($co){		$config=include(Eleanor::$root.'modules/static/config.php');
+	'load'=>function($co){
+		$config=include(Eleanor::$root.'modules/static/config.php');
 		if(!class_exists($config['api'],false))
 			include Eleanor::$root.'modules/static/api.php';
 		$Plug=new $config['api']($config);
@@ -45,7 +46,8 @@ $(function(){
 	res.change(function(){
 		butt.hide();
 		if($(this).val())
-		{			if($("option",this).size()==1)
+		{
+			if($("option",this).size()==1)
 				$("#del-'.$u.'").show();
 			else if($("option:last",this).prop("selected"))
 				$("#up-'.$u.',#del-'.$u.'").show();
@@ -58,7 +60,8 @@ $(function(){
 		}
 	}).change();
 
-	add.click(function(){		if(res.find("[value="+sel.val()+"]").size()==0)
+	add.click(function(){
+		if(res.find("[value="+sel.val()+"]").size()==0)
 			sel.find("option:selected:first").clone().each(function(){
 				$(this).html($(this).html().replace(/^(&nbsp;|›)+/g,""));
 			}).prop("selected",false).appendTo(res);
@@ -103,6 +106,7 @@ $(function(){
 });//]]></script>';
 	},
 	'save'=>function($co,$Obj)
-	{		return$Obj->GetPostVal($co['name'],$co['default']);
+	{
+		return$Obj->GetPostVal($co['name'],$co['default']);
 	},
 );

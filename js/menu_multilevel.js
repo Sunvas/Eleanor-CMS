@@ -53,7 +53,8 @@ $.fn.MultiLevelMenu=function(opts)
 					var x=$(this).position().left+$(this).width(),
 						y=$(this).position().top;
 					if(!opts.rtl && bodyw<rx || opts.rtl)
-					{						var tx=ul.width();
+					{
+						var tx=ul.width();
 						if(!opts.rtl || opts.rtl && $(this).offset().left-tx>0)
 							x-=tx+$(this).width();
 					}

@@ -468,7 +468,7 @@ $(function(){
 					'edit'=>$a['_aedit'] ? Eleanor::$Template->EditDelete($a['_aedit'],$a['_adel']) : false,
 				),
 				'title'=>$a['title'],
-				'text'=>($a['announcement'] ? $a['announcement'].'<a id="more"></a>' : '').$a['text'].($tags ? '<div class="tags">'.sprintf(static::$lang['tags_'],rtrim($tags,', ')).'</div>' : '').($voting ? '<a id="voting"></a>'.$voting : ''),
+				'text'=>($a['announcement'] ? $a['announcement'].'<br /><a id="more"></a>' : '').$a['text'].($tags ? '<div class="tags">'.sprintf(static::$lang['tags_'],rtrim($tags,', ')).'</div>' : '').($voting ? '<a id="voting"></a>'.$voting : ''),
 			))
 			.$comments;
 	}

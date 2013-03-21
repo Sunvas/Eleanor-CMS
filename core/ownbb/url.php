@@ -11,7 +11,8 @@
 
 #Класс, отвечает за работку ownbb тега [url]
 class OwnBbCode_url extends OwnBbCode
-{	/**
+{
+	/**
 	 * Обработка информации перед показом на странице
 	 *
 	 * @param string $t Тег, который обрабатывается
@@ -36,8 +37,10 @@ class OwnBbCode_url extends OwnBbCode
 			Eleanor::LoadOptions('editor');
 
 		if(isset($p['self']))
-		{			$np=array();
-			unset($p['self']);		}
+		{
+			$np=array();
+			unset($p['self']);
+		}
 		else
 			$np=array('target'=>'_blank');
 		foreach($p as $k=>&$v)

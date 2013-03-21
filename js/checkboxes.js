@@ -24,8 +24,11 @@ function CheckGroup(obj)
 }
 
 function One2AllCheckboxes(parents,mains,subnames,and)
-{	and=and||false;	var checks,
-		check=$(mains).click(function(e,mcl){			if(typeof mcl=="undefined")
+{
+	and=and||false;
+	var checks,
+		check=$(mains).click(function(e,mcl){
+			if(typeof mcl=="undefined")
 				mcl=true;
 			if(!mcl)
 				return;
@@ -35,7 +38,8 @@ function One2AllCheckboxes(parents,mains,subnames,and)
 					$(this).prop("checked",main.prop("checked")).triggerHandler("click",[true,false]);
 			});
 		}),
-		each=function(){			if($(this).data("one2all"))
+		each=function(){
+			if($(this).data("one2all"))
 				return;
 			$(this).data("one2all",true);
 			$(this).click(function(e,mcl,scl){
@@ -53,7 +57,11 @@ function One2AllCheckboxes(parents,mains,subnames,and)
 				$(mains).prop("checked",checked).triggerHandler("click",[false,true]);
 			})
 		},
-		Manage={			Rescan:function(){				checks=$(parents).find(subnames).each(each);
-			}		};
+		Manage={
+			Rescan:function(){
+				checks=$(parents).find(subnames).each(each);
+			}
+		};
 	Manage.Rescan();
-	return Manage;}
+	return Manage;
+}

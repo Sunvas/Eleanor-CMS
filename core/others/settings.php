@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright В© Eleanor CMS
+	Copyright © Eleanor CMS
 	URL: http://eleanor-cms.ru, http://eleanor-cms.com
 	E-mail: support@eleanor-cms.ru
 	Developing: Alexander Sunvas*
@@ -8,8 +8,8 @@
 	=====
 	*Pseudonym
 */
-$full=dirname(__file__).'/settings/full.php';
+$full=__dir__.'/settings/full.php';
 if(extension_loaded('ionCube Loader') and is_file($full))
 	include$full;
 else
-	include dirname(__file__).'/settings/simple.php';
+	include __dir__.'/settings/simple.php';

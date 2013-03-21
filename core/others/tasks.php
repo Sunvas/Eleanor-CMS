@@ -10,7 +10,8 @@
 */
 
 class Tasks extends BaseClass
-{	/**
+{
+	/**
 	 * Пересчет точной даты и времени следующего запуска крона
 	 */
 	public static function UpdateNextRun()

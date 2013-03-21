@@ -22,8 +22,9 @@ class AccountChangeEmail
 		Eleanor::LoadOptions('user-profile');
 
 		if($master)
-		{			$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
-			$GLOBALS['title'][]=$lang['changing_email'];;
+		{
+			$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+			$GLOBALS['title'][]=$lang['changing_email'];
 			if($GLOBALS['Eleanor']->Url->is_static)
 				$_GET+=$GLOBALS['Eleanor']->Url->Parse(array('id','md','secret'));
 		}
@@ -111,7 +112,8 @@ class AccountChangeEmail
 				$l=include$GLOBALS['Eleanor']->module['path'].'letters-'.Language::$main.'.php';
 				Eleanor::$Db->Delete(P.'confirmation','`op`=\'changeemail\' AND `user`='.$data['id']);
 				if($data['email'])
-				{					$hash=md5(uniqid(microtime()));
+				{
+					$hash=md5(uniqid(microtime()));
 					$actid=Eleanor::$Db->Insert(P.
 						'confirmation',
 						array(

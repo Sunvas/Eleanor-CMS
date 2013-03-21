@@ -16,13 +16,13 @@ class ApiStatic extends BaseClass
 
 	public function __construct($config=array())
 	{
-		$this->config=$config ? $config : include dirname(__file__).'/config.php';
+		$this->config=$config ? $config : include __dir__.'/config.php';
 	}
 
 	public function QuickMenu($type='admin',$module=array())
 	{
 		if(!isset(Eleanor::$Language[__class__]))
-			Eleanor::$Language->Load(dirname(__file__).'/api-*.php',__class__);
+			Eleanor::$Language->Load(__dir__.'/api-*.php',__class__);
 		if(!is_array($module['sections']))
 		{
 			$module['sections']=unserialize($module['sections']);
@@ -110,7 +110,7 @@ class ApiStatic extends BaseClass
 			return$El->Url->Construct($q);
 
 		$id=isset($q['id']) ? (int)$q['id'] : false;
-		$this->config=include(dirname(__file__).'/config.php');
+		$this->config=include(__dir__.'/config.php');
 		$parents='';
 		if($id)
 		{
@@ -183,7 +183,7 @@ class ApiStatic extends BaseClass
 	public function SitemapConfigure(&$post,$ti=13)
 	{
 		if(!isset(Eleanor::$Language[__class__]))
-			Eleanor::$Language->Load(dirname(__file__).'/api-*.php',__class__);
+			Eleanor::$Language->Load(__dir__.'/api-*.php',__class__);
 		return array(
 			'pp'=>array(
 				'title'=>Eleanor::$Language[__class__]['pp'],

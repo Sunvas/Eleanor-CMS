@@ -253,7 +253,7 @@ final class Eleanor extends BaseClass
 		if(!isset(self::$Instance))
 		{
 			self::$Instance=new self;
-			self::$root=dirname(dirname(__file__)).DIRECTORY_SEPARATOR;
+			self::$root=dirname(__dir__).DIRECTORY_SEPARATOR;
 			self::$rootf=dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR;
 			self::$filename=basename($_SERVER['SCRIPT_FILENAME']);
 			chdir(self::$root);

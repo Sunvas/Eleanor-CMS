@@ -53,14 +53,18 @@ class TaskMainClean extends BaseClass implements Task
 				$n=1;
 				$R=Eleanor::$UsersDb->Query('(SELECT `id`,`date` FROM `'.USERS_TABLE.'_updated` WHERE `date`=\''.$lastdate.'\')UNION ALL(SELECT `id` FROM `'.USERS_TABLE.'_updated` WHERE `date`>\''.$lastdate.'\' ORDER BY `date` ASC LIMIT 50)');
 				while($a=$R->fetch_assoc())
-				{					if($n++!=$R->num_rows or $lastdate==$a['date'])
+				{
+					if($n++!=$R->num_rows or $lastdate==$a['date'])
 						$ids[]=$a['id'];
 					$lastdate=$a['date'];
 				}
 
 				$R=Eleanor::$UsersDb->Query('SELECT `id`,`full_name`,`name`,`register`,`last_visit`,`language`,`timezone` FROM `'.USERS_TABLE.'` WHERE `id`'.Eleanor::$Db->In($ids).' AND `temp`=0');
 				while($a=$R->fetch_assoc())
-				{					$del[]=$a['id'];					Eleanor::$Db->Update(P.'users_site',array_slice($a,1),'`id`='.$a['id'].' LIMIT 1');				}
+				{
+					$del[]=$a['id'];
+					Eleanor::$Db->Update(P.'users_site',array_slice($a,1),'`id`='.$a['id'].' LIMIT 1');
+				}
 
 				$del=array_diff($ids,$del);
 				if($del)

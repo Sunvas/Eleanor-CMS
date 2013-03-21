@@ -11,8 +11,10 @@
 if(!defined('CMS'))die;
 
 function DoFilter(&$files,$filter)
-{	switch($filter)
-	{		case'onlydir':
+{
+	switch($filter)
+	{
+		case'onlydir':
 			foreach($files as $k=>&$f)
 				if(substr($f,-1)!=DIRECTORY_SEPARATOR)
 					unset($files[$k]);
@@ -45,7 +47,8 @@ $goal=isset($_GET['goal']) ? $_GET['goal'] : '';
 $query=isset($_GET['query']) ? trim($_GET['query'],'\//') : '';
 
 switch($goal)
-{	case'users':
+{
+	case'users':
 		$items=array();
 		if($query)
 		{
@@ -56,7 +59,8 @@ switch($goal)
 		Start();
 		echo'{query:"'.addcslashes($query,"\n\r\t\"\\").'",suggestions:['.($items ? '"'.join('","',$items).'"],data:["'.join('","',array_keys($items)).'"' : '').']}';
 	break;
-	default:		$filter=isset($_GET['filter']) ? (string)$_GET['filter'] : false;
+	default:
+		$filter=isset($_GET['filter']) ? (string)$_GET['filter'] : false;
 		$cut=Eleanor::$root;
 		$path=isset($_GET['path']) ? trim((string)$_GET['path'],'\//') : '';
 

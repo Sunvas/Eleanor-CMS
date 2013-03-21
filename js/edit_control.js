@@ -7,34 +7,43 @@
 	=====
 	*Pseudonym
 */
-var EC={	session:"",//Текущая сессия
+var EC={
+	session:"",//Текущая сессия
 	sett_group:[],//Группировка по сходным свойствам
 	service:"",//Текущий сервис
 	pref_sett:"",//Префикс имен контролов по настройке
 	pref_prev:"",//Префикс имен контролов предварительного просмотра
-	values:{},//Значения полей предпросмотра	data:{},//Данные полей настройки
+	values:{},//Значения полей предпросмотра
+	data:{},//Данные полей настройки
 	intv:[],//Вспомагательный массив для серелизации значений с []
 	type:"",//Текущий тип
 	OnChange:function(){},
-	SaveData:function(){		var type=$("#type-selector").val(),
+	SaveData:function(){
+		var type=$("#type-selector").val(),
 			group=(typeof this.sett_group[this.type]=="undefined") ? "" : this.sett_group[this.type],
 			th=this,
 			inputs=$("#edit-control-table").find(":input").filter(function(){
 				return ((this.name.indexOf(th.pref_sett)==0 || this.name.indexOf(th.pref_prev)==0) && !$(this).is(".temp"));
 			}),
-			Merge=function(main,extra){				$.each(extra,function(k,v){					if(typeof main[k]=="object" && typeof v=="object")
+			Merge=function(main,extra){
+				$.each(extra,function(k,v){
+					if(typeof main[k]=="object" && typeof v=="object")
 						Merge(main[k],v);
 					else
-						main[k]=v;				});			},
+						main[k]=v;
+				});
+			},
 			params={};
 
 		if(typeof th.intv[group]=="undefined")
 			th.intv[group]={};
-		$.each(th.intv[group],function(i,v){			if(i.indexOf("*")!=-1)
+		$.each(th.intv[group],function(i,v){
+			if(i.indexOf("*")!=-1)
 			{
 				var todel=i.substr(0,i.indexOf("*"));
 				eval("try{delete(th.intv[\""+group+"\"][\""+i+"\"]);delete(th.data[\""+group+"\"][\""+todel.replace(/\|/g,"\"][\"")+"\"]);}catch(e){}");
-			}		});
+			}
+		});
 		th.values[group]={};
 
 		if(typeof th.intv[group]=="undefined")
@@ -57,7 +66,8 @@ var EC={	session:"",//Текущая сессия
 		});
 		Merge(th.values[group],CORE.Inputs2object(params,th.intv[group]));
 	},
-	ChangeType:function(onlyprev){		var th=this,
+	ChangeType:function(onlyprev){
+		var th=this,
 			newtype=$("#type-selector").val(),
 			group=(typeof this.sett_group[newtype]=="undefined") ? "" : this.sett_group[newtype],
 			d,
@@ -67,14 +77,16 @@ var EC={	session:"",//Текущая сессия
 
 		this.SaveData();
 		if(typeof th.values[group]=="undefined")
-		{			g=(typeof this.sett_group[th.type]=="undefined") ? "" : this.sett_group[th.type];
+		{
+			g=(typeof this.sett_group[th.type]=="undefined") ? "" : this.sett_group[th.type];
 			d=(typeof th.values[g]=="undefined") ? [] : this.values[g];
 		}
 		else
 			d=this.values[group];
 
 		if(typeof th.data[group]=="undefined")
-		{			g=(typeof this.sett_group[th.type]=="undefined") ? "" : this.sett_group[th.type];
+		{
+			g=(typeof this.sett_group[th.type]=="undefined") ? "" : this.sett_group[th.type];
 			o=(typeof th.data[g]=="undefined") ? [] : this.data[g];
 		}
 		else
@@ -92,13 +104,16 @@ var EC={	session:"",//Текущая сессия
 		CORE.Ajax(
 			data,
 			function(result)
-			{				if(onlyprev)
+			{
+				if(onlyprev)
 					$("#edit-control-preview").html(result);
 				else
 					$("#edit-control-table").find("tr.temp").remove().end().append(result);
-				th.OnChange(onlyprev);				th.type=newtype;
+				th.OnChange(onlyprev);
+				th.type=newtype;
 			}
-		);	},
+		);
+	},
 //Для внутреннего select-a
 	Select:function(u)
 	{
@@ -117,7 +132,8 @@ var EC={	session:"",//Текущая сессия
 				var tr=$(this).closest("tr");
 				tr.clone(false).find("[type=text]").val("").end().insertAfter(tr);
 				AppDaD();
-			}).on("click",".sb-minus",function(){				var tr=$(this).closest("tr");
+			}).on("click",".sb-minus",function(){
+				var tr=$(this).closest("tr");
 				if(t.find("tr").size()>2)
 					tr.remove();
 				else
@@ -139,4 +155,5 @@ var EC={	session:"",//Текущая сессия
 				}
 			}).change();
 		});
-	}}
+	}
+}

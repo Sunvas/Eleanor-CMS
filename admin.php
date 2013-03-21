@@ -11,7 +11,7 @@
 $start=microtime();
 define('CMS',true);
 
-require dirname(__file__).'/core/core.php';
+require __dir__.'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::$service='admin';#ID сервиса
 Eleanor::LoadOptions(array('site','users-on-site'));

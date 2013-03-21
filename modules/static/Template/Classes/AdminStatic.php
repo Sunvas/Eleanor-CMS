@@ -14,7 +14,8 @@
 */
 
 class TPLAdminStatic
-{	/*
+{
+	/*
 		Страница отображения всех статических страниц
 		$items - массив статических страниц. Формат: ID=>array(), ключи внутреннего массива:
 			title - заголовок статической страницы
@@ -48,7 +49,9 @@ class TPLAdminStatic
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$subitems,$navi,$cnt,$pp,$qs,$page,$links)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница добавления/редактирования статической страницы
@@ -65,7 +68,8 @@ class TPLAdminStatic
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEdit($id,$controls,$values,$errors,$back,$uploader,$hasdraft,$links)
-	{
+	{
+
 	}
 
 	/*

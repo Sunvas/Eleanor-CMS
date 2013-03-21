@@ -113,7 +113,11 @@ echo 'Powered by '.ELEANOR_COPYRIGHT?>
 			</span><?php if($GLOBALS['Eleanor']->multisite):
 echo Eleanor::Select(false,Eleanor::Option(Eleanor::$Language['tpl']['msjump'],'',true),array('id'=>'msjump','style'=>'float:right','onchange'=>'CORE.MSJump($(this).val())'))?>
 <script type="text/javascript">//<![CDATA[
-$(function(){	$.each(CORE.mssites,function(k,v){		$("<option>").text(v.title).val(k).appendTo("#msjump");	})})//]]></script><?php endif?>		</div>
+$(function(){
+	$.each(CORE.mssites,function(k,v){
+		$("<option>").text(v.title).val(k).appendTo("#msjump");
+	})
+})//]]></script><?php endif?>		</div>
 	</div>
 </body>
 </html>

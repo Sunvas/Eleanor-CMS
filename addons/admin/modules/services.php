@@ -142,26 +142,30 @@ function ServicesList()
 	$items=array();
 	$R=Eleanor::$Db->Query('SELECT * FROM `'.P.'services` ORDER BY `name` ASC');
 	while($a=$R->fetch_assoc())
-	{		$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['name']));
+	{
+		$a['_aedit']=$Eleanor->Url->Construct(array('edit'=>$a['name']));
 		$a['_adel']=$Eleanor->Url->Construct(array('delete'=>$a['name']));
 		$items[]=$a;
 	}
 
 	$c=Eleanor::$Template->Services($items);
 	Start();
-	echo$c;}
+	echo$c;
+}
 
 function AddEdit($name,$errors=array())
 {global$Eleanor,$title;
 	$lang=Eleanor::$Language['ser'];
 	$values=array_combine(array_keys($Eleanor->sp),array_fill(0,count($Eleanor->sp),array('_name'=>$name,'_protected'=>false)));
 	if($name)
-	{		$R=Eleanor::$Db->Query('SELECT * FROM `'.P.'services` WHERE `name`='.Eleanor::$Db->Escape($name,true).' LIMIT 1');
+	{
+		$R=Eleanor::$Db->Query('SELECT * FROM `'.P.'services` WHERE `name`='.Eleanor::$Db->Escape($name,true).' LIMIT 1');
 		if(!$a=$R->fetch_assoc())
 			return GoAway();
 		foreach($a as $k=>&$v)
 			if(isset($Eleanor->sp[$k]))
-			{				if(!$errors)
+			{
+				if(!$errors)
 					$values[$k]['value']=$v;
 				if(isset($values[$k]['_protected']))
 					$values[$k]['_protected']=$a['protected'];
@@ -189,7 +193,8 @@ function AddEdit($name,$errors=array())
 	$values=$Eleanor->Controls->DisplayControls($Eleanor->sp,$values)+$values;
 	$c=Eleanor::$Template->AddEdit($name,$Eleanor->sp,$values,$errors,$back,$links);
 	Start();
-	echo$c;}
+	echo$c;
+}
 
 function Save($name)
 {global$Eleanor;
@@ -213,7 +218,8 @@ function Save($name)
 		}
 
 	try
-	{		$values=$Eleanor->Controls->SaveControls($Eleanor->sp);
+	{
+		$values=$Eleanor->Controls->SaveControls($Eleanor->sp);
 	}
 	catch(EE$E)
 	{
@@ -231,17 +237,21 @@ function Save($name)
 	if($name)
 	{
 		if($a['protected'])
-		{			unset($values['protected'],$values['name']);
+		{
+			unset($values['protected'],$values['name']);
 			if($a['protected']==1)
 				unset($values['login']);
 		}
 		elseif(!$values['name'])
 			return AddEdit($name,array('EMPTY_TITLE'));
 		elseif($values['name']!=$name)
-		{			$R=Eleanor::$Db->Query('SELECT `name` FROM `'.P.'services` WHERE `name`='.Eleanor::$Db->Escape($values['name'],true).' LIMIT 1');
+		{
+			$R=Eleanor::$Db->Query('SELECT `name` FROM `'.P.'services` WHERE `name`='.Eleanor::$Db->Escape($values['name'],true).' LIMIT 1');
 			if($R->num_rows!=0)
-				return AddEdit($id,array('EXISTS'));		}
-		Eleanor::$Db->Update(P.'services',$values,'`name`='.Eleanor::$Db->Escape($name,true).' LIMIT 1');	}
+				return AddEdit($id,array('EXISTS'));
+		}
+		Eleanor::$Db->Update(P.'services',$values,'`name`='.Eleanor::$Db->Escape($name,true).' LIMIT 1');
+	}
 	else
 	{
 		if(!$values['name'])

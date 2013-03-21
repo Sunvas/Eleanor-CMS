@@ -9,7 +9,7 @@
 	*Pseudonym
 */
 define('CMS',true);
-require dirname(__file__).'/core/core.php';
+require __dir__.'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::$service='rss';#ID сервиса
 Eleanor::LoadOptions(array('site','rss','users-on-site'));

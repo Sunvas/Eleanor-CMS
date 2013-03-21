@@ -36,12 +36,15 @@ $calendar='<div class="month"><h4>'.Eleanor::$Language->Date($v_0['y'].'-'.$v_0[
 .'<div class="clr"></div></div>
 <table><tr class="c_days"><td>'.$ltpl['mon'].'</td><td>'.$ltpl['tue'].'</td><td>'.$ltpl['wed'].'</td><td>'.$ltpl['thu'].'</td><td>'.$ltpl['fri'].'</td><td class="vday">'.$ltpl['sat'].'</td><td class="vday">'.$ltpl['sun'].'</td></tr>';
 foreach($v_0['calendar'] as &$week)
-{	$calendar.='<tr>';
+{
+	$calendar.='<tr>';
 	foreach($week as $k=>&$day)
-	{		if(!$day)
+	{
+		if(!$day)
 			$td='&nbsp;';
 		elseif(is_array($day))
-		{			$cnt+=$day['cnt'];
+		{
+			$cnt+=$day['cnt'];
 			$td='<a href="'.$day['a'].'" title="'.$ltpl['_cnt']($day['cnt']).'">'.$day['day'].'</a>';
 			$day=$day['day'];
 		}
@@ -51,12 +54,14 @@ foreach($v_0['calendar'] as &$week)
 		$cl=$tmon && $day==$tday ? 'today' : false;
 		if($k>4)
 			$cl=$cl ? 'tovday' : 'vday';
-		$calendar.='<td'.($cl ? ' class="'.$cl.'"' : '').'>'.$td.'</td>';	}
+		$calendar.='<td'.($cl ? ' class="'.$cl.'"' : '').'>'.$td.'</td>';
+	}
 	$calendar.='</tr>';
 }
 $arrows='';
 if($v_0['pm'])
-{	$p=Eleanor::$Language->Date(array('n'=>$v_0['pm'],'d'=>1),'my');
+{
+	$p=Eleanor::$Language->Date(array('n'=>$v_0['pm'],'d'=>1),'my');
 	$p=substr($p,0,strpos($p,' '));
 	$arrows.='<a class="arrowleft m-prev" href="#">'.$p.'</a>';
 }
@@ -90,11 +95,13 @@ $(function(){
 		ar=$("#'.$u.',#'.$u.'d");
 	if(cl)
 		ar.toggle();
-	$("#'.$u.'").closest(".dcont").prev().css("cursor","pointer").click(function(){		ar.toggle();
+	$("#'.$u.'").closest(".dcont").prev().css("cursor","pointer").click(function(){
+		ar.toggle();
 		cl=!cl;
 		if(cl)
 			localStorage.setItem("clndr","1");
 		else
 			localStorage.removeItem("clndr");
-		return false;	});
+		return false;
+	});
 });//]]></script>';

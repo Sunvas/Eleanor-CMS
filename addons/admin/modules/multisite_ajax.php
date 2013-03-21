@@ -11,7 +11,8 @@
 global$Eleanor;
 $event=isset($_POST['event']) ? (string)$_POST['event'] : '';
 switch($event)
-{	case'checkdb':
+{
+	case'checkdb':
 		$data=isset($_POST['data']) ? (array)$_POST['data'] : array();
 		$p=isset($data['prefix']) ? (string)$data['prefix'] : '';
 		if(isset($data['host'],$data['user'],$data['pass'],$data['db']))
@@ -20,9 +21,12 @@ switch($event)
 				$Db=new Db($data);
 			}
 			catch(EE$E)
-			{				return Result('connect');			}
+			{
+				return Result('connect');
+			}
 		else
-		{			if($p==P)
+		{
+			if($p==P)
 				return Result('prefix');
 			$Db=Eleanor::$Db;
 		}

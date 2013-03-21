@@ -13,7 +13,8 @@
 	В случае если такой файл уже существует - правьте его.
 */
 class TplUserContacts
-{	/*
+{
+	/*
 		Основная страница обратной связи
 
 		$canupload - флаг возможности загрузки файла
@@ -28,13 +29,17 @@ class TplUserContacts
 		$errors - массив ошибок
 		$isu - флаг пользователя (не гостя)
 		$captcha - captcha при отправке сообщения
-	*/	public static function Contacts($canupload,$info,$whom,$values,$bypost,$errors,$isu,$captcha)
-	{
+	*/
+	public static function Contacts($canupload,$info,$whom,$values,$bypost,$errors,$isu,$captcha)
+	{
+
 	}
 
 	/*
 		Страница с информацией о том, что сообщение успешно отправлено
 	*/
 	public static function Sent()
-	{	}
+	{
+
+	}
 }

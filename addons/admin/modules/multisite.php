@@ -25,7 +25,8 @@ switch($d)
 		$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
 		$c=$Eleanor->Settings->GetInterface('group','multisite');
 		if($c)
-		{			$c=Eleanor::$Template->Options($c);
+		{
+			$c=Eleanor::$Template->Options($c);
 			Start();
 			echo$c;
 		}

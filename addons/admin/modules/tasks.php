@@ -161,7 +161,9 @@ if(isset($_GET['do']))
 			ShowList();
 	}
 elseif(isset($_GET['edit']))
-{	$id=(int)$_GET['edit'];	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
+{
+	$id=(int)$_GET['edit'];
+	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 		Save($id);
 	else
 		AddEdit($id);

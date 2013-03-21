@@ -10,7 +10,8 @@
 */
 
 class OwnBbCode extends BaseClass
-{	const
+{
+	const
 		SINGLE=false;
 
 	/**
@@ -30,7 +31,9 @@ class OwnBbCode extends BaseClass
 	 * @param bool $cu Флаг возможности использования тега
 	 */
 	public static function PreDisplay($t,$p,$c,$cu)
-	{		return$c;	}
+	{
+		return$c;
+	}
 
 	/**
 	 * Обработка информации перед её правкой
@@ -103,7 +106,8 @@ class OwnBbCode extends BaseClass
 }
 
 class OwnBB extends BaseClass
-{	const#Константы типа обрабоки
+{
+	const#Константы типа обрабоки
 		DISPLAY=1,#Обработка сохраненных данных перед показом
 		SHOW=2,#Обработка несохраненных данных перед показом: отличие от DISPLAY состоит в том, что используется разрешение не gr_see, а gr_use
 		EDIT=4,#Обработка сохраненных данных перед правкой
@@ -123,7 +127,8 @@ class OwnBB extends BaseClass
 	 * @param array $codes Исключительный массив только эти ББ коды нужно парсить
 	 */
 	public static function Parse($s,$t=self::DISPLAY,array$c=array())
-	{		$s=self::StoreNotParsed($s,$t);
+	{
+		$s=self::StoreNotParsed($s,$t);
 		$s=self::ParseBBCodes($s,$t,$c);
 		return self::ParseNotParsed($s,$t);
 	}
@@ -136,7 +141,8 @@ class OwnBB extends BaseClass
 	 * @param array $codes Исключительный массив только эти ББ коды нужно парсить
 	 */
 	public static function ParseBBCodes($s,$type,array$codes=array())
-	{		switch($type)
+	{
+		switch($type)
 		{
 			case self::EDIT:
 				$mth='PreEdit';
@@ -174,8 +180,10 @@ class OwnBB extends BaseClass
 				$cch=false;#Class Check
 			}
 			else
-			{				$c='OwnBbCode_'.$h;
-				$cch=true;			}
+			{
+				$c='OwnBbCode_'.$h;
+				$cch=true;
+			}
 			foreach($ts as &$t)
 			{
 				$ocp=-1;
@@ -286,7 +294,8 @@ class OwnBB extends BaseClass
 				while(false!==$cp=stripos($s,'['.$t,$cp))
 				{
 					if($cp==$ocp)
-					{						++$cp;
+					{
+						++$cp;
 						continue;
 					}
 					$tl=strlen($t);
@@ -311,7 +320,8 @@ class OwnBB extends BaseClass
 					{
 						$l=strpos($s,']',$cp);
 						if($l===false)
-						{							++$cp;
+						{
+							++$cp;
 							continue;
 						}
 						$l-=$cp-1;#]
@@ -360,7 +370,8 @@ class OwnBB extends BaseClass
 		self::$bbs=array();
 		$R=Eleanor::$Db->Query('SELECT `handler`,`tags`,`no_parse`,`special`,`sp_tags`,`gr_use`,`gr_see`,`sb` FROM `'.P.'ownbb` WHERE `active`=1 ORDER BY `pos` ASC');
 		while($a=$R->fetch_assoc())
-		{			$a['sp_tags']=$a['sp_tags'] ? explode(',',$a['sp_tags']) : array();
+		{
+			$a['sp_tags']=$a['sp_tags'] ? explode(',',$a['sp_tags']) : array();
 			$a['gr_use']=$a['gr_use'] ? explode(',',$a['gr_use']) : array();
 			$a['gr_see']=$a['gr_see'] ? explode(',',$a['gr_see']) : array();
 			self::$bbs[]=$a;

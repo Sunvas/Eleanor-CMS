@@ -9,7 +9,8 @@ return array(
 		return'<form'.Eleanor::TagParams($a).'>';
 	},
 	'endform'=>function() use (&$tip)
-	{		$GLOBALS['jscripts'][]='js/jquery.poshytip.js';
+	{
+		$GLOBALS['jscripts'][]='js/jquery.poshytip.js';
 		return'</form>'.($tip ? '<script type="text/javascript">//<![CDATA[
 		$(function(){
 			$("span.labinfo").poshytip({

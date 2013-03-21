@@ -28,7 +28,8 @@ class EE_SQL extends EE
 
 		$d=end($db);
 		foreach($db as $v)
-		{			if(isset($v['class']) and $v['class']=='Db')
+		{
+			if(isset($v['class']) and $v['class']=='Db')
 				$d=$v;
 		}
 
@@ -57,12 +58,14 @@ class EE_SQL extends EE
 	 * Команда залогировать исключение
 	 */
 	public function Log()
-	{		$THIS=$this;#PHP 5.4 убрать рудмиент
+	{
+		$THIS=$this;#PHP 5.4 убрать рудмиент
 		$this->LogWriter(
 			'db_errors',
 			md5($this->extra['error'].$this->line.$this->file),
 			function($data)use($THIS)
-			{				$data['n']=isset($data['n']) ? $data['n']+1 : 1;
+			{
+				$data['n']=isset($data['n']) ? $data['n']+1 : 1;
 				$data['d']=date('Y-m-d H:i:s');
 				$data['e']=$THIS->extra['error'];
 				$data['f']=substr($THIS->getFile(),strlen(Eleanor::$root));
@@ -71,7 +74,8 @@ class EE_SQL extends EE
 				$log=$data['e'].PHP_EOL;
 
 				switch($THIS->type)
-				{					case'connect':
+				{
+					case'connect':
 						if(strpos($data['e'],'Access denied for user')===false)
 						{
 							$data['h']=isset($THIS->extra['host']) ? $THIS->extra['host'] : '';
@@ -88,8 +92,10 @@ class EE_SQL extends EE
 						$log.='Query: '.$data['q'].PHP_EOL.'File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'Date: '.$data['d'].PHP_EOL.'Happend: '.$data['n'];
 					break;
 					default:
-						$log.='File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'Date: '.$data['d'].PHP_EOL.'Happend: '.$data['n'];				}
-				return array($data,$log);			}
+						$log.='File: '.$data['f'].'['.$data['l'].']'.PHP_EOL.'Date: '.$data['d'].PHP_EOL.'Happend: '.$data['n'];
+				}
+				return array($data,$log);
+			}
 		);
 	}
 }

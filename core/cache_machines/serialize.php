@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class CacheMachineSerialize implements CacheMachineInterface
-{	public function __construct()
+{
+	public function __construct()
 	{
 		if(!is_writeable(Eleanor::$root.'cache'))
 			throw new EE('Folder /cache is write-protected!');
@@ -65,7 +66,8 @@ class CacheMachineSerialize implements CacheMachineInterface
 	 * @param string $t Тег
 	 */
 	public function DeleteByTag($t)
-	{		$t=str_replace('..','',$t);
+	{
+		$t=str_replace('..','',$t);
 		if($t!='')
 			$t.='*';
 		if($files=glob(Eleanor::$root.'cache/*'.$t.'.php'))

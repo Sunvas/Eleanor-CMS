@@ -10,8 +10,10 @@
 var votings=[];
 
 function Voting(opts)
-{	opts=$.extend(
-		{			form:"#id",
+{
+	opts=$.extend(
+		{
+			form:"#id",
 			similar:false,
 			AfterSwitch:$.Callbacks(),
 			request:{},
@@ -23,10 +25,13 @@ function Voting(opts)
 
 	var types=[],
 		th=this;
-	this.Switch=function(type,content)
-	{		if(opts.type==type)
+
+	this.Switch=function(type,content)
+	{
+		if(opts.type==type)
 			return;
-		types[opts.type]=$(opts.form).children().detach();		if(typeof types[type]=="undefined")
+		types[opts.type]=$(opts.form).children().detach();
+		if(typeof types[type]=="undefined")
 			$(opts.form).html(content);
 		else
 			types[type].appendTo(opts.form);
@@ -39,7 +44,9 @@ function Voting(opts)
 	}
 
 	this.Load=function(type,data)
-	{		if(typeof types[type]=="undefined")			CORE.Ajax(
+	{
+		if(typeof types[type]=="undefined")
+			CORE.Ajax(
 				$.extend(
 					{voting:{
 						data:data,
@@ -48,27 +55,36 @@ function Voting(opts)
 					opts.request
 				),
 				function(r)
-				{					th.Switch(type,r);				}
+				{
+					th.Switch(type,r);
+				}
 			);
 		else
-			th.Switch(type);	}
+			th.Switch(type);
+	}
 
 	if(typeof votings[opts.similar]=="undefined")
 		votings[opts.similar]=[];
 	votings[opts.similar].push(this);
-	$(opts.form).submit(function(){		if(typeof types["vote"]!="undefined")
+	$(opts.form).submit(function(){
+		if(typeof types["vote"]!="undefined")
 			th.Switch("vote",types["vote"]);
 		else
-		{			var da={},
+		{
+			var da={},
 				cnt=0;
-			$.each($(this).serializeArray(),function(k,v){				if(typeof da[v.name]=="undefined")
+			$.each($(this).serializeArray(),function(k,v){
+				if(typeof da[v.name]=="undefined")
 					cnt++;
-				da[v.name]=true;			})
+				da[v.name]=true;
+			})
 			if(opts.qcnt==cnt)
 				th.Load("vote",CORE.Inputs2object($(this)));
 			else
-				alert(CORE.Lang("noaq"));		}
-		return false;	})
+				alert(CORE.Lang("noaq"));
+		}
+		return false;
+	})
 }
 
 Voting.ChecksLimit=function(container,max)
@@ -76,16 +92,24 @@ Voting.ChecksLimit=function(container,max)
 	var sels=0,
 		bl=false,
 		Bl,
-		checks=$(":checkbox",container).click(function(){			if($(this).prop("checked"))
-			{				if(sels>=max)
-					return false;				sels++;
+		checks=$(":checkbox",container).click(function(){
+			if($(this).prop("checked"))
+			{
+				if(sels>=max)
+					return false;
+				sels++;
 			}
 			else if(sels>0)
 				sels--;
-			Bl();		});
-	Bl=function(){		if(sels>=max)
-			checks.filter(function(){				return !$(this).prop("checked");			}).prop("disabled",true);
+			Bl();
+		});
+	Bl=function(){
+		if(sels>=max)
+			checks.filter(function(){
+				return !$(this).prop("checked");
+			}).prop("disabled",true);
 		else
-			checks.prop("disabled",false);	};
+			checks.prop("disabled",false);
+	};
 	checks.triggerHandler("click");
 }

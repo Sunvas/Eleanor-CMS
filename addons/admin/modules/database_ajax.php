@@ -14,7 +14,8 @@ if(!$ids)
 $res=array();
 $R=Eleanor::$Db->Query('SELECT `id`,`options`,`data` FROM `'.P.'tasks` WHERE `id`'.Eleanor::$Db->In($ids).' AND `name`=\'recovernames\'');
 while($a=$R->fetch_assoc())
-{	$a['options']=unserialize($a['options']);
+{
+	$a['options']=unserialize($a['options']);
 	$a['data']=unserialize($a['data']);
 	$res[$a['id']]=array(
 		'done'=>$a['data']['done'],

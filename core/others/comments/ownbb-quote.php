@@ -10,7 +10,8 @@
 */
 
 class CommentsQoute extends OwnBbCode
-{	public static
+{
+	public static
 		$findlink;#Callback функция генерации ссылки на цитируемый комментарий
 
 	/**
@@ -20,7 +21,8 @@ class CommentsQoute extends OwnBbCode
 	 * @param string $p Параметры тега
 	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
 	 * @param bool $cu Флаг возможности использования тега
-	 */	public static function PreDisplay($t,$p,$c,$cu)
+	 */
+	public static function PreDisplay($t,$p,$c,$cu)
 	{
 		$p=$p ? Strings::ParseParams($p) : array();
 		if(isset($p['noparse']))
@@ -51,7 +53,8 @@ class CommentsQoute extends OwnBbCode
 	 * @param bool $cu Флаг возможности использования тега
 	 */
 	public static function PreSave($t,$p,$c,$cu)
-	{		$c=preg_replace("#^(\r?\n?<br />\r?\n?)+#i",'',$c);
+	{
+		$c=preg_replace("#^(\r?\n?<br />\r?\n?)+#i",'',$c);
 		$c=preg_replace("#(\r?\n?<br />\r?\n?)+$#i",'',$c);
 		return parent::PreSave($t,$p,$c,$cu);
 	}

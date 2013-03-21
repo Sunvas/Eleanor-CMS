@@ -12,14 +12,17 @@ global$Eleanor;
 $event=isset($_POST['event']) ? (string)$_POST['event'] : '';
 Eleanor::$Template->queue[]='Sitemap';
 switch($event)
-{	case'loadmsetts':
+{
+	case'loadmsetts':
 		$ids=isset($_POST['mids']) ? (array)$_POST['mids'] : array();
 		$r=array();
 		if($ids)
-		{			$C=new Controls;
+		{
+			$C=new Controls;
 			$R=Eleanor::$Db->Query('SELECT `id`,`title_l`,`descr_l`,`path`,`api` FROM `'.P.'modules` WHERE `id`'.Eleanor::$Db->In($ids));
 			while($a=$R->fetch_assoc())
-			{				$api=Eleanor::FormatPath($a['api'],$a['path']);
+			{
+				$api=Eleanor::FormatPath($a['api'],$a['path']);
 				$class='Api'.basename(dirname($api));
 				do
 				{
@@ -63,7 +66,8 @@ switch($event)
 						's'=>$sett,
 						'e'=>$error,
 					));
-				}			}
+				}
+			}
 		}
 		Result($r);
 	break;

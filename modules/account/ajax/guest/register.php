@@ -10,8 +10,10 @@
 */
 
 class AccountRegister
-{	public static function Handler()
-	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+{
+	public static function Handler()
+	{
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		Eleanor::LoadOptions(array('user-profile'),false);
 		$event=isset($_POST['event']) ? (string)$_POST['event'] : '';
 		switch($event)

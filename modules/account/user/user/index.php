@@ -9,13 +9,18 @@
 	*Pseudonym
 */
 class AccountIndex
-{	public static function Menu()
-	{		return array(
+{
+	public static function Menu()
+	{
+		return array(
 			'main'=>$GLOBALS['Eleanor']->Url->Prefix(),
 		);
 	}
-	public static function Content($master)
-	{		if($master)			$GLOBALS['title'][]=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['cabinet'];
+
+	public static function Content($master)
+	{
+		if($master)
+			$GLOBALS['title'][]=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['cabinet'];
 
 		$sessions=array();
 		$uid=(int)Eleanor::$Login->GetUserValue('id');

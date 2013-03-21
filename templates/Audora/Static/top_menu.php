@@ -9,7 +9,8 @@ if(Eleanor::$vars['multilang'])
 {
 	echo'<div class="hlang"><ul class="reset">';
 	foreach(Eleanor::$langs as $k=>$lng)
-	{		$img='<img src="images/lang_flags/'.$k.'.png" title="'.$lng['name'].'" alt="'.$lng['name'].'" />';
+	{
+		$img='<img src="images/lang_flags/'.$k.'.png" title="'.$lng['name'].'" alt="'.$lng['name'].'" />';
 		echo'<li>'.($k==Language::$main ? '<span class="active">'.$img.'</span>' : '<a href="'.Eleanor::$filename.'?language='.$k.'">'.$img.'</a>').'</li>';
 	}
 	echo'</ul></div>';
@@ -27,7 +28,7 @@ $lm=Eleanor::$Language['main'];
 				</ul>
 <?php
 $di='images/modules/default-small.png';
-$modules=Eleanor::$Cache->Get('adminhaeder_'.Language::$main,false);
+$modules=Eleanor::$Cache->Get('adminheader_'.Language::$main,false);
 if($modules===false)
 {
 	$modules=$titles=$premodules=array();
@@ -65,7 +66,7 @@ if($modules===false)
 	foreach($titles as $k=>&$v)
 		$modules[]=$premodules[$k];
 
-	Eleanor::$Cache->Put('adminhaeder_'.Language::$main,$modules,3600,false);
+	Eleanor::$Cache->Put('adminheader_'.Language::$main,$modules,3600,false);
 }
 $modcnt=count($modules);
 if($three=$modcnt>23)

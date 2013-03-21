@@ -16,7 +16,7 @@ if(!isset($cache))
 global$Eleanor;
 $uri=array_keys($Eleanor->modules['sections'],'news');
 $uri=reset($uri);
-$conf=include dirname(__file__).'/config.php';
+$conf=include __dir__.'/config.php';
 
 $narr=Eleanor::$Cache->Get($conf['n'].'_nv_'.Eleanor::$Language);
 if($narr===false)
@@ -32,7 +32,8 @@ if($narr===false)
 }
 
 if($narr)
-{	$mid=array_keys($Eleanor->modules['ids'],$uri);
+{
+	$mid=array_keys($Eleanor->modules['ids'],$uri);
 	$mid=reset($mid);
 	if($mid==$Eleanor->module['id'])
 		$C=$Eleanor->Categories;
@@ -42,14 +43,17 @@ if($narr)
 	if(isset($Eleanor->Voting))
 		$V=$Eleanor->Voting;
 	else
-	{		$V=new Voting($narr['voting']);
+	{
+		$V=new Voting($narr['voting']);
 		$V->mid=$mid;
 	}
 	$c=$V->Show(array('module'=>$uri,'event'=>'voting','id'=>$narr['id']));
 	if(isset($Eleanor->module['etag']))
 		$Eleanor->module['etag'].=$V->status.$narr['voting'];
 	if($c)
-	{		if($narr['cats'] and $Eleanor->Url->furl)			$cat=$C->GetUri($narr['cats']);
+	{
+		if($narr['cats'] and $Eleanor->Url->furl)
+			$cat=$C->GetUri($narr['cats']);
 		else
 			$cat=false;
 		$un=array('u'=>array($narr['uri'],'nid'=>$narr['id']));
@@ -61,4 +65,5 @@ if($narr)
 		{
 			return'Template BlockVoting does not exists.';
 		}
-	}}
+	}
+}

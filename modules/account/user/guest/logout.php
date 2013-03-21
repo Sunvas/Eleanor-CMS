@@ -9,6 +9,10 @@
 	*Pseudonym
 */
 class AccountLogout
-{	public static function Content($master=false)
-	{		if($master)			GoAway(true);	}
+{
+	public static function Content($master=false)
+	{
+		if($master)
+			GoAway(true);
+	}
 }

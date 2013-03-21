@@ -15,7 +15,8 @@ $service=isset($_REQUEST['service']) ? (string)$_REQUEST['service'] : '';
 if($service)
 	BeAs($service);
 switch($type)
-{	case'check':#Проверка стороннего сайта на логин в текущем сайте
+{
+	case'check':#Проверка стороннего сайта на логин в текущем сайте
 		Eleanor::$maxage=1000;
 		Eleanor::$last_mod=time();
 		$r=Eleanor::$Login->IsUser() ? Eleanor::JsVars(array('title'=>Eleanor::$vars['site_name'],)+Eleanor::$Login->GetUserValue(array('id','name'),false),false,true) : 'false';
@@ -55,7 +56,8 @@ switch($type)
 	break;
 	case'login':#Логин со стороннего сайта на текущий
 		if(Eleanor::$Login->IsUser())
-			return Result(true);		$sn=isset($_REQUEST['sn']) ? (string)$_REQUEST['sn'] : '';
+			return Result(true);
+		$sn=isset($_REQUEST['sn']) ? (string)$_REQUEST['sn'] : '';
 		$sign=isset($_REQUEST['signature']) ? (string)$_REQUEST['signature'] : '';
 		$ms=include Eleanor::$root.'addons/config_multisite.php';
 		if(!isset($ms[$sn]))
@@ -63,7 +65,8 @@ switch($type)
 		$d=$ms[$sn];
 
 		if($d['secret'])
-		{			$a=array(
+		{
+			$a=array(
 				'uid'=>isset($_REQUEST['uid']) ? (int)$_REQUEST['uid'] : 0,
 				'name'=>isset($_REQUEST['name']) ? (string)$_REQUEST['name'] : '',
 			);
@@ -82,7 +85,9 @@ switch($type)
 					$Db->SyncTimeZone();
 				}
 				catch(EE$E)
-				{					return Error($E->getMessage());				}
+				{
+					return Error($E->getMessage());
+				}
 			else
 				$Db=Eleanor::$Db;
 			$id=isset($_REQUEST['id']) ? (int)$_REQUEST['id'] : 0;
@@ -92,15 +97,19 @@ switch($type)
 			$Db->Delete($d['prefix'].'multisite_jump','`id`='.$id.' LIMIT 1');
 		}
 		if(!$d['sync'])
-		{			Eleanor::$UsersDb->Query('SELECT `id` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($a['name']).' LIMIT 1');
-			if(!list($a['uid'])=Eleanor::$UsersDb->fetch_row())				return Error();
+		{
+			Eleanor::$UsersDb->Query('SELECT `id` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($a['name']).' LIMIT 1');
+			if(!list($a['uid'])=Eleanor::$UsersDb->fetch_row())
+				return Error();
 		}
 		Eleanor::$Login->Auth($a['uid']);
 		Result(true);
 	break;
 	case'prejump':#Подготовка к прыжку с текущего на сторонний
 		if(Eleanor::$Login->IsUser())
-		{			Eleanor::LoadOptions('multisite');			$sn=isset($_REQUEST['sn']) ? (string)$_REQUEST['sn'] : '';
+		{
+			Eleanor::LoadOptions('multisite');
+			$sn=isset($_REQUEST['sn']) ? (string)$_REQUEST['sn'] : '';
 			$ms=include Eleanor::$root.'addons/config_multisite.php';
 			if(!isset($ms[$sn]))
 				return Error();
@@ -147,7 +156,9 @@ switch($type)
 		$sp=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path;
 		$sign=isset($_REQUEST['signature']) ? (string)$_REQUEST['signature'] : '';
 		if(isset($_REQUEST['secret']))
-		{			Eleanor::LoadOptions('multisite');			$a=array(
+		{
+			Eleanor::LoadOptions('multisite');
+			$a=array(
 				'uid'=>isset($_REQUEST['uid']) ? (int)$_REQUEST['uid'] : 0,
 				'name'=>isset($_REQUEST['name']) ? (string)$_REQUEST['name'] : '',
 			);

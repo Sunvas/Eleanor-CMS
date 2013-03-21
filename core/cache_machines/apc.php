@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class CacheMachineApc implements CacheMachineInterface
-{	private
+{
+	private
 		$u,#Уникализация кэш машины
 		$n=array(''=>true);#Массив имен того, что у нас есть в кеше.
 

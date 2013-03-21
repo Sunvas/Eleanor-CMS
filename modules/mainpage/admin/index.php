@@ -160,7 +160,8 @@ function AddEdit($id,$error='')
 		);
 	}
 	if($error)
-	{		if($error===true)
+	{
+		if($error===true)
 			$error='';
 		$bypost=true;
 		$values['id']=isset($_POST['id']) ? (int)$_POST['id'] : 0;

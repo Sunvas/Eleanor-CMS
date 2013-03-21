@@ -7,23 +7,34 @@
 $url=isset($v_0) ? $v_0 : array();
 $GLOBALS['head']['draft']='<script type="text/javascript">//<![CDATA[
 CORE.drafts=[];
-$(function(){	var first=true,
+$(function(){
+	var first=true,
 		lnk="",
 		cnt,
-		After=function(){			if(--cnt==0)
+		After=function(){
+			if(--cnt==0)
 				window.location.href=lnk;
 		};
 
-	$("div.language a").click(function(){//Кнопки переключения языков		if(first)
-		{			$.each(CORE.drafts,function(i,v){				v.OnSave.add(After);			});			first=false;		}
+	$("div.language a").click(function(){//Кнопки переключения языков
+		if(first)
+		{
+			$.each(CORE.drafts,function(i,v){
+				v.OnSave.add(After);
+			});
+			first=false;
+		}
 		cnt=CORE.drafts.length;
 		lnk=$(this).prop("href");
-		$.each(CORE.drafts,function(i,v){			if(v.changed)
+		$.each(CORE.drafts,function(i,v){
+			if(v.changed)
 				v.Save();
 			else
 				cnt--;
 		});
-		return cnt<=0;	});})//]]></script>';
+		return cnt<=0;
+	});
+})//]]></script>';
 
 if(!isset(Eleanor::$vars['drafts_autosave']))
 	Eleanor::LoadOptions('drafts');

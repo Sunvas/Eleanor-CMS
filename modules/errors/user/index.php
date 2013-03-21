@@ -45,14 +45,19 @@ if($isu)
 	$values['name']='';
 
 if($a['mail'] and $_SERVER['REQUEST_METHOD']=='POST')
-{	$Eleanor->Editor_result->ownbb=false;	$values['text']=$Eleanor->Editor_result->GetHtml('text',false,false);
+{
+	$Eleanor->Editor_result->ownbb=false;
+	$values['text']=$Eleanor->Editor_result->GetHtml('text',false,false);
 	if($values['text']=='')
 		$errors[]='EMPTY_TEXT';
 	if($isu)
-	{		$user=Eleanor::$Login->GetUserValue(array('id','full_name','name'),false);
-		$name=$user['name'];	}
+	{
+		$user=Eleanor::$Login->GetUserValue(array('id','full_name','name'),false);
+		$name=$user['name'];
+	}
 	else
-	{		$values['name']=isset($_POST['name']) ? (string)$_POST['name'] : '';
+	{
+		$values['name']=isset($_POST['name']) ? (string)$_POST['name'] : '';
 		if($values['name']!=='')
 			$name=$values['name'];
 		else
@@ -64,7 +69,8 @@ if($a['mail'] and $_SERVER['REQUEST_METHOD']=='POST')
 	if(!$cach)
 		$errors[]='WRONT_CAPTCHA';
 	if(!$errors)
-	{		$l=include$Eleanor->module['path'].'letters-'.LANGUAGE.'.php';
+	{
+		$l=include$Eleanor->module['path'].'letters-'.LANGUAGE.'.php';
 		$repl=array(
 			'site'=>Eleanor::$vars['site_name'],
 			'name'=>GlobalsWrapper::Filter($name),
@@ -85,7 +91,8 @@ if($a['mail'] and $_SERVER['REQUEST_METHOD']=='POST')
 	}
 }
 if($a['log'] and $back and strpos($back,PROTOCOL.Eleanor::$domain.Eleanor::$site_path)===0 and !$errors and !$sent)
-{	$R=Eleanor::$Db->Query('SELECT `title` FROM `'.P.'errors` INNER JOIN `'.P.'errors_l` USING(`id`) WHERE `language` IN (\'\',\''.LANGUAGE.'\') AND `id`='.$a['id'].' LIMIT 1');
+{
+	$R=Eleanor::$Db->Query('SELECT `title` FROM `'.P.'errors` INNER JOIN `'.P.'errors_l` USING(`id`) WHERE `language` IN (\'\',\''.LANGUAGE.'\') AND `id`='.$a['id'].' LIMIT 1');
 	if($my=$R->fetch_assoc())
 	{
 		$E=new EE($my['title'],EE::USER,array('code'=>$a['http_code'],'back'=>$back));

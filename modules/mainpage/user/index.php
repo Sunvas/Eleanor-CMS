@@ -11,12 +11,15 @@
 if(!defined('CMS'))die;
 $res=Eleanor::$Cache->Get('mainpage');
 if($res===false)
-{	$res=array();
+{
+	$res=array();
 	$modules=Modules::GetCache();
 	$R=Eleanor::$Db->Query('SELECT `id`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files` FROM `'.P.'modules` INNER JOIN `'.P.'mainpage` USING(`id`) WHERE `active`=1 ORDER BY `pos` ASC');
 	while($a=$R->fetch_assoc())
-	{		if(!in_array($a['id'],$modules['ids']))
-			continue;		if(!$a['multiservice'])
+	{
+		if(!in_array($a['id'],$modules['ids']))
+			continue;
+		if(!$a['multiservice'])
 		{
 			$files=unserialize($a['files']);
 			$a['file']=isset($files[Eleanor::$service]) ? $files[Eleanor::$service] : false;
@@ -33,7 +36,8 @@ global$Eleanor,$title;
 $Eleanor->started=true;
 ob_start();
 foreach($res as $k=>&$v)
-{	foreach($v['sections'] as $sk=>&$sv)
+{
+	foreach($v['sections'] as $sk=>&$sv)
 		if(Eleanor::$vars['multilang'] and isset($sv[Language::$main]))
 			$sv=reset($sv[Language::$main]);
 		else

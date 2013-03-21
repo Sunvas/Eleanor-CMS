@@ -13,7 +13,8 @@
 	В случае если такой файл уже существует - правьте его.
 */
 class TplUserNews
-{	/*
+{
+	/*
 		Список новостей на главной сайта и главной модуля
 		$data - массив данных. Ключи:
 			items - массив новостей. Формат: id=>array()
@@ -53,7 +54,8 @@ class TplUserNews
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($data,$cnt,$page,$pages,$pp,$links)
-	{
+	{
+
 	}
 
 	/*
@@ -90,13 +92,17 @@ class TplUserNews
 		Описание остальных переменных доступно в методе List
 	*/
 	public static function CategoryList($category,$data,$cnt,$page,$pp,$links)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница вывода всех категорий
 	*/
 	public static function ShowCategories()
-	{	}
+	{
+
+	}
 
 	/*
 		Страница вывода всех тегов
@@ -115,7 +121,9 @@ class TplUserNews
 		Описание остальных переменных доступно в методе List
 	*/
 	public static function TagsList($tag,$data,$cnt,$page,$pages,$pp,$links)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница поиска новостей
@@ -135,7 +143,8 @@ class TplUserNews
 		Описание остальных переменных доступно в методе List
 	*/
 	public static function Search($values,$error,$tags,$data,$cnt,$page,$pp,$links)
-	{
+	{
+
 	}
 
 	/*
@@ -168,7 +177,9 @@ class TplUserNews
 		$hl - массив слов, которые необходимо подсветить в новости
 	*/
 	public static function Show($a,$category,$voting,$comments,$hl)
-	{	}
+	{
+
+	}
 
 	/*
 		Вывод рейтинга новости
@@ -180,5 +191,7 @@ class TplUserNews
 		$marks - массив возможных оценок
 	*/
 	public static function Rating($id,$can,$total,$average,$sum,$marks)
-	{	}
+	{
+
+	}
 }

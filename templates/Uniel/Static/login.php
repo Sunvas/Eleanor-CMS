@@ -65,10 +65,22 @@ $(function(){
 </div></div></div>
 <?php if($GLOBALS['Eleanor']->multisite):?>
 <script type="text/javascript">//<![CDATA[
-CORE.MSQueue.done(function(qw){	var al=$(".externals");	$.each(qw,function(k,v){		var a=$("<a>").prop({			href:"#",
+CORE.MSQueue.done(function(qw){
+	var al=$(".externals");
+	$.each(qw,function(k,v){
+		var a=$("<a>").prop({
+			href:"#",
 			title:v.name,
-			style:"font-weight:bold"		}).text(v.title).click(function(){			CORE.MSLogin(k);
-			return false;		});		al.each(function(){			$(this).append("<br />").append(a);
-			a=a.clone(true);		});	})});
+			style:"font-weight:bold"
+		}).text(v.title).click(function(){
+			CORE.MSLogin(k);
+			return false;
+		});
+		al.each(function(){
+			$(this).append("<br />").append(a);
+			a=a.clone(true);
+		});
+	})
+});
 //]]></script>
 <?php endif;endif;?>

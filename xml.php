@@ -9,7 +9,7 @@
 	*Pseudonym
 */
 define('CMS',true);
-require dirname(__file__).'/core/core.php';
+require __dir__.'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::LoadOptions(array('site','users-on-site'));
 Eleanor::$service='xml';#ID сервиса

@@ -11,13 +11,16 @@
 if(!defined('CMS'))die;
 global$Eleanor;
 if($_SERVER['REQUEST_METHOD']=='POST')
-{	Eleanor::$Db->Delete(P.'qmenu','`type`=\''.Eleanor::$service.'\' AND `uid`='.Eleanor::$Login->GetUserValue('id'));
+{
+	Eleanor::$Db->Delete(P.'qmenu','`type`=\''.Eleanor::$service.'\' AND `uid`='.Eleanor::$Login->GetUserValue('id'));
 	$mids=isset($_POST['mid']) ? (array)$_POST['mid'] : array();
 	$lids=isset($_POST['lid']) ? (array)$_POST['lid'] : array();
 	$cnt=count($mids);
 	if($cnt>0)
-	{		if(count($lids)<$cnt)
-			$lids=array_pad($lids,$cnt,0);		$uids=array_fill(0,$cnt,Eleanor::$Login->GetUserValue('id'));
+	{
+		if(count($lids)<$cnt)
+			$lids=array_pad($lids,$cnt,0);
+		$uids=array_fill(0,$cnt,Eleanor::$Login->GetUserValue('id'));
 		$types=array_fill(0,$cnt,Eleanor::$service);
 		$poses=range(0,$cnt-1);
 		Eleanor::$Db->Insert(P.'qmenu',array('type'=>$types,'uid'=>$uids,'pos'=>$poses,'mid'=>$mids,'lid'=>$lids));
@@ -45,13 +48,17 @@ foreach($titles as $k=>&$v)
 {
 	$class='Api'.basename(dirname($to_sort[$k]['api']));
 	do
-	{		if(class_exists($class,false))
+	{
+		if(class_exists($class,false))
 			break;
 		if(is_file($to_sort[$k]['api']))
-		{			include($to_sort[$k]['api']);
+		{
+			include($to_sort[$k]['api']);
 			if(class_exists($class,false))
-				break;		}
-		continue 2;	}while(false);
+				break;
+		}
+		continue 2;
+	}while(false);
 
 	if(method_exists($class,'QuickMenu'))
 	{

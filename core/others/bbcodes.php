@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class BBCodes extends BaseClass
-{	public static
+{
+	public static
 		#Проверять корректность ссылок, мыл и т.п. Это полезно отключать, когда Вы хотите сохранить, допустим, формат письма. А потом просто заменять переменными текст.
 		$checkout=true,
 
@@ -20,7 +21,8 @@ class BBCodes extends BaseClass
 	 * Преобразование текста, размеченного BB кодами в HTML разметку
 	 *
 	 * @param string $text Текст с BB разметкой
-	 */	public static function Save($text)
+	 */
+	public static function Save($text)
 	{
 		$text=static::ParseContainer($text,'[ul','[/ul]',array(__class__,'DoList'),true);
 		$text=static::ParseContainer($text,'[ol','[/ol]',array(__class__,'DoList'),true);
@@ -216,14 +218,18 @@ class BBCodes extends BaseClass
 	 * @params callable $cb Функция которой будет передана строка для обработки, содержащая начало и содержимое контейнера, но не содержащая его конец
 	 */
 	public static function ParseContainer($s,$beg,$end,$cb)
-	{		$bl=strlen($beg);
-		$el=strlen($end);		while(false!==$bp=strpos($s,$beg) and false!==$ep=strpos($s,$end,$bp+1+$bl))
-		{			$brp=strrpos(substr($s,0,$ep-1),$beg);
+	{
+		$bl=strlen($beg);
+		$el=strlen($end);
+		while(false!==$bp=strpos($s,$beg) and false!==$ep=strpos($s,$end,$bp+1+$bl))
+		{
+			$brp=strrpos(substr($s,0,$ep-1),$beg);
 			if($brp>$bp)
 				$bp=$brp;
 			$ns=substr($s,$bp,$ep-$bp);
 			$ns=call_user_func($cb,$ns);
-			$s=substr_replace($s,$ns,$bp,$ep-$bp+$el);		}
+			$s=substr_replace($s,$ns,$bp,$ep-$bp+$el);
+		}
 		return$s;
 	}
 
@@ -234,7 +240,8 @@ class BBCodes extends BaseClass
 	 * @param string $params Необработанная строка параметров картинки
 	 */
 	protected static function DoImage($url,$params)
-	{		$url=stripslashes($url);
+	{
+		$url=stripslashes($url);
 		$params=Strings::ParseParams(stripslashes($params),'url');
 		$tparams=array();
 		foreach($params as $k=>$v)
@@ -510,4 +517,5 @@ class BBCodes extends BaseClass
 			}
 		}
 		return'[img'.join($iparams).']'.$params['src'].'[/img]';
-	}}
+	}
+}

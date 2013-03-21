@@ -12,7 +12,9 @@ global$Eleanor;
 if(!isset($op) or !is_array($op))
 	$op=array();
 try
-{	return Eleanor::$Template->BlockTagCloud($op,null);}
+{
+	return Eleanor::$Template->BlockTagCloud($op,null);
+}
 catch(EE$E)
 {
 	return'Template BlockTagCloud does not exists.';

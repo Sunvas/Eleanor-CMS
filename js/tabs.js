@@ -10,7 +10,8 @@
 var EleanorTabs=0;
 
 $.fn.Tabs=function(opts)
-{	opts=$.extend(
+{
+	opts=$.extend(
 		{
 			OnBeforeSwitch:function(a){return true},
 			OnEndSwitch:function(a){return true},
@@ -68,11 +69,14 @@ $.fn.Tabs=function(opts)
 			delete(tabs[to]);
 			if(act==to)
 				for(var i in contents)
-				{					Switch(i);
-					break;				}
+				{
+					Switch(i);
+					break;
+				}
 		},
 		AddTab=function(tab)
-		{			var content=$(tab).data("rel");
+		{
+			var content=$(tab).data("rel");
 			if(opts.contents[n])
 				content=opts.contents[n];
 			else if(opts.contents[content])
@@ -82,11 +86,13 @@ $.fn.Tabs=function(opts)
 			else
 				return;
 			contents[n]=content;
-			tabs[n]=$(tab).click(function(){				Switch(this.n);
+			tabs[n]=$(tab).click(function(){
+				Switch(this.n);
 				return false;
 			});
 			tab.Switch=function()
-			{				Switch(tab.n);
+			{
+				Switch(tab.n);
 			}
 			tab.Remove=function()
 			{

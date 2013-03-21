@@ -10,14 +10,18 @@
 */
 
 class Rating extends BaseClass
-{	/**
+{
+	/**
 	 * Вычисление нового среднего значения при добавлении оценки
 	 *
 	 * @param int $total Количество проголосовавших
 	 * @param float $average Средняя оценка
 	 * @param int $mark Добавляемая оценка
-	 */	public static function AddMark($total,$average,$mark)
-	{		return round((ceil($average*$total)+$mark)/++$total,2);	}
+	 */
+	public static function AddMark($total,$average,$mark)
+	{
+		return round((ceil($average*$total)+$mark)/++$total,2);
+	}
 
 	/**
 	 * Вычисление нового среднего значения при удалении оценки

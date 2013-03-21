@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class CacheMachineMemCached implements CacheMachineInterface
-{	private
+{
+	private
 		$u,#Уникализация кэш машины
 		$n=array(''=>true),#Массив имен того, что у нас есть в кеше.
 		$L=false;#Объект MemCache-a
@@ -34,7 +35,8 @@ class CacheMachineMemCached implements CacheMachineInterface
 	}
 
 	public function __destruct()
-	{		$this->Put('',$this->n);
+	{
+		$this->Put('',$this->n);
 	}
 
 	/**

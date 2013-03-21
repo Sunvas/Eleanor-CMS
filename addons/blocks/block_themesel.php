@@ -10,7 +10,8 @@
 */
 $opts=array();
 foreach(Eleanor::$vars['templates'] as &$v)
-{	$f=Eleanor::$root.'/templates/'.$v.'.settings.php';
+{
+	$f=Eleanor::$root.'/templates/'.$v.'.settings.php';
 	if(!file_exists($f))
 		continue;
 	$a=include$f;

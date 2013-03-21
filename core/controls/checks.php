@@ -10,7 +10,8 @@
 */
 
 class ControlChecks extends BaseClass implements ControlsBase
-{	/**
+{
+	/**
 	 * Получение настроек контрола
 	 *
 	 * @param ControlsManager $Obj
@@ -54,7 +55,8 @@ class ControlChecks extends BaseClass implements ControlsBase
 			ob_end_clean();
 		}
 		if(!is_array($a['options']['options']))
-		{			if($Obj->throw)
+		{
+			if($Obj->throw)
 				throw new EE('Incorrect options',EE::DEV);
 			$Obj->errors[__class__]='Incorrect options';
 			return;

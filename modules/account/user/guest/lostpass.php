@@ -37,10 +37,12 @@ class AccountLostPass
 			$post=$_SERVER['REQUEST_METHOD']=='POST';
 			$errors=array();
 			if($post)
-			{				$cach=$GLOBALS['Eleanor']->Captcha->Check(isset($_POST['check']) ? (string)$_POST['check'] : '');
+			{
+				$cach=$GLOBALS['Eleanor']->Captcha->Check(isset($_POST['check']) ? (string)$_POST['check'] : '');
 				$GLOBALS['Eleanor']->Captcha->Destroy();
 				if(!$cach)
-					$errors[]='WRONG_CAPTCHA';			}
+					$errors[]='WRONG_CAPTCHA';
+			}
 
 			if(isset($_GET['id'],$_GET['md']))
 			{
@@ -54,7 +56,8 @@ class AccountLostPass
 					if(Eleanor::$vars['account_pass_rec_t']==2)
 						$ps=true;
 					elseif($post)
-					{						$values=array(
+					{
+						$values=array(
 							'password'=>isset($_POST['password']) ? (string)$_POST['password'] : '',
 							'password2'=>isset($_POST['password2']) ? (string)$_POST['password2'] : '',
 						);
@@ -72,8 +75,10 @@ class AccountLostPass
 						return static::RemindNewPass($user,$values,$errors);
 
 					if($ps)
-					{						$p=uniqid();
-						$pass=strlen($p)>=Eleanor::$vars['min_pass_length'] ? substr($p,0,Eleanor::$vars['min_pass_length']>7 ? Eleanor::$vars['min_pass_length'] : 7) : str_pad($p,Eleanor::$vars['min_pass_length'],uniqid(),STR_PAD_RIGHT);					}
+					{
+						$p=uniqid();
+						$pass=strlen($p)>=Eleanor::$vars['min_pass_length'] ? substr($p,0,Eleanor::$vars['min_pass_length']>7 ? Eleanor::$vars['min_pass_length'] : 7) : str_pad($p,Eleanor::$vars['min_pass_length'],uniqid(),STR_PAD_RIGHT);
+					}
 
 					try
 					{
@@ -112,7 +117,8 @@ class AccountLostPass
 				}
 			}
 			if($post)
-			{				$values=array(
+			{
+				$values=array(
 					'name'=>isset($_POST['name']) ? (string)$_POST['name'] : '',
 					'email'=>isset($_POST['email']) ? (string)$_POST['email'] : '',
 				);
@@ -167,13 +173,15 @@ class AccountLostPass
 					Eleanor::ExecBBLogic($l['passrem'],$repl)
 				);
 				$GLOBALS['title'][]=$lang['wait_pass1'];
-				return Eleanor::$Template->AcRemindPassStep2();			}
+				return Eleanor::$Template->AcRemindPassStep2();
+			}
 		}
 		return self::RemindPass();
 	}
 
 	protected static function RemindPass($errors=array())
-	{		$GLOBALS['title'][]=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['reminderpass'];
+	{
+		$GLOBALS['title'][]=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['reminderpass'];
 		return Eleanor::$Template->AcRemindPass(
 			array(
 				'name'=>isset($_POST['name']) ? (string)$_POST['name'] : '',
@@ -185,7 +193,8 @@ class AccountLostPass
 	}
 
 	protected static function RemindNewPass($user,$values=array(),$errors=array())
-	{		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
+	{
+		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$values+=array(
 			'password'=>'',
 			'password2'=>'',

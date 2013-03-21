@@ -9,12 +9,16 @@
 	*Pseudonym
 */
 class AccountActivate
-{	public static
+{
+	public static
 		$wait=true;
-	public static function Menu()
-	{		$uinfo=Eleanor::$Login->GetUserValue(array('groups','register'),false);
+
+	public static function Menu()
+	{
+		$uinfo=Eleanor::$Login->GetUserValue(array('groups','register'),false);
 		if($uinfo['groups']==array(GROUP_WAIT) and static::$wait)
-		{			if(!isset(Eleanor::$vars['reg_act_time']))
+		{
+			if(!isset(Eleanor::$vars['reg_act_time']))
 				Eleanor::LoadOptions('user-profile');
 			if(Eleanor::$vars['reg_type']==2)
 				return array(
@@ -27,7 +31,8 @@ class AccountActivate
 	}
 
 	public static function Content($master=true)
-	{		if(!$master)
+	{
+		if(!$master)
 			return;
 		$uinfo=Eleanor::$Login->GetUserValue(array('id','groups'));
 		if($uinfo['groups']!=array(GROUP_WAIT))
@@ -46,7 +51,8 @@ class AccountActivate
 			$hours=0;
 			if($_SERVER['REQUEST_METHOD']=='POST' or $GLOBALS['Eleanor']->Captcha->disabled)
 				do
-				{					$cach=$GLOBALS['Eleanor']->Captcha->Check(isset($_POST['check']) ? (string)$_POST['check'] : '');
+				{
+					$cach=$GLOBALS['Eleanor']->Captcha->Check(isset($_POST['check']) ? (string)$_POST['check'] : '');
 					$GLOBALS['Eleanor']->Captcha->Destroy();
 					if(!$cach)
 					{

@@ -31,7 +31,8 @@ if(isset($_GET['do']))
 			ShowList();
 	}
 elseif(isset($_GET['edit']))
-{	$id=(int)$_GET['edit'];
+{
+	$id=(int)$_GET['edit'];
 	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 		Save($id);
 	else
@@ -78,7 +79,8 @@ function ShowList()
 	$tosort=$items=$temp=$groups=array();
 	$R=Eleanor::$Db->Query('SELECT `id`,`services`,`title_l` `title`,`descr_l` `descr`,`protected`,`path`,`image`,`active` FROM `'.P.'modules` ORDER BY `protected` ASC');
 	while($a=$R->fetch_assoc())
-	{		$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
+	{
+		$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
 		$a['descr']=$a['descr'] ? Eleanor::FilterLangValues((array)unserialize($a['descr'])) : '';
 		$a['services']=$a['services'] ? explode(',,',trim($a['services'],',')) : array();
 
@@ -144,14 +146,19 @@ function AddEdit($id,$error='')
 		);
 	}
 	if($error)
-	{		if($error===true)
+	{
+		if($error===true)
 			$error='';
 		if(Eleanor::$vars['multilang'])
-		{			$values['title']=isset($_POST['title']) ? (array)$_POST['title'] : array();
-			$values['descr']=isset($_POST['descr']) ? (array)$_POST['descr'] : array();		}
+		{
+			$values['title']=isset($_POST['title']) ? (array)$_POST['title'] : array();
+			$values['descr']=isset($_POST['descr']) ? (array)$_POST['descr'] : array();
+		}
 		else
-		{			$values['title']=isset($_POST['title']) ? array(''=>(string)$_POST['title']) : array(''=>'');
-			$values['descr']=isset($_POST['descr']) ? array(''=>(string)$_POST['descr']) : array(''=>'');		}
+		{
+			$values['title']=isset($_POST['title']) ? array(''=>(string)$_POST['title']) : array(''=>'');
+			$values['descr']=isset($_POST['descr']) ? array(''=>(string)$_POST['descr']) : array(''=>'');
+		}
 
 		$values['sections']=isset($_POST['sections']) ? (array)$_POST['sections'] : array();
 		$values['services']=isset($_POST['services']) ? (array)$_POST['services'] : array();
@@ -163,10 +170,12 @@ function AddEdit($id,$error='')
 		$values['file']=isset($_POST['file']) ? (string)$_POST['file'] : '';
 		$values['active']=isset($_POST['active']);
 		if($id)
-		{			$R=Eleanor::$Db->Query('SELECT `services`,`protected`,`path`,`file`,`active` FROM `'.P.'modules` WHERE `id`='.$id.' LIMIT 1');
+		{
+			$R=Eleanor::$Db->Query('SELECT `services`,`protected`,`path`,`file`,`active` FROM `'.P.'modules` WHERE `id`='.$id.' LIMIT 1');
 			$a=$R->fetch_assoc();
 			if($a['protected'])
-			{				$values=$a+$values;
+			{
+				$values=$a+$values;
 				$values['services']=explode(',,',trim($values['services'],','));
 			}
 		}
@@ -194,7 +203,8 @@ function AddEdit($id,$error='')
 }
 
 function Save($id)
-{	$lang=Eleanor::$Language['modules'];
+{
+	$lang=Eleanor::$Language['modules'];
 	$errors=array();
 	if(Eleanor::$vars['multilang'])
 	{
@@ -207,9 +217,11 @@ function Save($id)
 		$descr=isset($_POST['descr']) ? array(''=>(string)Eleanor::$POST['descr']) : array();
 	}
 	foreach($title as $k=>&$v)
-	{		$v=trim($v);
+	{
+		$v=trim($v);
 		if($v=='')
-		{			$er=$k ? '_'.strtoupper($k) : '';
+		{
+			$er=$k ? '_'.strtoupper($k) : '';
 			$errors['EMPTY_TITLE'.$er]=$lang['empty_title']($k);
 		}
 	}
@@ -224,7 +236,8 @@ function Save($id)
 	}
 
 	if(!$prot)
-	{		$multi=isset($_POST['multiservice']);
+	{
+		$multi=isset($_POST['multiservice']);
 		$services=isset($_POST['services']) ? (array)$_POST['services'] : array();
 		foreach($services as $k=>&$v)
 			if(!isset(Eleanor::$services[$v]))
@@ -245,30 +258,38 @@ function Save($id)
 
 	$groups=isset($_POST['groups']) ? (array)$_POST['groups'] : array();
 	foreach($groups as $k=>&$v)
-	{		$v=(int)$v;
+	{
+		$v=(int)$v;
 		if($v==0)
 			unset($groups[$k]);
 	}
 	$sections=isset($_POST['sections']) ? (array)$_POST['sections'] : array();
 	foreach($sections as $k=>&$v)
-	{		if(Eleanor::$vars['multilang'])
-		{			if(is_array($v))
+	{
+		if(Eleanor::$vars['multilang'])
+		{
+			if(is_array($v))
 				foreach($v as $lng=>&$value)
 					if(isset(Eleanor::$langs[$lng]))
-					{						$value=explode(',',$value);
+					{
+						$value=explode(',',$value);
 						foreach($value as $tmp=>&$tmpv)
-						{							$tmpv=trim($tmpv);
+						{
+							$tmpv=trim($tmpv);
 							if(!$tmpv)
-								unset($value[$tmp]);						}
+								unset($value[$tmp]);
+						}
 						if(!$value)
-							unset($v[$lng]);					}
+							unset($v[$lng]);
+					}
 					else
 						unset($v[$lng]);
 			else
 				$v=false;
 		}
 		elseif($v)
-		{			$v=explode(',',$v);
+		{
+			$v=explode(',',$v);
 			foreach($v as $tmp=>&$tmpv)
 			{
 				$tmpv=trim($tmpv);
@@ -317,7 +338,8 @@ function Save($id)
 	if(preg_match('#\.(jpe?g|png|gif|bmp)$#i',$values['image'])==0)
 		$values['image']='';
 	if(!$prot)
-	{		natsort($services);
+	{
+		natsort($services);
 		$values+=array(
 			'services'=>$services ? ','.implode(',,',$services).',' : '',
 			'protected'=>isset($_POST['protected']),

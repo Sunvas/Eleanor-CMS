@@ -10,15 +10,18 @@
 */
 
 class UserManager extends BaseClass
-{	/**
+{
+	/**
 	 * Создание пользователя системы
 	 *
 	 * @param array $user Данные создаваемого пользователя. Ключи должны совпадать с названиями полей в БД, исключением:
 	 * string _password Ключ для указания пароля пользователя
 	 * array groups Массив групп пользователя
 	 * @throws EE
-	 */	public static function Add(array$user=array())
-	{		Eleanor::LoadOptions('user-profile');
+	 */
+	public static function Add(array$user=array())
+	{
+		Eleanor::LoadOptions('user-profile');
 		if(!isset($user['name']) or $user['name']=='')
 			throw new EE('EMPTY_NAME',EE::DEV);
 		if(!isset($user['_password']) or $user['_password']=='')
@@ -97,11 +100,13 @@ class UserManager extends BaseClass
 	 * @throws EE
 	 */
 	public static function Update(array$user,$ids=false)
-	{		if($ids)
+	{
+		if($ids)
 		{
 			$single=(!is_array($ids) or count($ids)==1);
 			if(!$single)
-			{				if(isset($user['email']))#NULL значения для мыла допускаются
+			{
+				if(isset($user['email']))#NULL значения для мыла допускаются
 					unset($user['email']);
 				unset($user['name']);
 			}
@@ -127,7 +132,8 @@ class UserManager extends BaseClass
 				$tosite[$v]=$user[$v];
 
 		if(isset($user['groups']))
-		{			$tosite['groups']=static::DoGroups($user['groups']);
+		{
+			$tosite['groups']=static::DoGroups($user['groups']);
 			$todb['temp']=strpos($tosite['groups'],','.GROUP_WAIT.',')!==false;
 		}
 
@@ -135,14 +141,16 @@ class UserManager extends BaseClass
 		{
 			if(isset($user['email']))
 				if(Strings::CheckEmail($user['email'],false))
-				{					$R=Eleanor::$Db->Query('SELECT `email` FROM `'.P.'users_site` WHERE `email`='.Eleanor::$Db->Escape($user['email']).' AND `id`'.$nin.' LIMIT 1');
+				{
+					$R=Eleanor::$Db->Query('SELECT `email` FROM `'.P.'users_site` WHERE `email`='.Eleanor::$Db->Escape($user['email']).' AND `id`'.$nin.' LIMIT 1');
 					if($R->num_rows>0)
 						throw new EE('EMAIL_EXISTS',EE::UNIT);
 				}
 				else
 					throw new EE('EMAIL_ERROR',EE::UNIT);
 			if(isset($user['name']))
-			{				if($user['name']=='')
+			{
+				if($user['name']=='')
 					throw new EE('EMPTY_NAME',EE::DEV);
 				self::IsNameBlocked($user['name']);
 				$R=Eleanor::$UsersDb->Query('SELECT `name` FROM `'.USERS_TABLE.'` WHERE `name`='.Eleanor::$Db->Escape($user['name']).' AND `id`'.$nin.' LIMIT 1');
@@ -159,7 +167,8 @@ class UserManager extends BaseClass
 		}
 
 		if(isset($user['_password']))
-		{			if($user['_password']=='')
+		{
+			if($user['_password']=='')
 				throw new EE('EMPTY_PASSWORD',EE::DEV);
 			Eleanor::LoadOptions('user-profile',false);
 			if(Eleanor::$vars['min_pass_length'] and ($l=mb_strlen($user['_password']))<(int)Eleanor::$vars['min_pass_length'])
@@ -177,8 +186,10 @@ class UserManager extends BaseClass
 		{
 			$num=Eleanor::$UsersDb->Update(USERS_TABLE,$todb,'`id`'.$in);
 			if($num>0)
-			{				$ids=(array)$ids;
-				Eleanor::$UsersDb->Replace(USERS_TABLE.'_updated',array('id'=>$ids,'!date'=>array_fill(0,count($ids),'NOW()')));			}
+			{
+				$ids=(array)$ids;
+				Eleanor::$UsersDb->Replace(USERS_TABLE.'_updated',array('id'=>$ids,'!date'=>array_fill(0,count($ids),'NOW()')));
+			}
 		}
 
 		if($tosite)
@@ -196,7 +207,8 @@ class UserManager extends BaseClass
 	 * @param int|array $ids ID удаляемых пользователей
 	 */
 	public static function Delete($ids)
-	{		if(is_array($ids) and false!==$k=array_search(0,$ids))
+	{
+		if(is_array($ids) and false!==$k=array_search(0,$ids))
 			unset($ids[$k]);
 		if(!$ids)
 			return;
@@ -247,7 +259,11 @@ class UserManager extends BaseClass
 	 * @param array $extra Дополнительные поля синхронизации
 	 */
 	public static function Sync($ids,array$extra=array())
-	{		$ids=(array)$ids;		#Поля, которые одинаковые для таблиц users_site и глобальной таблицы пользователей		$fields=array('full_name','name','register','language','timezone');
+	{
+		$ids=(array)$ids;
+		#Поля, которые одинаковые для таблиц users_site и глобальной таблицы пользователей
+		$fields=array('full_name','name','register','language','timezone');
+
 		$tosite=$toextra=$sync=$update=array();
 		foreach($ids as $k=>&$v)
 			if(is_array($v))
@@ -257,7 +273,8 @@ class UserManager extends BaseClass
 		$in=array_keys($sync);
 		$R=Eleanor::$Db->Query('SELECT `id`,`'.join('`,`',$fields).'` FROM `'.P.'users_site` WHERE `id`'.Eleanor::$Db->In($in));
 		while($a=$R->fetch_assoc())
-		{			$update[]=$a['id'];
+		{
+			$update[]=$a['id'];
 			if($sync[$a['id']]==array_slice($a,1))
 				unset($sync[$a['id']]);
 		}
@@ -269,7 +286,8 @@ class UserManager extends BaseClass
 			$sync[$a['id']]+=array_slice($a,1);
 
 		foreach($sync as $k=>$v)
-		{			if(isset($v['groups']))
+		{
+			if(isset($v['groups']))
 				$v['groups']=static::DoGroups($v['groups']);
 			elseif(isset($extra[$k]['groups']))
 				$v['groups']=static::DoGroups($extra[$k]['groups']);
@@ -286,7 +304,8 @@ class UserManager extends BaseClass
 			{
 				Eleanor::$Db->Update('users_site',$v,'`id`='.$k.' LIMIT 1');
 				continue;
-			}			$ts=$te=array('id'=>$k);
+			}
+			$ts=$te=array('id'=>$k);
 			$ts+=$v+array('groups'=>','.GROUP_USER.',');
 
 			if(isset($extra[$k]))
@@ -313,9 +332,12 @@ class UserManager extends BaseClass
 	 * @return bool
 	 */
 	public static function MatchPass($pass,$id=false)
-	{		if(!$id)
-			$id=Eleanor::$Login->GetUserValue('id');		$R=Eleanor::$UsersDb->Query('SELECT `pass_salt`,`pass_hash` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' LIMIT 1');
-		$a=$R->fetch_assoc();		if(!$a)
+	{
+		if(!$id)
+			$id=Eleanor::$Login->GetUserValue('id');
+		$R=Eleanor::$UsersDb->Query('SELECT `pass_salt`,`pass_hash` FROM `'.USERS_TABLE.'` WHERE `id`='.(int)$id.' LIMIT 1');
+		$a=$R->fetch_assoc();
+		if(!$a)
 			return false;
 		return$a['pass_hash']==self::PassHash($a['pass_salt'],$pass);
 	}
@@ -408,13 +430,16 @@ class UserManager extends BaseClass
 
 			$n=array();
 			foreach($titles as $k=>&$v)
-			{				if(!isset($n[$to2sort[$k]]))
+			{
+				if(!isset($n[$to2sort[$k]]))
 					$n[$to2sort[$k]]=1;
-				$to2sort[$k]=$n[$to2sort[$k]]++;			}
+				$to2sort[$k]=$n[$to2sort[$k]]++;
+			}
 			unset($titles,$n);
 			foreach($to1sort as $k=>&$v)
 				if($db[$k]['parents'])
-				{					$p=ltrim(strrchr(','.rtrim($db[$k]['parents'],','),','),',');
+				{
+					$p=ltrim(strrchr(','.rtrim($db[$k]['parents'],','),','),',');
 					if(isset($to2sort[$p]))
 						$to2sort[$k]=$to2sort[$p].','.$to2sort[$k];
 					else
@@ -426,7 +451,8 @@ class UserManager extends BaseClass
 
 			natsort($to2sort);
 			foreach($to2sort as $k=>&$v)
-			{				$db[$k]['parents']=$db[$k]['parents'] ? explode(',',rtrim($db[$k]['parents'],',')) : array();
+			{
+				$db[$k]['parents']=$db[$k]['parents'] ? explode(',',rtrim($db[$k]['parents'],',')) : array();
 				$r[(int)$db[$k]['id']]=$db[$k];
 			}
 
@@ -437,7 +463,8 @@ class UserManager extends BaseClass
 		$sel=(array)$sel;
 		$no=(array)$no;
 		foreach($r as &$v)
-		{			$p=$v['parents'];
+		{
+			$p=$v['parents'];
 			$p[]=$v['id'];
 			if(array_intersect($no,$p))
 				continue;
@@ -452,7 +479,8 @@ class UserManager extends BaseClass
 	 * @param array|int $g Группы пользователя
 	 */
 	private static function DoGroups($g)
-	{		if(!$g)
+	{
+		if(!$g)
 			return','.GROUP_USER.',';
 		if(is_array($g))
 		{
@@ -463,4 +491,5 @@ class UserManager extends BaseClass
 			return','.join(',,',$g).',';
 		}
 		return','.(int)$g.',';
-	}}
+	}
+}

@@ -19,7 +19,8 @@ if(Eleanor::$service!='upload')
 }
 require Eleanor::$root.'addons/admin/info.php';
 if(isset($info[$_REQUEST['file']],$info[$_REQUEST['file']]['services'][$orig]))
-{	$a=$info[$_REQUEST['file']];
+{
+	$a=$info[$_REQUEST['file']];
 	$Eleanor->module=array(
 		'name'=>$_REQUEST['file'],
 		'title'=>$a['title'],

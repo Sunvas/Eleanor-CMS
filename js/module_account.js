@@ -7,11 +7,15 @@
 	=====
 	*Pseudonym
 */
-CORE.AcRegister={	max_name:15,	module:"",
+CORE.AcRegister={
+	max_name:15,
+	module:"",
 
 	nameerrors:[],
 	CheckName:function(name,F)
-	{		var th=this;		if(typeof th.nameerrors[name]!="undefined")
+	{
+		var th=this;
+		if(typeof th.nameerrors[name]!="undefined")
 			F(th.nameerrors[name]);
 		else if(name.length>this.max_name)
 			F(CORE.lang.NICK_TOO_LONG(this.max_name,name.length));
@@ -51,4 +55,5 @@ CORE.AcRegister={	max_name:15,	module:"",
 					F(error);
 				}
 			);
-	}}
+	}
+}

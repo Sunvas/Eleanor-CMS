@@ -13,7 +13,8 @@
 	В случае если такой файл уже существует - правьте его.
 */
 class TplUserNewsCorrect
-{	/*
+{
+	/*
 		Страница добавления/редактирования новости
 		$id идентификатор редактируемой новости, если $id==0 значит новость добавляется
 		$values массив значений полей
@@ -50,7 +51,9 @@ class TplUserNewsCorrect
 		$captcha - captcha при создании новости
 	*/
 	public static function AddEdit($id,$values,$errors,$uploader,$voting,$bypost,$hasdraft,$back,$links,$captcha)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница с информацией об успешном создании/сохранении новости
@@ -62,7 +65,9 @@ class TplUserNewsCorrect
 		$mod - флаг того, что сохранненная/созданная новость подлежит модерации
 	*/
 	public static function AddEditComplete($back,$url,$edited,$status,$title,$mod)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница удаления новости
@@ -71,7 +76,9 @@ class TplUserNewsCorrect
 		$back - URL возврата
 	*/
 	public static function DeleteNews($a,$back)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница завершения удаления новости
@@ -80,6 +87,7 @@ class TplUserNewsCorrect
 		$back - URL возврата
 	*/
 	public static function NewsDelSuccess($a,$back)
-	{
+	{
+
 	}
 }

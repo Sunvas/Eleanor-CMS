@@ -10,19 +10,27 @@
 */
 
 class TaskSpecial_RecoverNames extends BaseClass implements Task
-{	private
+{
+	private
 		$opts=array(),
 		$data=array();
-	public function __construct($opts)
-	{		$this->opts=$opts;	}
-	public function Run($data)
-	{		if(!isset($data['deadids']))
-			$data['deadids']=0;		$this->data=$data;
+
+	public function __construct($opts)
+	{
+		$this->opts=$opts;
+	}
+
+	public function Run($data)
+	{
+		if(!isset($data['deadids']))
+			$data['deadids']=0;
+		$this->data=$data;
 		$per=$this->opts['per_load'];
 		$runned=false;
 		foreach($this->opts['tables'] as $table=>&$tids)
 			foreach($this->opts['ids'] as $k=>&$fieldid)
-			{				if(isset($tids[$fieldid]))
+			{
+				if(isset($tids[$fieldid]))
 					$cnt=$tids[$fieldid];
 				else
 					continue;
@@ -38,18 +46,25 @@ class TaskSpecial_RecoverNames extends BaseClass implements Task
 				$fid=Eleanor::$Db->Escape($fieldid,false);
 				$fname=Eleanor::$Db->Escape($this->opts['names'][$k],false);
 				try
-				{					$R=Eleanor::$Db->Query('SELECT `'.$fid.'` `f`, COUNT(`'.$fid.'`) `cnt` FROM `'.$table.'` WHERE `'.$fid.'`!=0  GROUP BY `'.$fid.'` LIMIT '.($this->data['tables'][$table][$fieldid]-$data['deadids']).','.$per);				}
+				{
+					$R=Eleanor::$Db->Query('SELECT `'.$fid.'` `f`, COUNT(`'.$fid.'`) `cnt` FROM `'.$table.'` WHERE `'.$fid.'`!=0  GROUP BY `'.$fid.'` LIMIT '.($this->data['tables'][$table][$fieldid]-$data['deadids']).','.$per);
+				}
 				catch(EE_SQL$E)
-				{					return true;
+				{
+					return true;
 				}
 				while($res=$R->fetch_assoc())
-				{					$runned=true;
+				{
+					$runned=true;
 					$R2=Eleanor::$UsersDb->Query('SELECT `name` FROM `'.USERS_TABLE.'` WHERE `id`='.$res['f'].' LIMIT 1');
 					if($a=$R2->fetch_assoc())
 						$updated=Eleanor::$Db->Update($table,array($fname=>htmlspecialchars($a['name'],ELENT,CHARSET)),'`'.$fid.'`='.$res['f']);
 					else
-					{						Eleanor::$Db->Update($table,array($fid=>0),'`'.$fid.'`='.$res['f']);						$updated=$res['cnt'];
-						$this->data['deadids']++;					}
+					{
+						Eleanor::$Db->Update($table,array($fid=>0),'`'.$fid.'`='.$res['f']);
+						$updated=$res['cnt'];
+						$this->data['deadids']++;
+					}
 					$this->data['updated']+=$updated;
 					$this->data['total']++;
 					$this->data['tables'][$table][$fieldid]++;
@@ -64,5 +79,7 @@ class TaskSpecial_RecoverNames extends BaseClass implements Task
 	}
 
 	public function GetNextRunInfo()
-	{		return$this->data;	}
+	{
+		return$this->data;
+	}
 }

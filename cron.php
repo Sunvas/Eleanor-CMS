@@ -22,7 +22,7 @@ interface Task
 }
 
 define('CMS',true);
-require dirname(__file__).'/core/core.php';
+require __dir__.'/core/core.php';
 $Eleanor=Eleanor::getInstance();
 Eleanor::$service='cron';#ID сервиса
 if(0<$t=strpos(Eleanor::$site_path,Eleanor::$filename))

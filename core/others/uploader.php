@@ -11,9 +11,11 @@
 	Управление загруженными файлами для публикаций.
 */
 class Uploader extends BaseClass
-{	const
+{
+	const
 		FILENAME='Filedata';#Имя input type="file" при загрузке файла через flash
-	public
+
+	public
 		$prevsuff='_preview',#Суффикс превьюшек
 		$pp=20,#Количество файлов на страницу
 		$preview=array('','jpeg','jpg','png','bmp','gif'),#Типы файлов для которых необходимо создавать превьюшки
@@ -63,7 +65,8 @@ class Uploader extends BaseClass
 	 * @param string $tpl Название класса оформления загрузчика
 	 */
 	public function __construct($path=false,$tpl='Uploader')
-	{		$this->vars=Eleanor::LoadOptions('files',true);
+	{
+		$this->vars=Eleanor::LoadOptions('files',true);
 		$this->max_size=Eleanor::$Permissions->MaxUpload();
 		if($this->vars['thumbs'])
 			$this->preview=explode(',',Strings::CleanForExplode($this->vars['thumb_types']));
@@ -72,7 +75,8 @@ class Uploader extends BaseClass
 		$this->pathlimit=($path ? preg_replace('#/|\\\\#',DIRECTORY_SEPARATOR,rtrim($path,'/\\')) : Eleanor::$root.Eleanor::$uploads).DIRECTORY_SEPARATOR;
 		if($tpl)
 			Eleanor::$Template->queue[]=$tpl;
-		$this->uid=Eleanor::$Login->GetUserValue('id');	}
+		$this->uid=Eleanor::$Login->GetUserValue('id');
+	}
 
 	/**
 	 * Получение HTML кода загрузчика. Метод можно вызывать несколько раз, передавая каждый раз уникальный параметр $uniq для создания нескольких независимых загрузчиков на странице
@@ -82,7 +86,8 @@ class Uploader extends BaseClass
 	 * @param string|FALSE $title Название загрузчика
 	 */
 	public function Show($path=false,$uniq='',$title=false)
-	{		$max_upload=Files::SizeToBytes(ini_get('upload_max_filesize'));
+	{
+		$max_upload=Files::SizeToBytes(ini_get('upload_max_filesize'));
 		if(is_int($this->max_size))
 		{
 			if($this->max_size<$max_upload)
@@ -91,7 +96,8 @@ class Uploader extends BaseClass
 			$this->allow_walk=false;
 		}
 		if($this->max_files>0)
-		{			$this->allow_walk=false;
+		{
+			$this->allow_walk=false;
 			if($path=='')
 				$path=false;
 		}
@@ -99,10 +105,13 @@ class Uploader extends BaseClass
 		if(!isset($_SESSION))
 			Eleanor::StartSession();
 		if($path===false)
-		{			$newf=Eleanor::GetCookie(__class__.'-'.$uniq);
+		{
+			$newf=Eleanor::GetCookie(__class__.'-'.$uniq);
 			if(!$newf)
-			{				$newf=uniqid();
-				Eleanor::SetCookie(__class__.'-'.$uniq,$newf);			}
+			{
+				$newf=uniqid();
+				Eleanor::SetCookie(__class__.'-'.$uniq,$newf);
+			}
 			$this->path=$this->pathlimit.'temp'.DIRECTORY_SEPARATOR.$newf.DIRECTORY_SEPARATOR;
 			$_SESSION[__class__][$uniq]=array(
 				'prevsuff'=>$this->prevsuff,
@@ -124,7 +133,8 @@ class Uploader extends BaseClass
 			);
 		}
 		else
-		{			$path=preg_replace('#/|\\\\#',DIRECTORY_SEPARATOR,trim($path,'/\\'));
+		{
+			$path=preg_replace('#/|\\\\#',DIRECTORY_SEPARATOR,trim($path,'/\\'));
 			$this->path=$this->pathlimit.($path ? Files::Windows($path).DIRECTORY_SEPARATOR : '');
 			$_SESSION[__class__][$uniq]=array(
 				'prevsuff'=>$this->prevsuff,
@@ -143,7 +153,8 @@ class Uploader extends BaseClass
 				'path'=>$this->path,
 				'tmp'=>false,
 				'uid'=>$this->uid,
-			);		}
+			);
+		}
 		if(!is_dir($this->path))
 			Files::MkDir($this->path);
 
@@ -167,7 +178,8 @@ class Uploader extends BaseClass
 	 * @param string|FALSE $sess Идентификатор сессии
 	 */
 	public function WorkingPath($uniq='',$sess=false)
-	{		if($sess===false)
+	{
+		if($sess===false)
 		{
 			$f=Eleanor::GetCookie(__class__.'-'.$uniq);
 			return$f ? Eleanor::$root.Eleanor::$uploads.'/temp/'.$f : false;
@@ -185,18 +197,23 @@ class Uploader extends BaseClass
 	 * @param string|FALSE $sess Идентификатор сессии
 	 */
 	public function MoveFiles($path,$uniq='',$sess=false)
-	{		if($sess===false)
+	{
+		if($sess===false)
 		{
 			$oldpath=Eleanor::GetCookie(__class__.'-'.$uniq);
 			$oldpath=preg_replace('#[^a-z0-9]+#i','',$oldpath);
 			if(!$oldpath)
 				throw new EE('Upload error',EE::USER);
-			$oldpath=Eleanor::$root.Eleanor::$uploads.'/temp/'.$oldpath;		}
+			$oldpath=Eleanor::$root.Eleanor::$uploads.'/temp/'.$oldpath;
+		}
 		else
-		{			if(!isset($_SESSION))				Eleanor::StartSession($sess);
+		{
+			if(!isset($_SESSION))
+				Eleanor::StartSession($sess);
 			if(!isset($_SESSION[__class__][$uniq]))
 				throw new EE('Upload error',EE::USER);
-			if(!$_SESSION[__class__][$uniq]['tmp'])				return array('from'=>'','to'=>'');
+			if(!$_SESSION[__class__][$uniq]['tmp'])
+				return array('from'=>'','to'=>'');
 			$oldpath=$_SESSION[__class__][$uniq]['path'];
 		}
 		if(!file_exists($oldpath) or !glob($oldpath.'/*'))
@@ -208,13 +225,15 @@ class Uploader extends BaseClass
 		if(!is_dir($bd))
 			Files::MkDir($bd);
 		if(rename($oldpath,$newpath))
-		{			$rl=strlen(Eleanor::$root);
+		{
+			$rl=strlen(Eleanor::$root);
 			if(Eleanor::$os=='w')
 			{
 				$oldpath=str_replace(DIRECTORY_SEPARATOR,'/',$oldpath);
 				$newpath=str_replace(DIRECTORY_SEPARATOR,'/',$newpath);
 			}
-			return array('from'=>substr($oldpath,$rl),'to'=>substr($newpath,$rl));		}
+			return array('from'=>substr($oldpath,$rl),'to'=>substr($newpath,$rl));
+		}
 		throw new EE('Upload error',EE::ENV);
 	}
 
@@ -225,12 +244,14 @@ class Uploader extends BaseClass
 	 * @param string $to Путь, куда нужно перейти
 	 */
 	protected function GetPath($start,$to='')
-	{		$start=Files::Windows(trim($start,'/\\'));
+	{
+		$start=Files::Windows(trim($start,'/\\'));
 		$p=realpath($this->path.($start ? $start.DIRECTORY_SEPARATOR : '').trim($to,'/\\'));
 		if(is_dir($p))
 			$p.=DIRECTORY_SEPARATOR;
 		if($p and ($this->allow_walk or strncmp($p,$this->path,strlen($this->path))==0) and strncmp($p,$this->pathlimit,strlen($this->pathlimit))==0)
-			return$p;		if(!is_dir($this->path))
+			return$p;
+		if(!is_dir($this->path))
 			Files::MkDir($this->path);
 		return$this->path;
 	}
@@ -241,7 +262,8 @@ class Uploader extends BaseClass
 	 * @param string $path Путь к каталогу, в котором находятся файлы
 	 */
 	protected function FilesSize($path)
-	{		if(!is_dir($path))
+	{
+		if(!is_dir($path))
 			return array(0,0);
 		$size=$cnt=0;
 		$files=glob(rtrim($path,'/\\').'/*',GLOB_MARK);

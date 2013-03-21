@@ -12,10 +12,13 @@ if(!defined('CMS'))die;
 
 $AL=Eleanor::LoadLogin(Eleanor::$services['admin']['login']);
 if($AL->IsUser())
-{	global$Eleanor;	$af=Eleanor::$services['admin']['file'];
+{
+	global$Eleanor;
+	$af=Eleanor::$services['admin']['file'];
 	$hfu=Eleanor::$Cache->Get('ahfu'.Language::$main,false);
 	if($hfu===false)
-	{		$manag='';
+	{
+		$manag='';
 		$premodules=$modules=array();
 		require Eleanor::$root.'addons/admin/info.php';
 		$di='images/modules/default-small.png';
@@ -103,7 +106,8 @@ if($AL->IsUser())
 	$ladmin=Eleanor::$Language['admin'];
 	echo'<div class="clr"></div></div>
 	<script type="text/javascript">//<![CDATA[
-$(function(){	$("a.mlink").MainMenu();
+$(function(){
+	$("a.mlink").MainMenu();
 	var ab=$("#adminblockh"),
 		h=$("#adminblockf").height()+"px",
 		abf=$("#adminblockf");
@@ -113,19 +117,23 @@ $(function(){	$("a.mlink").MainMenu();
 		abf.addClass("fixmenupanel").next().css("margin-top",h)
 	}
 
-	$("#adminblockh a").click(function(){		abf.toggleClass("fixmenupanel");
+	$("#adminblockh a").click(function(){
+		abf.toggleClass("fixmenupanel");
 		if(ab.is(".active"))
-		{			ab.removeClass("active");
+		{
+			ab.removeClass("active");
 			abf.next().css("margin-top",0);
 			scroll(0,0);
 			localStorage.removeItem("ahfu");
 		}
 		else
-		{			ab.addClass("active");
+		{
+			ab.addClass("active");
 			abf.next().css("margin-top",h);
 			localStorage.setItem("ahfu","1");
 		}
-		return false;	});
+		return false;
+	});
 })//]]></script>
 	<div class="adminmenupanel">
 	<div class="backtoadmin" id="adminblockh"><a href="#"></a></div>

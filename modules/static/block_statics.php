@@ -41,7 +41,7 @@ if(!function_exists('BlockStatics'))
 }
 
 if(!class_exists('ApiStatic',false))
-	include dirname(__file__).'/api.php';
+	include __dir__.'/api.php';
 $Api=new ApiStatic;
 $dump=$Api->GetOrderedList();
 $u=uniqid();

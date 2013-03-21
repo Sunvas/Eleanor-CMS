@@ -248,7 +248,9 @@ class AccountSettings
 		);
 		$saved=false;
 		if($master and $_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
-		{			$C=new Controls;			$C->arrname=array();
+		{
+			$C=new Controls;
+			$C->arrname=array();
 			$C->throw=false;
 			$values=$C->SaveControls($controls);
 
@@ -273,7 +275,8 @@ class AccountSettings
 				$av=preg_replace('#^images/avatars/#','',$av);
 
 			if($C->errors)
-			{				$post=true;
+			{
+				$post=true;
 				return static::Edit($controls,$avatar,$C->errors);
 			}
 
@@ -310,8 +313,10 @@ class AccountSettings
 
 		$values=Eleanor::$Login->GetUserValue($names,false);
 		if($errors)
-		{			$values['_aupload']=isset($_POST['_atype']) && $_POST['_atype']=='upload';
-			$values['avatar_location']=isset($_POST['avatar_location']) ? (string)$_POST['avatar_location'] : '';		}
+		{
+			$values['_aupload']=isset($_POST['_atype']) && $_POST['_atype']=='upload';
+			$values['avatar_location']=isset($_POST['avatar_location']) ? (string)$_POST['avatar_location'] : '';
+		}
 		else
 		{
 			if($values['avatar_type']=='local' and $values['avatar_location'])

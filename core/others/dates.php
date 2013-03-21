@@ -9,14 +9,16 @@
 	*Pseudonym
 */
 class Dates
-{	/**
+{
+	/**
 	 * Вывод календаря: контрола выбора даты и времени
 	 *
 	 * @param string $name Имя контрола
 	 * @param string $value Значение контрола
 	 * @param bool $time Флаг возможности выбирать время (минуты и секунды)
 	 * @param array $a Дополнительные параметры контрола
-	 */	public static function Calendar($name,$value='',$time=false,array$a=array())
+	 */
+	public static function Calendar($name,$value='',$time=false,array$a=array())
 	{
 		if(strncmp('0000-00-00',$value,10)==0)
 			$value='';
@@ -32,7 +34,8 @@ class Dates
 		return Eleanor::Input($name,$value,$a).Eleanor::Button('...','button',$ba)
 		.'<script type="text/javascript">//<![CDATA[
 $(function(){
-	$("#'.$a['id'].'").on("clone",function(){		this.Calendar=new Calendar({
+	$("#'.$a['id'].'").on("clone",function(){
+		this.Calendar=new Calendar({
 			inputField:this,
 			trigger:$(this).next().get(0),
 			showTime:'.($time ? 'true' : 'false').',
@@ -70,7 +73,8 @@ $(function(){
 	 * @param bool $pn Флаг дописывания в начало и конец календаря числа следующих месяцев, если FALSE - вставляются нули
 	 */
 	public static function BuildCalendar($y,$m,$pn=true)
-	{		$mt=mktime(0,0,0,$m,1,$y);
+	{
+		$mt=mktime(0,0,0,$m,1,$y);
 		$t=idate('w',$mt);
 		if($t==0)
 			$t=7;

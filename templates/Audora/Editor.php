@@ -30,14 +30,17 @@ if($obb or $smiles)
 			? '<div class="bb_footpanel"><b><a href="#" id="a-'.$sm.'" class="bbf_smiles">'.Eleanor::$Language['tpl']['smiles'].'</a></b></div>
 <script type="text/javascript">//<![CDATA[
 $(function(){
-	var D=new DropDown({		selector:"#a-'.$sm.'",
+	var D=new DropDown({
+		selector:"#a-'.$sm.'",
 		left:false,
 		top:true,
 		rel:"#'.$sm.'"
 	});
-	$("#'.$sm.' a").click(function(){		EDITOR.Insert(" "+$(this).data("em")+" ","",false,"'.$id.'");
+	$("#'.$sm.' a").click(function(){
+		EDITOR.Insert(" "+$(this).data("em")+" ","",false,"'.$id.'");
 		D.hide();
-		return false;	});
+		return false;
+	});
 });//]]></script><div class="bb_smiles" id="'.$sm.'">'.join($smiles).'</div>'
 		: '',
 		'<div class="bb_yourpanel">',$obb,'<div class="clr"></div></div></div>';

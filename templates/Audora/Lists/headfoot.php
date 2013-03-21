@@ -6,7 +6,8 @@ return array(
 	'base'=>'<base href="{0}" />',
 	'script'=>'<script type="text/javascript" src="{0}"></script>',
 	'link'=>function($a)
-	{		return'<link'.Eleanor::TagParams($a).' />';
+	{
+		return'<link'.Eleanor::TagParams($a).' />';
 	},
 	'debug'=>'<div class="debug"><b>{0}</b> - <span title="{1}">{2}</span></div>',
 );

@@ -10,7 +10,8 @@
 */
 
 class OwnBbCode_html extends OwnBbCode
-{	/**
+{
+	/**
 	 * Обработка информации перед показом на странице
 	 *
 	 * @param string $t Тег, который обрабатывается
@@ -18,7 +19,8 @@ class OwnBbCode_html extends OwnBbCode
 	 * @param bool $cu Флаг возможности использования тега
 	 */
 	public static function PreDisplay($t,$p,$c,$cu)
-	{		if(strpos($p,'noparse')!==false)
+	{
+		if(strpos($p,'noparse')!==false)
 			return'['.$t.']'.htmlspecialchars($c,ELENT,CHARSET,false).'[/'.$t.']';
 		if(!$cu)
 			return static::RestrictDisplay($t,$p,$c);

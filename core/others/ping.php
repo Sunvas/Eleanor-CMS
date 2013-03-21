@@ -10,7 +10,8 @@
 */
 
 class Ping extends BaseClass
-{	const
+{
+	const
 		SAVEDAYS=1,#Количество дней, сколько хранить
 		PROCCESS_LIMIT=50;#Лимит пингов за раз
 
@@ -29,8 +30,10 @@ class Ping extends BaseClass
 	 * [string changes] Страница на которой произошли изменения
 	 * [string rss] RSS сайта
 	 * [array categories] Категории
-	 */	public static function Add(array$a)
-	{		Eleanor::$Db->Replace(
+	 */
+	public static function Add(array$a)
+	{
+		Eleanor::$Db->Replace(
 			P.'ping',
 			array(
 				'id'=>isset($a['id']) ? (string)$a['id'] : uniqid(),
@@ -46,7 +49,8 @@ class Ping extends BaseClass
 			)
 		);
 		Eleanor::$Db->Update(P.'tasks',array('!nextrun'=>'NOW()'),'`name`=\'ping\'');
-		Tasks::UpdateNextRun();	}
+		Tasks::UpdateNextRun();
+	}
 
 	/**
 	 * Единичный пинг поисковых систем
@@ -62,15 +66,18 @@ class Ping extends BaseClass
 	 * @return array Результат, возвращенный каждой из поисковых систем
 	 */
 	public static function Once(array$a)
-	{		if(!isset(self::$services))
+	{
+		if(!isset(self::$services))
 			self::$services=include Eleanor::$root.'addons/config_ping.php';
 
 		if(isset($a['exclude']))
-		{			if(!is_array($a['exclude']))
+		{
+			if(!is_array($a['exclude']))
 				$a['exclude']=$a['exclude'] ? explode(',',$a['exclude']) : array();
 		}
 		else
-			$a['exclude']=array();
+			$a['exclude']=array();
+
 		if(isset($a['services']))
 		{
 			if(!is_array($a['services']))
@@ -87,20 +94,23 @@ class Ping extends BaseClass
 		if(empty($a['main']))
 			$a['main']=PROTOCOL.Eleanor::$domain.Eleanor::$site_path;
 		foreach(self::$services as $k=>&$v)
-		{			if($a['services'] and !in_array($k,$a['services']) or in_array($k,$a['exclude']))
+		{
+			if($a['services'] and !in_array($k,$a['services']) or in_array($k,$a['exclude']))
 				continue;
 
 			if(!is_array($v['methods']))
 				$v['methods']=(array)$v['methods'];
 
 			$f='<?xml version="1.0" encoding="'.CHARSET.'"?><methodCall><methodName>';
-			if(in_array('weblogUpdates.extendedPing',$v['methods']) and $nech and $nerss)				$f.='weblogUpdates.extendedPing</methodName><params><param><value>'
+			if(in_array('weblogUpdates.extendedPing',$v['methods']) and $nech and $nerss)
+				$f.='weblogUpdates.extendedPing</methodName><params><param><value>'
 					.$a['site'].'</value></param><param><value>'
 					.$a['main'].'</value></param><param><value>'
 					.$a['changes'].'</value></param><param><value>'
 					.$a['rss'].'</value></param>'
 					.(isset($a['categories']) ? '<param><value>'.$a['categories'].'</value></param>' : '')
-					.'</params></methodCall>';			elseif(in_array('weblogUpdates.ping',$v['methods']))
+					.'</params></methodCall>';
+			elseif(in_array('weblogUpdates.ping',$v['methods']))
 				$f.='weblogUpdates.ping</methodName><params><param><value>'
 					.$a['site'].'</value></param><param><value>'
 					.$a['main'].'</value></param>'
@@ -122,18 +132,24 @@ class Ping extends BaseClass
 			$r[$k]=curl_exec($cu);
 			curl_close($cu);
 		}
-		return$r;	}
+		return$r;
+	}
 
 	/**
 	 * Запуск процесса пинга. Запускается через cron
 	 */
 	public static function Proccess()
-	{		$R=Eleanor::$Db->Query('SELECT `id`,`site`,`services`,`exclude`,`main`,`changes`,`rss`,`categories` FROM `'.P.'ping` WHERE `pinged`=0 ORDER BY `date` ASC LIMIT '.self::PROCCESS_LIMIT);
+	{
+		$R=Eleanor::$Db->Query('SELECT `id`,`site`,`services`,`exclude`,`main`,`changes`,`rss`,`categories` FROM `'.P.'ping` WHERE `pinged`=0 ORDER BY `date` ASC LIMIT '.self::PROCCESS_LIMIT);
 		$n=$R->num_rows;
 		while($a=$R->fetch_assoc())
-		{			$res=self::Once($a);
+		{
+			$res=self::Once($a);
 			foreach($res as &$v)
 				$v=strpos($v,'Thanks for the ping.')===false ? 'error' : 'ok';
-			Eleanor::$Db->Update(P.'ping',array('pinged'=>1,'result'=>serialize($res)),'`id`='.Eleanor::$Db->Escape($a['id']).' LIMIT 1');		}
-		Eleanor::$Db->Delete(P.'ping','`pinged`=1 AND `date`<NOW()-INTERVAL '.self::SAVEDAYS.' DAY');		return$n<self::PROCCESS_LIMIT;	}
+			Eleanor::$Db->Update(P.'ping',array('pinged'=>1,'result'=>serialize($res)),'`id`='.Eleanor::$Db->Escape($a['id']).' LIMIT 1');
+		}
+		Eleanor::$Db->Delete(P.'ping','`pinged`=1 AND `date`<NOW()-INTERVAL '.self::SAVEDAYS.' DAY');
+		return$n<self::PROCCESS_LIMIT;
+	}
 }

@@ -9,7 +9,8 @@
 	*Pseudonym
 */
 class CacheMachineZend implements CacheMachineInterface
-{	private
+{
+	private
 		$u,#Уникализация кэш машины
 		$n=array(''=>true);#Массив имен того, что у нас есть в кеше.
 
@@ -19,7 +20,8 @@ class CacheMachineZend implements CacheMachineInterface
 	 * @param string $u Строка уникализации кэша (на одной кэш машине может быть запущено несколько копий Eleanor CMS)
 	 */
 	public function __construct($u='')
-	{		$this->u=$u;
+	{
+		$this->u=$u;
 		$this->n=$this->Get('');
 		if(!$this->n or !is_array($this->n))
 			$this->n=array();

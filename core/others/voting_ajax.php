@@ -10,10 +10,13 @@
 */
 
 class Voting_Ajax extends Voting
-{	/**
+{
+	/**
 	 * Осуществление действий по Ajax заспросу
-	 */	public function Process()
-	{		if(!isset($this->status))
+	 */
+	public function Process()
+	{
+		if(!isset($this->status))
 			$this->Status();
 		if($this->tpl)
 			Eleanor::$Template->queue[]=$this->tpl;
@@ -22,21 +25,34 @@ class Voting_Ajax extends Voting
 			'data'=>isset($_POST['voting']['data']) ? (array)$_POST['voting']['data'] : array(),
 		);
 		switch($data['type'])
-		{			case'vote':
+		{
+			case'vote':
 				if(!$this->status)
-				{					$qa=$insr=$insqr=$ques=array();
-					$error=false;					Eleanor::$Db->Transaction();
+				{
+					$qa=$insr=$insqr=$ques=array();
+					$error=false;
+					Eleanor::$Db->Transaction();
 					$R=Eleanor::$Db->Query('SELECT `qid`,`multiple`,`maxans`,`answers` FROM `'.$this->table.'_q` WHERE `id`='.$this->voting['id']);
 					while($a=$R->fetch_assoc())
-					{						$a['answers']=$a['answers'] ? (array)unserialize($a['answers']) : array();
+					{
+						$a['answers']=$a['answers'] ? (array)unserialize($a['answers']) : array();
 						if(!isset($data['data'][$a['qid']]) or $a['multiple'] and (!is_array($data['data'][$a['qid']]) or count($data['data'][$a['qid']])>$a['maxans'] or array_diff($data['data'][$a['qid']],array_keys($a['answers']))))
-						{							$error=true;
-							break;						}
-						$qa[$a['qid']]=$a['answers'];					}
+						{
+							$error=true;
+							break;
+						}
+						$qa[$a['qid']]=$a['answers'];
+					}
 					if($error or count(array_intersect_key($qa,$data['data']))!=count($qa))
-					{						Eleanor::$Db->RollBack();						Error();						return false;					}
+					{
+						Eleanor::$Db->RollBack();
+						Error();
+						return false;
+					}
 					foreach($qa as $k=>&$q)
-					{						$ddk=(array)$data['data'][$k];						foreach($ddk as &$v)
+					{
+						$ddk=(array)$data['data'][$k];
+						foreach($ddk as &$v)
 						{
 							$q[$v]++;
 							if($this->uid)
@@ -59,24 +75,34 @@ class Voting_Ajax extends Voting
 					}
 					Eleanor::$Db->Update($this->table,array('!votes'=>'`votes`+1'),'`id`='.$this->voting['id'].' LIMIT 1');
 					if($this->uid)
-					{						Eleanor::$Db->Insert($this->table.'_q_results',$insqr);						Eleanor::$Db->Insert($this->table.'_results',$insr);
+					{
+						Eleanor::$Db->Insert($this->table.'_q_results',$insqr);
+						Eleanor::$Db->Insert($this->table.'_results',$insr);
 					}
 					else
-					{						if(!isset($this->TC))
+					{
+						if(!isset($this->TC))
 							$this->TC=new TimeCheck($this->mid,false,$this->uid);
-						$this->TC->Add('v'.$this->voting['id'],serialize($qa),false,$this->voting['againdays'].'d');					}					Eleanor::$Db->Commit();
+						$this->TC->Add('v'.$this->voting['id'],serialize($qa),false,$this->voting['againdays'].'d');
+					}
+					Eleanor::$Db->Commit();
 					$this->status='confirmed';
 					$this->voting['votes']++;
 					$R=Eleanor::$Db->Query('SELECT `qid`,`multiple`,`title`,`variants` FROM `'.$this->table.'_q` INNER JOIN `'.$this->table.'_q_l` USING(`id`,`qid`) WHERE `id`='.$this->voting['id'].' AND `language` IN (\'\',\''.Language::$main.'\')');
 					while($a=$R->fetch_assoc())
-					{						$a['variants']=$a['variants'] ? (array)unserialize($a['variants']) : array();
+					{
+						$a['variants']=$a['variants'] ? (array)unserialize($a['variants']) : array();
 						$a['answers']=$qa[$a['qid']];
 						$ques[$a['qid']]=array_slice($a,1);
-					}				}
+					}
+				}
 				else
-				{					$ques=array();					$R=Eleanor::$Db->Query('SELECT `qid`,`multiple`,`answers`,`title`,`variants` FROM `'.$this->table.'_q` INNER JOIN `'.$this->table.'_q_l` USING(`id`,`qid`) WHERE `id`='.$this->voting['id'].' AND `language` IN (\'\',\''.Language::$main.'\')');
+				{
+					$ques=array();
+					$R=Eleanor::$Db->Query('SELECT `qid`,`multiple`,`answers`,`title`,`variants` FROM `'.$this->table.'_q` INNER JOIN `'.$this->table.'_q_l` USING(`id`,`qid`) WHERE `id`='.$this->voting['id'].' AND `language` IN (\'\',\''.Language::$main.'\')');
 					while($a=$R->fetch_assoc())
-					{						$a['answers']=$a['answers'] ? (array)unserialize($a['answers']) : array();
+					{
+						$a['answers']=$a['answers'] ? (array)unserialize($a['answers']) : array();
 						$a['variants']=$a['variants'] ? (array)unserialize($a['variants']) : array();
 						$ques[$a['qid']]=array_slice($a,1);
 					}
@@ -86,5 +112,7 @@ class Voting_Ajax extends Voting
 				return true;
 			break;
 			default:
-				Error();		}	}
+				Error();
+		}
+	}
 }

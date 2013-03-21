@@ -9,15 +9,18 @@
 */
 
 function DropDown(opts)
-{	opts=$.extend(
-		{			selector:0,
+{
+	opts=$.extend(
+		{
+			selector:0,
 			top:false,
 			left:true,
 			event:"click",
 			rel:false,
 			limiter:false//Контентер, правая или левая граница которого будет ограничителем
 		},
-		opts	);
+		opts
+	);
 
 	var th=$(opts.selector),
 		rel=$(opts.rel||th.data("rel")),
@@ -31,15 +34,18 @@ function DropDown(opts)
 				left=opts.left ? th.position().left : th.position().left+th.outerWidth()-w;
 
 			if(limiter)
-			{				var rb=limiter.position().left+limiter.outerWidth();
+			{
+				var rb=limiter.position().left+limiter.outerWidth();
 				if(left+w>rb && rb-w>0)
-					left=rb-w;			}
+					left=rb-w;
+			}
 			rel.hide()
 			.css("left",left+"px")
 			.css("top",(opts.top ? th.position().top-h : th.position().top+th.height())+"px");
 		},
 		Hide=function(im)
-		{			if(!showed)
+		{
+			if(!showed)
 				return;
 			if(im)
 				rel.hide();
@@ -48,7 +54,10 @@ function DropDown(opts)
 			DropDown.current=false;
 			showed=false;
 		},
-		RetObj={			rel:rel,			hide:Hide		},
+		RetObj={
+			rel:rel,
+			hide:Hide
+		},
 		Show=function(im)
 		{
 			if(showed)
@@ -74,17 +83,20 @@ function DropDown(opts)
 			th.hover(Show,Hide);
 		break;
 		default:
-			th.click(function(e){				e.stopPropagation();
+			th.click(function(e){
+				e.stopPropagation();
 				showed ? Hide() : Show();
 				return false;
 			});
-	}	return RetObj;
+	}
+	return RetObj;
 }
 DropDown.current=false;
 
 $(document).click(function(e){
 	if(DropDown.current && !DropDown.current.rel.is(e.target) && DropDown.current.rel.find(e.target).size()==0)
-	{		DropDown.current.hide(true);
+	{
+		DropDown.current.hide(true);
 		DropDown.current=false;
 	}
 });

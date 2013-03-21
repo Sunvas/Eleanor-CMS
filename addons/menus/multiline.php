@@ -27,10 +27,13 @@ if($menu===false)
 	$menu=$to1sort=$to2sort=$db=$excl=array();
 	$R=Eleanor::$Db->Query('SELECT `id`,`title`,`url`,`eval_url`,`params`,`parents`,`pos`,`status` FROM `'.P.'menu` LEFT JOIN `'.P.'menu_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\')'.($p ? ' AND `parents` LIKE \''.$p.'%\'' : '').' ORDER BY `parents` ASC, `pos` ASC');
 	while($a=$R->fetch_assoc())
-	{		foreach($excl as $v)
+	{
+		foreach($excl as $v)
 			if(strpos($a['parents'],$v)===0)
-				continue;		if($a['id']==$exclude or !$a['status'])
-		{			$excl[]=$a['parents'].$a['id'].',';
+				continue;
+		if($a['id']==$exclude or !$a['status'])
+		{
+			$excl[]=$a['parents'].$a['id'].',';
 			continue;
 		}
 

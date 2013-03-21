@@ -9,14 +9,17 @@
 	*Pseudonym
 */
 class AccountRegister
-{	public static function Menu()
-	{		return array(
+{
+	public static function Menu()
+	{
+		return array(
 			'main'=>$GLOBALS['Eleanor']->Url->Construct(array('do'=>'register'),true,''),
 		);
 	}
 
 	public static function Content($master=true)
-	{		Eleanor::LoadOptions('user-profile');
+	{
+		Eleanor::LoadOptions('user-profile');
 		if(!$master or $_SERVER['REQUEST_METHOD']!='POST' or Eleanor::$vars['reg_off'])
 			return static::Register();
 
@@ -137,10 +140,13 @@ class AccountRegister
 			case'3':
 				$GLOBALS['title'][]=$lang['wait_act'];
 				return Eleanor::$Template->AcWaitActivate(true);
-		}	}
+		}
+	}
 
 	protected static function Register($errors=array())
-	{		$GLOBALS['title'][]=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['form_reg'];		return Eleanor::$Template->AcRegister(
+	{
+		$GLOBALS['title'][]=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['form_reg'];
+		return Eleanor::$Template->AcRegister(
 			array(
 				'name'=>isset($_POST['name']) ? (string)$_POST['name'] : '',
 				'full_name'=>isset($_POST['full_name']) ? (string)$_POST['full_name'] : '',
@@ -150,4 +156,6 @@ class AccountRegister
 			),
 			$GLOBALS['Eleanor']->Captcha->disabled ? false : $GLOBALS['Eleanor']->Captcha->GetCode(),
 			$errors
-		);	}}
+		);
+	}
+}

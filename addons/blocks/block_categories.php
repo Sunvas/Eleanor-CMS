@@ -12,7 +12,8 @@ $n=isset($GLOBALS['Eleanor']->module['section']) ? $GLOBALS['Eleanor']->module['
 $cache=Eleanor::$Cache->Get('categories_'.$n.'_'.Language::$main);
 
 if($cache===false and isset($GLOBALS['Eleanor']->Categories))
-{	$Fbc=function($a,$c='<ul>') use (&$Fbc)
+{
+	$Fbc=function($a,$c='<ul>') use (&$Fbc)
 	{
 		$parents=reset($a);
 		$l=strlen($parents['parents']);

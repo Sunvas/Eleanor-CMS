@@ -13,7 +13,8 @@
 	В случае если такой файл уже существует - правьте его.
 */
 class TPLAdminNews
-{
+{
+
 	/*
 		Страница отображения всех тегов
 		$items - массив статических страниц. Формат: ID=>array(), ключи внутреннего массива:
@@ -36,7 +37,9 @@ class TPLAdminNews
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function TagsList($items,$cnt,$pp,$qs,$page,$links)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница добавления/редактирования тега
@@ -52,7 +55,8 @@ class TPLAdminNews
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEditTag($id,$controls,$values,$errors,$back,$hasdraft,$links)
-	{
+	{
+
 	}
 
 	/*
@@ -85,7 +89,9 @@ class TPLAdminNews
 			pages - функция-генератор ссылок на остальные страницы
 	*/
 	public static function ShowList($items,$categs,$cnt,$pp,$qs,$page,$links)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница добавления/редактирования новости
@@ -129,7 +135,9 @@ class TPLAdminNews
 			draft - ссылка на сохранение черновиков (для фоновых запросов)
 	*/
 	public static function AddEdit($id,$values,$errors,$uploader,$voting,$bypost,$hasdraft,$back,$links)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница удаления новости
@@ -138,7 +146,9 @@ class TPLAdminNews
 		$back - URL возврата
 	*/
 	public static function Delete($a,$back)
-	{	}
+	{
+
+	}
 
 	/*
 		Страница удаления тега

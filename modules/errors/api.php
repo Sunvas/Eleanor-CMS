@@ -21,7 +21,7 @@ class ApiErrors extends BaseClass
 	public function QuickMenu($type='admin',$module=array())
 	{
 		if(!isset(Eleanor::$Language[__class__]))
-			Eleanor::$Language->Load(dirname(__file__).'/api-*.php',__class__);
+			Eleanor::$Language->Load(__dir__.'/api-*.php',__class__);
 		if(!is_array($module['sections']))
 		{
 			$module['sections']=unserialize($module['sections']);
@@ -51,7 +51,7 @@ class ApiErrors extends BaseClass
 		$no=isset($q['no']) ? (int)$q['no'] : false;
 		if(!$id and !$no)
 			return;
-		$this->config=include(dirname(__file__).'/config.php');
+		$this->config=include(__dir__.'/config.php');
 
 		if($no)
 		{

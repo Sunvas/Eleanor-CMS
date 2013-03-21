@@ -10,10 +10,15 @@
 */
 
 class TaskPing extends BaseClass implements Task
-{	public function Run($d)
-	{		Eleanor::LoadOptions('site');		return Ping::Proccess();
+{
+	public function Run($d)
+	{
+		Eleanor::LoadOptions('site');
+		return Ping::Proccess();
 	}
 
 	public function GetNextRunInfo()
-	{		return'';	}
+	{
+		return'';
+	}
 }

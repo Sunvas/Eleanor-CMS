@@ -37,7 +37,8 @@ foreach($a['settings'] as $k=>&$v)
 		$c.='<tr class="temp"><td class="label">'.$a['td'][$k][0].':<br /><span class="small">'.$a['td'][$k][1].'</span></td><td>'.Eleanor::$Template->LangEdit($v,null).'</td></tr>';
 
 if(!$ajax)
-{	$GLOBALS['jscripts'][]='js/edit_control.js';
+{
+	$GLOBALS['jscripts'][]='js/edit_control.js';
 	if(!empty($_SESSION['controls']['controls_name']))
 	{
 		$pn=reset($_SESSION['controls']['controls_name']);

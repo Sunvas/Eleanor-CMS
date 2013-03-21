@@ -319,7 +319,8 @@ if(isset($_GET['do']))
 			$Eleanor->Url->SetPrefix(array('do'=>'options'),true);
 			$c=$Eleanor->Settings->GetInterface('group','users-on-site');
 			if($c)
-			{				$c=Eleanor::$Template->Options($c);
+			{
+				$c=Eleanor::$Template->Options($c);
 				Start();
 				echo$c;
 			}
@@ -498,7 +499,8 @@ if(isset($_GET['do']))
 					else
 						$users[$a['id']]=array_slice($a,1);
 				}
-			}			if($groups)
+			}
+			if($groups)
 			{
 				$R=Eleanor::$Db->Query('SELECT `id`,`title_l` `title`,`html_pref`,`html_end` FROM `'.P.'groups` WHERE `id`'.Eleanor::$Db->In($groups));
 				$groups=array();
@@ -560,9 +562,11 @@ if(isset($_GET['do']))
 			if($so!='asc')
 				$so='desc';
 			if($sort and ($sort!='enter' or $so!='desc'))
-			{				$qs+=array('sort'=>$sort,'so'=>$so);
+			{
+				$qs+=array('sort'=>$sort,'so'=>$so);
 				switch($sort)
-				{					case'enter':
+				{
+					case'enter':
 						$sort='`s`.`expire`';
 					break;
 					case'ip':
@@ -579,7 +583,8 @@ if(isset($_GET['do']))
 			{
 				$R=Eleanor::$Db->Query('SELECT `s`.`type`,`s`.`user_id`,`s`.`enter`,`s`.`expire`,`s`.`expire`>NOW() `_online`,`s`.`ip_guest`,`s`.`ip_user`,`s`.`service`,`s`.`browser`,`s`.`location`,`s`.`name` `botname`,`us`.`groups`,`us`.`name`,`us`.`full_name` FROM `'.P.'sessions` `s` INNER JOIN `'.P.'users_site` `us` ON `s`.`user_id`=`us`.`id` '.$where.' ORDER BY '.$sort.' '.$so.' LIMIT '.$offset.','.$pp);
 				while($a=$R->fetch_assoc())
-				{					if($a['type']=='user')
+				{
+					if($a['type']=='user')
 						if($a['name'])
 						{
 							$a['_group']=(int)ltrim($a['groups'],',');
@@ -623,7 +628,9 @@ if(isset($_GET['do']))
 			ShowList();
 	}
 elseif(isset($_GET['edit']))
-{	$id=(int)$_GET['edit'];	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
+{
+	$id=(int)$_GET['edit'];
+	if($_SERVER['REQUEST_METHOD']=='POST' and Eleanor::$our_query)
 		Save($id);
 	else
 		AddEdit($id);
@@ -715,15 +722,21 @@ function ShowList()
 			$where[]='`u`.`full_name`='.$name;
 		}
 		if(!empty($_REQUEST['fi']['id']))
-		{			$ints=explode(',',Tasks::FillInt($_REQUEST['fi']['id']));			$qs['']['fi']['id']=(string)$_REQUEST['fi']['id'];
+		{
+			$ints=explode(',',Tasks::FillInt($_REQUEST['fi']['id']));
+			$qs['']['fi']['id']=(string)$_REQUEST['fi']['id'];
 			$where[]='`id`'.Eleanor::$Db->In($ints);
 		}
 		if(!empty($_REQUEST['fi']['group']))
-		{			$qs['']['fi']['group']=(int)$_REQUEST['fi']['group'];
-			$where[]='`groups` LIKE \','.$qs['']['fi']['group'].',\'';		}
+		{
+			$qs['']['fi']['group']=(int)$_REQUEST['fi']['group'];
+			$where[]='`groups` LIKE \','.$qs['']['fi']['group'].',\'';
+		}
 		if(!empty($_REQUEST['fi']['lvfrom']) and 0<$t=strtotime($_REQUEST['fi']['lvfrom']))
-		{			$qs['']['fi']['lvfrom']=$_REQUEST['fi']['lvfrom'];
-			$where[]='`u`.`last_visit`>=\''.date('Y-m-d H:i:s',$t).'\'';		}
+		{
+			$qs['']['fi']['lvfrom']=$_REQUEST['fi']['lvfrom'];
+			$where[]='`u`.`last_visit`>=\''.date('Y-m-d H:i:s',$t).'\'';
+		}
 		if(!empty($_REQUEST['fi']['lvto']) and 0<$t=strtotime($_REQUEST['fi']['lvto']))
 		{
 			$qs['']['fi']['lvto']=$_REQUEST['fi']['lvto'];
@@ -797,7 +810,8 @@ function ShowList()
 	$qs+=array('sort'=>false,'so'=>false);
 
 	if($cnt>0)
-	{		$myuid=Eleanor::$Login->GetUserValue('id');
+	{
+		$myuid=Eleanor::$Login->GetUserValue('id');
 		$R=Eleanor::$Db->Query('SELECT `id`,`u`.`full_name`,`u`.`name`,`email`,`groups`,`ip`,`u`.`last_visit` FROM `'.$table.'` `u` INNER JOIN `'.P.'users_extra` USING(`id`)'.$where.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.', '.$pp);
 		while($a=$R->fetch_assoc())
 		{
@@ -818,7 +832,8 @@ function ShowList()
 		$R=Eleanor::$Db->Query('SELECT `id`,`title_l` `title`,`html_pref`,`html_end` FROM `'.P.'groups` WHERE `id`'.Eleanor::$Db->In($groups));
 		$groups=array();
 		while($a=$R->fetch_assoc())
-		{			$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
+		{
+			$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
 			$a['_aedit']=$pref.$Eleanor->Url->Construct(array('edit'=>$a['id']),false);
 			$groups[$a['id']]=array_slice($a,1);
 		}
@@ -838,7 +853,8 @@ function ShowList()
 	);
 	$c=Eleanor::$Template->ShowList($items,$groups,$cnt,$pp,$qs,$page,$links);
 	Start();
-	echo$c;}
+	echo$c;
+}
 
 function AddEdit($id,$error='')
 {global$Eleanor,$title;
@@ -846,7 +862,8 @@ function AddEdit($id,$error='')
 	$overload=$values=array();
 	$lang=Eleanor::$Language['users'];
 	if($id)
-	{		$R=Eleanor::$UsersDb->Query('SELECT * FROM `'.USERS_TABLE.'` WHERE `id`='.$id.' LIMIT 1');
+	{
+		$R=Eleanor::$UsersDb->Query('SELECT * FROM `'.USERS_TABLE.'` WHERE `id`='.$id.' LIMIT 1');
 		if(!$values=$R->fetch_assoc())
 			return GoAway(true);
 		$R=Eleanor::$Db->Query('SELECT * FROM `'.P.'users_site` WHERE `id`='.$id.' LIMIT 1');
@@ -880,11 +897,14 @@ function AddEdit($id,$error='')
 		}
 
 		if(!$error)
-		{			$values['groups']=$values['groups'] ? explode(',,',trim($values['groups'],',')) : array();
+		{
+			$values['groups']=$values['groups'] ? explode(',,',trim($values['groups'],',')) : array();
 			if($values['groups'])
-			{				$values['_group']=reset($values['groups']);
+			{
+				$values['_group']=reset($values['groups']);
 				$k=key($values['groups']);
-				unset($values['groups'][$k]);			}
+				unset($values['groups'][$k]);
+			}
 			else
 				$values['_group']=GROUP_USER;
 
@@ -952,7 +972,8 @@ function AddEdit($id,$error='')
 	}
 
 	if($error)
-	{		if($error===true)
+	{
+		if($error===true)
 			$error='';
 		$Eleanor->us_post=$bypost=true;
 		$values['full_name']=isset($_POST['full_name']) ? (string)$_POST['full_name'] : '';
@@ -1008,11 +1029,13 @@ function AddEdit($id,$error='')
 	);
 	$c=Eleanor::$Template->AddEditUser($id,$values,$Eleanor->gp,$overload,$upavatar,$Eleanor->us,$extra,$bypost,$error,$back,$links);
 	Start();
-	echo$c;}
+	echo$c;
+}
 
 function Save($id)
 {global$Eleanor;
-	$lang=Eleanor::$Language['users'];	$C=new Controls;
+	$lang=Eleanor::$Language['users'];
+	$C=new Controls;
 	$C->throw=false;
 	$C->arrname=array('extra');
 	try
@@ -1190,18 +1213,28 @@ function Save($id)
 		}
 	}
 	else
-	{		if($values['full_name']=='')
-			$values['full_name']=htmlspecialchars($values['full_name'],ELENT,CHARSET,true);		if(!$extra['pass'])
-		{			Eleanor::LoadOptions('user-profile',false);
+	{
+		if($values['full_name']=='')
+			$values['full_name']=htmlspecialchars($values['full_name'],ELENT,CHARSET,true);
+		if(!$extra['pass'])
+		{
+			Eleanor::LoadOptions('user-profile',false);
 			$extra['pass']=uniqid();
-			$extra['pass']=strlen($extra['pass'])>=Eleanor::$vars['min_pass_length'] ? substr($extra['pass'],0,Eleanor::$vars['min_pass_length']>7 ? Eleanor::$vars['min_pass_length'] : 7) : str_pad($extra['pass'],Eleanor::$vars['min_pass_length'],uniqid(),STR_PAD_RIGHT);		}
+			$extra['pass']=strlen($extra['pass'])>=Eleanor::$vars['min_pass_length'] ? substr($extra['pass'],0,Eleanor::$vars['min_pass_length']>7 ? Eleanor::$vars['min_pass_length'] : 7) : str_pad($extra['pass'],Eleanor::$vars['min_pass_length'],uniqid(),STR_PAD_RIGHT);
+		}
 		try
-		{			$newid=UserManager::Add($values+array('_password'=>$extra['pass']));		}
+		{
+			$newid=UserManager::Add($values+array('_password'=>$extra['pass']));
+		}
 		catch(EE_SQL$E)
-		{			$E->Log();
-			return AddEdit($id,array($E->getMessage()));		}
+		{
+			$E->Log();
+			return AddEdit($id,array($E->getMessage()));
+		}
 		catch(EE$E)
-		{			$mess=$E->getMessage();			$errors=array();
+		{
+			$mess=$E->getMessage();
+			$errors=array();
 			switch($mess)
 			{
 				case'NAME_TOO_LONG':
@@ -1213,9 +1246,11 @@ function Save($id)
 				default:
 					$errors[]=$mess;
 			}
-			return AddEdit($id,$errors);		}
+			return AddEdit($id,$errors);
+		}
 		if($avatar)
-		{			if($atype=='upload')
+		{
+			if($atype=='upload')
 			{
 				rename(Eleanor::$root.$avatar,Eleanor::$root.Eleanor::$uploads.'/avatars/'.($newa='av-'.$newid.strrchr($avatar,'.')));
 				$avatar=$newa;
@@ -1249,4 +1284,5 @@ function Save($id)
 				catch(EE$E){}
 			}while(false);
 	}
-	GoAway(empty($_POST['back']) ? true : $_POST['back']);}
+	GoAway(empty($_POST['back']) ? true : $_POST['back']);
+}

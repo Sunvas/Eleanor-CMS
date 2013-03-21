@@ -9,8 +9,10 @@
 	*Pseudonym
 */
 class AccountRegister
-{	public static function Content($master=true)
+{
+	public static function Content($master=true)
 	{
 		if($master)
 			GoAway(true);
-	}}
+	}
+}

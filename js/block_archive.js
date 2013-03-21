@@ -8,8 +8,11 @@
 	*Pseudonym
 */
 CORE.Archive=function(opts)
-{	var today=new Date();	opts=$.extend(
-		{			module:"news",
+{
+	var today=new Date();
+	opts=$.extend(
+		{
+			module:"news",
 			month:today.getMonth(),
 			year:today.getFullYear(),
 			event:"archive",
@@ -17,12 +20,16 @@ CORE.Archive=function(opts)
 			yearp:".y-prev",
 			yearn:".y-next",
 			monthp:".m-prev",
-			monthn:".m-next"		},
-		opts	);
+			monthn:".m-next"
+		},
+		opts
+	);
 	var c=$(opts.container),
 		cache={},
 		Go=function()
-		{			var k=opts.year+"-"+opts.month;			if(typeof cache[k]=="undefined")
+		{
+			var k=opts.year+"-"+opts.month;
+			if(typeof cache[k]=="undefined")
 				CORE.Ajax(
 					{
 						module:opts.module,
@@ -31,7 +38,8 @@ CORE.Archive=function(opts)
 						year:opts.year
 					},
 					function(r)
-					{						cache[r.year+"-"+r.month]=r.archive;
+					{
+						cache[r.year+"-"+r.month]=r.archive;
 						c.html(r.archive);
 						opts.month=r.month;
 						opts.year=r.year;
@@ -60,14 +68,21 @@ CORE.Archive=function(opts)
 
 	c.on("click",opts.yearp,YearN)
 	.on("click",opts.yearn,YearP)
-	.on("click",opts.monthn,function(){		if(opts.month>=12)
-		{			opts.month=1;
-			YearN();		}
+	.on("click",opts.monthn,function(){
+		if(opts.month>=12)
+		{
+			opts.month=1;
+			YearN();
+		}
 		else
-		{			opts.month++;
-			Go();		}
-		return false;	})
-	.on("click",opts.monthp,function(){		if(opts.month<=1)
+		{
+			opts.month++;
+			Go();
+		}
+		return false;
+	})
+	.on("click",opts.monthp,function(){
+		if(opts.month<=1)
 		{
 			opts.month=12;
 			YearP();
@@ -77,5 +92,6 @@ CORE.Archive=function(opts)
 			opts.month--;
 			Go();
 		}
-		return false;	})
+		return false;
+	})
 }

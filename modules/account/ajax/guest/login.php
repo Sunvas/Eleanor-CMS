@@ -11,10 +11,12 @@
 class AccountLogin
 {
 	public static function Handler($master)
-	{		$errors=array();
+	{
+		$errors=array();
 		$captcha=Eleanor::$vars['antibrute']==2 && (isset($_POST['check']) || ($ct=Eleanor::GetCookie('Captcha_'.get_class(Eleanor::$Login)) and $ct>time()));
 		if($captcha)
-		{			$pch=isset($_POST['check']);
+		{
+			$pch=isset($_POST['check']);
 			$GLOBALS['Eleanor']->Captcha->disabled=false;
 			$cach=$GLOBALS['Eleanor']->Captcha->Check($pch ? (string)$_POST['check'] : '');
 			$GLOBALS['Eleanor']->Captcha->Destroy();

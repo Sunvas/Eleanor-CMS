@@ -9,8 +9,13 @@
 	*Pseudonym
 */
 class AccountLogOut
-{	public static function Content($master)
-	{		if($master)
-		{			Eleanor::$Login->Logout();
+{
+	public static function Content($master)
+	{
+		if($master)
+		{
+			Eleanor::$Login->Logout();
 			GoAway(isset($_GET['return']) ? (string)$_GET['return'] : false);
-		}	}}
+		}
+	}
+}

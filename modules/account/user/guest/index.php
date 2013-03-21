@@ -35,8 +35,10 @@ class AccountIndex
 			$GLOBALS['title'][]=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']]['cabinet'];
 
 		if($captcha)
-		{			$GLOBALS['Eleanor']->Captcha->disabled=false;
-			$captcha=$GLOBALS['Eleanor']->Captcha->GetCode();		}
+		{
+			$GLOBALS['Eleanor']->Captcha->disabled=false;
+			$captcha=$GLOBALS['Eleanor']->Captcha->GetCode();
+		}
 		$links=array(
 			'login'=>$GLOBALS['Eleanor']->Url->Construct(array('do'=>'login'),true,''),
 		);

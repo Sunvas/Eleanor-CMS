@@ -10,8 +10,10 @@
 */
 
 class AccountIndex
-{	public static function Handler()
-	{		$event=isset($_POST['event']) ? $_POST['event'] : '';
+{
+	public static function Handler()
+	{
+		$event=isset($_POST['event']) ? $_POST['event'] : '';
 		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		switch($event)
 		{
@@ -20,14 +22,18 @@ class AccountIndex
 				$uid=(int)Eleanor::$Login->GetUserValue('id');
 				$R=Eleanor::$Db->Query('SELECT `login_keys` FROM `'.P.'users_site` WHERE `id`='.$uid.' LIMIT 1');
 				if($a=$R->fetch_assoc())
-				{					$cl=get_class(Eleanor::$Login);
+				{
+					$cl=get_class(Eleanor::$Login);
 					$lks=$a['login_keys'] ? (array)unserialize($a['login_keys']) : array();
 					unset($lks[$cl][$key]);
 					if(empty($lks[$cl]))
 						unset($lks[$cl]);
-					Eleanor::$Db->Update(P.'users_site',array('login_keys'=>$lks ? serialize($lks) : ''),'`id`='.$uid.' LIMIT 1');				}
+					Eleanor::$Db->Update(P.'users_site',array('login_keys'=>$lks ? serialize($lks) : ''),'`id`='.$uid.' LIMIT 1');
+				}
 				Result(true);
 			break;
 			default:
 				Error(Eleanor::$Language['main']['unknown_event']);
-		}	}}
+		}
+	}
+}

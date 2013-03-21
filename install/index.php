@@ -17,14 +17,16 @@ $percent=0;
 $title=$navi=$error='';
 Eleanor::StartSession(isset($_REQUEST['s']) ? $_REQUEST['s'] : '','INSTALLSESSION');
 if(isset($_SESSION['lang']))
-{	Language::$main=$_SESSION['lang'];
+{
+	Language::$main=$_SESSION['lang'];
 	Eleanor::$Language->Change();
 	$lang=Eleanor::$Language->Load('install/lang/install-*.php','install');
 }
 elseif($step>2)
 	$step=1;
 switch($step)
-{	case 5:
+{
+	case 5:
 		if(isset($_GET['tzo']))
 			$_SESSION['tzo']=(int)$_GET['tzo'];
 		if(isset($_GET['dst']))
@@ -36,13 +38,17 @@ switch($step)
 		if(isset($_POST['agree_sanc']))
 			$_SESSION['agree_sanc']=true;
 		if(isset($_SESSION['agree_sanc']))
-		{			$percent=40;			$title=$navi=$lang['srequirements'];
+		{
+			$percent=40;
+			$title=$navi=$lang['srequirements'];
 			$can=true;
 			$text='<div class="wpbox wpbwhite"><div class="wptop"><b>&nbsp;</b></div><div class="wpmid"><form method="post" action="index.php?s='.session_id().'&amp;step=5"><table class="tablespec"><tr class="tshead"><th>'.$lang['parametr'].'</th><th>'.$lang['value'].'</th><th>'.$lang['status'].'</th></tr><tr class="tsline"><td class="label">'.$lang['php_version'].'</td><td class="sense">'.PHP_VERSION.'</td>';
 
 			if(version_compare(PHP_VERSION,'5.3.0','<'))
-			{				$text.='<td><img src="'.Eleanor::$Template->default['theme'].'/images/warn.png" alt="'.$lang['error'].'" /></td>';
-				$can=false;			}
+			{
+				$text.='<td><img src="'.Eleanor::$Template->default['theme'].'/images/warn.png" alt="'.$lang['error'].'" /></td>';
+				$can=false;
+			}
 			else
 				$text.='<td><img src="'.Eleanor::$Template->default['theme'].'/images/ok.png" alt="OK" /></td>';
 
@@ -108,7 +114,8 @@ $(function(){
 		if(isset($_POST['agree_lic']))
 			$_SESSION['agree_lic']=true;
 		if(isset($_SESSION['agree_lic']))
-		{			$title=$navi=$lang['sanctions'];
+		{
+			$title=$navi=$lang['sanctions'];
 			$percent=25;
 			$license=is_file($f=Eleanor::$root.'addons/license/sanctions-'.Eleanor::$Language.'.html') ? file_get_contents($f) : file_get_contents(Eleanor::$root.'addons/license/sanctions-'.LANGUAGE.'.html');
 			$license=preg_replace('#^.*?<body[^>]*>|</body>.*$#s','',$license);
@@ -127,12 +134,15 @@ $(function(){
 	case 2:
 		$can=isset($lang);
 		if($step==2 and isset($_GET['lang'],Eleanor::$langs[$_GET['lang']]) and (!isset($_SESSION['lang']) or $_SESSION['lang']!=$_GET['lang']))
-		{			Language::$main=$_SESSION['lang']=(string)$_GET['lang'];
-			Eleanor::$Language->Change();			$lang=Eleanor::$Language->Load('install/lang/install-*.php','install');
+		{
+			Language::$main=$_SESSION['lang']=(string)$_GET['lang'];
+			Eleanor::$Language->Change();
+			$lang=Eleanor::$Language->Load('install/lang/install-*.php','install');
 			$can=true;
 		}
 		if($can)
-		{			$title=$navi=$lang['license'];
+		{
+			$title=$navi=$lang['license'];
 			$percent=10;
 			$license=is_file($f=Eleanor::$root.'addons/license/license-'.Eleanor::$Language.'.html') ? file_get_contents($f) : file_get_contents(Eleanor::$root.'addons/license/license-'.LANGUAGE.'.html');
 			$license=preg_replace('#^.*?<body[^>]*>|</body>.*$#s','',$license);
@@ -153,7 +163,8 @@ $(function(){
 		$l=isset($_GET['lang']) ? (string)$_GET['lang'] : false;
 		$langsel=false;
 		foreach(Eleanor::$langs as $k=>&$v)
-		{			if($l and !$langsel and strncasecmp($l,$k,min(strlen($l),strlen($k)))==0)
+		{
+			if($l and !$langsel and strncasecmp($l,$k,min(strlen($l),strlen($k)))==0)
 			{
 				$l=$k;
 				$langsel=true;
@@ -163,7 +174,9 @@ $(function(){
 		if($langsel or $l)
 			$percent=5;
 		else
-		{			$percent=0;			reset(Eleanor::$langs);
+		{
+			$percent=0;
+			reset(Eleanor::$langs);
 			$l=key(Eleanor::$langs);
 			$head=array(
 				'lang'=>'<script type="text/javascript">//<![CDATA[
@@ -171,7 +184,8 @@ var langtry=["language","Language","userLanguage","systemLanguage"],
 	lang="";
 for(var i in langtry)
 	if(typeof navigator[langtry[i]]!="undefined")
-	{		window.location.href="'.PROTOCOL.Eleanor::$domain.Eleanor::$site_path.'index.php?s='.session_id().'&lang="+navigator[langtry[i]].substring(0,2);
+	{
+		window.location.href="'.PROTOCOL.Eleanor::$domain.Eleanor::$site_path.'index.php?s='.session_id().'&lang="+navigator[langtry[i]].substring(0,2);
 		break;
 	}
 //]]></script>'

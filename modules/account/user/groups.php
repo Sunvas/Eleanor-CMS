@@ -15,7 +15,9 @@ Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
 $groups=$tosort=$values=array();
 $R=Eleanor::$Db->Query('SELECT `id`,`title_l` `title`,`html_pref`,`html_end`,`descr_l` `descr` FROM `'.P.'groups`');
 while($a=$R->fetch_assoc())
-{	$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';	$a['descr']=$a['descr'] ? Eleanor::FilterLangValues((array)unserialize($a['descr'])) : '';
+{
+	$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';
+	$a['descr']=$a['descr'] ? Eleanor::FilterLangValues((array)unserialize($a['descr'])) : '';
 	$tosort[]=$a['title'];
 	$values[]=$a;
 }

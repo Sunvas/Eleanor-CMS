@@ -10,14 +10,16 @@
 */
 
 class Comments_Ajax extends Comments
-{	/**
+{
+	/**
 	 * Обработка Ajax запроса комментариев
 	 *
 	 * @param array $post Массив переменных, переданных движком комментариев
 	 * @param string $id Идентификатор контента, для которого выводятся комментарии
 	 * @param int|FALSE $mid Числовой идентификатор модуля, к которому относятся комментарии
 	 * @return false|array Возвращает false в случае неудачи либо массив с результатами выполнения в случае удачи
-	 */	public function Process(array$post,$id,$mid=false)
+	 */
+	public function Process(array$post,$id,$mid=false)
 	{
 		if($this->off)
 			return Error();

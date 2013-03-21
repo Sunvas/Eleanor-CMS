@@ -1,2 +1,4 @@
-﻿CORE.Lang({	savedraft:"Save draft",
-	draftsaved:"Draft saved"})
+﻿CORE.Lang({
+	savedraft:"Save draft",
+	draftsaved:"Draft saved"
+})

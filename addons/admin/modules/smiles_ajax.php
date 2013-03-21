@@ -12,7 +12,8 @@ global$Eleanor;
 $event=isset($_POST['event']) ? (string)$_POST['event'] : '';
 Eleanor::$Template->queue[]='Smiles';
 switch($event)
-{	case'setemotion':
+{
+	case'setemotion':
 		$id=isset($_POST['id']) ? (int)$_POST['id'] : 0;
 		$em=isset($_POST['emotion']) ? (string)$_POST['emotion'] : false;
 		$em=$em ? explode(',',$em) : array();
@@ -33,8 +34,10 @@ switch($event)
 			}
 		}
 		if($exemo)
-		{			$lang=Eleanor::$Language->Load('addons/admin/langs/smiles-*.php',false);
-			return Error($lang['emoexists']($exemo));		}
+		{
+			$lang=Eleanor::$Language->Load('addons/admin/langs/smiles-*.php',false);
+			return Error($lang['emoexists']($exemo));
+		}
 		if(!$id or !$em)
 			return Error();
 		$R=Eleanor::$Db->Query('SELECT `emotion` FROM `'.P.'smiles` WHERE `id`='.$id.' LIMIT 1');
@@ -47,6 +50,7 @@ switch($event)
 			Eleanor::$Cache->Obsolete('smiles');
 		}
 		Result(true);
-	break;	default:
+	break;
+	default:
 		Error(Eleanor::$Language['main']['unknown_event']);
 }

@@ -270,7 +270,9 @@ class VotingManager extends BaseClass
 							return$erri;
 						$lqv[$qk]['variants'][$l][$k]=trim($lqv[$qk]['variants'][$l][$k]);
 						if($lqv[$qk]['variants'][$l][$k]=='')
-						{							$er=strtoupper('empty_variant'.($l ? '_'.$l : ''));							$errors[$er]=$this->Language['EMPTY_VARIANT']($l);
+						{
+							$er=strtoupper('empty_variant'.($l ? '_'.$l : ''));
+							$errors[$er]=$this->Language['EMPTY_VARIANT']($l);
 						}
 					}
 					unset($a);
@@ -410,7 +412,8 @@ class VotingManager extends BaseClass
 	 * Получение контролов опроса по умолчанию
 	 */
 	public function Controls()
-	{		$THIS=$this;#ToDo! PHP 5.4 убрать этот костыль (смотри ниже) use ($THIS)
+	{
+		$THIS=$this;#ToDo! PHP 5.4 убрать этот костыль (смотри ниже) use ($THIS)
 		$ans=array();
 		$vaload=function($a,$Obj) use (&$ans,$THIS)
 		{
@@ -559,12 +562,14 @@ class VotingManager extends BaseClass
 						'descr'=>'',
 						'type'=>'input',
 						'check'=>function($value,$langs) use ($THIS)
-						{							$errors=array();
+						{
+							$errors=array();
 							if($THIS->langs)
 								foreach($value as $k=>&$v)
 								{
 									if($v=='' and in_array($k,$langs))
-									{										$uk=strtoupper($k);
+									{
+										$uk=strtoupper($k);
 										$errors['EMPTY_TITLE_'.$uk]=$THIS->Language['EMPTY_TITLE']($k);
 									}
 								}

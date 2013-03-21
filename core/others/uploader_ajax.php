@@ -10,7 +10,8 @@
 */
 
 class Uploader_Ajax extends Uploader
-{	/**
+{
+	/**
 	 * Осуществление Ajax запроса
 	 */
 	public function Process()

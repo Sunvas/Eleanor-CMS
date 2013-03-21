@@ -12,12 +12,15 @@ if(!defined('CMS'))die;
 global$Eleanor;
 $conf=include($Eleanor->module['path'].'config.php');
 if(Eleanor::$Cache->Get($conf['n'].'-runned')===false)
-{	Eleanor::$Cache->Put($conf['n'].'-runned',true,100);
+{
+	Eleanor::$Cache->Put($conf['n'].'-runned',true,100);
 	$n=150;
 	$ids=array();
 	$R=Eleanor::$Db->Query('SELECT `id`,`date`,`pinned`,`tags` FROM `'.$conf['t'].'` WHERE `date`<=\''.date('Y-m-d H:i:s').'\' AND `status`=2 LIMIT '.$n);
 	while($a=$R->fetch_assoc())
-	{		$n--;		$upd=array(
+	{
+		$n--;
+		$upd=array(
 			'status'=>1,
 		);
 		if((int)$a['pinned'])
@@ -29,9 +32,11 @@ if(Eleanor::$Cache->Get($conf['n'].'-runned')===false)
 		Eleanor::$Db->Update($conf['t'],$upd,'`id`='.$a['id'].' LIMIT 1');
 
 		if($a['tags'])
-		{			$a['tags']=explode(',,',trim($a['tags'],','));
+		{
+			$a['tags']=explode(',,',trim($a['tags'],','));
 			Eleanor::$Db->Insert($conf['rt'],array('id'=>array_fill(0,count($a['tags']),$a['id']),'tag'=>$a['tags']));
-			Eleanor::$Db->Update($conf['tt'],array('!cnt'=>'`cnt`+1'),'`id`'.Eleanor::$Db->In($a['tags']));		}
+			Eleanor::$Db->Update($conf['tt'],array('!cnt'=>'`cnt`+1'),'`id`'.Eleanor::$Db->In($a['tags']));
+		}
 	}
 	if($ids)
 		Eleanor::$Db->Update($conf['tl'],array('lstatus'=>1),'`id`'.Eleanor::$Db->In($ids));
@@ -55,7 +60,8 @@ if(Eleanor::$Cache->Get($conf['n'].'-runned')===false)
 			Eleanor::$Db->Update($conf['t'],$upd,'`id`='.$a['id'].' LIMIT 1');
 		}
 		if($ids)
-		{			$in=Eleanor::$Db->In($ids);
+		{
+			$in=Eleanor::$Db->In($ids);
 			Eleanor::$Db->Update($conf['tl'],array('lstatus'=>0),'`id`'.$in);
 			$R=Eleanor::$Db->Query('SELECT `tag`,COUNT(`id`) `cnt` FROM `'.$conf['rt'].'` WHERE `id`'.$in.' GROUP BY `tag`');
 			while($a=$R->fetch_assoc())

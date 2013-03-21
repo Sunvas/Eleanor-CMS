@@ -42,7 +42,9 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 		file_put_contents($f,'<?php return '.var_export($values,true).';');
 	}
 	catch(EE$E)
-	{		$error=$E->getMessage();	}
+	{
+		$error=$E->getMessage();
+	}
 }
 else
 {

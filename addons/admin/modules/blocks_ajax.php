@@ -28,7 +28,8 @@ switch($event)
 			$conf=Eleanor::FormatPath($conf);
 			if(is_file($conf))
 			{
-				$conf=include$conf;
+				$CONF=function()use($conf){ return include$conf; };
+				$conf=$CONF();
 				if(!is_array($conf))
 					$conf=false;
 			}

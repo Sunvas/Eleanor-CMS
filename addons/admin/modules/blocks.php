@@ -747,7 +747,8 @@ function AddEdit($id,$errors=array())
 		$conf=Eleanor::FormatPath($conf);
 		if(is_file($conf))
 		{
-			$values['_config']=include$conf;
+			$CONF=function()use($conf){ return include$conf; };
+			$values['_config']=$CONF();
 			if(!is_array($values['_config']))
 				$values['_config']=false;
 			elseif($bypost)

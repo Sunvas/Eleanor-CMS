@@ -10,7 +10,7 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor;
-$conf=include($Eleanor->module['path'].'config.php');
+$conf=include$Eleanor->module['path'].'config.php';
 if(Eleanor::$Cache->Get($conf['n'].'-runned')===false)
 {
 	Eleanor::$Cache->Put($conf['n'].'-runned',true,100);

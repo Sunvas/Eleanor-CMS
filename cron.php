@@ -211,7 +211,7 @@ function ApplyLang($gl=false)
 		Eleanor::$lvars=array();
 }
 
-#Функция "Будь как", делает сервис другим. Полностью :)
+#Функция "Будь как", делает сервис другим. Осторожно, этот BeAs не похожа на другие
 function BeAs($n)
 {global$Eleanor;
 	if(Eleanor::$service==$n or !isset(Eleanor::$services[$n]))
@@ -228,6 +228,8 @@ function BeAs($n)
 
 	if($n=='user')
 	{
+		if(!isset(Eleanor::$vars['furl']))
+			Eleanor::LoadOptions('site');
 		$Eleanor->Url->furl=Eleanor::$vars['furl'];
 		$Eleanor->Url->delimiter=Eleanor::$vars['url_static_delimiter'];
 		$Eleanor->Url->defis=Eleanor::$vars['url_static_defis'];
@@ -238,12 +240,5 @@ function BeAs($n)
 			$Eleanor->Url->special.=$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[Language::$main]['uri']),false,false);
 		if(isset($Eleanor->module,$Eleanor->module['name']))
 			$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
-
-		$theme=Eleanor::$Login->IsUser() ? Eleanor::$Login->GetUserValue('theme') : Eleanor::GetCookie('theme');
-		if(!Eleanor::$vars['templates'] or !in_array($theme,Eleanor::$vars['templates']))
-			$theme=false;
-		Eleanor::InitTemplate($theme ? $theme : Eleanor::$services['user']['theme']);
 	}
-	else
-		Eleanor::InitTemplate(Eleanor::$services[$n]['theme']);
 }

@@ -28,42 +28,42 @@ QUERY;
 #Russian
 if($rus)
 	$insert['blocks_l(rus)']=<<<QUERY
-INSERT INTO `{$prefix}blocks_l` (`id`, `language`, `title`) VALUES
-(1, 'russian', 'Кто онлайн'),
-(2, 'russian', 'Облако тегов'),
-(3, 'russian', 'Архив'),
-(4, 'russian', 'Опрос'),
-(5, 'russian', 'Вертикальное меню'),
-(6, 'russian', 'По теме'),
-(7, 'russian', 'Выбор шаблона')
+INSERT INTO `{$prefix}blocks_l` (`id`, `language`, `title`, `config`) VALUES
+(1, 'russian', 'Кто онлайн', ''),
+(2, 'russian', 'Облако тегов', ''),
+(3, 'russian', 'Архив', ''),
+(4, 'russian', 'Опрос', ''),
+(5, 'russian', 'Вертикальное меню', 'a:1:{s:6:"parent";i:7;}'),
+(6, 'russian', 'По теме', ''),
+(7, 'russian', 'Выбор шаблона', '')
 QUERY;
 #[E] Russian
 
 #English
 if($eng)
 	$insert['blocks_l(eng)']=<<<QUERY
-INSERT INTO `{$prefix}blocks_l` (`id`, `language`, `title`) VALUES
-(1, 'english', 'Who online'),
-(2, 'english', 'Tags cloud'),
-(3, 'english', 'Archive'),
-(4, 'english', 'Voting'),
-(5, 'english', 'Vertical menu'),
-(6, 'english', 'By topic'),
-(7, 'english', 'Select template')
+INSERT INTO `{$prefix}blocks_l` (`id`, `language`, `title`, `config`) VALUES
+(1, 'english', 'Who online', ''),
+(2, 'english', 'Tags cloud', ''),
+(3, 'english', 'Archive', ''),
+(4, 'english', 'Voting', ''),
+(5, 'english', 'Vertical menu', 'a:1:{s:6:"parent";i:7;}'),
+(6, 'english', 'By topic', ''),
+(7, 'english', 'Select template', '')
 QUERY;
 #[E]English
 
 #Ukrainian
 if($ukr)
 	$insert['blocks_l(ukr)']=<<<QUERY
-INSERT INTO `{$prefix}blocks_l` (`id`, `language`, `title`) VALUES
-(1, 'ukrainian', 'Хто онлайн'),
-(2, 'ukrainian', 'Хмарка тегів'),
-(3, 'ukrainian', 'Архів'),
-(4, 'ukrainian', 'Опитування'),
-(5, 'ukrainian', 'Вертикальне меню'),
-(6, 'ukrainian', 'По темі'),
-(7, 'ukrainian', 'Вибір шаблону')
+INSERT INTO `{$prefix}blocks_l` (`id`, `language`, `title`, `config`) VALUES
+(1, 'ukrainian', 'Хто онлайн', ''),
+(2, 'ukrainian', 'Хмарка тегів', ''),
+(3, 'ukrainian', 'Архів', ''),
+(4, 'ukrainian', 'Опитування', ''),
+(5, 'ukrainian', 'Вертикальне меню', 'a:1:{s:6:"parent";i:7;}'),
+(6, 'ukrainian', 'По темі', ''),
+(7, 'ukrainian', 'Вибір шаблону', '')
 QUERY;
 #[E]Ukrainian
 

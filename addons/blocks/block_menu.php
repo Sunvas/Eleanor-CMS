@@ -1,4 +1,7 @@
 <?php
+if(!defined('CMS'))die;
+if(isset($CONFIG['parent']))
+	$parent=$CONFIG['parent'];
 $menu=include Eleanor::$root.'addons/menus/multiline.php';
 try
 {

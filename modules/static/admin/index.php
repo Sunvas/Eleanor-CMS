@@ -585,7 +585,7 @@ function Save($id)
 
 	#Обновим и родителя: чтобы было что показывать в разделе "смотри так же".
 	if($parent)
-		Eleanor::$Db->Update($mc['tl'],array('!last_mod'=>'NOW()'),'id='.$parent);
+		Eleanor::$Db->Update($mc['tl'],array('!last_mod'=>'NOW()'),'id='.(int)$parent);
 
 	Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 	GoAway(empty($_POST['back']) ? true : $_POST['back']);

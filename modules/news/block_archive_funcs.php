@@ -47,7 +47,7 @@ function ArchiveDays($y,$m,$conf,$mname,$dates=false)
 			$data['max']=strtotime($data['max']);
 			if($data['min']>$rd)
 				return ArchiveDays(idate('Y',$data['min']),idate('m',$data['min']),$conf,$mname,array('min'=>$data['min'],'max'=>$data['max']));
-			$R=Eleanor::$Db->Query('SELECT IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`, COUNT(`id`) `cnt` FROM `'.$conf['t'].'` WHERE IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) LIKE \''.$y.'-'.str_pad($m,2,'0',STR_PAD_LEFT).'%\' AND `status`=1 GROUP BY DAY(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) LIMIT 31');
+			$R=Eleanor::$Db->Query('SELECT IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`, COUNT(`id`) `cnt` FROM `'.$conf['t'].'` WHERE IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) LIKE \''.$y.'-'.sprintf('%02d',$m).'%\' AND `status`=1 GROUP BY DAY(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) LIMIT 31');
 			while($a=$R->fetch_row())
 				$data['dates'][str_replace('-','',substr($a[0],0,10))]=$a[1];
 		}

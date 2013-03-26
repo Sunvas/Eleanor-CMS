@@ -1332,18 +1332,18 @@ final class Eleanor extends BaseClass
 					$m[0]=explode(':',$m[0]);
 					$ip=explode(':',$ip);
 					foreach($m[0] as &$v)
-						$bm.=str_pad(decbin(hexdec($v)),8,'0',STR_PAD_LEFT);
+						$bm.=sprintf('%08b',hexdec($v));
 					foreach($ip as &$v)
-						$bip.=str_pad(decbin(hexdec($v)),8,'0',STR_PAD_LEFT);
+						$bip.=sprintf('%08b',hexdec($v));
 				}
 				else
 				{
 					$m[0]=explode('.',$m[0]);
 					$ip=explode('.',$ip);
 					foreach($m[0] as &$v)
-						$bm.=str_pad(decbin($v),8,'0',STR_PAD_LEFT);
+						$bm.=sprintf('%08b',$v);
 					foreach($ip as &$v)
-						$bip.=str_pad(decbin($v),8,'0',STR_PAD_LEFT);
+						$bip.=sprintf('%08b',$v);
 				}
 				return strncmp($bm,$bip,(int)$m[1])==0;
 			}
@@ -1386,13 +1386,13 @@ final class Eleanor extends BaseClass
 				$m=explode('.',str_replace('*',0,$m[0]),4);
 				$ip=explode('.',$ip,4);
 				foreach($m as &$v)
-					$v=str_pad($v,3,'0',STR_PAD_LEFT);
+					$v=sprintf('%03d',$v);
 				$m=ltrim(join($m),'0');
 				foreach($mto as &$v)
-					$v=str_pad($v,3,'0',STR_PAD_LEFT);
+					$v=sprintf('%03d',$v);
 				$mto=ltrim(join($mto),'0');
 				foreach($ip as &$v)
-					$v=str_pad($v,3,'0',STR_PAD_LEFT);
+					$v=sprintf('%03d',$v);
 				$ip=ltrim(join($ip),'0');
 			}
 			return bccomp($ip,$m)>=0 && bccomp($mto,$ip)>=0;

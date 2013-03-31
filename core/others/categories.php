@@ -59,11 +59,11 @@ class Categories extends BaseClass
 			if($a['parents'])
 			{
 				$cnt=substr_count($a['parents'],',');
-				$to1sort[$a['id']]=$cnt;
+				$to1sort[ $a['id'] ]=$cnt;
 				$maxlen=max($cnt,$maxlen);
 			}
-			$db[$a['id']]=$a;
-			$to2sort[$a['id']]=$a['pos'];
+			$db[ $a['id'] ]=$a;
+			$to2sort[ $a['id'] ]=$a['pos'];
 		}
 		asort($to1sort,SORT_NUMERIC);
 
@@ -79,10 +79,7 @@ class Categories extends BaseClass
 
 		natsort($to2sort);
 		foreach($to2sort as $k=>&$v)
-		{
-			$db[$k]['parents']=rtrim($db[$k]['parents'],',');
-			$r[(int)$db[$k]['id']]=$db[$k];
-		}
+			$r[ (int)$db[$k]['id'] ]=array_slice($db[$k],1);
 
 		return$r;
 	}
@@ -108,13 +105,13 @@ class Categories extends BaseClass
 						break;
 					}
 					$curr=array_shift($id);
-					$parent=$v['id'];
+					$parent=$k;
 				}
 		}
 		if(is_scalar($id) and isset($this->dump[$id]))
 		{
 			$this->dump[$id]['description']=OwnBB::Parse($this->dump[$id]['description']);
-			return$this->dump[$id];
+			return$this->dump[$id]+array('id'=>$id);
 		}
 	}
 
@@ -129,13 +126,13 @@ class Categories extends BaseClass
 		$opts='';
 		$sel=(array)$sel;
 		$no=(array)$no;
-		foreach($this->dump as &$v)
+		foreach($this->dump as $k=>&$v)
 		{
 			$p=$v['parents'] ? explode(',',$v['parents']) : array();
-			$p[]=$v['id'];
+			$p[]=$k;
 			if(array_intersect($no,$p))
 				continue;
-			$opts.=Eleanor::Option(($v['parents'] ? str_repeat('&nbsp;',substr_count($v['parents'],',')+1).'›&nbsp;' : '').$v['title'],$v['id'],in_array($v['id'],$sel),array(),2);
+			$opts.=Eleanor::Option(($v['parents'] ? str_repeat('&nbsp;',substr_count($v['parents'],',')+1).'›&nbsp;' : '').$v['title'],$k,in_array($k,$sel),array(),2);
 		}
 		return$opts;
 	}

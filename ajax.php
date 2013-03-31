@@ -142,9 +142,9 @@ function SomeAjax()
 			case'preview':
 				if(isset($_POST['service']))
 					BeAs($_POST['service']);
-				$Eleanor->Editor->type='bb';
-				$Eleanor->Editor->ownbb=isset($_POST['ownbb']);
-				$Eleanor->Editor->smiles=isset($_POST['smiles']);
+				$Eleanor->Editor_result->type='bb';
+				$Eleanor->Editor_result->ownbb=isset($_POST['ownbb']);
+				$Eleanor->Editor_result->smiles=isset($_POST['smiles']);
 				Result($Eleanor->Editor_result->GetHtml(isset($_POST['text']) ? (string)$_POST['text'] : '',true,false));
 			break;
 			case'uploader':

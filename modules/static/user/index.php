@@ -9,7 +9,7 @@
 	*Pseudonym
 */
 if(!defined('CMS'))die;
-global$Eleanor;
+global$Eleanor,$title;
 $Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
 $l=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$mc['n']);
 Eleanor::$Template->queue[]=$mc['usertpl'];

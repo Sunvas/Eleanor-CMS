@@ -643,7 +643,7 @@ span.argmore a {
 .morelink .binner { padding-top: 5px; }
 
 /*COMMENTS*/
-.comment { background: #ffffff url("../images/commentbg.png") repeat-x left top; }
+div.comment { background: #ffffff url("../images/commentbg.png") repeat-x left top; }
 *html .comment { width: 100%; }
 .comment .binner { padding-top: 10px; padding-bottom: 10px; }
 .heading h2 { font-size: 18px;}
@@ -651,12 +651,12 @@ span.argmore a {
 .signature { padding-top: 13px; margin: 0; font-size: 0.9em; color: #a4a4a4; position: relative;}
 .signature a { color: #a4a4a4; }
 
-.comment .morelink { padding: 15px 0 7px 0; }
-.comment .moreinfo { font-size: 0.9em; color: #a4a4a4; }
-.comment .heading { padding: 0 0 7px 0; background: none; }
-.comment .maincont { background: none; }
-.comment .cb-insertnick { cursor:pointer; }
-.comment .cb-findcomment, .comment .answers { font-weight:bold; }
+div.comment .morelink { padding: 15px 0 7px 0; }
+div.comment .moreinfo { font-size: 0.9em; color: #a4a4a4; }
+div.comment .heading { padding: 0 0 7px 0; background: none; }
+div.comment .maincont { background: none; }
+div.comment .cb-insertnick { cursor:pointer; }
+div.comment .cb-findcomment, .comment .answers { font-weight:bold; }
 
 #comments .moderate { padding:0 18px 5px 0; text-align:right; }
 #comments .children { padding-left:50px; }
@@ -745,7 +745,7 @@ table.blocktable th a{ color: #bb3000; }
 
 .tabstyle th {
 	background: #f7f7f7 url("../images/tabstyle_bgth.png") repeat-x left top;
-	height: 27px;
+	height: 18px;
 	color:black;
 }
 

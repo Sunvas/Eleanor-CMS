@@ -260,8 +260,9 @@ class Url extends BaseClass
 			$rep=Eleanor::$vars['url_rep_space'];
 
 		$s=preg_replace(array('`('.preg_quote($this->defis,'`').'|'.preg_quote($this->delimiter,'`').'|[\\\\=\s#,"\'\\/:*\?&\+<>%\|])+`','#('.preg_quote($this->ending,'#').')+$#'),$rep,$s);
-		$rep=preg_quote($rep,'#');
-		return preg_replace('#^('.$rep.')+|('.$rep.')+$#','',$s);
+		$qrep=preg_quote($rep,'#');
+		$s=preg_replace('#('.$qrep.')+#',$rep,$s);
+		return preg_replace('#^('.$qrep.')+|('.$qrep.')+$#','',$s);
 	}
 
 	/**

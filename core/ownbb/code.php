@@ -64,6 +64,8 @@ $(function(){
 			$c=str_replace(' ','&nbsp;',$c);
 			$c=nl2br($c);
 		}
+		else
+			$c=htmlspecialchars_decode($c,ELENT);
 		return parent::PreSave($t,$p,$c,true);
 	}
 

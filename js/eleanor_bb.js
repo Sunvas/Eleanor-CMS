@@ -135,13 +135,14 @@ CORE.BBEditor=function(opts)
 			return document.selection.createRange().text;
 
 		var start=textarea.prop("selectionStart"),
-			end=textarea.prop("selectionEnd");
+			end=textarea.prop("selectionEnd"),
+			val=textarea.val();
 
 		//Хак для оперы :(
-		if(CORE.browser.opera)
+		if(CORE.browser.opera && val.indexOf("\r")>-1)
 		{
 			var cnt=0,
-				left=textarea.val().substring(0,start),
+				left=val.substring(0,start),
 				overflow=start-left.length;
 
 			for(var i=0;i<left.length;i++)
@@ -155,7 +156,7 @@ CORE.BBEditor=function(opts)
 				}
 			start-=cnt;
 
-			left=textarea.val().substring(0,end-cnt);
+			left=val.substring(0,end-cnt);
 			for(;i<left.length;i++)
 				if(left.charCodeAt(i)==10)
 				{
@@ -164,7 +165,7 @@ CORE.BBEditor=function(opts)
 				}
 			end-=cnt;
 		}
-		return textarea.val().substring(start,end);
+		return val.substring(start,end);
 	}
 
 	/*
@@ -414,14 +415,15 @@ function SetSelectedText(textarea,tag,secondtag,F,scorl,scorr)
 	{
 		var start=textarea.prop("selectionStart"),
 			end=textarea.prop("selectionEnd"),
-			left=textarea.val().substring(0,start),
+			val=textarea.val(),
+			left=val.substring(0,start),
 			content,
 			right,
 			sctop=textarea.scrollTop(),
 			scleft=textarea.scrollLeft();
 
 		//Хак для оперы :(
-		if(CORE.browser.opera)
+		if(CORE.browser.opera && val.indexOf("\r")>-1)
 		{
 			var cnt=0,
 				overflow=start-left.length;
@@ -435,7 +437,7 @@ function SetSelectedText(textarea,tag,secondtag,F,scorl,scorr)
 						left=left.substr(0,left.length-1);
 				}
 
-			content=textarea.val().substring(0,end-cnt);
+			content=val.substring(0,end-cnt);
 			for(;i<content.length;i++)
 				if(content.charCodeAt(i)==10)
 				{
@@ -443,13 +445,13 @@ function SetSelectedText(textarea,tag,secondtag,F,scorl,scorr)
 					cnt++;
 					content=content.substr(0,content.length-1);
 				}
-			content=textarea.val().substring(left.length,end-cnt);
-			right=textarea.val().substring(left.length+content.length);
+			content=val.substring(left.length,end-cnt);
+			right=val.substring(left.length+content.length);
 		}
 		else
 		{
-			content=textarea.val().substring(start,end);
-			right=textarea.val().substring(end);
+			content=val.substring(start,end);
+			right=val.substring(end);
 		}
 
 		if($.isFunction(F))

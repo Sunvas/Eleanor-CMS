@@ -1,4 +1,5 @@
 <?php
+if(!defined('CMS'))die;
 switch(Eleanor::$service)
 {
 	case'user':

@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 class ApiMenu extends BaseClass
 {
 	private

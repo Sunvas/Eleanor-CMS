@@ -119,7 +119,7 @@ class Strings extends BaseClass
 		if(mb_strlen($s)>$n)
 		{
 			$s=mb_substr($s,0,$n);
-			$s=preg_replace('#[&<][^;>]*$#','',$s).$e;
+			$s=trim(preg_replace('#[&<][^;>]*$#','',$s),';., ').$e;
 		}
 		return$s;
 	}

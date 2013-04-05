@@ -1,4 +1,10 @@
 <?php
+/*
+	Copyright © Eleanor CMS, developed by Alexander Sunvas*, interface created by Rumin Sergey.
+	For details, visit the web site http://eleanor-cms.ru, emails send to support@eleanor-cms.ru .
+	*Pseudonym
+*/
+if(!defined('CMS'))die;
 $tables[]='SET FOREIGN_KEY_CHECKS=0;';
 
 $tables[]="DROP TABLE IF EXISTS `{$prefix}blocks`";

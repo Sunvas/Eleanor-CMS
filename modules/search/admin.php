@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 global$Eleanor,$title;
 $post=false;
 $controls=array(

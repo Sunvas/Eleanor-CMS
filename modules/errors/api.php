@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 class ApiErrors extends BaseClass
 {
 	private

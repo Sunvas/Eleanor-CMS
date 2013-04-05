@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 if(!function_exists('BlockStatics'))
 {
 	function BlockStatics($Api,$upref,$a,$c='<ul>')

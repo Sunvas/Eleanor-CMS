@@ -1,17 +1,13 @@
 <?php
 /*
-	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
+	Copyright © Eleanor CMS, developed by Alexander Sunvas*, interface created by Rumin Sergey.
+	For details, visit the web site http://eleanor-cms.ru, emails send to support@eleanor-cms.ru .
 	*Pseudonym
 */
 if(!defined('CMS'))die;
 
 global$Eleanor,$title;
-$Eleanor->module['config']=$mc=include($Eleanor->module['path'].'config.php');
+$Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
 $lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$mc['n']);
 $Eleanor->Categories->Init($mc['c']);
 $Eleanor->module['etag']='';#Дополнение к ETAG
@@ -453,31 +449,29 @@ elseif($id or $puri)
 	else
 		$a['_canrate']=false;
 
-	if($a['meta_title'])
-		$title=$a['meta_title'];
-	else
-		$title[]=$a['title'];
-
-	if($a['meta_descr'])
-		$Eleanor->module['description']=$a['meta_descr'];
-
-	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($u);
-
 	OwnBB::$opts['alt']=$a['title'];
 
 	$a['announcement']=$a['show_sokr'] && $a['announcement'] ? OwnBB::Parse($a['announcement']) : false;
 	if($a['text'])
 		$a['text']=OwnBB::Parse($a['text']);
 
+	if($a['meta_title'])
+		$title=$a['meta_title'];
+	else
+		$title[]=$a['title'];
+
+	$Eleanor->module['description']=$a['meta_descr'] ? $a['meta_descr'] : Strings::CutStr(strip_tags(str_replace("\n",' ',$a['announcement'] ? $a['announcement'] : $a['text'])),250);
+
+	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($u);
+
 	#Поддержка соцсетей:
 	$Lst=Eleanor::LoadListTemplate('headfoot')
 		->og('title',$a['title'])
 		->og('uri',$Eleanor->origurl)
 		->og('locale',Eleanor::$langs[Language::$main]['d'])
-		->og('site_name',Eleanor::$vars['site_name']);
-	if($a['meta_descr'])
-		$Lst->og('description',$a['meta_descr']);
-	if(preg_match('#<img.+?src="([^"]+)"[^>]*>#',$a['text'],$m)>0)
+		->og('site_name',Eleanor::$vars['site_name'])
+		->og('description',$Eleanor->module['description']);
+	if(preg_match('#<img.+?src="([^"]+)"[^>]*>#',$a['announcement'].$a['text'],$m)>0)
 		$Lst->og('image',strpos($m[1],'://')===false ? PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$m[1] : $m[1]);
 	$GLOBALS['head']['og']=(string)$Lst;
 
@@ -519,13 +513,6 @@ elseif($cid or $curls)
 		'href'=>Eleanor::$services['rss']['file'].'?'.Url::Query(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name'],'c'=>$category['id']) : array('module'=>$Eleanor->module['name'],'c'=>$category['id'])),
 		'title'=>sprintf($lang['from'],$category['title']),
 	));
-	if($category['meta_title'])
-		$title=$category['meta_title'];
-	else
-		$title[]=$category['title'];
-
-	if($category['meta_descr'])
-		$Eleanor->module['description']=$category['meta_descr'];
 
 	if(Eleanor::$vars['publ_catsubcat'])
 	{
@@ -560,6 +547,13 @@ elseif($cid or $curls)
 	if(!$d)
 		return;
 
+	if($category['meta_title'])
+		$title=$category['meta_title'];
+	else
+		$title[]=$category['title'];
+
+	$Eleanor->module['description']=$category['meta_descr'] ? Eleanor::ExecBBLogic($category['meta_descr'],array('page'=>$pages==$page ? false : $page)) : Strings::CutStr(strip_tags(str_replace("\n",' ',$category['description'])),250);
+
 	if($Eleanor->module['links']['add'])
 		$Eleanor->module['links']['add']=$Eleanor->Url->Construct(array('do'=>'add',''=>array('def'=>array('category'=>$category['id']))),true,'');
 	$cu=$Eleanor->Categories->GetUri($category['id']);
@@ -576,9 +570,8 @@ elseif($cid or $curls)
 		->og('title',$category['title'])
 		->og('uri',$Eleanor->origurl)
 		->og('locale',Eleanor::$langs[Language::$main]['d'])
-		->og('site_name',Eleanor::$vars['site_name']);
-	if($category['meta_descr'])
-		$Lst->og('description',$category['meta_descr']);
+		->og('site_name',Eleanor::$vars['site_name'])
+		->og('description',$Eleanor->module['description']);
 	if($category['image'])
 		$Lst->og('image',PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Categories->imgfolder.$category['image']);
 	$GLOBALS['head']['og']=(string)$Lst;

@@ -9,7 +9,6 @@
   array (
     'russian' =>
     array (
-      'zz@ya.ru' => '45454',
     ),
     'english' =>
     array (

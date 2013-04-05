@@ -1,13 +1,10 @@
 <?php
 /*
-	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
+	Copyright © Eleanor CMS, developed by Alexander Sunvas*, interface created by Rumin Sergey.
+	For details, visit the web site http://eleanor-cms.ru, emails send to support@eleanor-cms.ru .
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 $insert[]='SET FOREIGN_KEY_CHECKS=0;';
 $domain=Eleanor::$domain;
 $rus=in_array('russian',$languages);
@@ -1209,24 +1206,24 @@ QUERY;
 #Russian
 if($rus)
 	$insert['news_categories_l(rus)']=<<<QUERY
-INSERT INTO `{$prefix}news_categories_l` (`id`,`language`,`uri`,`title`,`description`) VALUES
-(1, 'russian', 'наши-новости', 'Наши новости', 'Тестовая категория новостей')
+INSERT INTO `{$prefix}news_categories_l` (`id`,`language`,`uri`,`title`,`description`,`meta_descr`) VALUES
+(1, 'russian', 'наши-новости', 'Наши новости', 'Тестовая категория новостей', 'Новости нашего проекта[page], страница {page}[/page].')
 QUERY;
 #[E] Russian
 
 #English
 if($eng)
 	$insert['news_categories_l(eng)']=<<<QUERY
-INSERT INTO `{$prefix}news_categories_l` (`id`,`language`,`uri`,`title`,`description`) VALUES
-(1, 'english', 'our-news', 'Our news', 'News test category')
+INSERT INTO `{$prefix}news_categories_l` (`id`,`language`,`uri`,`title`,`description`,`meta_descr`) VALUES
+(1, 'english', 'our-news', 'Our news', 'News test category', 'News of our project[page], page {page}[/page].')
 QUERY;
 #[E] English
 
 #Ukrainian
 if($ukr)
 	$insert['news_categories_l(ukr)']=<<<QUERY
-INSERT INTO `{$prefix}news_categories_l` (`id`,`language`,`uri`,`title`,`description`) VALUES
-(1, 'ukrainian', 'наші-новини', 'Наші новини', 'Тестова категорія новин')
+INSERT INTO `{$prefix}news_categories_l` (`id`,`language`,`uri`,`title`,`description`,`meta_descr`) VALUES
+(1, 'ukrainian', 'наші-новини', 'Наші новини', 'Тестова категорія новин', 'Новини нашого проекту[page], сторінка {page}[/page].')
 QUERY;
 #[E] Ukrainian
 

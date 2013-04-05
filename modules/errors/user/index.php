@@ -1,11 +1,7 @@
 <?php
 /*
-	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
+	Copyright © Eleanor CMS, developed by Alexander Sunvas*, interface created by Rumin Sergey.
+	For details, visit the web site http://eleanor-cms.ru, emails send to support@eleanor-cms.ru .
 	*Pseudonym
 */
 if(!defined('CMS'))die;
@@ -29,12 +25,6 @@ else
 $R=Eleanor::$Db->Query('SELECT `id`,`http_code`,`image`,`mail`,`log`,`title`,`text`,`meta_title`,`meta_descr` FROM `'.P.'errors` INNER JOIN `'.P.'errors_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND '.($id ? '`id`='.$id : '`uri`='.Eleanor::$Db->Escape($uri)).' LIMIT 1');
 if(!$a=$R->fetch_assoc())
 	return GoAway(PROTOCOL.Eleanor::$domain.Eleanor::$site_path);
-
-if($a['meta_title'])
-	$title=$a['meta_title'];
-else
-	$title[]=$a['title'];
-$Eleanor->module['description']=$a['meta_descr'];
 
 $isu=Eleanor::$Login->IsUser();
 $back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');
@@ -101,6 +91,13 @@ if($a['log'] and $back and strpos($back,PROTOCOL.Eleanor::$domain.Eleanor::$site
 }
 
 $a['text']=OwnBB::Parse($a['text']);
+
+if($a['meta_title'])
+	$title=$a['meta_title'];
+else
+	$title[]=$a['title'];
+$Eleanor->module['description']=$a['meta_descr'] ? $a['meta_descr'] : Strings::CutStr(strip_tags(str_replace("\n",' ',$a['text'])),250);
+
 if($a['mail'])
 	$Eleanor->Editor->ownbb=false;
 $s=Eleanor::$Template->ShowError($a,$sent,$values,$errors,$back,$Eleanor->Captcha->disabled ? false : $Eleanor->Captcha->GetCode());

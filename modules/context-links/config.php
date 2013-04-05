@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 return array(
 	'n'=>'cl',#Модуля
 	't'=>P.'context_links',#Имя таблицы с контентом

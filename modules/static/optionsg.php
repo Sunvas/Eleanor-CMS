@@ -1,4 +1,5 @@
 <?php
+if(!defined('CMS'))die;
 return array(
 	'load'=>function($co){
 		$config=include(Eleanor::$root.'modules/static/config.php');

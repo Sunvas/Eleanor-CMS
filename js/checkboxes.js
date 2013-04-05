@@ -10,58 +10,43 @@
 
 function CheckGroup(obj)
 {
-	var can=false;
-	$(obj).find('input[type=checkbox]').each(function(){
-		if(this.checked)
-		{
-			can=true;
-			return false;
-		}
-	});
-	if(!can)
+	if($(obj).find(":checkbox:checked").size()==0)
+	{
 		alert(CORE.Lang('nothing_selected'));
-	return can;
+		return true;
+	}
+	return false;
 }
 
-function One2AllCheckboxes(parents,mains,subnames,and)
+function One2AllCheckboxes(parents,main,subnames,and)
 {
 	and=and||false;
 	var checks,
-		check=$(mains).click(function(e,mcl){
-			if(typeof mcl=="undefined")
-				mcl=true;
-			if(!mcl)
-				return;
-			var main=$(this);
+		Rescan=function(){
+			checks=$(parents).find(subnames).each(function(){
+				if($(this).data("one2all"))
+					return;
+				$(this).data("one2all",true).change(function(e,mcl,scl){
+					if(typeof scl=="undefined")
+						scl=true;
+					if(scl)
+					{
+						var checked=checks.filter(":checked").size();
+						main.prop("checked",and ? checked==checks.size() : checked>0).triggerHandler("change",[false,true]);
+					}
+				})
+			});
+			checks.filter(":first").triggerHandler("change");
+		};
+	main=$(main).change(function(e,mcl){
+		if(typeof mcl=="undefined")
+			mcl=true;
+		if(mcl)
 			checks.each(function(){
 				if($(this).data("one2all"))
-					$(this).prop("checked",main.prop("checked")).triggerHandler("click",[true,false]);
+					$(this).prop("checked",main.prop("checked")).triggerHandler("change",[true,false]);
 			});
-		}),
-		each=function(){
-			if($(this).data("one2all"))
-				return;
-			$(this).data("one2all",true);
-			$(this).click(function(e,mcl,scl){
-				if(typeof mcl=="undefined")
-					mcl=true;
-				if(typeof scl=="undefined")
-					scl=true;
-				if(!scl)
-					return;
-				var checked=and;
-				checks.each(function(){
-					if($(this).data("one2all"))
-						checked=and ? checked && this.checked : checked || this.checked;
-				});
-				$(mains).prop("checked",checked).triggerHandler("click",[false,true]);
-			})
-		},
-		Manage={
-			Rescan:function(){
-				checks=$(parents).find(subnames).each(each);
-			}
-		};
-	Manage.Rescan();
-	return Manage;
+	});
+	Rescan();
+	return Rescan;
 }

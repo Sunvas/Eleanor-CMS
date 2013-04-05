@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 global$Eleanor;
 $mc=include($Eleanor->module['path'].'config.php');
 Eleanor::LoadOptions($mc['opts']);

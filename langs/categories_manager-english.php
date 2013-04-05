@@ -13,4 +13,5 @@ return array(
 	'adding'=>'Adding category',
 	'editing'=>'Editing category',
 	'list'=>'Categories',
+	'meta_descr'=>'Supported variable {page} with page value.',
 );

@@ -1,11 +1,7 @@
 <?php
 /*
-	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
+	Copyright © Eleanor CMS, developed by Alexander Sunvas*, interface created by Rumin Sergey.
+	For details, visit the web site http://eleanor-cms.ru, emails send to support@eleanor-cms.ru .
 	*Pseudonym
 */
 if(!defined('CMS'))die;
@@ -146,17 +142,15 @@ else
 			$title=$data['meta_title'];
 		else
 			$title[]=$data['title'];
-		$Eleanor->module['description']=$data['meta_descr'];
+		$Eleanor->module['description']=$data['meta_descr'] ? $data['meta_descr'] : Strings::CutStr(strip_tags(str_replace("\n",' ',$data['text'])),250);
 
 		#Поддержка соцсетей:
-		$Lst=Eleanor::LoadListTemplate('headfoot');
-		if($data['title'])
-			$Lst->og('title',$data['title']);
-		$Lst->og('uri',$Eleanor->origurl)
+		$Lst=Eleanor::LoadListTemplate('headfoot')
+			->og('title',$data['title'])
+			->og('uri',$Eleanor->origurl)
 			->og('locale',Eleanor::$langs[Language::$main]['d'])
-			->og('site_name',Eleanor::$vars['site_name']);
-		if($data['meta_descr'])
-			$Lst->og('description',$data['meta_descr']);
+			->og('site_name',Eleanor::$vars['site_name'])
+			->og('description',$Eleanor->module['description']);
 		if(preg_match('#<img.+?src="([^"]+)"[^>]*>#',$data['text'],$m)>0)
 			$Lst->og('image',strpos($m[1],'://')===false ? PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$m[1] : $m[1]);
 		$GLOBALS['head']['og']=(string)$Lst;

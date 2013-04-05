@@ -1,14 +1,10 @@
 <?php
 /*
-	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
+	Copyright © Eleanor CMS, developed by Alexander Sunvas*, interface created by Rumin Sergey.
+	For details, visit the web site http://eleanor-cms.ru, emails send to support@eleanor-cms.ru .
 	*Pseudonym
 */
-
+if(!defined('CMS'))die;
 class Categories_Manager extends Categories
 {
 	public
@@ -22,7 +18,6 @@ class Categories_Manager extends Categories
 
 	/**
 	 * Конструктор менеджера категорий
-	 *
 	 * @param string $l Путь к языковому файлу
 	 */
 	public function __construct($l='categories_manager-*.php')
@@ -33,7 +28,6 @@ class Categories_Manager extends Categories
 
 	/**
 	 * Показ содержимого менеджера категорий
-	 *
 	 * @return Template
 	 */
 	public function Show()
@@ -168,7 +162,6 @@ class Categories_Manager extends Categories
 
 	/**
 	 * Получение контролов категорий по умолчанию
-	 *
 	 * @return array Массив контролов
 	 */
 	public function Controls()
@@ -263,7 +256,7 @@ class Categories_Manager extends Categories
 			),
 			'meta_descr'=>array(
 				'title'=>'Meta description',
-				'descr'=>'',
+				'descr'=>$this->Language['meta_descr'],
 				'type'=>'input',
 				'bypost'=>&$this->post,
 				'multilang'=>Eleanor::$vars['multilang'],
@@ -352,7 +345,6 @@ class Categories_Manager extends Categories
 
 	/**
 	 * Получение списка всех категорий
-	 *
 	 * @return Template
 	 */
 	protected function Manager()
@@ -459,7 +451,6 @@ class Categories_Manager extends Categories
 
 	/**
 	 * Получение формы правки категории
-	 *
 	 * @return Template
 	 */
 	protected function AddEdit($id,$errors=array())
@@ -713,7 +704,6 @@ class Categories_Manager extends Categories
 
 	/**
 	 * Оптимизация положений категорий, все позиции приводятся к корректному виду
-	 *
 	 * @param string $p Идентификатор родителей категории (parents)
 	 */
 	public function Optimize($p='')

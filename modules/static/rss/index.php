@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 global$Eleanor;
 $pp_=50;#Количество статических страниц на страницу по умолчанию :)
 $mc=include$Eleanor->module['path'].'config.php';

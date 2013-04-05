@@ -63,6 +63,7 @@ class Editor_Result extends BaseClass
 		if(!$isv and !isset($_POST[$name]))
 			return;
 		$text=$isv ? $name : (string)$_POST[$name];
+		$text=str_replace("\r",'',$text);
 		/*if(preg_match('#\[_[a-z_0-9\-]+_\]#',$text)>0)
 		{
 			preg_match_all('#\[_[a-z_0-9\-]+_\]#',$text,$m);

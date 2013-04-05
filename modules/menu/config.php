@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+if(!defined('CMS'))die;
 return array(
 	'n'=>'menu',#Модуля
 	't'=>P.'menu',#Имя таблицы с контентом

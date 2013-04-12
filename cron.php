@@ -85,7 +85,7 @@ else
 			if($task['free'] and $task['nextrun']>time())
 				break;
 			$f=Eleanor::$root.'core/tasks/'.$task['task'];
-			$class='Task'.substr($task['task'],0,strrpos($task['task'],'.'));
+			$class='Task'.basename($task['task'],'.php');
 			ob_start();
 			register_shutdown_function('FatalCatcher');
 			$Eleanor->c_l_e=false;

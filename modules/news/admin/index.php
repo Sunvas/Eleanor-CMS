@@ -10,7 +10,7 @@
 */
 if(!defined('CMS'))die;
 global$Eleanor,$title;
-$Eleanor->module['config']=$mc=include($Eleanor->module['path'].'config.php');
+$Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
 Eleanor::$Template->queue[]=$mc['admintpl'];
 
 $lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php',$mc['n']);

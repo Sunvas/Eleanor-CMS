@@ -147,10 +147,11 @@ $(function(){
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
-			if(is_array($v))
-				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			elseif($v)
-				$Lst->head($v);
+			if($v)
+				if(is_array($v) and $values[$k])
+					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
+				elseif(is_string($v))
+					$Lst->head($v);
 
 		if($back)
 			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));

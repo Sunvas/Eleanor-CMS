@@ -128,10 +128,14 @@ class TplCategoriesManager
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
-			if($values[$k])
-				if(is_array($v))
+			if($v)
+				if(is_array($v) and $values[$k])
+				{
+					if(!isset($v['title']))
+						die(var_dump($values[$k],$k));
 					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-				elseif($v)
+				}
+				elseif(is_string($v))
 					$Lst->head($v);
 
 		if($back)

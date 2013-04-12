@@ -10,12 +10,12 @@
 
 function CheckGroup(obj)
 {
-	if($(obj).find(":checkbox:checked").size()==0)
+	if($(obj).find(":checked").size()==0)
 	{
 		alert(CORE.Lang('nothing_selected'));
-		return true;
+		return false;
 	}
-	return false;
+	return true;
 }
 
 function One2AllCheckboxes(parents,main,subnames,and)

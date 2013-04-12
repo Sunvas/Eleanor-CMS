@@ -14,6 +14,9 @@ $Eleanor->module['config']=$mc=include$Eleanor->module['path'].'config.php';
 $lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$mc['n']);
 Eleanor::$Template->queue[]=$mc['usertpl'];
 
+if($Eleanor->module['sections']['menu']!=$Eleanor->module['name'])
+	$Eleanor->Url->SetPrefix(array('lang'=>Language::$main==LANGUAGE ? false : Eleanor::$langs[Language::$main]['uri'],'module'=>Eleanor::$vars['prefix_free_module']==$Eleanor->module['id'] ? false : $Eleanor->module['sections']['menu']));
+
 $menu=Eleanor::$Cache->Get('menu_map_'.Language::$main);
 if($menu===false)
 {
@@ -76,5 +79,6 @@ if(!class_exists('ApiMenu',false))
 	include Eleanor::$root.'modules/menu/api.php';
 $title[]=$lang['menu'];
 $c=Eleanor::$Template->GeneralMenu($menu);
+$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Prefix(!$Eleanor->Url->furl);
 Start();
 echo$c;

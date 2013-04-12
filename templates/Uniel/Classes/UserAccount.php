@@ -1135,9 +1135,7 @@ $(function(){
 		$Lst->begin();
 		foreach($controls as $k=>&$v)
 			if(is_array($v))
-			{
 				$Lst->item(array($v['title'],$values[$k],'tip'=>$v['descr'],'td1'=>$n++ ? false : array('style'=>'width:130px')));
-			}
 			elseif($v)
 			{
 				if($head)

@@ -121,14 +121,15 @@ class TplGroups
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin(array('id'=>'tg'))
 			->item(static::$lang['parent'],Eleanor::Select('_parent',Eleanor::Option('&mdash;',0,!$values['_parent'],array(),2).UserManager::GroupsOpts($values['_parent'],$id ? $id : array()),array('id'=>'parent')));
 		foreach($controls as $k=>&$v)
-			if(is_array($v))
-				$Lst->item(array(
-					(empty($v['noinherit']) ? Eleanor::Check('inherit[]',in_array($k,$inherit),array('style'=>'display:none','value'=>$k)) : '').$v['title'],
-					'<div>'.Eleanor::$Template->LangEdit($values[$k],null).'</div>',
-					'tip'=>$v['descr']
-				));
-			elseif($v)
-				$Lst->head($v);
+			if($v)
+				if(is_array($v) and $values[$k])
+					$Lst->item(array(
+						(empty($v['noinherit']) ? Eleanor::Check('inherit[]',in_array($k,$inherit),array('style'=>'display:none','value'=>$k)) : '').$v['title'],
+						'<div>'.Eleanor::$Template->LangEdit($values[$k],null).'</div>',
+						'tip'=>$v['descr']
+					));
+				elseif(is_string($v))
+					$Lst->head($v);
 
 		if($back)
 			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));

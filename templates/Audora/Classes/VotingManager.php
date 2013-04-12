@@ -28,10 +28,10 @@ class TplVotingManager
 
 		$Lst=Eleanor::LoadListTemplate('table-form')->begin()->head(static::$lang['questions']);
 		foreach($controls as $k=>&$v)
-			if($k!='_questions' and $values[$k])
-				if(is_array($v))
-					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'descr'=>$v['descr']));
-				elseif($v)
+			if($k!='_questions' and $v)
+				if(is_array($v) and $values[$k])
+					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
+				elseif(is_string($v))
 					$Lst->head($v);
 
 		$u=uniqid('vo-');
@@ -50,10 +50,10 @@ class TplVotingManager
 		{
 			$Lst->begin(array('class'=>'tabstyle tabform question','data-qn'=>$kq));
 			foreach($controls as $k=>&$v)
-				if(!empty($values[$k]))
-					if(is_array($v))
-						$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'descr'=>$v['descr']));
-					elseif($v)
+				if($v)
+					if(is_array($v) and $values[$k])
+						$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
+					elseif(is_string($v))
 						$Lst->head($v);
 
 			$Lst->button(Eleanor::Button(static::$lang['addq'],'button',array('class'=>'addquestion')).' '.Eleanor::Button(static::$lang['delq'],'button',array('class'=>'deletequestion')))->end();

@@ -7,11 +7,14 @@
 	=====
 	*Pseudonym
 */
+$.event.props.push("dataTransfer");
 CORE.UPLOADER=function(opts)
 {
 	opts=$.extend(
 		{
-			container:document.body,
+			upload_path:"",
+
+			container:false,
 			realpath:"",
 			service:"",
 			curpath:"",
@@ -29,11 +32,17 @@ CORE.UPLOADER=function(opts)
 			watermark:localStorage.getItem("watermark-"+opts.uniq),
 		}
 	)
+	if(!opts.container)
+		return false;
+	
 	this.UP=false;
 	this.buttons=[];
 	this.editor=false;
 
-	var th=this;
+	var th=this,
+		needdrop=true,
+		drop_enable=true,
+		drop_cnt=0;
 
 	this.Get=function(n)
 	{
@@ -145,6 +154,48 @@ CORE.UPLOADER=function(opts)
 
 	this.Update=function()
 	{
+		if(needdrop)
+		{
+			$(opts.container).on("dragover",function(e){
+				$(this).addClass("dragover");
+				e.dataTransfer.dropEffect="move";
+				e.stopPropagation();
+				return false;
+			})
+			.on("dragleave",function(){
+				$(this).removeClass("dragover");
+			})
+			.on("drop",function(e){
+				$(this).removeClass("dragover");
+				drop_cnt++;
+				var Done=function()
+					{
+						if(--drop_cnt==0)
+							setTimeout(function(){
+								th.Update();
+							},200);
+					}
+				CORE.ShowLoading();
+				$.each(e.dataTransfer.files,function(k,v){
+					var data=new FormData();
+					data.append("session",opts.sess);
+					data.append("type","uploader");
+					data.append("uniq",opts.uniq);
+					data.append("Filedata",v);
+
+					$.ajax({
+						url:opts.upload_path,
+						data:data,
+						processData:false,
+						contentType:false,
+						type:"POST",
+						success:Done,
+						dataType:"JSON"
+					}).fail(Done);
+				});
+			});
+			needdrop=false;
+		}
 		this.Go("");
 	}
 
@@ -174,10 +225,10 @@ CORE.UPLOADER=function(opts)
 				$(".files",opts.container).html(result['content'])
 				//Tip
 				.find("img.type").poshytip({
-					className: "tooltip",
-					offsetX: -7,
-					offsetY: 16,
-					allowTipHover: true
+					className:"tooltip",
+					offsetX:-7,
+					offsetY:16,
+					allowTipHover:true
 				});
 				$(".info",opts.container).html(result["info"]);
 				opts.curpath=result["path"];
@@ -192,6 +243,7 @@ CORE.UPLOADER=function(opts)
 					th.UP.addPostParam("path",result["path"]);
 					if(result["upload"])
 					{
+						drop_enable=true;
 						$("crf-"+opts.uniq).show();
 						th.UP.setButtonDisabled(false);
 						th.UP.setFileSizeLimit(result["upload_limit"]);
@@ -199,6 +251,7 @@ CORE.UPLOADER=function(opts)
 					}
 					else
 					{
+						drop_enable=false;
 						$("crf-"+opts.uniq).hide();
 						th.UP.setButtonDisabled(true);
 						th.UP.setButtonText(CORE.Lang("upload_text_dis"));
@@ -453,7 +506,7 @@ $.extend(
 				this.debug(ex);
 			}
 		},
-		FileDialogComplete:function(selected,queued)//Кол-во
+		FileDialogComplete:function(selected,queued)
 		{
 			try
 			{

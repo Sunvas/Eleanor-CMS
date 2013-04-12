@@ -20,6 +20,9 @@ $GLOBALS['head']['rss']=$Lst->link(array(
 	'title'=>$l['rss'],
 ));
 
+if($Eleanor->module['sections']['static']!=$Eleanor->module['name'])
+	$Eleanor->Url->SetPrefix(array('lang'=>Language::$main==LANGUAGE ? false : Eleanor::$langs[Language::$main]['uri'],'module'=>Eleanor::$vars['prefix_free_module']==$Eleanor->module['id'] ? false : $Eleanor->module['sections']['static']));
+
 if(!class_exists($mc['api'],false))
 	include$Eleanor->module['path'].'api.php';
 $Eleanor->Plug=new$mc['api']($mc);
@@ -181,6 +184,7 @@ function ShowGeneral()
 			$res[]=$temp[$v];
 	unset($temp,$ids);
 	$s=Eleanor::$Template->StaticGeneral($res);
+	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Prefix(!$Eleanor->Url->furl);
 	Start();
 	echo$s;
 }
@@ -192,6 +196,7 @@ function Substance()
 	foreach($ol as $k=>&$v)
 		$v['_a']=$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($k) : array('id'=>$k));
 	$s=Eleanor::$Template->StaticSubstance($ol);
+	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Prefix(!$Eleanor->Url->furl);
 	Start();
 	echo$s;
 }

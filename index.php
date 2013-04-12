@@ -437,9 +437,6 @@ function MainPage($tm=false)
 		if(!$tm)
 			break;
 
-		if(!$Eleanor->Url->is_static)
-			return ExitPage();
-
 		$R=Eleanor::$Db->Query('SELECT `id`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files` FROM `'.P.'modules` WHERE `id`='.(int)Eleanor::$vars['prefix_free_module'].' AND `active`=1 LIMIT 1');
 		if(!$a=$R->fetch_assoc())
 			break;
@@ -467,7 +464,8 @@ function MainPage($tm=false)
 			'sections'=>$a['sections'],
 		);
 
-		$Eleanor->Url->string=$tm.$Eleanor->Url->delimiter.$Eleanor->Url->string;
+		if($Eleanor->Url->is_static)
+			$Eleanor->Url->string=$tm.$Eleanor->Url->delimiter.$Eleanor->Url->string;
 		if(Eleanor::$vars['multilang'] and Language::$main!=LANGUAGE)
 			$Eleanor->Url->SetPrefix(array('lang'=>Eleanor::$langs[Language::$main]['uri']));
 

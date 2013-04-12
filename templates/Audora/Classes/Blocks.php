@@ -468,10 +468,11 @@ $(function(){
 
 		if($values['_config'])
 			foreach($values['_config'] as $k=>&$v)
-				if(is_array($v))
-					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values['config'][$k],null),'tip'=>isset($v['descr']) ? $v['descr'] : '','tr'=>array('class'=>'trfile trconf')));
-				else
-					$Lst->head(array($v,'tr'=>array('class'=>'trfile trconf infolabel first')));
+				if($v)
+					if(is_array($v) and $values[$k])
+						$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values['config'][$k],null),'tip'=>isset($v['descr']) ? $v['descr'] : '','tr'=>array('class'=>'trfile trconf')));
+					elseif(is_string($v))
+						$Lst->head(array($v,'tr'=>array('class'=>'trfile trconf infolabel first')));
 
 		if(Eleanor::$vars['multilang'])
 			$Lst->item($ltpl['set_for_langs'],Eleanor::$Template->LangChecks($values['_onelang'],$values['_langs'],null,5));
@@ -538,10 +539,11 @@ $(function(){
 	{
 		$Lst=Eleanor::LoadListTemplate('table-form');
 		foreach($conf as $k=>&$v)
-			if(is_array($v))
-				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($a[$k],null),'tip'=>isset($v['descr']) ? $v['descr'] : '','tr'=>array('class'=>'trfile trconf')));
-			elseif(is_string($v))
-				$Lst->head(array($v,'tr'=>array('class'=>'trfile trconf infolabel first')));
+			if($v)
+				if(is_array($v) and $values[$k])
+					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>isset($v['descr']) ? $v['descr'] : '','tr'=>array('class'=>'trfile trconf')));
+				elseif(is_string($v))
+					$Lst->head(array($v,'tr'=>array('class'=>'trfile trconf infolabel first')));
 		return$Lst;
 	}
 

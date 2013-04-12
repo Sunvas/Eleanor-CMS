@@ -1504,8 +1504,7 @@ class Template_Mixed extends Template
 				$this->files[$k]=array();
 				if(is_dir($v) and $fs=glob($v.'*.php',GLOB_MARK))
 					foreach($fs as &$fv)
-						if($fv=substr(strrchr($fv,'/'),1))#Оставляем только имена файлов
-							$this->files[$k][]=substr($fv,0,strrpos($fv,'.'));
+						$this->files[$k][]=basename($fv,'.php');#Оставляем только имена файлов
 			}
 			if(in_array($n,$this->files[$k]))
 				return Eleanor::LoadFileTemplate($v.$n.'.php',(count($p)==1 && is_array($p[0]) ? $p[0] : $p)+$this->default);

@@ -13,6 +13,9 @@ $Eleanor->Categories->Init($mc['c']);
 $Eleanor->module['etag']='';#Дополнение к ETAG
 Eleanor::LoadOptions($mc['opts']);
 
+if($Eleanor->module['sections']['news']!=$Eleanor->module['name'])
+	$Eleanor->Url->SetPrefix(array('lang'=>Language::$main==LANGUAGE ? false : Eleanor::$langs[Language::$main]['uri'],'module'=>Eleanor::$vars['prefix_free_module']==$Eleanor->module['id'] ? false : $Eleanor->module['sections']['news']));
+
 $curls=array();
 $puri=false;
 if($Eleanor->Url->is_static)

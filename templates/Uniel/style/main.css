@@ -45,10 +45,10 @@ table { border-collapse: collapse; border-spacing: 0; border: 0 none; }
 
 /*UL, LI*/
 ul {
-    margin: 0;
-    padding-left: 16px;
-    list-style-position:outside;
-    list-style-image:none;
+	margin: 0;
+	padding-left: 16px;
+	list-style-position:outside;
+	list-style-image:none;
 }
 
 ul li { margin: 0; padding: 0; }
@@ -992,7 +992,7 @@ table.categories td { border:0px;vertical-align:top; }
 .errorinput input { width: 200px; }
 .errorinput textarea { width: 99%; }
 
-a.button	{
+a.button {
 	background: #ffb800 url("../images/buttons_type1.png") no-repeat left top;
 	font-weight: bold;
 	display: block;
@@ -1008,7 +1008,6 @@ a.button:hover	{ background: #ffb800 url("../images/buttons_type1.png") no-repea
 /*Перенос смайлов */
 .smile { display:inline-block; }
 
-
 /*ОШИБКИ*/
 .warning { padding: 8px; text-align: left; margin: auto; margin-bottom: 5px;
 	-o-border-radius:4px;
@@ -1022,9 +1021,7 @@ a.button:hover	{ background: #ffb800 url("../images/buttons_type1.png") no-repea
 .warning div { margin-left: 56px; }
 .warning div div { margin: 0; }
 .warning h4 { margin-top: 0; }
-.warning .info  { float: left; }
-.warning .repair { font-weight:bold; text-align:right; border-top:1px gray dashed; }
-
+.warning img  { float: left; margin-right:7px; }
 
 /*Галерея аватаров*/
 .galleryavatars { text-align:center; }

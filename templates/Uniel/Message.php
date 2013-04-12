@@ -12,7 +12,7 @@ $isa=is_array($v_0);
 <div class="base">
 	<div class="binner">
 		<div class="warning">
-			<img src="<?php echo$theme?>images/<?php echo$type?>.png" style="float:left;" alt="" title="<?php
+			<img src="<?php echo$theme?>images/<?php echo$type?>.png" alt="" title="<?php
 if($isa and count($v_0)>1 and $type=='error')
 	$type.='s';
 $title=isset(Eleanor::$Language['tpl'][$type]) ? Eleanor::$Language['tpl'][$type] : 'warning';

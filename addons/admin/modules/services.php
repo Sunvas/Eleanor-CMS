@@ -66,7 +66,7 @@ $Eleanor->sp=array(
 				while($entry=$Dir->read())
 				{
 					if(is_file(Eleanor::$root.'core/login/'.$entry))
-						$ret.=Eleanor::Option($entry=substr($entry,0,strrpos($entry,'.')),false,in_array($entry,$a['value']));
+						$ret.=Eleanor::Option($entry=basename($entry,'.php'),false,in_array($entry,$a['value']));
 				}
 				$Dir->close();
 				return$ret;

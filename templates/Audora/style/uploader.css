@@ -83,3 +83,5 @@ ul.uppanel_files li .typeicon { float: left; margin-top: 5px; margin-right: 5px;
 .filestemplate li .buttons { width: 70px; text-align: right; margin-left: 0; }
 
 div.frdatethm { text-align:center; }
+
+.dragover { border:2px green solid !important; }

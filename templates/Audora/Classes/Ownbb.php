@@ -115,17 +115,18 @@ class TplOwnBB
 		$tabs=array();
 		$head=false;
 		foreach($controls as $k=>&$v)
-			if(is_array($v))
-				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-			else
-			{
-				if($head)
+			if($v)
+				if(is_array($v) and $values[$k])
+					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
+				elseif(is_string($v))
 				{
-					$tabs[]=array($head,(string)$Lst->end());
-					$Lst->begin();
+					if($head)
+					{
+						$tabs[]=array($head,(string)$Lst->end());
+						$Lst->begin();
+					}
+					$head=$v;
 				}
-				$head=$v;
-			}
 
 		$tabs[]=array($head,(string)$Lst->end());
 

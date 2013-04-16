@@ -662,6 +662,8 @@ function AddEdit($id,$errors=array())
 					$values['_onelang']=false;
 				$values['_langs']=isset($values['title']) ? array_keys($values['title']) : array();
 			}
+			else
+				$values['config']=array(''=>$values['config']);
 		}
 		$title[]=$lang['editing'];
 	}

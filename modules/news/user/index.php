@@ -561,7 +561,7 @@ elseif($cid or $curls)
 		$Eleanor->module['links']['add']=$Eleanor->Url->Construct(array('do'=>'add',''=>array('def'=>array('category'=>$category['id']))),true,'');
 	$cu=$Eleanor->Categories->GetUri($category['id']);
 	$links=array(
-		'first_page'=>$Eleanor->Url->Construct($cu,true,false),
+		'first_page'=>$Eleanor->Url->Construct($cu,true,!$Eleanor->Url->furl),
 		'pages'=>function($n) use ($cu){ return$GLOBALS['Eleanor']->Url->Construct($cu+array('page'=>array('page'=>$n))); },
 	);
 
@@ -670,7 +670,7 @@ function FormatList($R,$caching=true,$anurl=array())
 				$a['announcement']=OwnBB::Parse($a['announcement']);
 
 			$u=array('u'=>array($a['uri'],'id'=>$a['id']))+$anurl;
-			$a['_url']=$Eleanor->Url->Construct($a['_cat'] && isset($cus[$a['_cat']]) ? $cus[$a['_cat']]+$u : $u);
+			$a['_url']=$Eleanor->Url->Construct(isset($cus[$a['_cat']]) ? $cus[$a['_cat']]+$u : $u);
 			$items[$a['id']]=array_slice($a,1);
 		}
 	}
@@ -768,25 +768,8 @@ function GetGN()
 }
 
 function SetData($tpl=false)
-{global$Eleanor,$head;
+{global$Eleanor;
 	$mc=$Eleanor->module['config'];
-	$lang=Eleanor::$Language[$mc['n']];
-	$Lst=Eleanor::LoadListTemplate('headfoot');
-	$u='?'.Url::Query(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
-	$Eleanor->module['rss']=Eleanor::$services['rss']['file'].$u;
-	$head['rss']=$Lst('link',array(
-		'rel'=>'alternate',
-		'type'=>'application/rss+xml',
-		'href'=>$Eleanor->module['rss'],
-		'title'=>$lang['n'],
-	));
-	$head['search']=$Lst('link',array(
-		'rel'=>'search',
-		'type'=>'application/opensearchdescription+xml',
-		'title'=>$lang['n'],
-		'href'=>Eleanor::$services['xml']['file'].$u,
-	));
-
 	Eleanor::$Template->queue[]=$tpl ? $tpl : $mc['usertpl'];
 
 	$tags=Eleanor::$Cache->Get($mc['n'].'_tags_'.Language::$main);
@@ -812,6 +795,7 @@ function SetData($tpl=false)
 	else
 		$cron=false;
 
+	$u='?'.Url::Query(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
 	$Eleanor->module+=array(
 		'tags'=>$tags ? $tags : null,
 		'cron'=>$cron,
@@ -822,6 +806,8 @@ function SetData($tpl=false)
 			'search'=>$Eleanor->Url->Construct(array('do'=>'search'),true,''),
 			'add'=>Eleanor::$vars['publ_add'] ? $Eleanor->Url->Construct(array('do'=>'add'),true,'') : false,
 			'my'=>Eleanor::$vars['publ_add'] ? $Eleanor->Url->Construct(array('do'=>'my'),true,'') : false,
+			'rss'=>Eleanor::$services['rss']['file'].$u,
+			'xmlsearch'=>Eleanor::$services['xml']['file'].$u,
 		)
 	);
 }

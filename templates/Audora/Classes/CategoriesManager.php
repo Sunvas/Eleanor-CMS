@@ -129,7 +129,7 @@ class TplCategoriesManager
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 		foreach($controls as $k=>&$v)
 			if($v)
-				if(is_array($v) and $values[$k])
+				if(is_array($v) and !empty($values[$k]))
 				{
 					if(!isset($v['title']))
 						die(var_dump($values[$k],$k));

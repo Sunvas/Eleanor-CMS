@@ -56,7 +56,7 @@ if($narr)
 			$cat=$C->GetUri($narr['cats']);
 		else
 			$cat=false;
-		$un=array('u'=>array($narr['uri'],'nid'=>$narr['id']));
+		$un=array('u'=>array($narr['uri'],'id'=>$narr['id']));
 		try
 		{
 			echo Eleanor::$Template->BlockVoting($narr['title'],$Eleanor->Url->Construct(array('module'=>$uri)+($cat ? $cat+$un : $un),false),$c);

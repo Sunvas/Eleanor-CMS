@@ -17,9 +17,9 @@ $Eleanor->Categories->Init($mc['c']);
 $items=array();
 $lastmod=0;
 
-if(isset($_GET['nid']))
+if(isset($_GET['id']))
 {
-	$R=Eleanor::$Db->Query('SELECT `id`,`announcement`,`cats`,UNIX_TIMESTAMP(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `date`,`show_sokr`,`show_detail`,`uri`,`title`,`text`,`last_mod` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`='.(int)$_GET['nid'].' LIMIT 1');
+	$R=Eleanor::$Db->Query('SELECT `id`,`announcement`,`cats`,UNIX_TIMESTAMP(IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`)) `date`,`show_sokr`,`show_detail`,`uri`,`title`,`text`,`last_mod` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `id`='.(int)$_GET['id'].' LIMIT 1');
 	if($a=$R->fetch_assoc() and ($a['text'] or $a['show_detail']))
 	{
 		$a['text']=($a['show_sokr'] ? OwnBB::Parse($a['announcement']) : '').OwnBB::Parse($a['text']);
@@ -115,7 +115,7 @@ foreach($items as $k=>&$v)
 			if($Eleanor->Url->furl and isset($Eleanor->Categories->dump[$cid]))
 				$cu=$Eleanor->Categories->GetUri($cid);
 		}
-		$u=$Eleanor->Url->Construct($cu+array('u'=>array($v['uri'],'nid'=>$k)));
+		$u=$Eleanor->Url->Construct($cu+array('u'=>array($v['uri'],'id'=>$k)));
 	}
 	echo Rss(array(
 		'title'=>$v['title'],#Заголовок сообщения

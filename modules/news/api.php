@@ -85,7 +85,7 @@ class ApiNews extends BaseClass
 		if(Eleanor::$service!='user' or !$q)
 			return$El->Url->Construct($q);
 		$cid=isset($q['cid']) ? (int)$q['cid'] : 0;
-		$nid=isset($q['nid']) ? (int)$q['nid'] : 0;
+		$nid=isset($q['id']) ? (int)$q['id'] : 0;
 
 		if($nid or $puri)
 		{
@@ -97,7 +97,7 @@ class ApiNews extends BaseClass
 			if(!$a=$R->fetch_assoc())
 				return;
 
-			$u=array('u'=>array($a['uri'],'nid'=>$a['id']));
+			$u=array('u'=>array($a['uri'],'id'=>$a['id']));
 			if($El->Url->furl)
 			{
 				Language::$main=$lang;
@@ -341,7 +341,7 @@ class ApiNews extends BaseClass
 					$data[$lang]['o']+=$R->num_rows;
 					while($a=$R->fetch_assoc())
 					{
-						$u=array('u'=>array($a['uri'],'nid'=>$a['id']));
+						$u=array('u'=>array($a['uri'],'id'=>$a['id']));
 						if($Url->furl)
 						{
 							$a['lcats']=$a['lcats'] ? (int)ltrim($a['lcats'],',') : false;

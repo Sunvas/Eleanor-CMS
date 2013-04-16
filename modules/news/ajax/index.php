@@ -170,7 +170,7 @@ else
 
 			$Eleanor->Categories->Init($mc['c']);
 			$cat=$a['cats'] && $Eleanor->Url->furl ? $Eleanor->Categories->GetUri((int)ltrim($a['cats'],',')) : false;
-			$u=array('u'=>array($a['uri'],'nid'=>$a['id']));
+			$u=array('u'=>array($a['uri'],'id'=>$a['id']));
 			$data=isset($_POST['comments']) ? (array)$_POST['comments'] : array();
 			$Eleanor->Comments_ajax->baseurl=array('module'=>$Eleanor->module['name'])+($cat ? $cat+$u : $u);
 			if($r=$Eleanor->Comments_ajax->Process($data,$id))

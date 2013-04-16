@@ -238,45 +238,52 @@ function Start($tpl='index',$code=200)
 	else
 		$descr=false;
 
-	$Lst=Eleanor::LoadListTemplate('headfoot')
-		->metahttp('text/html; charset='.DISPLAY_CHARSET)
-		->base(PROTOCOL.Eleanor::$domain.Eleanor::$site_path)
-		->title($t)
-		->meta('generator','Eleanor CMS '.ELEANOR_VERSION);
-
-	if($descr)
-		$Lst->meta('description',htmlspecialchars($descr,ELENT,CHARSET,false));
-
-	if(false!==$mn=array_search(6,$Eleanor->modules['ids']))
-		$Lst->link(array('rel'=>'search','href'=>$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>$mn),false)))
-			->link(array(
-				'rel'=>'search',
-				'type'=>'application/opensearchdescription+xml',
-				'title'=>Eleanor::$vars['site_name'],
-				'href'=>Eleanor::$services['xml']['file'].'?'.Url::Query(array('module'=>$mn)),
-			));
-
-	if(Eleanor::$vars['site_domain']!=Eleanor::$domain and Eleanor::$vars['parked_domains']=='rel' and Eleanor::$vars['site_domain'])
-		$Lst->link(array('rel'=>'canonical','href'=>PROTOCOL.preg_replace('#^[a-z0-9\-]+\.[a-z\-]{2,}#i',Eleanor::$vars['site_domain'],$_SERVER['SERVER_NAME']).$_SERVER['REQUEST_URI']));
-	#Если модулем задан оригинальный URL страницы, сравним его с полученным
-	elseif(isset($Eleanor->origurl))
+	try
 	{
-		$u=isset($Eleanor->module['general']) ? PROTOCOL.Eleanor::$punycode.Eleanor::$site_path : $Eleanor->origurl;
-		$du=Url::Decode($u);
-		$du=str_replace('&amp;','&',$du);
+		$Lst=Eleanor::LoadListTemplate('headfoot')
+			->metahttp('text/html; charset='.DISPLAY_CHARSET)
+			->base(PROTOCOL.Eleanor::$domain.Eleanor::$site_path)
+			->title($t)
+			->meta('generator','Eleanor CMS '.ELEANOR_VERSION);
 
-		$ru=PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'];
-		$ru=Url::Decode($ru);
+		if($descr)
+			$Lst->meta('description',htmlspecialchars($descr,ELENT,CHARSET,false));
 
-		if(strcasecmp($du,$ru)!=0)
-			$Lst->link(array('rel'=>'canonical','href'=>$u));
+		if(false!==$mn=array_search(6,$Eleanor->modules['ids']))
+			$Lst->link(array('rel'=>'search','href'=>$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>$mn),false)))
+				->link(array(
+					'rel'=>'search',
+					'type'=>'application/opensearchdescription+xml',
+					'title'=>Eleanor::$vars['site_name'],
+					'href'=>Eleanor::$services['xml']['file'].'?'.Url::Query(array('module'=>$mn)),
+				));
+
+		if(Eleanor::$vars['site_domain']!=Eleanor::$domain and Eleanor::$vars['parked_domains']=='rel' and Eleanor::$vars['site_domain'])
+			$Lst->link(array('rel'=>'canonical','href'=>PROTOCOL.preg_replace('#^[a-z0-9\-]+\.[a-z\-]{2,}#i',Eleanor::$vars['site_domain'],$_SERVER['SERVER_NAME']).$_SERVER['REQUEST_URI']));
+		#Если модулем задан оригинальный URL страницы, сравним его с полученным
+		elseif(isset($Eleanor->origurl))
+		{
+			$u=isset($Eleanor->module['general']) ? PROTOCOL.Eleanor::$punycode.Eleanor::$site_path : $Eleanor->origurl;
+			$du=Url::Decode($u);
+			$du=str_replace('&amp;','&',$du);
+
+			$ru=PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'];
+			$ru=Url::Decode($ru);
+
+			if(strcasecmp($du,$ru)!=0)
+				$Lst->link(array('rel'=>'canonical','href'=>$u));
+		}
+
+		array_unshift($jscripts,'js/jquery.min.js','js/core.js','js/lang-'.Language::$main.'.js');
+		$jscripts=array_unique($jscripts);
+
+		foreach($jscripts as &$v)
+			$Lst->script($v);
 	}
-
-	array_unshift($jscripts,'js/jquery.min.js','js/core.js','js/lang-'.Language::$main.'.js');
-	$jscripts=array_unique($jscripts);
-
-	foreach($jscripts as &$v)
-		$Lst->script($v);
+	catch(EE$E)
+	{
+		$Lst='<!-- '.$E->getMessage().' -->';
+	}
 
 	$thead=$Lst.Eleanor::JsVars(array(
 		'c_domain'=>Eleanor::$vars['cookie_domain'],

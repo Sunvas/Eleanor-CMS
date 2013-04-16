@@ -188,16 +188,24 @@ function Start($tpl='index',$code=200)
 	}
 	$tcover=(string)(is_array($tpl) ? call_user_func_array(array(Eleanor::$Template,$tpl[0]),array_slice($tpl,1)) : Eleanor::$Template->$tpl());
 
-	$Lst=Eleanor::LoadListTemplate('headfoot')
-		->metahttp('text/html; charset='.DISPLAY_CHARSET)
-		->base(PROTOCOL.getenv('HTTP_HOST').Eleanor::$site_path)
-		->title(is_array($title) ? join(' &raquo; ',$title) : $title)
-		->meta('robots','noindex, nofollow');
+	try
+	{
+		$Lst=Eleanor::LoadListTemplate('headfoot')
+			->metahttp('text/html; charset='.DISPLAY_CHARSET)
+			->base(PROTOCOL.getenv('HTTP_HOST').Eleanor::$site_path)
+			->title(is_array($title) ? join(' &raquo; ',$title) : $title)
+			->meta('robots','noindex, nofollow');
 
-	array_unshift($jscripts,'js/jquery.min.js','js/core.js','js/lang-'.Language::$main.'.js');
-	$jscripts=array_unique($jscripts);
-	foreach($jscripts as &$v)
-		$Lst->script($v);
+		array_unshift($jscripts,'js/jquery.min.js','js/core.js','js/lang-'.Language::$main.'.js');
+		$jscripts=array_unique($jscripts);
+		foreach($jscripts as &$v)
+			$Lst->script($v);
+	}
+	catch(EE$E)
+	{
+		$Lst='<!-- '.$E->getMessage().' -->';
+	}
+
 	$thead=$Lst.Eleanor::JsVars(array(
 		'c_domain'=>Eleanor::$vars['cookie_domain'],
 		'c_prefix'=>Eleanor::$vars['cookie_prefix'],

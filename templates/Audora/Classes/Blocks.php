@@ -469,7 +469,7 @@ $(function(){
 		if($values['_config'])
 			foreach($values['_config'] as $k=>&$v)
 				if($v)
-					if(is_array($v) and $values[$k])
+					if(is_array($v) and $values['config'][$k])
 						$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values['config'][$k],null),'tip'=>isset($v['descr']) ? $v['descr'] : '','tr'=>array('class'=>'trfile trconf')));
 					elseif(is_string($v))
 						$Lst->head(array($v,'tr'=>array('class'=>'trfile trconf infolabel first')));
@@ -535,12 +535,12 @@ $(function(){
 		return Eleanor::$Template->Cover($c,$errors,'error').'<script type="text/javascript">/*<![CDATA[*/AddEditBlock()//]]></script>';
 	}
 
-	public static function AjaxBlocksConf($co,$values)
+	public static function AjaxBlocksConf($controls,$values)
 	{
 		$Lst=Eleanor::LoadListTemplate('table-form');
-		foreach($conf as $k=>&$v)
+		foreach($controls as $k=>&$v)
 			if($v)
-				if(is_array($v) and $values[$k])
+				if(is_array($v) and !empty($values[$k]))
 					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>isset($v['descr']) ? $v['descr'] : '','tr'=>array('class'=>'trfile trconf')));
 				elseif(is_string($v))
 					$Lst->head(array($v,'tr'=>array('class'=>'trfile trconf infolabel first')));

@@ -42,7 +42,7 @@ if($R->num_rows>0)
 	while($a=$R->fetch_assoc())
 	{
 		$a['lcats']=$a['lcats'] ? (int)ltrim($a['lcats'],',') : false;
-		$u=array('u'=>array($a['uri'],'nid'=>$a['id']));
+		$u=array('u'=>array($a['uri'],'id'=>$a['id']));
 		if($a['lcats'] and $Eleanor->Url->furl)
 		{
 			$cu=$Eleanor->Categories->GetUri($a['lcats']);

@@ -527,7 +527,7 @@ function Save($id,$gn=array())
 
 	Eleanor::$Cache->Lib->DeleteByTag($mc['n']);
 	SetData($mc['usercorrecttpl']);
-	$u=array('u'=>array(Eleanor::FilterLangValues($lvalues['uri']),'nid'=>$id));
+	$u=array('u'=>array(Eleanor::FilterLangValues($lvalues['uri']),'id'=>$id));
 	if($maincat and $Eleanor->Url->furl)
 	{
 		$cu=$Eleanor->Categories->GetUri($maincat);
@@ -537,7 +537,7 @@ function Save($id,$gn=array())
 	if($ping and Eleanor::$vars['publ_ping'])
 	{
 		$sd=PROTOCOL.Eleanor::$domain.Eleanor::$site_path;
-		Ping::Add(array('id'=>$mc['n'],'changes'=>$sd.$Eleanor->Url->Prefix(),'rss'=>$sd.$Eleanor->module['rss']));
+		Ping::Add(array('id'=>$mc['n'],'changes'=>$sd.$Eleanor->Url->Prefix(),'rss'=>$sd.$Eleanor->module['links']['rss']));
 	}
 	Eleanor::$Cache->Obsolete($mc['n'].'_nextrun');
 	$oldid=func_get_arg(0);

@@ -20,22 +20,30 @@ class TplUserNewsCorrect
 	*/
 	protected static function TopMenu($tit=false)
 	{
-		$GLOBALS['jscripts'][]=Eleanor::$Template->default['theme'].'js/publications.js';
-		#Cron
-		if(isset(Eleanor::$services['cron']))
-		{
-			$task=Eleanor::$Cache->Get($GLOBALS['Eleanor']->module['config']['n'].'_nextrun');
-			$t=time();
-			$task=$task===false && $task<=$t ? '<img src="'.Eleanor::$services['cron']['file'].'?'.Url::Query(array('module'=>$GLOBALS['Eleanor']->module['name'],'language'=>Language::$main==LANGUAGE ? false : Language::$main,'rand'=>$t)).'" style="width:1px;height1px;" />' : '';
-		}
-		else
-			$task='';
-		#[E] Cron
-
-		if(isset($GLOBALS['Eleanor']->module['general']))
-			return$task;
 		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		$links=&$GLOBALS['Eleanor']->module['links'];
+		$GLOBALS['jscripts'][]=Eleanor::$Template->default['theme'].'js/publications.js';
+
+		$Lst=Eleanor::LoadListTemplate('headfoot');
+		$GLOBALS['head']['rss']=$Lst('link',array(
+			'rel'=>'alternate',
+			'type'=>'application/rss+xml',
+			'href'=>$links['rss'],
+			'title'=>$lang['n'],
+		));
+		$GLOBALS['head']['search']=$Lst('link',array(
+			'rel'=>'search',
+			'type'=>'application/opensearchdescription+xml',
+			'title'=>$lang['n'],
+			'href'=>$links['xmlsearch'],
+		));
+
+		#Cron
+		$cron=$GLOBALS['Eleanor']->module['cron'] ? '<img src="'.$GLOBALS['Eleanor']->module['cron'].'" style="width:1px;height1px;" />' : '';
+		#[E] Cron
+		if(isset($GLOBALS['Eleanor']->module['general']))
+			return$cron;
+
 		return Eleanor::$Template->Menu(array(
 			'menu'=>array(
 				array($links['base'],static::$lang['all']),
@@ -45,7 +53,7 @@ class TplUserNewsCorrect
 				$links['add'] ? array($links['add'],static::$lang['add']) : false,
 				$links['my'] ? array($links['my'],$lang['my']) : false,
 			),
-			'title'=>($tit ? $tit : $lang['n']).$task,
+			'title'=>($tit ? $tit : $lang['n']).$cron,
 		));
 	}
 

@@ -122,7 +122,7 @@ class TplGroups
 			->item(static::$lang['parent'],Eleanor::Select('_parent',Eleanor::Option('&mdash;',0,!$values['_parent'],array(),2).UserManager::GroupsOpts($values['_parent'],$id ? $id : array()),array('id'=>'parent')));
 		foreach($controls as $k=>&$v)
 			if($v)
-				if(is_array($v) and $values[$k])
+				if(is_array($v) and !empty($values[$k]))
 					$Lst->item(array(
 						(empty($v['noinherit']) ? Eleanor::Check('inherit[]',in_array($k,$inherit),array('style'=>'display:none','value'=>$k)) : '').$v['title'],
 						'<div>'.Eleanor::$Template->LangEdit($values[$k],null).'</div>',

@@ -14,7 +14,7 @@ $Eleanor=Eleanor::getInstance();
 Eleanor::$service='upload';#ID сервиса
 Eleanor::InitService();
 Eleanor::$Language->queue['main'][]='langs/main-*.php';
-Eleanor::LoadOptions('site');
+Eleanor::LoadOptions(array('site','users-on-site'));
 ApplyLang();
 
 if(Eleanor::$Permissions->IsBanned())

@@ -11,7 +11,7 @@ $values=&$v_1;
 $Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 foreach($controls as $k=>&$v)
 	if($v)
-		if(is_array($v) and $values[$k])
+		if(is_array($v) and !empty($values[$k]))
 			$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
 		elseif(is_string($v))
 			$Lst->head($v);

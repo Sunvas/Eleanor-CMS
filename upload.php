@@ -146,7 +146,7 @@ function ExitPage($code=403,$r=301)
 {global$Eleanor;
 	BeAs('user');
 	$Eleanor->Url->file=Eleanor::$services['user']['file'];
-	GoAway(PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>'errors','code'=>$code),false,true,Eleanor::$vars['furl']),$r);
+	GoAway(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>'errors','code'=>$code),false,''),$r);
 }
 
 function SomeUpload()
@@ -217,7 +217,10 @@ function BeAs($n)
 		if(Language::$main!=LANGUAGE)
 			$Eleanor->Url->special.=$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[Language::$main]['uri']),false,false);
 		if(isset($Eleanor->module,$Eleanor->module['name']))
-			$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
+		{
+			$pref=isset($Eleanor->module['id']) && $Eleanor->module['id']==Eleanor::$vars['prefix_free_module'] ? array() : array('module'=>$Eleanor->module['name']);
+			$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'])+$pref : $pref);
+		}
 
 		$theme=Eleanor::$Login->IsUser() ? Eleanor::$Login->GetUserValue('theme') : Eleanor::GetCookie('theme');
 		if(!Eleanor::$vars['templates'] or !in_array($theme,Eleanor::$vars['templates']))

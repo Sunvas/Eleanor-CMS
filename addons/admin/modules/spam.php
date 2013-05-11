@@ -179,10 +179,10 @@ function ShowList()
 	$offset=abs(($page-1)*$pp);
 	if($cnt and $offset>=$cnt)
 		$offset=max(0,$cnt-$pp);
-	$sort=isset($_GET['sort']) ? $_GET['sort'] : '';
+	$sort=isset($_GET['sort']) ? (string)$_GET['sort'] : '';
 	if(!in_array($sort,array('id','innertitle','status')))
 		$sort='';
-	$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? $_GET['so'] : 'desc';
+	$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? (string)$_GET['so'] : 'desc';
 	if($so!='desc')
 		$so='asc';
 	if($sort and ($sort!='id' or $so!='asc'))

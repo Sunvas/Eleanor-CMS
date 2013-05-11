@@ -682,7 +682,7 @@ $(function(){
 <body style="text-align: left; margin: 20px;">
 <script type="text/javascript">//<![CDATA[
 $(function(){
-	$("table a").click(function(){
+	$("table li a").click(function(){
 		window.opener.AuthorSelected($(this).text(),$(this).data("id"),window.name);
 		window.close();
 		return false;

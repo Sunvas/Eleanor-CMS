@@ -63,7 +63,7 @@ echo $ug;
 								<div class="wptop"><b><span>&nbsp;</span></b></div>
 								<div class="wpmid">
 <?php
-$section=isset($_GET['section']) ? $_GET['section'] : 'general';
+$section=isset($_GET['section']) ? (string)$_GET['section'] : 'general';
 if($section!='general')
 {
 	global$Eleanor;

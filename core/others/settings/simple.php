@@ -20,7 +20,7 @@ class Settings extends BaseClass
 		$a_opts=array(),#Разрешенные настройки для изменения
 		$only_opts=true,#Разрешить изменение только опций, относящихся к категориям выше
 		$g_mod=false,#Разрешить создание, редактирование и удаление групп
-		$opts_mod=false,#Разрешить создание, редактирование и удаление настроек
+		$opts_mod=true,#Разрешить создание, редактирование и удаление настроек
 		$a_move=true,#Разрешить перемещение групп и настроек
 		$a_search=false,#Разрешить поиск
 		$opts_wg=false,#Показывать опции без групп (для админа)
@@ -736,11 +736,7 @@ class Settings extends BaseClass
 					if($this->opts_mod)
 						$a['_buttons']['default']=$El->Url->Construct(array($this->pp.'gdefault'=>$a['id']));
 					if($this->g_mod)
-					{
-						$a['_buttons']['edit']=$El->Url->Construct(array($this->pp.'gedit'=>$a['id']));
-						if(!$a['protected'])
-							$a['_buttons']['delete']=$El->Url->Construct(array($this->pp.'gdelete'=>$a['id']));
-					}
+						$a['_buttons']['delete']=$a['_buttons']['edit']=false;
 					$items[$a['id']]=array_slice($a,1);
 				}
 				$links=array();
@@ -910,8 +906,8 @@ class Settings extends BaseClass
 				'_adown'=>$this->a_move && $gshow && $v['pos']<$cnt ? $El->Url->Construct(array($this->pp.'odown'=>$v['id'])) : false,
 				'_areset'=>$reset ? $El->Url->Construct(array($this->pp.'oreset'=>$v['id'])) : false,
 				'_adefault'=>$reset && $this->opts_mod ? $El->Url->Construct(array($this->pp.'odefault'=>$v['id'])) : false,
-				'_aedit'=>$this->opts_mod ? $El->Url->Construct(array($this->pp.'oedit'=>$v['id'])) : false,
-				'_adelete'=>!$v['protected'] && $this->opts_mod ? $El->Url->Construct(array($this->pp.'adelete'=>$v['id'])) : false,
+				'_aedit'=>false,
+				'_adelete'=>false,
 				'_agroup'=>isset($v['gtitle']) ? $El->Url->Construct(array($this->pp.'sg'=>$v['group'])) : false,
 			);
 			if(isset($v['error']))

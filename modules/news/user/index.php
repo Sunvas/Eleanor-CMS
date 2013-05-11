@@ -23,7 +23,7 @@ if($Eleanor->Url->is_static)
 	$str=$Eleanor->Url->GetEnding(array($Eleanor->Url->ending,$Eleanor->Url->delimiter),true);
 	$_GET+=$Eleanor->Url->Parse($str ? array() : array('do'));
 	$curls=isset($_GET['']) ? (array)$_GET[''] : array();
-	if($str==$Eleanor->Url->ending and !isset($_GET['page']))
+	if(!isset($_GET['id']) and $str==$Eleanor->Url->ending and !isset($_GET['page']))
 		$puri=array_pop($curls);
 }
 $cid=isset($_GET['cid']) ? (int)$_GET['cid'] : 0;
@@ -412,23 +412,25 @@ elseif($id or $puri)
 		if($cu)
 			$u=$cu+$u;
 	}
-	if($cid or $curls or $id and $a['uri'])
+	else
+		$cu=false;
+
+
+	$category=$Eleanor->Categories->GetCategory($cid ? $cid : $curls);
+	if($category)
 	{
-		$category=$Eleanor->Categories->GetCategory($cid ? $cid : $curls);
-		if($category)
+		$category['_a']=$Eleanor->Url->Construct($Eleanor->Categories->GetUri($category['id']),true,!$Eleanor->Url->furl);
+		if($category['id']!=$a['_cat'])
 		{
-			$category['_a']=$Eleanor->Url->Construct($Eleanor->Categories->GetUri($category['id']),true,false);
-			if($category['id']!=$a['_cat'])
-			{
-				$commu=$Eleanor->Comments->GET();
-				foreach($commu as $k=>$v)
-					$u[]=array($Eleanor->Comments->upref.$k=>$v);
-				return GoAway($u);
-			}
+			$commu=$Eleanor->Comments->GET();
+			foreach($commu as $k=>$v)
+				$u[]=array($Eleanor->Comments->upref.$k=>$v);
+			return GoAway($u);
 		}
 	}
-	else
-		$category=false;
+	elseif($cu)
+		return GoAway($u);
+
 	if(!Eleanor::$is_bot and $a['status']==1)
 		Eleanor::$Db->Update($mc['t'],array('!reads'=>'`reads`+1'),'`id`='.$a['id'].' LIMIT 1');
 
@@ -439,8 +441,7 @@ elseif($id or $puri)
 		Eleanor::$etag=md5($uid.'-'.$a['id'].'-'.$mc['n'].$Eleanor->module['etag']);
 		if(Eleanor::$modified and Eleanor::$last_mod and Eleanor::$last_mod<=Eleanor::$modified and $etag and $etag==Eleanor::$etag)
 			return Start();
-		else
-			Eleanor::$modified=false;
+		Eleanor::$modified=false;
 	}
 	SetData();
 
@@ -566,7 +567,7 @@ elseif($cid or $curls)
 	);
 
 	$c=Eleanor::$Template->CategoryList($category,$d,$cnt,-$page,$pages,Eleanor::$vars['publ_per_page'],$links);
-	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($cu+array('page'=>array('page'=>$page==$pages ? false : $page)),true,!$Eleanor->Url->furl);
+	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($cu+array('page'=>array('page'=>$page==$pages ? false : $page)),true,$page!=$pages);
 
 	#Поддержка соцсетей:
 	$Lst=Eleanor::LoadListTemplate('headfoot')

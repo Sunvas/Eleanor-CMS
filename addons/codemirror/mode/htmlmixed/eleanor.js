@@ -7,4 +7,4 @@
 	=====
 	*Pseudonym
 */
-CORE.AddScript(["addons/codemirror/mode/xml/xml.js","addons/codemirror/mode/javascript/javascript.js","addons/codemirror/mode/css/css.js"]);
+CORE.AddScript(["addons/codemirror/mode/xml/xml.js","addons/codemirror/mode/javascript/javascript.js","addons/codemirror/mode/css/css.js","addons/codemirror/mode/vbscript/vbscript.js"]);

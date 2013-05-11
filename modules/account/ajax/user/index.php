@@ -13,7 +13,7 @@ class AccountIndex
 {
 	public static function Handler()
 	{
-		$event=isset($_POST['event']) ? $_POST['event'] : '';
+		$event=isset($_POST['event']) ? (string)$_POST['event'] : '';
 		$lang=Eleanor::$Language[$GLOBALS['Eleanor']->module['config']['n']];
 		switch($event)
 		{

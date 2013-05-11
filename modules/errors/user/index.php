@@ -17,7 +17,7 @@ else
 	if($Eleanor->Url->is_static)
 		$_GET+=$Eleanor->Url->Parse(array('code'));
 
-	$uri=isset($_GET['code']) ? $_GET['code'] : false;
+	$uri=isset($_GET['code']) ? (string)$_GET['code'] : false;
 	if(isset($_GET['id']))
 		$id=(int)$_GET['id'];
 }

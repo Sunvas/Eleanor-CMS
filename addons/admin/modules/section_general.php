@@ -19,7 +19,7 @@ $Eleanor->module['links']=array(
 	'logs'=>$Eleanor->Url->Construct(array('do'=>'logs')),
 	'license'=>$Eleanor->Url->Construct(array('do'=>'license')),
 );
-switch(isset($_GET['do']) ? $_GET['do'] : '')
+switch(isset($_GET['do']) ? (string)$_GET['do'] : '')
 {
 	case'server':
 		$title[]=$lang['server_info'];

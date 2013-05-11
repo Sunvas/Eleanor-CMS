@@ -89,8 +89,7 @@ if(Eleanor::$caching)
 	Eleanor::$etag=md5($mc['n'].join(',',array_keys($items)));
 	if(Eleanor::$modified and Eleanor::$last_mod and Eleanor::$last_mod<=Eleanor::$modified and $etag and $etag==Eleanor::$etag)
 		return Start();
-	else
-		Eleanor::$modified=false;
+	Eleanor::$modified=false;
 }
 
 BeAs('user');

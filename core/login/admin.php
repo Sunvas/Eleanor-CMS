@@ -18,6 +18,11 @@ class LoginAdmin extends LoginBase implements LoginClass
 		MAX_SESSIONS=1,#Максимальное число сессий
 		UNIQUE='admin';
 
+	protected static
+		$user=array(),
+		$login,
+		$Plugin;
+
 	/**
 	 * Аутентификация по определенным входящим параметрам, например, по логину и паролю
 	 *

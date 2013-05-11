@@ -193,6 +193,7 @@ CORE.UPLOADER=function(opts)
 						dataType:"JSON"
 					}).fail(Done);
 				});
+				return false;
 			});
 			needdrop=false;
 		}

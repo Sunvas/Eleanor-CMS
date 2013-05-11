@@ -58,11 +58,11 @@ class OwnBbCode_attach extends OwnBbCode
 				$p['height']=isset($p['height']) ? (int)$p['height'] : 30;
 
 				$align=isset($p['align']) && in_array($p['align'],array('left','center','right')) ? 'float:'.$p['align'] : '';
-				$GLOBALS['jscripts'][]='addons/flowplayer/flowplayer-3.2.11.min.js';
+				$GLOBALS['jscripts'][]='addons/flowplayer/flowplayer-3.2.12.min.js';
 				$pl=uniqid('player_');
 				return'<a href="'.$p['file'].'" style="display:block;width:'.$p['width'].'px;height:'.$p['height'].'px;'.$align.'" id="'.$pl.'"></a>
 <script type="text/javascript">//<![CDATA[
-flowplayer("'.$pl.'","addons/flowplayer/flowplayer-3.2.15.swf",{
+flowplayer("'.$pl.'","addons/flowplayer/flowplayer-3.2.16.swf",{
 	// pause on first frame of the video
 	clip: {
 		autoPlay: false,
@@ -70,7 +70,7 @@ flowplayer("'.$pl.'","addons/flowplayer/flowplayer-3.2.15.swf",{
 	},
 	plugins:{
 		controls:{
-			autoHide: true
+			autoHide: '.($type=='mp3' ? 'false' : 'true').'
 		}
 	}
 });

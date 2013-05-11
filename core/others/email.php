@@ -54,7 +54,7 @@ class Email
 			array(
 				'content-type'=>$a['type'],
 				'charset'=>DISPLAY_CHARSET,
-				'content'=>$mess,
+				'content'=>str_replace('="go.php?','="',$mess),
 			),
 		);
 		foreach($a['files'] as $k=>&$v)

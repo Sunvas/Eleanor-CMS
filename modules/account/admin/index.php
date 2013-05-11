@@ -31,7 +31,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_reg_'],
 					'type'=>'input',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'htmlsafe'=>true,
@@ -41,7 +41,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letter_reg_fin'],
 					'descr'=>$lang['letter_reg_'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -53,7 +53,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letter_reg_act'],
 					'descr'=>$lang['letter_reg_act_'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -65,7 +65,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letter_reg_act_admin'],
 					'descr'=>$lang['letter_reg_'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -78,7 +78,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_act_success_'],
 					'type'=>'input',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'htmlsafe'=>true,
@@ -88,7 +88,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letter_act_success'],
 					'descr'=>$lang['letter_act_success_'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -100,7 +100,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letter_act_refused'],
 					'descr'=>$lang['letter_act_refused_'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -113,7 +113,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_passrem_'],
 					'type'=>'input',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'htmlsafe'=>true,
@@ -123,7 +123,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letterdescr'],
 					'descr'=>$lang['letter_passrem_'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -136,7 +136,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_passremfin_'],
 					'type'=>'input',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'htmlsafe'=>true,
@@ -146,7 +146,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letterdescr'],
 					'descr'=>$lang['letter_passremfin_'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -159,7 +159,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['letter_newemail_'],
 					'type'=>'input',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'htmlsafe'=>true,
@@ -169,7 +169,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letter_newemail_old'],
 					'descr'=>$lang['letter_newemail_'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -181,7 +181,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letter_newemail_new'],
 					'descr'=>$lang['letter_newemail_'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -209,7 +209,7 @@ if(isset($_GET['do']))
 				else
 				{
 					$file=$Eleanor->module['path'].'letters-'.LANGUAGE.'.php';
-					file_put_contents($file,'<?php return '.var_export($letter,true));
+					file_put_contents($file,'<?php return '.var_export($letter,true).';');
 				}
 			}
 			else
@@ -217,7 +217,7 @@ if(isset($_GET['do']))
 				{
 					$letters=array();
 					$file=$Eleanor->module['path'].'letters-'.$lng.'.php';
-					$letter=file_exists($file) ? (array)include $file : array();
+					$letter=file_exists($file) ? (array)include$file : array();
 					$letter+=array(
 						'reg_t'=>'',
 						'reg_fin'=>'',
@@ -231,8 +231,12 @@ if(isset($_GET['do']))
 						'newemail_old'=>'',
 						'newemail_new'=>'',
 					);
-					foreach($letter as $k=>&$v)
-						$values[$k]['value'][$lng]=$v;
+					if(Eleanor::$vars['multilang'])
+						foreach($letter as $k=>$v)
+							$values[$k]['value'][$lng]=$v;
+					else
+						foreach($letter as $k=>$v)
+							$values[$k]['value']=$v;
 				}
 			$values=$Eleanor->Controls->DisplayControls($controls,$values)+$values;
 			$title[]=$lang['letters'];
@@ -488,10 +492,10 @@ function InactiveUsers()
 	$offset=abs(($page-1)*$pp);
 	if($cnt and $offset>=$cnt)
 		$offset=max(0,$cnt-$pp);
-	$sort=isset($_GET['sort']) ? $_GET['sort'] : '';
+	$sort=isset($_GET['sort']) ? (string)$_GET['sort'] : '';
 	if(!in_array($sort,array('id','ip','name','email','group','full_name','last_visit')))
 		$sort='';
-	$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? $_GET['so'] : 'desc';
+	$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? (string)$_GET['so'] : 'desc';
 	if($so!='asc')
 		$so='desc';
 	if($sort)

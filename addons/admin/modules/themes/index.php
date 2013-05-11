@@ -114,7 +114,7 @@ elseif(isset($_GET['settpl'],$_GET['to']))
 	$nolic=empty($info['license']);
 	if(Eleanor::$our_query and ($nolic or $_SERVER['REQUEST_METHOD']=='POST'))
 	{
-		if(isset($_POST['submit']))
+		if($nolic or isset($_POST['submit']))
 		{
 			Eleanor::$Db->Update(P.'services',array('theme'=>$theme),'`name`='.Eleanor::$Db->Escape($name).' LIMIT 1');
 			Eleanor::$Cache->Lib->DeleteByTag('');

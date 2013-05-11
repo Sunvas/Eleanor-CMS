@@ -239,6 +239,9 @@ function BeAs($n)
 		if(Language::$main!=LANGUAGE)
 			$Eleanor->Url->special.=$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[Language::$main]['uri']),false,false);
 		if(isset($Eleanor->module,$Eleanor->module['name']))
-			$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
+		{
+			$pref=isset($Eleanor->module['id']) && $Eleanor->module['id']==Eleanor::$vars['prefix_free_module'] ? array() : array('module'=>$Eleanor->module['name']);
+			$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'])+$pref : $pref);
+		}
 	}
 }

@@ -15,9 +15,9 @@ $Eleanor->module['config']=include($Eleanor->module['path'].'config.php');
 switch($Eleanor->module['section'])
 {
 	case'groups':
-		return include dirname(__file__).'/groups.php';
+		return include __DIR__.'/groups.php';
 	case'online':
-		return include dirname(__file__).'/online.php';
+		return include __DIR__.'/online.php';
 }
 $lang=Eleanor::$Language->Load($Eleanor->module['path'].'user-*.php',$Eleanor->module['config']['n']);
 Eleanor::$Template->queue[]=$Eleanor->module['config']['usertpl'];
@@ -30,7 +30,7 @@ if($Eleanor->Url->is_static)
 }
 else
 {
-	$user=isset($_GET['user']) ? $_GET['user'] : 0;
+	$user=isset($_GET['user']) ? (string)$_GET['user'] : 0;
 	$do=isset($_GET['do']) ? (string)$_GET['do'] : false;
 }
 

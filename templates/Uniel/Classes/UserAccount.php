@@ -1250,7 +1250,7 @@ $(function(){
 			->end();
 
 		$C.=$Lst->begin()
-			.'<tr><td rowspan="5" style="padding:5px;width:10%">'.$avatar.'</td><td class="label" style="width:150px">'.static::$lang['nickname'].'</td><td>'.$sname.'</td></tr>'
+			.'<tr><td rowspan="'.(Eleanor::$vars['multilang'] ? 6 : 5).'" style="padding:5px;width:10%">'.$avatar.'</td><td class="label" style="width:150px">'.static::$lang['nickname'].'</td><td>'.$sname.'</td></tr>'
 			.($sname==$user['full_name'] ? '' : $Lst->item($lang['full_name'],$user['full_name']));
 
 		$Lst->item(static::$lang['registered'],Eleanor::$Language->Date($user['register'],'fdt'))

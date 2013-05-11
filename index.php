@@ -34,6 +34,7 @@ $Eleanor->Url->special=$Eleanor->Url->furl ? '' : Eleanor::$filename.'?';
 $Eleanor->started=$Eleanor->error=false;
 
 $m=false;
+$ending=$Eleanor->Url->GetEnding($Eleanor->Url->delimiter,false);
 if(Eleanor::$vars['multilang'])
 {
 	$isu=Eleanor::$Login->IsUser();
@@ -151,10 +152,10 @@ if(!$m)
 if($m)
 {
 	if(!isset($Eleanor->modules['ids'][$m]))
-		return MainPage($m);
+		return MainPage($m,$ending);
 	$R=Eleanor::$Db->Query('SELECT `id`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files` FROM `'.P.'modules` WHERE `id`='.(int)$Eleanor->modules['ids'][$m].' AND `active`=1 LIMIT 1');
 	if(!$a=$R->fetch_assoc())
-		return MainPage($m);
+		return MainPage($m,$ending);
 	if(!$a['multiservice'])
 	{
 		$files=unserialize($a['files']);
@@ -186,8 +187,10 @@ if($m)
 }
 elseif(isset($_REQUEST['direct']) and is_file($f=Eleanor::$root.'addons/direct/'.preg_replace('#[^a-z0-9]+#i','',(string)$_REQUEST['direct']).'.php'))
 	include$f;
+elseif(join($_GET))#Для запросов вида key_value
+	MainPage('',$ending);
 else
-	return MainPage();
+	MainPage();
 
 #Предопределенные функции.
 function Start($tpl='index',$code=200)
@@ -437,11 +440,11 @@ function ExitPage($code=404)
 	die;
 }
 
-function MainPage($tm=false)
+function MainPage($tm=false,$ending=false)
 {global$Eleanor;
 	do
 	{
-		if(!$tm)
+		if($tm===false)
 			break;
 
 		$R=Eleanor::$Db->Query('SELECT `id`,`sections`,`title_l`,`path`,`multiservice`,`file`,`files` FROM `'.P.'modules` WHERE `id`='.(int)Eleanor::$vars['prefix_free_module'].' AND `active`=1 LIMIT 1');
@@ -471,8 +474,8 @@ function MainPage($tm=false)
 			'sections'=>$a['sections'],
 		);
 
-		if($Eleanor->Url->is_static)
-			$Eleanor->Url->string=$tm.$Eleanor->Url->delimiter.$Eleanor->Url->string;
+		if($Eleanor->Url->is_static and $tm)
+			$Eleanor->Url->string=$tm.($Eleanor->Url->string===false ? $ending : $Eleanor->Url->delimiter.$Eleanor->Url->string);
 		if(Eleanor::$vars['multilang'] and Language::$main!=LANGUAGE)
 			$Eleanor->Url->SetPrefix(array('lang'=>Eleanor::$langs[Language::$main]['uri']));
 

@@ -333,7 +333,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['descr4new'],
 					'type'=>'input',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'htmlsafe'=>true,
@@ -343,7 +343,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letterdescr'],
 					'descr'=>$lang['descr4new'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -356,7 +356,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['descr4name'],
 					'type'=>'input',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'htmlsafe'=>true,
@@ -366,7 +366,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letterdescr'],
 					'descr'=>$lang['descr4name'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -379,7 +379,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['lettertitle'],
 					'descr'=>$lang['descr4name'],
 					'type'=>'input',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'htmlsafe'=>true,
@@ -389,7 +389,7 @@ if(isset($_GET['do']))
 					'title'=>$lang['letterdescr'],
 					'descr'=>$lang['descr4name'],
 					'type'=>'editor',
-					'multilang'=>true,
+					'multilang'=>Eleanor::$vars['multilang'],
 					'bypost'=>&$post,
 					'options'=>array(
 						'checkout'=>false,
@@ -434,8 +434,12 @@ if(isset($_GET['do']))
 						'pass_t'=>'',
 						'pass'=>'',
 					);
-					foreach($letter as $k=>&$v)
-						$values[$k]['value'][$lng]=$v;
+					if(Eleanor::$vars['multilang'])
+						foreach($letter as $k=>$v)
+							$values[$k]['value'][$lng]=$v;
+					else
+						foreach($letter as $k=>$v)
+							$values[$k]['value']=$v;
 				}
 			$values=$Eleanor->Controls->DisplayControls($controls,$values)+$values;
 			$title[]=$lang['letters'];
@@ -555,10 +559,10 @@ if(isset($_GET['do']))
 			$offset=abs(($page-1)*$pp);
 			if($cnt and $offset>=$cnt)
 				$offset=max(0,$cnt-$pp);
-			$sort=isset($_GET['sort']) ? $_GET['sort'] : '';
+			$sort=isset($_GET['sort']) ? (string)$_GET['sort'] : '';
 			if(!in_array($sort,array('enter','ip','location')))
 				$sort='';
-			$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? $_GET['so'] : 'desc';
+			$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? (string)$_GET['so'] : 'desc';
 			if($so!='asc')
 				$so='desc';
 			if($sort and ($sort!='enter' or $so!='desc'))
@@ -797,10 +801,10 @@ function ShowList()
 	$offset=abs(($page-1)*$pp);
 	if($cnt and $offset>=$cnt)
 		$offset=max(0,$cnt-$pp);
-	$sort=isset($_GET['sort']) ? $_GET['sort'] : '';
+	$sort=isset($_GET['sort']) ? (string)$_GET['sort'] : '';
 	if(!in_array($sort,array('id','name','email','groups','full_name','last_visit')))
 		$sort='';
-	$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? $_GET['so'] : 'desc';
+	$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? (string)$_GET['so'] : 'desc';
 	if($so!='asc')
 		$so='desc';
 	if($sort and ($sort!='id' or $so!='desc'))

@@ -386,10 +386,10 @@ class Categories_Manager extends Categories
 		$offset=abs(($page-1)*$pp);
 		if($cnt and $offset>=$cnt)
 			$offset=max(0,$cnt-$pp);
-		$sort=isset($_GET[$this->pp.'sort']) ? $_GET[$this->pp.'sort'] : '';
+		$sort=isset($_GET[$this->pp.'sort']) ? (string)$_GET[$this->pp.'sort'] : '';
 		if(!in_array($sort,array('id','title','pos')))
 			$sort='';
-		$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET[$this->pp.'so']) ? $_GET[$this->pp.'so'] : 'asc';
+		$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET[$this->pp.'so']) ? (string)$_GET[$this->pp.'so'] : 'asc';
 		if($so!='desc')
 			$so='asc';
 		if($sort)

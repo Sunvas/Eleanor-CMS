@@ -141,13 +141,13 @@ function Start($ch=array())
 			'description'=>false,
 		);
 	$image=$ch['image']
-		? '<image><url>'.$ch['image']['url'].'</url><title>'.$ch['image']['title'].'</title><link>'.$ch['image']['link'].'</link>'
+		? '<image><url>'.$ch['image']['url'].'</url><title><![CDATA['.$ch['image']['title'].']]></title><link>'.$ch['image']['link'].'</link>'
 			.($ch['image']['width'] ? '<width>'.(int)$ch['image']['width'].'</width>' : '')
 			.($ch['image']['height'] ? '<height>'.(int)$ch['image']['height'].'</height>' : '')
 			.($ch['image']['description'] ? '<description>'.htmlspecialchars($ch['image']['description'],ELENT,CHARSET,false).'</description>' : '')
 			.'</image>'
 		: '';
-	echo'<?xml version="1.0" encoding="'.DISPLAY_CHARSET.'"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>'.$ch['title'].'</title><description>'.$ch['description'].'</description><link>'.$ch['link'].'</link><language>'.$ch['language'].'</language><generator>Eleanor RSS Generator</generator><atom:link href="'.PROTOCOL.getenv('HTTP_HOST').htmlspecialchars(getenv('REQUEST_URI')).'" rel="self" type="application/rss+xml" />'
+	echo'<?xml version="1.0" encoding="'.DISPLAY_CHARSET.'"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title><![CDATA['.$ch['title'].']]></title><description>'.$ch['description'].'</description><link>'.$ch['link'].'</link><language>'.$ch['language'].'</language><generator>Eleanor RSS Generator</generator><atom:link href="'.PROTOCOL.getenv('HTTP_HOST').htmlspecialchars(getenv('REQUEST_URI')).'" rel="self" type="application/rss+xml" />'
 	.($ch['copyright'] ? '<copyright>'.htmlspecialchars($ch['copyright'],ELENT,CHARSET,false).'</copyright>' : '')
 	.($ch['managingEditor'] ? '<managingEditor>'.htmlspecialchars($ch['managingEditor'],ELENT,CHARSET,false).'</managingEditor>' : '')
 	.($ch['webMaster'] ? '<webMaster>'.htmlspecialchars($ch['webMaster'],ELENT,CHARSET,false).'</webMaster>' : '')
@@ -308,7 +308,7 @@ function ExitPage($code=403,$r=301)
 {global$Eleanor;
 	BeAs('user');
 	$Eleanor->Url->file=Eleanor::$services['user']['file'];
-	GoAway(PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>'errors','code'=>$code),false,true,Eleanor::$vars['furl']),$r);
+	GoAway(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>'errors','code'=>$code),false,''),$r);
 }
 
 function ApplyLang($gl=false)
@@ -353,7 +353,10 @@ function BeAs($n)
 		if(Language::$main!=LANGUAGE)
 			$Eleanor->Url->special.=$Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[Language::$main]['uri']),false,false);
 		if(isset($Eleanor->module,$Eleanor->module['name']))
-			$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
+		{
+			$pref=isset($Eleanor->module['id']) && $Eleanor->module['id']==Eleanor::$vars['prefix_free_module'] ? array() : array('module'=>$Eleanor->module['name']);
+			$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'])+$pref : $pref);
+		}
 
 		$theme=Eleanor::$Login->IsUser() ? Eleanor::$Login->GetUserValue('theme') : Eleanor::GetCookie('theme');
 		if(!Eleanor::$vars['templates'] or !in_array($theme,Eleanor::$vars['templates']))

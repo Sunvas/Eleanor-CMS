@@ -344,10 +344,10 @@ function ShowList()
 	$offset=abs(($page-1)*$pp);
 	if($cnt and $offset>=$cnt)
 		$offset=max(0,$cnt-$pp);
-	$sort=isset($_GET['sort']) ? $_GET['sort'] : '';
+	$sort=isset($_GET['sort']) ? (string)$_GET['sort'] : '';
 	if(!in_array($sort,array('id','emotion','path','status','pos','show')))
 		$sort='';
-	$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? $_GET['so'] : 'asc';
+	$so=$_SERVER['REQUEST_METHOD']!='POST' && $sort && isset($_GET['so']) ? (string)$_GET['so'] : 'asc';
 	if($so!='desc')
 		$so='asc';
 	if($sort)

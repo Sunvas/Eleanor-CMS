@@ -43,7 +43,7 @@ function DoFilter(&$files,$filter)
 
 }
 
-$goal=isset($_GET['goal']) ? $_GET['goal'] : '';
+$goal=isset($_GET['goal']) ? (string)$_GET['goal'] : '';
 $query=isset($_GET['query']) ? trim($_GET['query'],'\//') : '';
 
 switch($goal)

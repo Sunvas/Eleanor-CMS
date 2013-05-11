@@ -75,8 +75,7 @@ else
 					Eleanor::$etag=$data['etag'];
 					if(Eleanor::$modified and $data['last_mod'] and $data['last_mod']<=Eleanor::$modified and $etag and $etag==Eleanor::$etag)
 						return Start();
-					else
-						Eleanor::$modified=false;
+					Eleanor::$modified=false;
 				}
 				$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct(array('uri'=>$f));
 				$id=$f;
@@ -113,8 +112,7 @@ else
 				Eleanor::$etag=md5($uid.'-'.$mc['n'].$id);
 				if(Eleanor::$modified and Eleanor::$last_mod and Eleanor::$last_mod<=Eleanor::$modified and $etag and $etag==Eleanor::$etag)
 					return Start();
-				else
-					Eleanor::$modified=false;
+				Eleanor::$modified=false;
 			}
 
 			$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($id) : array('id'=>$id));

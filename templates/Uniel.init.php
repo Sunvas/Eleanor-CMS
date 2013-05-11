@@ -8,7 +8,7 @@
 	=====
 	*Pseudonym
 
-	Файл инициализации шаблона Audora
+	Файл инициализации шаблона Uniel
 */
 if(!defined('CMS'))die;
 Eleanor::$Language->Load('templates/Uniel/langs/*.php','tpl');

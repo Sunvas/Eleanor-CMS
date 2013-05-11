@@ -66,7 +66,7 @@ class AccountChangeEmail
 					);
 					return Eleanor::$Template->AcEmailChangeSteps12(2);
 				}
-				elseif(!isset($a['data']['secret']) or isset($_GET['secret'],$a['data']['secret']) and $_GET['secret']==$a['data']['secret'])
+				elseif(!isset($a['data']['secret']) or isset($_GET['secret'],$a['data']['secret']) and (string)$_GET['secret']==$a['data']['secret'])
 				{
 					Eleanor::$Db->Delete(P.'confirmation','`id`='.(int)$_GET['id'].' LIMIT 1');
 					UserManager::Update(array('email'=>$a['data']['email']));

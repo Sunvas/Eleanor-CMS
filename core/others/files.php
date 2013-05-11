@@ -113,7 +113,7 @@ class Files
 		header('Etag: '.$etag);
 		header('Date: '.gmdate('D, d M Y H:i:s').' GMT');
 		header('Last-Modified: '.gmdate('D, d M Y H:i:s',$lm).' GMT');
-		$fn=preg_match('#^[a-z0-9\-_\.]+$#i',$a['filename'])>0 ? $a['filename'] : '=?'.DISPLAY_CHARSET.'?B?'.base64_encode($a['filename']).'?=';
+		$fn=preg_match('#^[a-z0-9\-_\.\(\)]+$#i',$a['filename'])>0 ? $a['filename'] : '=?'.DISPLAY_CHARSET.'?B?'.base64_encode($a['filename']).'?=';
 		if($a['save'])
 			header('Content-Disposition: attachment; filename="'.$fn.'"');
 		else

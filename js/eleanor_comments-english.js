@@ -12,4 +12,4 @@
 	qqe:"Used {0} does not write this!",
 	answer:"Reply to comment {0}",
 	addc:"Add new comment"
-},"comments_")
+},"comments_");

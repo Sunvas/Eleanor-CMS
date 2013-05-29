@@ -25,73 +25,73 @@ CORE.BBEditor=function(opts)
 		switch(m[1])
 		{
 			case "bold":
-				f=function(){th.Bold();return false}
+				f=function(){th.Bold();return false};
 			break;
 			case "italic":
-				f=function(){th.Italic();return false}
+				f=function(){th.Italic();return false};
 			break;
 			case "uline":
-				f=function(){th.UnderLine();return false}
+				f=function(){th.UnderLine();return false};
 			break;
 			case "strike":
-				f=function(){th.Strike();return false}
+				f=function(){th.Strike();return false};
 			break;
 			case "left":
-				f=function(){th.Left();return false}
+				f=function(){th.Left();return false};
 			break;
 			case "center":
-				f=function(){th.Center();return false}
+				f=function(){th.Center();return false};
 			break;
 			case "right":
-				f=function(){th.Right();return false}
+				f=function(){th.Right();return false};
 			break;
 			case "justify":
-				f=function(){th.Justify();return false}
+				f=function(){th.Justify();return false};
 			break;
 			case "hr":
-				f=function(){th.Hr();return false}
+				f=function(){th.Hr();return false};
 			break;
 			case "url":
-				f=function(){th.Url();return false}
+				f=function(){th.Url();return false};
 			break;
 			case "mail":
-				f=function(){th.Mail();return false}
+				f=function(){th.Mail();return false};
 			break;
 			case "img":
-				f=function(){th.Img();return false}
+				f=function(){th.Img();return false};
 			break;
 			case "ul":
-				f=function(){th.Ul();return false}
+				f=function(){th.Ul();return false};
 			break;
 			case "ol":
-				f=function(){th.Ol();return false}
+				f=function(){th.Ol();return false};
 			break;
 			case "li":
-				f=function(){th.Li();return false}
+				f=function(){th.Li();return false};
 			break;
 			case "tm":
-				f=function(){th.Tm();return false}
+				f=function(){th.Tm();return false};
 			break;
 			case "c":
-				f=function(){th.C();return false}
+				f=function(){th.C();return false};
 			break;
 			case "r":
-				f=function(){th.R();return false}
+				f=function(){th.R();return false};
 			break;
 			case "tab":
-				f=function(){th.Tab();return false}
+				f=function(){th.Tab();return false};
 			break;
 			case "nobb":
-				f=function(){th.Nobb();return false}
+				f=function(){th.Nobb();return false};
 			break;
 			case "preview":
-				f=function(){th.Preview();return false}
+				f=function(){th.Preview();return false};
 			break;
 			case "plus":
-				f=function(){th.Plus();return false}
+				f=function(){th.Plus();return false};
 			break;
 			case "minus":
-				f=function(){th.Minus();return false}
+				f=function(){th.Minus();return false};
 			break;
 			case "font":
 				new DropDown({
@@ -113,16 +113,16 @@ CORE.BBEditor=function(opts)
 		switch(m[1])
 		{
 			case "color":
-				f=function(){var v=$(this).val();if(v){th.Color(v);$("option:first",this).prop("selected",true)}}
+				f=function(){var v=$(this).val();if(v){th.Color(v);$("option:first",this).prop("selected",true)}};
 			break;
 			case "font":
-				f=function(){var v=$(this).val();if(v){th.Font(v);$("option:first",this).prop("selected",true)}}
+				f=function(){var v=$(this).val();if(v){th.Font(v);$("option:first",this).prop("selected",true)}};
 			break;
 			case "background":
-				f=function(){var v=$(this).val();if(v){th.BackGround(v);$("option:first",this).prop("selected",true)}}
+				f=function(){var v=$(this).val();if(v){th.BackGround(v);$("option:first",this).prop("selected",true)}};
 			break;
 			case "size":
-				f=function(){var v=$(this).val();if(v){th.Size(v);$("option:first",this).prop("selected",true)}}
+				f=function(){var v=$(this).val();if(v){th.Size(v);$("option:first",this).prop("selected",true)}};
 			break;
 		}
 		if(f)
@@ -166,7 +166,7 @@ CORE.BBEditor=function(opts)
 			end-=cnt;
 		}
 		return val.substring(start,end);
-	}
+	};
 
 	/*
 		scorl и scorr - Корректировка выделения
@@ -174,102 +174,102 @@ CORE.BBEditor=function(opts)
 	this.SetSelectedText=function(tag,secondtag,F,scorl,scorr)
 	{
 		return SetSelectedText(textarea,tag,secondtag,F,scorl,scorr);
-	}
+	};
 
 	this.GetText=function()
 	{
 		return textarea.val();
-	}
+	};
 
 	this.SetText=function(text)
 	{
 		textarea.val(text);
-	}
+	};
 
 	this.Bold=function()
 	{
 		this.SetSelectedText("[b]","[/b]");
-	}
+	};
 
 	this.Strike=function()
 	{
 		this.SetSelectedText("[s]","[/s]");
-	}
+	};
 
 	this.Italic=function()
 	{
 		this.SetSelectedText("[i]","[/i]");
-	}
+	};
 
 	this.Li=function()
 	{
 		this.SetSelectedText("[*]");
-	}
+	};
 
 	this.Ol=function()
 	{
 		this.SetSelectedText("[ol]","[/ol]",function(t){return t ? "\n[*]"+t.replace(/\n/g,"\n[*]")+"\n" : "\n[*]\n[*]\n[*]\n"});
-	}
+	};
 
 	this.Ul=function()
 	{
 		this.SetSelectedText("[ul]","[/ul]",function(t){return t ? "\n[*]"+t.replace(/\n/g,"\n[*]")+"\n" : "\n[*]\n[*]\n[*]\n"});
-	}
+	};
 
 	this.UnderLine=function()
 	{
 		this.SetSelectedText("[u]","[/u]");
-	}
+	};
 
 	this.Hr=function()
 	{
 		this.SetSelectedText("[hr]");
-	}
+	};
 
 	this.Tab=function()
 	{
 		this.SetSelectedText("\t");
-	}
+	};
 
 	this.Left=function()
 	{
 		this.SetSelectedText("[left]","[/left]");
-	}
+	};
 
 	this.Right=function()
 	{
 		this.SetSelectedText("[right]","[/right]");
-	}
+	};
 
 	this.Center=function()
 	{
 		this.SetSelectedText("[center]","[/center]");
-	}
+	};
 
 	this.Justify=function()
 	{
 		this.SetSelectedText("[justify]","[/justify]");
-	}
+	};
 
 	this.C=function()
 	{
 		this.SetSelectedText("[c]");
-	}
+	};
 
 	this.R=function()
 	{
 		this.SetSelectedText("[r]");
-	}
+	};
 
 	this.Nobb=function()
 	{
 		this.SetSelectedText("[nobb]","[/nobb]");
-	}
+	};
 
 	this.Tm=function()
 	{
 		this.SetSelectedText("[tm]");
-	}
+	};
 
 	this.Url=function()
 	{
@@ -284,7 +284,7 @@ CORE.BBEditor=function(opts)
 		if(text==null)
 			return;
 		this.SetSelectedText("[url="+link+"]"+text+"[/url]",null,null,("[url="+link+"]").length,-6);
-	}
+	};
 
 	this.Img=function()
 	{
@@ -294,7 +294,7 @@ CORE.BBEditor=function(opts)
 		if(link==null)
 			return;
 		this.SetSelectedText("[img]"+link+"[/img]",null,null,5,-6);
-	}
+	};
 
 	this.Mail=function()
 	{
@@ -308,39 +308,38 @@ CORE.BBEditor=function(opts)
 		if(text==null)
 			return;
 		this.SetSelectedText("[email="+link+"]"+text+"[/email]",null,null,("[email="+link+"]").length,-8);
-	}
+	};
 
 	this.Color=function(cn)
 	{
 		if(cn)
 			this.SetSelectedText("[color="+cn+"]","[/color]");
-	}
+	};
 
 	this.BackGround=function(cn)
 	{
 		if(cn)
 			this.SetSelectedText("[background="+cn+"]","[/background]");
-	}
+	};
 
 	this.Size=function(s)
 	{
 		if(s)
 			this.SetSelectedText("[size="+s+"]","[/size]");
-	}
+	};
 
 	this.Font=function(s)
 	{
 		if(s)
 			this.SetSelectedText("[font="+s+"]","[/font]");
-	}
-
+	};
 
 	this.Plus=function()
 	{
 		textarea.stop(true,true).animate({
 			height:"+=75"
 		});
-	}
+	};
 
 	this.Minus=function()
 	{
@@ -354,11 +353,11 @@ CORE.BBEditor=function(opts)
 		textarea.stop(true,true).animate({
 			height:"-="+h
 		});
-	}
+	};
 
 	this.Preview=function()
 	{
-		var req={type:"preview",text:this.GetText(),editor:"bb"}
+		var req={type:"preview",text:this.GetText(),editor:"bb"};
 		if(opts.service)
 			req.service=opts.service;
 		if(opts.smiles)
@@ -366,13 +365,13 @@ CORE.BBEditor=function(opts)
 		if(opts.ownbb)
 			req.ownbb=true;
 		CORE.Ajax(req,opts.Preview);
-	}
+	};
 
 	this.IsEmail=function(C)
 	{
 		var A=new RegExp("(@.*@)|(\\.\\.)|(@\\.)|(^\\.)"),B=new RegExp("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$");
-		return(!A.test(C) && B.test(C))
-	}
+		return(!A.test(C) && B.test(C));
+	};
 
 	textarea.focus(function(){EDITOR.Active(opts.id);EDITOR.activebb=th});
 	EDITOR.New(
@@ -388,7 +387,7 @@ CORE.BBEditor=function(opts)
 			Set:function(text){ textarea.val(text); }
 		}
 	);
-}
+};
 
 function SetSelectedText(textarea,tag,secondtag,F,scorl,scorr)
 {
@@ -476,7 +475,7 @@ function SetSelectedText(textarea,tag,secondtag,F,scorl,scorr)
 	else
 		textarea.get(0).value+=tag + ((typeof(secondtag)=="string") ? secondtag : "");
 	textarea.change();
-}
+};
 
 (function()
 {

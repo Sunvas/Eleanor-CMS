@@ -40,8 +40,8 @@ function Voting(opts)
 		$.each(votings[opts.similar],function(k,v){
 			if(v!=th)
 				v.Switch(type,content);
-		})
-	}
+		});
+	};
 
 	this.Load=function(type,data)
 	{
@@ -61,7 +61,7 @@ function Voting(opts)
 			);
 		else
 			th.Switch(type);
-	}
+	};
 
 	if(typeof votings[opts.similar]=="undefined")
 		votings[opts.similar]=[];
@@ -77,14 +77,14 @@ function Voting(opts)
 				if(typeof da[v.name]=="undefined")
 					cnt++;
 				da[v.name]=true;
-			})
+			});
 			if(opts.qcnt==cnt)
 				th.Load("vote",CORE.Inputs2object($(this)));
 			else
 				alert(CORE.Lang("noaq"));
 		}
 		return false;
-	})
+	});
 }
 
 Voting.ChecksLimit=function(container,max)
@@ -112,4 +112,4 @@ Voting.ChecksLimit=function(container,max)
 			checks.prop("disabled",false);
 	};
 	checks.triggerHandler("click");
-}
+};

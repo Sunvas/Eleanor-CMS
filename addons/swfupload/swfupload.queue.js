@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Queue Plug-in
 	
 	Features:

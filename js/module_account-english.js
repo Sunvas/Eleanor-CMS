@@ -7,4 +7,4 @@
 	{
 		return"The password should be at least "+n+" character"+(n==1 ? "" : "s")+". Your - "+l+" character"+(l==1 ? "" : "s")+".";
 	}
-})
+});

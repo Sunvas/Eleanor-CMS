@@ -93,5 +93,5 @@ CORE.Archive=function(opts)
 			Go();
 		}
 		return false;
-	})
-}
+	});
+};

@@ -56,4 +56,4 @@ CORE.AcRegister={
 				}
 			);
 	}
-}
+};

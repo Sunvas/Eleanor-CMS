@@ -34,7 +34,7 @@ function VotingManager(id)
 						th=$(this);
 					th.find("input[type=text]").each(function(){
 						beg.push($(this).prop("class").split(/ /)[0].match(/(\d+)$/));
-					})
+					});
 					beg=beg.sort();
 					if(beg.length>2)
 						th.find("input[type=text]:not(.variant"+beg[0]+",.variant"+beg[1]+")").closest("tr").remove();
@@ -91,7 +91,7 @@ function VotingManager(id)
 				var d=$(this).data("max");
 				if(d>max)
 					max=d;
-			})
+			});
 
 			maxans.prop("max",variants.eq(0).find("tr:has(td)").size());
 			AppDaD();

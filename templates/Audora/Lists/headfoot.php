@@ -4,7 +4,7 @@ return array(
 	'meta'=>'<meta name="{0}" content="{1}" />',
 	'metahttp'=>'<meta http-equiv="content-type" content="{0}" />',
 	'base'=>'<base href="{0}" />',
-	'script'=>'<script type="text/javascript" src="{0}"></script>',
+	'script'=>'[0]<script type="text/javascript" src="{0}"></script>[/0]',
 	'link'=>function($a)
 	{
 		return'<link'.Eleanor::TagParams($a).' />';

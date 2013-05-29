@@ -1070,7 +1070,6 @@ $(function(){
 							CORE.Ajax(
 								{
 									module:"'.$GLOBALS['Eleanor']->module['name'].'",
-									lang:CORE.language,
 									"do":"settings",
 									event:"galleries"
 								},

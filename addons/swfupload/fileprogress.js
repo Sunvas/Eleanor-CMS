@@ -1,4 +1,4 @@
-/*
+﻿/*
 	A simple class for displaying file information and progress
 	Note: This is a demonstration only and not part of SWFUpload.
 	Note: Some have had problems adapting this class in IE7. It may not be suitable for your application.

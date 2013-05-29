@@ -441,7 +441,7 @@
 		return this.each(function() {
 			new $.Poshytip(this, opts);
 		});
-	}
+	};
 
 	// default settings
 	$.fn.poshytip.defaults = {

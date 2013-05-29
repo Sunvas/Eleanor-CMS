@@ -44,7 +44,7 @@ CORE.Comments=function(opts)
 				var z={};
 				z[n]=q;
 				q=z;
-			})
+			});
 			return q;
 		},
 		NewHash=function(h)
@@ -311,7 +311,7 @@ CORE.Comments=function(opts)
 
 	ModerateDo();
 	urls[opts.page]=window.location.href.replace(/#.+/,"");
-	HistoryGo=function(p){ GoToPage(p,false,false,true) }
+	HistoryGo=function(p){ GoToPage(p,false,false,true) };
 	this.GoToPage=GoToPage;
 	comments[opts.page]=container.children(".comments").find("script").remove().end();
 	paginators[opts.page]=container.children(".paginator").find("script").remove().end();
@@ -429,7 +429,7 @@ CORE.Comments=function(opts)
 		if(oldanswer)
 			oldanswer.show();
 		oldanswer=id ? p.find(".cb-qquote,.cb-answer").hide() : false;
-		$(opts.nc).find("[name=parent]").val(id ? id : opts.parent).end().find(".answerto").html(id ? CORE.Lang("comments_answer",["<a href=\""+window.location.href+"#comment"+id+"\">"+p.find(".cb-findcomment").text()+"</a>"])+" <a href=\"#\" class=\"cb-answer\">X</a>" : CORE.Lang("comments_addc"))
+		$(opts.nc).find("[name=parent]").val(id ? id : opts.parent).end().find(".answerto").html(id ? CORE.Lang("comments_answer",["<a href=\""+window.location.href+"#comment"+id+"\">"+p.find(".cb-findcomment").text()+"</a>"])+" <a href=\"#\" class=\"cb-answer\">X</a>" : CORE.Lang("comments_addc"));
 		return false;
 	});
 
@@ -561,7 +561,7 @@ CORE.Comments=function(opts)
 			}
 		$(this).val("");
 		return false;
-	})
+	});
 
 	setInterval(function(){
 		if(autoupdate && updateskip--==0)
@@ -570,4 +570,4 @@ CORE.Comments=function(opts)
 			updateskip=0;
 		}
 	},opts.autoupdate);
-}
+};

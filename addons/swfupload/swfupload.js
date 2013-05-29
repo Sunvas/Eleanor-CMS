@@ -1,9 +1,9 @@
-/**
+﻿/**
  * SWFUpload: http://www.swfupload.org, http://swfupload.googlecode.com
  *
  * mmSWFUpload 1.0: Flash upload dialog - http://profandesign.se/swfupload/,  http://www.vinterwebb.se/
  *
- * SWFUpload is (c) 2006-2007 Lars Huring, Olov Nilz�n and Mammon Media and is released under the MIT License:
+ * SWFUpload is (c) 2006-2007 Lars Huring, Olov Nilzйn and Mammon Media and is released under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
  * SWFUpload 2 is (c) 2007-2008 Jake Roberts and is released under the MIT License:
@@ -902,7 +902,7 @@ SWFUpload.prototype.swfuploadPreload = function () {
 	}
 	
 	return !!returnValue;
-}
+};
 
 // Private: This event is called by Flash when it has finished loading. Don't modify this.
 // Use the swfupload_loaded_handler event setting to execute custom code when SWFUpload has loaded.

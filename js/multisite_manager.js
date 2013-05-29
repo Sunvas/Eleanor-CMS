@@ -34,7 +34,7 @@ $(function(){
 					th.addClass("empty");
 				else
 					th.removeClass("empty");
-			}
+			};
 		sites=th.on("checkempty",F).find("[name^=\"sites[\"]");
 		F();
 	}).end()
@@ -56,7 +56,7 @@ $(function(){
 				$("a",this).each(function(){
 					if($(this).hasClass("selected"))
 						actcl=$(this);
-					$(this).data("rel",$(this).data("rel")+"-"+max)
+					$(this).data("rel",$(this).data("rel")+"-"+max);
 				}).Tabs();
 				if(actcl)
 					actcl.click();
@@ -89,12 +89,12 @@ $(function(){
 					$(this).addClass("redf");
 					can=false;
 				}
-			}).end()
+			}).end();
 		if(!can)
 			return false;
 		dbs.each(function(){
 			data[$(this).prop("name").match(/\[([^\]]+)\]$/)[1]]=$(this).is(":checkbox") ? $(this).prop("checked") ? 1 : 0 : $(this).val();
-		})
+		});
 		CORE.Ajax(
 			{
 				direct:"admin",
@@ -165,10 +165,10 @@ $(function(){
 				tosubmit++;
 				$(this).find(".checkdb:first").click();
 			}
-		})
+		});
 		waitsubmit=true;
 		can=tosubmit==0;
 
 		return can;
-	})
-})
+	});
+});

@@ -90,7 +90,7 @@ function DropDown(opts)
 			});
 	}
 	return RetObj;
-}
+};
 DropDown.current=false;
 
 $(document).click(function(e){

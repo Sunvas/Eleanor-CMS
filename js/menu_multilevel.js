@@ -77,7 +77,7 @@ $.fn.MultiLevelMenu=function(opts)
 		}).children("ul").each(function(){
 			AttachSubMenu($.extend({},opts,{type:"column",event:"mouseenter"}),$(this));
 		})
-	}
+	};
 
 	$.each(this,function(){
 		if($(this).data("menu"))
@@ -86,4 +86,4 @@ $.fn.MultiLevelMenu=function(opts)
 	});
 
 	return this;
-}
+};

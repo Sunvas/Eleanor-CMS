@@ -34,7 +34,7 @@ $Eleanor->Url->special=$Eleanor->Url->furl ? '' : Eleanor::$filename.'?';
 $Eleanor->started=$Eleanor->error=false;
 
 $m=false;
-$ending=$Eleanor->Url->GetEnding($Eleanor->Url->delimiter,false);
+$ending=$Eleanor->Url->GetEnding(array($Eleanor->Url->delimiter,$Eleanor->Url->ending),false);
 if(Eleanor::$vars['multilang'])
 {
 	$isu=Eleanor::$Login->IsUser();
@@ -466,6 +466,7 @@ function MainPage($tm=false,$ending=false)
 		$m=reset($a['sections']);
 		$a['title_l']=$a['title_l'] ? Eleanor::FilterLangValues(unserialize($a['title_l'])) : '';
 		$Eleanor->module=array(
+			'noprefix'=>true,
 			'name'=>$m,
 			'section'=>isset($Eleanor->modules['sections'][$m]) ? $Eleanor->modules['sections'][$m] : '',
 			'title'=>$a['title_l'],
@@ -476,6 +477,8 @@ function MainPage($tm=false,$ending=false)
 
 		if($Eleanor->Url->is_static and $tm)
 			$Eleanor->Url->string=$tm.($Eleanor->Url->string===false ? $ending : $Eleanor->Url->delimiter.$Eleanor->Url->string);
+		else
+			$Eleanor->Url->string.=$ending;
 		if(Eleanor::$vars['multilang'] and Language::$main!=LANGUAGE)
 			$Eleanor->Url->SetPrefix(array('lang'=>Eleanor::$langs[Language::$main]['uri']));
 

@@ -25,4 +25,4 @@
 	enter_image_addr:"Enter the address of the image",
 	wrong_email:"You have entered an incorrect e-mail! Continue?",
 	hide:"Hide"
-})
+});

@@ -105,14 +105,14 @@ class Editor extends BaseClass
 					'id'=>$id,
 					'name'=>$name,
 					'value'=>$value,
-					'extra'=>isset($extra['bb']) ? $extra['bb'] : (isset($extra['no']) ? $extra['no'] : array()),
+					'extra'=>isset($extra['bb']) ? (array)$extra['bb'] : (isset($extra['no']) ? (array)$extra['no'] : array()),
 					'smiles'=>$this->smiles,
 					'ownbb'=>$this->ownbb,
 				));
 			break;
 			case'ckeditor':
 				array_push($GLOBALS['jscripts'],'addons/ckeditor/ckeditor.js');
-				$html=Eleanor::Text($name,$value,(isset($extra['ckeditor']) ? $extra['ckeditor'] : array())+array('id'=>$id)).'<script type="text/javascript">//<![CDATA[
+				$html=Eleanor::Text($name,$value,array('id'=>$id)+(isset($extra['ckeditor']) ? (array)$extra['ckeditor'] : array())).'<script type="text/javascript">//<![CDATA[
 //$(function(){
 	if(typeof CKEDITOR.instances.'.$id.'!="undefined")
 		try{ CKEDITOR.instances.'.$id.'.destroy(); }catch(e){};

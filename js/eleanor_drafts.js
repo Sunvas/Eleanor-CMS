@@ -49,7 +49,7 @@ CORE.DRAFT=function(opts)
 			ClearTO();
 			to=setTimeout(th.Save,opts.interval*1000);
 		}
-	}
+	};
 
 	this.Save=function()//Функция насильного сохранения черновика
 	{
@@ -69,9 +69,9 @@ CORE.DRAFT=function(opts)
 			oa=f.attr("action")||"";
 			ot=f.attr("target")||"";
 			f.submit(ClearTO);
-		}
+		};
 		f.prop({action:opts.url,target:fn}).submit().prop({action:oa,target:ot});
-	}
+	};
 
 	opts.form.on("change",":input",th.Change);
-}
+};

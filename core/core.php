@@ -1283,7 +1283,7 @@ final class Eleanor extends BaseClass
 			'sessions',
 			array(
 				'type'=>self::$is_bot ? 'bot' : $uid ? 'user' : 'guest',
-				'user_id'=>$uid,
+				'user_id'=>(int)$uid,
 				'!enter'=>'NOW()',
 				'!expire'=>'\''.date('Y-m-d H:i:s').'\' + INTERVAL '.(isset(self::$vars['time_online'][$to]) ? (int)self::$vars['time_online'][$to] : 900).' SECOND',
 				($uid>0 ? 'ip_user' : 'ip_guest')=>self::$ip,

@@ -98,7 +98,7 @@ var EC={
 			service:this.service,
 			newtype:newtype,
 			onlyprev:onlyprev ? 1 : 0
-		}
+		};
 		data[this.pref_sett]=o;
 		data[this.pref_prev]=d;
 		CORE.Ajax(
@@ -126,7 +126,7 @@ var EC={
 						move:".updown",
 						replace:"<tr style=\"height:35px\"><td colspan=\"4\">&nbsp;</td></tr>"
 					}).find("tr").width(t.innerWidth());
-				}
+				};
 
 			t.on("click",".sb-plus",function(){
 				var tr=$(this).closest("tr");
@@ -138,7 +138,7 @@ var EC={
 					tr.remove();
 				else
 					tr.find("[type=text]").val("");
-			})
+			});
 
 			AppDaD();
 
@@ -156,4 +156,4 @@ var EC={
 			}).change();
 		});
 	}
-}
+};

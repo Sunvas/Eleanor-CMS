@@ -80,7 +80,7 @@ $(function(){
 		$("#sections .delete").show();
 		AppyDragAndDrop();
 		return false;
-	})
+	});
 
 	if($("#sections li").size()==1)
 		$("#sections .delete").hide();

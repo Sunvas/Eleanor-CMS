@@ -82,7 +82,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 						$.each(s,function(k,v){
 							r+=$.isNumeric(k) && CORE.Lang(v) ? CORE.Lang(v) : v;
 							r+="\n";
-						})
+						});
 						s=r;
 					}
 					if(s!="")
@@ -99,11 +99,11 @@ var uagent=navigator.userAgent.toLowerCase(),
 			beforeSend:info.OnBegin,
 			success:function(r)
 			{
-				function Soccess()
+				var Soccess=function()
 				{
 					try{info.OnSuccess(r.data)}catch(e){}
 					$.each(r.head,function(i,H){ CORE.AddHead(i,H) });
-				}
+				};
 				if(!r || r.error || typeof r.data=="undefined")
 					try{info.OnFail(r.error ? r.error : r||"No data")}catch(e){}
 				else if($.isArray(r.scripts) && r.scripts.length>0)
@@ -317,7 +317,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 			var st=e.state||false;
 			if(st && st.f!==false && typeof CORE.history[st.f]!="undefined")
 				CORE.history[st.f](st.data);
-		}
+		};
 		if(window.addEventListener)
 			window.addEventListener("popstate",OnPop,false);
 		else
@@ -392,7 +392,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 						name:k,
 						value:v
 					}).appendTo(form);
-				})
+				});
 				form.appendTo("body").submit();
 			}
 		);
@@ -483,7 +483,7 @@ EDITOR=
 		if(id && this.editors[id])
 			this.active=id;
 	}
-}
+};
 CORE.MSQueue=$.Deferred();
 $(function(){
 	if(CORE.mssites || CORE.msisuser)
@@ -538,4 +538,4 @@ $(function(){
 			sic.prop("disabled",false);
 		},500);
 	});
-});
+}); 

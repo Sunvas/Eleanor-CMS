@@ -29,9 +29,9 @@ CORE.UPLOADER=function(opts)
 		{
 			showpreviews:localStorage.getItem("showpreviews-"+opts.uniq),
 			dopreviews:localStorage.getItem("dopreviews-"+opts.uniq),
-			watermark:localStorage.getItem("watermark-"+opts.uniq),
+			watermark:localStorage.getItem("watermark-"+opts.uniq)
 		}
-	)
+	);
 	if(!opts.container)
 		return false;
 	
@@ -47,7 +47,7 @@ CORE.UPLOADER=function(opts)
 	this.Get=function(n)
 	{
 		return typeof opts[n]=="undefined" ? false : opts[n];
-	}
+	};
 
 	this.CreateFolder=function()
 	{
@@ -68,7 +68,7 @@ CORE.UPLOADER=function(opts)
 					th.Update();
 				}
 			);
-	}
+	};
 
 	this.CreateFile=function()
 	{
@@ -100,7 +100,7 @@ CORE.UPLOADER=function(opts)
 				alert(err);
 			}
 		);
-	}
+	};
 
 	this.EditFile=function(n)
 	{
@@ -129,7 +129,7 @@ CORE.UPLOADER=function(opts)
 				alert(err);
 			}
 		);
-	}
+	};
 
 	this.SaveFile=function(n,content,c)
 	{
@@ -150,7 +150,7 @@ CORE.UPLOADER=function(opts)
 				th.Update();
 			}
 		);
-	}
+	};
 
 	this.Update=function()
 	{
@@ -174,7 +174,7 @@ CORE.UPLOADER=function(opts)
 							setTimeout(function(){
 								th.Update();
 							},200);
-					}
+					};
 				CORE.ShowLoading();
 				$.each(e.dataTransfer.files,function(k,v){
 					var data=new FormData();
@@ -198,12 +198,12 @@ CORE.UPLOADER=function(opts)
 			needdrop=false;
 		}
 		this.Go("");
-	}
+	};
 
 	this.GoPage=function(p)
 	{
 		this.Go("",p);
-	}
+	};
 
 	this.Go=function(to,page)
 	{
@@ -260,7 +260,7 @@ CORE.UPLOADER=function(opts)
 				}
 			}
 		);
-	}
+	};
 
 	this.DeleteFile=function(n,F)
 	{
@@ -283,7 +283,7 @@ CORE.UPLOADER=function(opts)
 				th.Update();
 			}
 		);
-	}
+	};
 
 	this.Rename=function(n)
 	{
@@ -306,7 +306,7 @@ CORE.UPLOADER=function(opts)
 				th.Update();
 			}
 		);
-	}
+	};
 
 	this.InsertLink=function(link,e)
 	{
@@ -321,7 +321,7 @@ CORE.UPLOADER=function(opts)
 		}
 		else
 			prompt(CORE.Lang("copy_and_paste"),link);
-	}
+	};
 
 	this.InsertAttach=function(link,preview,e)
 	{
@@ -332,12 +332,12 @@ CORE.UPLOADER=function(opts)
 			EDITOR.Insert(link,th.editor);
 		else
 			prompt(CORE.Lang("copy_and_paste"),link);
-	}
+	};
 
 	this.Open=function(url)
 	{
 		window.open(window.location.protocol+"//"+window.location.hostname+CORE.site_path+opts.realpath+url);
-	}
+	};
 
 	this.ShowPreviews=function()
 	{
@@ -345,7 +345,7 @@ CORE.UPLOADER=function(opts)
 			localStorage.setItem("showpreviews-"+opts.uniq,opts.showpreviews);
 		else
 			localStorage.removeItem("showpreviews-"+opts.uniq);
-	}
+	};
 
 	this.DoPreviews=function()
 	{
@@ -355,7 +355,7 @@ CORE.UPLOADER=function(opts)
 			localStorage.setItem("dopreviews-"+opts.uniq,opts.dopreviews);
 		else
 			localStorage.removeItem("dopreviews-"+opts.uniq);
-	}
+	};
 
 	this.WaterMark=function()
 	{
@@ -365,7 +365,7 @@ CORE.UPLOADER=function(opts)
 			localStorage.setItem("watermark-"+opts.uniq,opts.watermark);
 		else
 			localStorage.removeItem("watermark-"+opts.uniq);
-	}
+	};
 
 	$(opts.container).on("click",".up-create_file",function(){
 		th.CreateFile();
@@ -413,7 +413,7 @@ CORE.UPLOADER=function(opts)
 	}).on("click",".up-open",function(){
 		th.Open($(this).data("goal"));
 		return false;
-	})
+	});
 
 	setTimeout(function(){
 		if(opts.watermark)
@@ -432,7 +432,7 @@ CORE.UPLOADER=function(opts)
 			th.ShowPreviews();
 		}
 	},100);
-}
+};
 
 $.extend(
 	CORE.UPLOADER,
@@ -623,4 +623,4 @@ $.extend(
 			}
 		}
 	}
-)
+);

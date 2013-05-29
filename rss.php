@@ -342,6 +342,7 @@ function BeAs($n)
 	Eleanor::$service=$n;
 	ApplyLang();
 
+	$queue=isset(Eleanor::$Template->queue) ? Eleanor::$Template->queue : array();
 	if($n=='user')
 	{
 		$Eleanor->Url->furl=Eleanor::$vars['furl'];
@@ -365,4 +366,5 @@ function BeAs($n)
 	}
 	else
 		Eleanor::InitTemplate(Eleanor::$services[$n]['theme']);
+	Eleanor::$Template->queue+=$queue;
 }

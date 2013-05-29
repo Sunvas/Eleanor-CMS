@@ -9,7 +9,7 @@
 */
 $.fn.MainMenu=function(opts)
 {
-	opts=$.extend(
+	opts=$.extend( 
 		{
 			contents:[],
 			selclass:"selected",
@@ -112,13 +112,13 @@ $.fn.MainMenu=function(opts)
 
 			tabs[n].get(0).n=n++;
 			$(content).hide();
-		}
+		};
 
 	this.each(function(){
 		AddMenu(this);
 	});
 	return this;
-}
+};
 
 function ProgressList(m,cron)
 {

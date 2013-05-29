@@ -142,7 +142,7 @@ function AddEditUser(id)
 		return false;
 	})
 	.on("click",".gallery",function(){
-		var v=$(this).data("gallery")
+		var v=$(this).data("gallery");
 		if(galleries[v])
 			$("#avatar-select").html(galleries[v]);
 		else

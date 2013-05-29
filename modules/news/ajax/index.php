@@ -128,7 +128,7 @@ else
 				Eleanor::$Db->Update($mc['t'],array('r_total'=>$a['r_total'],'r_average'=>$a['r_average'],'r_sum'=>$a['r_sum']),'`id`='.$id.' LIMIT 1');
 				Eleanor::$Db->Update($mc['tl'],array('!last_mod'=>'NOW()'),'`id`='.$id.' LIMIT 1');
 				$TCH->Add($id,$mark,Eleanor::$vars['publ_mark_users'],Eleanor::$vars['publ_remark'].'d');
-				Result(Eleanor::$Template->Rating($id,false,$a['r_total'],$a['r_average'],$a['r_sum'],$marks));
+				Result(Eleanor::$Template->Rating($id,false,$a['r_total'],$a['r_average'],$a['r_sum'],$marks,false));
 			}
 			else
 				Error();

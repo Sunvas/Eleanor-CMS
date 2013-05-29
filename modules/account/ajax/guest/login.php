@@ -10,7 +10,7 @@
 */
 class AccountLogin
 {
-	public static function Handler($master)
+	public static function Handler()
 	{
 		$errors=array();
 		$captcha=Eleanor::$vars['antibrute']==2 && (isset($_POST['check']) || ($ct=Eleanor::GetCookie('Captcha_'.get_class(Eleanor::$Login)) and $ct>time()));
@@ -27,7 +27,7 @@ class AccountLogin
 			try
 			{
 				Eleanor::$Login->Login((array)$_POST['login'],array('captcha'=>$captcha));
-				Result(true);
+				return Result(true);
 			}
 			catch(EE$E)
 			{

@@ -93,11 +93,11 @@ $.fn.Tabs=function(opts)
 			tab.Switch=function()
 			{
 				Switch(tab.n);
-			}
+			};
 			tab.Remove=function()
 			{
 				Remove(tab.n);
-			}
+			};
 			tabs[n].get(0).n=n++;
 			$(content).hide();
 		};
@@ -108,4 +108,4 @@ $.fn.Tabs=function(opts)
 	var g=localStorage.getItem(storekey);
 	Switch(g ? g : 0);
 	return this;
-}
+};

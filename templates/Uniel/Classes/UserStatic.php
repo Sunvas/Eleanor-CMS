@@ -93,7 +93,7 @@ class TplUserStatic
 					break;
 				elseif($nonp)
 				{
-					$c.=self::SubstanceItems(array_slice($a,$n));
+					$c.=self::SubstanceItems(array_slice($a,$n,count($a)-$n,true));
 					$nonp=false;
 				}
 				continue;

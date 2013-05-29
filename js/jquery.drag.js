@@ -82,7 +82,7 @@ $.fn.DragAndDrop=function(opts)
 											tmp.insertBefore(lists[li][idr].o);
 											lists[li][idr].o.insertBefore(r);
 											r.replaceAll(tmp);
-										}while(ii<idr)
+										}while(ii<idr);
 										idr-=0.5;
 									}
 									else if(ii>idr)
@@ -166,7 +166,7 @@ $.fn.DragAndDrop=function(opts)
 				if(items.length>0)
 					lists.push(items);
 			});
-		}
+		};
 	ScanItems();
 	return this;
-}
+};

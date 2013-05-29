@@ -34,7 +34,7 @@ function One2AllCheckboxes(parents,main,subnames,and)
 						var checked=checks.filter(":checked").size();
 						main.prop("checked",and ? checked==checks.size() : checked>0).triggerHandler("change",[false,true]);
 					}
-				})
+				});
 			});
 			checks.filter(":first").triggerHandler("change");
 		};

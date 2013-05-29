@@ -3,11 +3,11 @@
 	Скелет основного шаблона.
 */
 if(!defined('CMS'))die;
-$ltpl=Eleanor::$Language['tpl'];?><!DOCTYPE html>
+$ltpl=Eleanor::$Language['tpl'];
+$GLOBALS['jscripts'][]='js/menu_multilevel.js';?><!DOCTYPE html>
 <html prefix="og: http://ogp.me/ns#">
 <head>
 {head}
-<script type="text/javascript" src="js/menu_multilevel.js"></script>
 <link media="screen" href="<?php echo$theme?>style/main.css" type="text/css" rel="stylesheet" />
 <link rel="shortcut icon" href="favicon.ico" />
 </head>

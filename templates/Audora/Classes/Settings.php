@@ -518,7 +518,7 @@ return $a[\'value\'];',array('style'=>'width:100%','readonly'=>'readonly')).'</d
 		return Eleanor::$Template->Cover($c,$errors).'<script type="text/javascript">//<![CDATA[
 $(function(){
 	$(".linetabs a").Tabs();
-	$("[name=multilang]:first").click(function(){
+	var ml=$("[name=multilang]:first").click(function(){
 		if(typeof Multilangs=="undefined")
 			return;
 		var th=$(this);
@@ -529,10 +529,15 @@ $(function(){
 		}
 		else
 		{
-			Multilangs.opts.where=$("#tab0");//.add($("#tab2 tr.temp").slice(1));
-			Multilangs.opts.Switch(["'.Language::$main.'"],['.join(',',$langs).'],$("#edit-control-preview").add($("#tab2 tr.temp").slice()));
+			Multilangs.opts.where=$("#tab0");
+			Multilangs.opts.Switch([],['.join(',',$langs).'],$("#edit-control-table, #tab2 tr.temp"));
 		}
-	}).triggerHandler("click");
+	});
+	ml.triggerHandler("click");
+
+	EC.OnChange=function(){
+		ml.triggerHandler("click");
+	};
 });//]]></script>';
 	}
 }

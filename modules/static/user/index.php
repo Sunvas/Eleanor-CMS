@@ -39,7 +39,7 @@ else
 	if($Eleanor->Url->is_static)
 	{
 		$Eleanor->Url->GetEnding(array($Eleanor->Url->ending,$Eleanor->Url->delimiter),true);
-		$_GET+=$Eleanor->Url->Parse();
+		$_GET+=$Eleanor->Url->Parse(array(),false);
 		if(isset($_GET['']))
 			$trace=(array)$_GET[''];
 	}
@@ -115,7 +115,7 @@ else
 				Eleanor::$modified=false;
 			}
 
-			$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($id) : array('id'=>$id));
+			$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($id) : array(''=>array('id'=>$id)));
 			OwnBB::$opts['alt']=$data['title'];
 			$data['text']=OwnBB::Parse($data['text']);
 			if(!$pr=$Eleanor->Url->Prefix())
@@ -130,14 +130,14 @@ else
 					$tmp[$a['id']]=$a['title'];
 				foreach($in as &$v)
 					if(isset($tmp[$v]))
-						$data['navi'][]=array($tmp[$v],$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($v) : array('id'=>$v)));
+						$data['navi'][]=array($tmp[$v],$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($v) : array(''=>array('id'=>$v))));
 			}
 			$data['navi'][]=array($data['title'],false);
 
 			$data['seealso']=array();
 			$R=Eleanor::$Db->Query('SELECT `id`,`title` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `status`=1 AND `parents`=\''.$parents.'\' ORDER BY `pos` ASC');
 			while($a=$R->fetch_assoc())
-				$data['seealso'][]=array($a['title'],$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($a['id']) : array('id'=>$a['id'])));
+				$data['seealso'][]=array($a['title'],$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($a['id']) : array(''=>array('id'=>$a['id']))));
 		}
 		if($data['meta_title'])
 			$title=$data['meta_title'];
@@ -192,7 +192,7 @@ function Substance()
 	$title[]=Eleanor::$Language[$Eleanor->module['config']['n']]['substance'];
 	$ol=$Eleanor->Plug->GetOrderedList();
 	foreach($ol as $k=>&$v)
-		$v['_a']=$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($k) : array('id'=>$k));
+		$v['_a']=$Eleanor->Url->Construct($Eleanor->Url->furl ? $Eleanor->Plug->GetUri($k) : array(''=>array('id'=>$k)));
 	$s=Eleanor::$Template->StaticSubstance($ol);
 	$Eleanor->origurl=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Prefix(!$Eleanor->Url->furl);
 	Start();

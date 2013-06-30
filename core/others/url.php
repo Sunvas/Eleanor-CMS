@@ -206,7 +206,7 @@ class Url extends BaseClass
 	 * @param bool $cut Флаг удаления обработанных значений из обрабатываемой ссылки
 	 * @param bool $pd Флаг обработки значений с дефисом, как разделитель ключ=>значения
 	*/
-	public function ParseToValue($p,$cut=true,$pd=true)
+	public function ParseToValue($p,$cut=true,$pd=false)
 	{
 		if(!$this->is_static)
 			return isset($_GET[$p]) ? $_GET[$p] : false;
@@ -259,6 +259,7 @@ class Url extends BaseClass
 		if($rep===false)#ToDo! parent::framework
 			$rep=Eleanor::$vars['url_rep_space'];
 
+		$s=str_replace('\'','',$s);
 		$s=preg_replace(array('`('.preg_quote($this->defis,'`').'|'.preg_quote($this->delimiter,'`').'|[\\\\=\s#,"\'\\/:*\?&\+<>%\|])+`','#('.preg_quote($this->ending,'#').')+$#'),$rep,$s);
 		$qrep=preg_quote($rep,'#');
 		$s=preg_replace('#('.$qrep.')+#',$rep,$s);

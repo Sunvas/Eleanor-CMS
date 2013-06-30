@@ -1,4 +1,4 @@
-/*!
+﻿/*!
 	jQuery Colorbox v1.4.15 - 2013-04-22
 	(c) 2013 Jack Moore - jacklmoore.com/colorbox
 	license: http://www.opensource.org/licenses/mit-license.php

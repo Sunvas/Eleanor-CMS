@@ -431,6 +431,10 @@ $ser=array(
 	'lfm'=>'include Eleanor::$root.\'\'addons/admin/options/lfm.php\'\'',
 	'time_online'=>'include Eleanor::$root.\'\'addons/admin/options/time_online.php\'\'',
 	'sg'=>'include Eleanor::$root.\'\'modules/static/optionsg.php\'\'',
+);
+
+#Russian
+$ser=array(
 	'pd'=>'array(
 		\'\'options\'\'=>array(
 			\'\'ignore\'\'=>\'\'Игнорировать\'\',
@@ -475,7 +479,7 @@ $ser=array(
 			\'\'s\'\'=>\'\'Наименьшей стороны\'\',
 		),
 	)',
-);
+)+$ser;
 $secret=uniqid();
 
 if($rus)
@@ -611,6 +615,7 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serial
 QUERY;
 #[E] Russian
 
+#Ukrainian
 $ser=array(
 	'pd'=>'array(
 		\'\'options\'\'=>array(
@@ -657,7 +662,7 @@ $ser=array(
 		),
 	)',
 )+$ser;
-#Ukrainian
+
 if($ukr)
 	$insert['config_l(ukr)']=<<<QUERY
 INSERT INTO `{$prefix}config_l` (`id`,`language`, `title`, `descr`, `value`, `serialized`, `default`, `extra`, `startgroup`) VALUES
@@ -790,6 +795,8 @@ INSERT INTO `{$prefix}config_l` (`id`,`language`, `title`, `descr`, `value`, `se
 (113, 'ukrainian', 'Максимальна позитивна оцінка', 'Значення не може бути нижче нуля. Для відключення позитивних оцінок, введіть 0', '3', 0, '3', '', '')
 QUERY;
 #[E] Ukrainian
+
+#English
 $ser=array(
 	'pd'=>'array(
 		\'\'options\'\'=>array(
@@ -836,7 +843,7 @@ $ser=array(
 		),
 	)',
 )+$ser;
-#English
+
 if($eng)
 	$insert['config_l(eng)']=<<<QUERY
 INSERT INTO `{$prefix}config_l` (`id`,`language`,`title`,`descr`,`value`,`serialized`,`default`,`extra`,`startgroup`) VALUES
@@ -1072,24 +1079,40 @@ $ser=array(
 	1=>array(
 		serialize(array(
 			'news'=>array(
-				'russian'=>array('новости','news'),
-				'english'=>array('news'),
-				'ukrainian'=>array('новини','news'),
+				'russian'=>array('новости','news'),#Russian
+				'english'=>array('news'),#English
+				'ukrainian'=>array('новини','news'),#Ukrainian
 			),
 		)),
-		serialize(array('russian'=>'Новости','english'=>'News','ukrainian'=>'Новини')),
-		serialize(array('russian'=>'Управление новостями Вашего сайта','english'=>'Management news your site','ukrainian'=>'Керування новинами Вашого сайту')),
+		serialize(array(
+			'russian'=>'Новости',#Russian
+			'english'=>'News',#English
+			'ukrainian'=>'Новини',#Ukrainian
+		)),
+		serialize(array(
+			'russian'=>'Управление новостями Вашего сайта',#Russian
+			'english'=>'Management news your site',#English
+			'ukrainian'=>'Керування новинами Вашого сайту',#Ukrainian
+		)),
 	),
 	array(
 		serialize(array(
 			'static'=>array(
-				'russian'=>array('страницы','pages'),
-				'english'=>array('pages'),
-				'ukrainian'=>array('сторінки','pages'),
+				'russian'=>array('страницы','pages'),#Russian
+				'english'=>array('pages'),#English
+				'ukrainian'=>array('сторінки','pages'),#Ukrainian
 			),
 		)),
-		serialize(array('russian'=>'Статические страницы','english'=>'Static pages','ukrainian'=>'Статичні сторінки')),
-		serialize(array('russian'=>'Модуль для создания статических страниц','english'=>'Module for configurating static pages','ukrainian'=>'Модуль для створення статичних сторінок')),
+		serialize(array(
+			'russian'=>'Статические страницы',#Russian
+			'english'=>'Static pages',#English
+			'ukrainian'=>'Статичні сторінки',#Ukrainian
+		)),
+		serialize(array(
+			'russian'=>'Модуль для создания статических страниц',#Russian
+			'english'=>'Module for configurating static pages',#English
+			'ukrainian'=>'Модуль для створення статичних сторінок',#Ukrainian
+		)),
 	),
 	array(
 		serialize(array(
@@ -1097,85 +1120,125 @@ $ser=array(
 				''=>array('_mainpage'),
 			),
 		)),
-		serialize(array('russian'=>'Главная страница','english'=>'Main page','ukrainian'=>'Головна сторінка')),
-		serialize(array('russian'=>'Конструктор главной страницы сайта','english'=>'Constructor homepage site','ukrainian'=>'Конструктор головної сторінки сайту')),
+		serialize(array(
+			'russian'=>'Главная страница',#Russian
+			'english'=>'Main page',#English
+			'ukrainian'=>'Головна сторінка',#Ukrainian
+		)),
+		serialize(array(
+			'russian'=>'Конструктор главной страницы сайта',#Russian
+			'english'=>'Constructor homepage site',#English
+			'ukrainian'=>'Конструктор головної сторінки сайту',#Ukrainian
+		)),
 	),
 	array(
 		serialize(array(
 			'errors'=>array(
-				'russian'=>array('ошибки','errors'),
-				'english'=>array('errors'),
-				'ukrainian'=>array('помилки','errors'),
+				'russian'=>array('ошибки','errors'),#Russian
+				'english'=>array('errors'),#English
+				'ukrainian'=>array('помилки','errors'),#Ukrainian
 			),
 		)),
-		serialize(array('russian'=>'Страницы ошибок','english'=>'Error pages','ukrainian'=>'Сторінки помилок')),
-		serialize(array('russian'=>'Настройка страниц ошибок Вашего сайта (404,403,...)','english'=>'Configuring error pages your site (404,403, etc...)','ukrainian'=>'Налаштування сторінок помилок Вашого сайту (404,403,...)')),
+		serialize(array(
+			'russian'=>'Страницы ошибок',#Russian
+			'english'=>'Error pages',#English
+			'ukrainian'=>'Сторінки помилок',#Ukrainian
+		)),
+		serialize(array(
+			'russian'=>'Настройка страниц ошибок Вашего сайта (404,403,...)',#Russian
+			'english'=>'Configuring error pages your site (404,403, etc...)',#English
+			'ukrainian'=>'Налаштування сторінок помилок Вашого сайту (404,403,...)',#Ukrainian
+		)),
 	),
 	array(
 		str_replace('\'','\'\'',serialize(array(
 			'contacts'=>array(
-				'russian'=>array('обратная связь','contacts'),
-				'english'=>array('contacts'),
-				'ukrainian'=>array('зворотній зв\'язок','contacts'),
+				'russian'=>array('обратная связь','contacts'),#Russian
+				'english'=>array('contacts'),#English
+				'ukrainian'=>array('зворотній зв\'язок','contacts'),#Ukrainian
 			),
 		))),
-		serialize(array('russian'=>'Обратная связь','english'=>'Feedback','ukrainian'=>'Зворотній зв&#039;язок')),
-		serialize(array('russian'=>'Настройка обратной связи','english'=>'Settings of feedback','ukrainian'=>'Налаштування зворотнього зв&#039;язку')),
+		serialize(array(
+			'russian'=>'Обратная связь',#Russian
+			'english'=>'Feedback',#English
+			'ukrainian'=>'Зворотній зв&#039;язок',#Ukrainian
+		)),
+		serialize(array(
+			'russian'=>'Настройка обратной связи',#Russian
+			'english'=>'Settings of feedback',#English
+			'ukrainian'=>'Налаштування зворотнього зв&#039;язку',#Ukrainian
+		)),
 	),
 	array(
 		serialize(array(
 			'search'=>array(
-				'russian'=>array('поиск','search'),
-				'english'=>array('search'),
-				'ukrainian'=>array('пошук','search'),
+				'russian'=>array('поиск','search'),#Russian
+				'english'=>array('search'),#English
+				'ukrainian'=>array('пошук','search'),#Ukrainian
 			),
 		)),
-		serialize(array('russian'=>'Google поиск','english'=>'Google search','ukrainian'=>'Google пошук')),
+		serialize(array(
+			'russian'=>'Google поиск',#Russian
+			'english'=>'Google search',#English
+			'ukrainian'=>'Google пошук',#Ukrainian
+		)),
 	),
 	array(
 		serialize(array(
 			'menu'=>array(
-				'russian'=>array('карта сайта','меню','menu','sitemap'),
-				'english'=>array('sitemap','menu'),
-				'ukrainian'=>array('мапа сайту','меню','menu','sitemap'),
+				'russian'=>array('карта сайта','меню','menu','sitemap'),#Russian
+				'english'=>array('sitemap','menu'),#English
+				'ukrainian'=>array('мапа сайту','меню','menu','sitemap'),#Ukrainian
 			),
 		)),
-		serialize(array('russian'=>'Меню сайта','english'=>'Menu','ukrainian'=>'Меню сайту')),
+		serialize(array(
+			'russian'=>'Меню сайта',
+			'english'=>'Menu',#English
+			'ukrainian'=>'Меню сайту',#Ukrainian
+		)),
 	),
 	array(
 		serialize(array(
 			'account'=>array(
-				'russian'=>array('аккаунт','account'),
-				'english'=>array('account'),
-				'ukrainian'=>array('аккаунт','account'),
+				'russian'=>array('аккаунт','account'),#Russian
+				'english'=>array('account'),#English
+				'ukrainian'=>array('аккаунт','account'),#Ukrainian
 			),
 			'groups'=>array(
-				'russian'=>array('группы','groups'),
-				'english'=>array('groups'),
-				'ukrainian'=>array('групи','groups'),
+				'russian'=>array('группы','groups'),#Russian
+				'english'=>array('groups'),#English
+				'ukrainian'=>array('групи','groups'),#Ukrainian
 			),
 			'user'=>array(
-				'russian'=>array('пользователь','user'),
-				'english'=>array('user'),
-				'ukrainian'=>array('user','користувач'),
+				'russian'=>array('пользователь','user'),#Russian
+				'english'=>array('user'),#English
+				'ukrainian'=>array('user','користувач'),#Ukrainian
 			),
 			'online'=>array(
-				'russian'=>array('кто-онлайн','online'),
-				'english'=>array('online'),
-				'ukrainian'=>array('хто-онлайн','online'),
+				'russian'=>array('кто-онлайн','online'),#Russian
+				'english'=>array('online'),#English
+				'ukrainian'=>array('хто-онлайн','online'),#Ukrainian
 			),
 		)),
-		serialize(array('russian'=>'Аккаунт пользователя','english'=>'User account','ukrainian'=>'Аккаунт користувача')),
+		serialize(array(
+			'russian'=>'Аккаунт пользователя',#Russian
+			'english'=>'User account',#English
+			'ukrainian'=>'Аккаунт користувача',#Ukrainian
+		)),
 	),
 	array(
 		serialize(array(
 			'context'=>array(
-				'russian'=>array('контекстные ссылки','context links'),
-				'english'=>array('context links'),
-				'ukrainian'=>array('контекстні посилання','context links'),
+				'russian'=>array('контекстные ссылки','context links'),#Russian
+				'english'=>array('context links'),#English
+				'ukrainian'=>array('контекстні посилання','context links'),#Ukrainian
 			),
 		)),
-		serialize(array('russian'=>'Контекстные ссылки','english'=>'Сontext links','ukrainian'=>'Контекстні посилання')),
+		serialize(array(
+			'russian'=>'Контекстные ссылки',#Russian
+			'english'=>'Сontext links',#English
+			'ukrainian'=>'Контекстні посилання',#Ukrainian
+		)),
 	),
 );
 $insert['modules']=<<<QUERY
@@ -1306,9 +1369,21 @@ $insert['upgrade_hist']="INSERT INTO `{$prefix}upgrade_hist` VALUES (1, '".ELEAN
 $insert['users_site']="INSERT INTO `{$prefix}users_site` (`id`) VALUES (0)";
 
 $ser=array(
-	1=>serialize(array('russian'=>'Дневная очистка','english'=>'Daytime cleaning','ukrainian'=>'Щоденна очистка')),
-	serialize(array('russian'=>'Дневной ping','english'=>'Daytime ping','ukrainian'=>'Щоденний ping')),
-	serialize(array('russian'=>'Информер','english'=>'Informer','ukrainian'=>'Інформер')),
+	1=>serialize(array(
+		'russian'=>'Дневная очистка',#Russian
+		'english'=>'Daytime cleaning',#English
+		'ukrainian'=>'Щоденна очистка',#Ukrainian
+	)),
+	serialize(array(
+		'russian'=>'Дневной ping',#Russian
+		'english'=>'Daytime ping',#English
+		'ukrainian'=>'Щоденний ping',#Ukrainian
+	)),
+	serialize(array(
+		'russian'=>'Информер',#Russian
+		'english'=>'Informer',#English
+		'ukrainian'=>'Інформер',#Ukrainian
+	)),
 );
 
 $dateo=date_offset_get(date_create());

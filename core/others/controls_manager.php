@@ -99,7 +99,6 @@ class Controls_Manager extends Controls
 
 		$corrlo=$this->langs && !$co['bypost'];
 		$fopts=Eleanor::FilterLangValues($co['options']);
-
 		foreach($setts as $k=>&$v)
 		{
 			if($corrlo)
@@ -224,11 +223,11 @@ class Controls_Manager extends Controls
 			{
 				if(empty($setts[$k]['multilang']))
 					foreach($this->langs as &$l)
-						$options[$k][$l]=$v;
+						$options[$l][$k]=$v;
 				else
 					foreach($this->langs as &$l)
 						if(isset($v[$l]))
-							$options[$k][$l]=$v[$l];
+							$options[$l][$k]=$v[$l];
 			}
 			$result['options']=$options;
 			if($prevlang and in_array($prevlang,$this->langs))
@@ -306,10 +305,7 @@ class Controls_Manager extends Controls
 				if($co['multilang'])
 				{
 					foreach($co['value'] as &$v)
-					{
-						$value=$v ? Strings::ParseParams($v) : array();
-						$v=$value;
-					}
+						$v=$v ? Strings::ParseParams($v) : array();
 					return$co['value'];
 				}
 				return$co['value'] ? Strings::ParseParams($co['value']) : array();

@@ -177,7 +177,10 @@ class ApiStatic extends BaseClass
 						break;
 					}
 		}
-		$params[]=array($lastu,'id'=>$id);
+		if($lastu)
+			$params[]=array($lastu);
+		else
+			$params['']=array('id'=>$id);
 		return$params;
 	}
 

@@ -215,7 +215,7 @@ class Files
 	 * Копирование файлов и каталогов
 	 *
 	 * @param string $source Источник: путь откуда будет происходить копирование
-	 * @param string $dest Назначени: путь, куда будет происходить копирование
+	 * @param string $dest Назначение: путь, куда будет происходить копирование
 	 */
 	public static function Copy($source,$dest)
 	{

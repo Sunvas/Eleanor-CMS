@@ -457,10 +457,16 @@ class Controls extends BaseClass
 			case'input':
 			case'text':
 				$co['options']+=array('extra'=>array(),'htmlsafe'=>false);
+
+				#Заплатка для формы редактирования контрола, поддержка поля Input type
+				if(isset($co['options']['type']) and !isset($co['options']['extra']['type']))
+					$co['options']['extra']['type']=$co['options']['type'];
+
 				if($co['bypost'])
 					$co['value']=$this->GetPostVal($co['name'],$co['value']);
 				if(is_array($co['value']))
 					$co['value']=join(',',$co['value']);
+
 				$html=Eleanor::$co['type']($co['controlname'],$co['value'],$co['options']['extra'],$co['options']['htmlsafe']);
 			break;
 			case'items':

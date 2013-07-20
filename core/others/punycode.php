@@ -72,7 +72,7 @@ class Punycode
 			$old_idx=$idx;
 			$w=1;
 			$k=36;
-			do
+			while(true)
 			{
 				$cp=ord($s[$enco_idx++]);
 				$digit=$cp-48<10 ? $cp-22 : ($cp-65<26 ? $cp-65 : ($cp-97<26 ? $cp-97 : 36));
@@ -82,7 +82,7 @@ class Punycode
 					break;
 				$w*=36-$t;
 				$k+=36;
-			}while(true);
+			}
 			$delta=floor(($idx-$old_idx)/$first);
 			$first=2;
 			$delta+=floor($delta/($decol+1));
@@ -173,7 +173,7 @@ class Punycode
 				{
 					$q=$delta;
 					$k=36;
-					do
+					while(true)
 					{
 						if($k<=$bias+1)
 							$t=1;
@@ -188,7 +188,7 @@ class Punycode
 						$ex.=self::EncodeDigit($t+($q-$t)%(36-$t));
 						$q=floor(($q-$t)/(36-$t));
 						$k+=36;
-					}while(true);
+					}
 					$ex.=self::EncodeDigit($q);
 
 					$delta=floor($delta/$first);

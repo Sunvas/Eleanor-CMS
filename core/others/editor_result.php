@@ -268,7 +268,7 @@ class Editor_Result extends BaseClass
 						break;
 					}
 					$qpo++;
-				}while(false);
+				}
 			}
 			#Наши комментарии мы не трогаем вообще
 			if(strpos($ft,'!-- NP')!==0)

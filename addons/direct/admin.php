@@ -8,7 +8,7 @@
 	=====
 	*Pseudonym
 */
-if(!defined('CMS'))die;
+if(!defined('CMS') or !function_exists('BeAs'))die;
 $orig=Eleanor::$service;
 if(Eleanor::$service!='upload')
 {

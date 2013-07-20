@@ -27,7 +27,7 @@ class TPLAdminNews
 		$GLOBALS['Eleanor']->module['navigation']=array(
 			array($links['list'],$lang['list'],'act'=>$act=='list',
 				'submenu'=>array(
-					$links['newlist'] ? array($links['newlist']['link'],sprintf(static::$lang['news'],$links['links']['cnt']),'act'=>false) : false,
+					$links['newlist'] ? array($links['newlist']['link'],sprintf(static::$lang['news'],$links['newlist']['cnt']),'act'=>false) : false,
 					array($links['add'],static::$lang['add'],'act'=>$act=='add'),
 				),
 			),

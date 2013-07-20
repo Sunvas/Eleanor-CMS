@@ -310,7 +310,7 @@ class Comments extends BaseClass
 			include Eleanor::$root.'core/others/comments/ownbb-quote.php';
 
 		$THIS=$this;#PHP 5.4 Убрать этот костыль
-		CommentsQoute::$findlink=function($id) use ($THIS){ return$THIS->Url(array($this->upref.'find'=>$id)); };
+		CommentsQoute::$findlink=function($id) use ($THIS){ return$THIS->Url(array($THIS->upref.'find'=>$id)); };
 
 		if($parent)
 		{

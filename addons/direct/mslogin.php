@@ -8,7 +8,7 @@
 	=====
 	*Pseudonym
 */
-if(!defined('CMS'))die;
+if(!defined('CMS') or !function_exists('BeAs'))die;
 
 $type=isset($_REQUEST['type']) ? $_REQUEST['type'] : '';
 $service=isset($_REQUEST['service']) ? (string)$_REQUEST['service'] : '';

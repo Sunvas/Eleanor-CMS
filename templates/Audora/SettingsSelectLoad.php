@@ -19,6 +19,6 @@ else
 $lang=Eleanor::$Language->Load($theme.'langs/controls-*.php',false);
 echo Eleanor::Select($name,Eleanor::Option($lang['select_source_code'],'eval',$value=='eval').Eleanor::Option($lang['select_source_input'],'opts',$value=='opts'),array('id'=>'s-opts-'.$u)),
 	'<br /><div id="s-eval-',$u,'">',Eleanor::Text(($ise=is_array($values['eval'])) ? $values['eval'][0] : $values['eval'],$ise ? $values['eval'][1] : ''),
-	'</div><table id="s-table-',$u,'" class="tabstyle" style="width:420px"><tr class="first tablethhead"><th></th><th>',$lang['select_value1'],
-	'</th><th>',$lang['select_value'],'</th><th style="width:60px">',Eleanor::$Language['tpl']['functs'],'</th></tr>',$trs,
+	'</div><table id="s-table-',$u,'" class="tabstyle" style="width:420px"><tr class="first tablethhead"><th></th><th>',$lang['select_value'],
+	'</th><th>',$lang['select_value1'],'</th><th style="width:60px">',Eleanor::$Language['tpl']['functs'],'</th></tr>',$trs,
 	'</table><script type="text/javascript">/*<![CDATA[*/EC.Select("',$u,'")//]]></script>';

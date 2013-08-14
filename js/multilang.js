@@ -38,7 +38,7 @@ function MultilangChecks(opts)
 	{
 		var act=[],
 			deac=[],
-			mainch=$(th.opts.general).prop("checked");
+			mainch=th.opts.general ? $(th.opts.general).prop("checked") : false;
 
 		$(th.opts.langs).each(function(){
 			if(!mainch && this.checked)
@@ -62,13 +62,14 @@ function MultilangChecks(opts)
 			th.opts.Switch(act,deac,th.opts.where);
 	};
 	$(th.opts.langs).click(th.Click);
-	$(th.opts.general).click(function(){
-		th.Click();
-		if(this.checked)
-			$(th.opts.langs).parents("div:first").fadeOut("fast");
-		else
-			$(th.opts.langs).parents("div:first").fadeIn("fast");
-	});
+	if(th.opts.general)
+		$(th.opts.general).click(function(){
+			th.Click();
+			if(this.checked)
+				$(th.opts.langs).parents("div:first").fadeOut("fast");
+			else
+				$(th.opts.langs).parents("div:first").fadeIn("fast");
+		});
 	
 	setTimeout(th.Click,50);
 }

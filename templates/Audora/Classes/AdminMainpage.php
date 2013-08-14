@@ -138,7 +138,7 @@ class TPLAdminMainpage
 			->begin()
 			->item(static::$lang['module'],Eleanor::Select('id',$mops,array('tabindex'=>1)))
 			->item(array(static::$lang['pos'],'tip'=>static::$lang['pos_'],Eleanor::Input('pos',$values['pos'],array('type'=>'number','tabindex'=>2,'min'=>1))))
-			->button($back.Eleanor::Button('OK','submit',array('tabindex'=>10)).($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>3,'onclick'=>'if(confirm(\''.$ltpl['are_you_sure'].'\'))window.location=\''.$links['delete'].'\'')) : ''))
+			->button($back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add'],'submit',array('tabindex'=>10)).($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>3,'onclick'=>'if(confirm(\''.$ltpl['are_you_sure'].'\'))window.location=\''.$links['delete'].'\'')) : ''))
 			->end()
 			->endform();
 		return Eleanor::$Template->Cover((string)$Lst,$error);

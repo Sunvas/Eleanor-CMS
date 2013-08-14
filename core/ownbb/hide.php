@@ -31,7 +31,7 @@ class OwnBbCode_hide extends OwnBbCode
 		$l=Eleanor::$Language['ownbb'];
 		try
 		{
-			return Eleanor::$Template->HiddenText($l['hidden']);
+			return isset(Eleanor::$Template) ? Eleanor::$Template->HiddenText($l['hidden']) : '['.$l['hidden'].']';
 		}
 		catch(EE$E)
 		{

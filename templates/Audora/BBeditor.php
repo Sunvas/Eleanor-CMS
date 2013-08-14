@@ -7,11 +7,11 @@
 		name - имя контрола редактора
 		value - значение редактора
 		extra - дополнительные параметры textarea
-		smiles - флаг включения смайлов в предпросмотре
-		ownbb - флаг включения "своих" BB кодов в предпросмотре
+		preview - параметры AJAX запроса на предпросмотр
 	)
 */
-if(!defined('CMS'))die;
+defined('CMS')||die;
+$GLOBALS['jscripts'][]='js/eleanor_bb.js';
 $GLOBALS['head']['bbeditor']='<link rel="stylesheet" type="text/css" href="templates/Audora/style/bbeditor.css" media="screen" />';
 
 $lang=Eleanor::$Language->Load($theme.'langs/bbeditor-*.php',false);
@@ -122,7 +122,7 @@ $lang=Eleanor::$Language->Load($theme.'langs/bbeditor-*.php',false);
 </div>
 
 </div>
-<script type="text/javascript">/*<![CDATA[*/new CORE.BBEditor({id:"<?php echo$id,'"',$ownbb ? ',ownbb:true' : '',$smiles ? ',smiles:true' : '',',service:"',Eleanor::$service?>",Preview:function(html){
+<script type="text/javascript">/*<![CDATA[*/new CORE.BBEditor({id:"<?php echo$id,'",preview:',Eleanor::JsVars($preview,false,true)?>,Preview:function(html){
 	{
 		var pr=$("<div class=\"preview\">").width($("#ed-<?php echo$id?>").parent().width()).insertAfter($("#ed-<?php echo$id?>").parent().children("div.preview").remove().end().find("div.bb_yourpanel")),
 			hide=$("<div style=\"text-align:center\"><input type=\"button\" class=\"button\" value=\""+CORE.Lang('hide')+"\" /></div>").find("input").click(function(){

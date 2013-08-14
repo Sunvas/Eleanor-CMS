@@ -7,6 +7,8 @@ return array(
 	'TAG_EXISTS'=>'This tag already exists!',
 	'add'=>'Add news',
 	'add_tag'=>'Add tag',
+	'savet'=>'Save tag',
+	'save'=>'Save news',
 	'cats_manage'=>'Categories',
 	'addf'=>'Additional fields',
 	'news'=>'Awaiting moderation (%s)',

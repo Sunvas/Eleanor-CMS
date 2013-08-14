@@ -19,6 +19,7 @@ class Editor extends BaseClass
 		$editors=array(),#Перечень редакторов. Смотри в конструктор
 		$visual=array(),#Перечень визуальных редакторов
 
+		$preview=array('type'=>'preview','service'=>'user'),#AJAX параметры превью-запроса
 		$imgalt='';#Автоматическое прописывание альтов к картинкам
 
 	protected
@@ -100,7 +101,11 @@ class Editor extends BaseClass
 		switch($this->type)
 		{
 			case'bb':#Родной ББ
-				$GLOBALS['jscripts'][]='js/eleanor_bb.js';
+				$preview=$this->preview;
+				if($this->smiles)
+					$preview['smiles']=1;
+				if($this->ownbb)
+					$preview['ownbb']=1;
 				$html=Eleanor::$Template->{isset($extra['bbtpl']) ? $extra['bbtpl'] : 'BBeditor'}(array(
 					'id'=>$id,
 					'name'=>$name,
@@ -108,6 +113,7 @@ class Editor extends BaseClass
 					'extra'=>isset($extra['bb']) ? (array)$extra['bb'] : (isset($extra['no']) ? (array)$extra['no'] : array()),
 					'smiles'=>$this->smiles,
 					'ownbb'=>$this->ownbb,
+					'preview'=>$preview,
 				));
 			break;
 			case'ckeditor':

@@ -37,6 +37,7 @@ return array(
 	'deleting'=>'You have successfully removed news &quot;%s&quot;',
 	'waitmod'=>'Waiting for moderation',
 
+	'save'=>'Save news',
 	'nodraft'=>'Without draft',
 	'title'=>'Title',
 	'maincat'=>'Main category',

@@ -8,6 +8,7 @@
 	=====
 	*Pseudonym
 */
+defined('CMS')||die;
 global$Eleanor;
 if(empty($Eleanor->module['ptags']) or empty($Eleanor->module['pid']))
 	return'';
@@ -35,7 +36,7 @@ $near=array_keys(array_reverse($near,true));
 if(isset($near[5]))
 	$near=array_slice($near,0,5);
 
-$R=Eleanor::$Db->Query('SELECT `id`,`uri`,`lcats`,`title` FROM `'.$mc['tl'].'` WHERE `id`'.Eleanor::$Db->In($near).' AND `lstatus`=1');
+$R=Eleanor::$Db->Query('SELECT `id`,`uri`,`lcats`,`title` FROM `'.$mc['tl'].'` WHERE `id`'.Eleanor::$Db->In($near).' AND `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1');
 if($R->num_rows>0)
 {
 	echo'<ul>';

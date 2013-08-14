@@ -187,7 +187,7 @@ $(function(){
 		$Lst->s.='<tr><td colspan="2">'.$uploader.'</td></tr>';
 
 		$Lst->button(
-			$back.Eleanor::Button('OK','submit',array('tabindex'=>10))
+			$back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add'],'submit',array('tabindex'=>10))
 			.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>11,'onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 			.Eleanor::Input('_draft',$id,array('type'=>'hidden'))
 			.Eleanor::$Template->DraftButton($links['draft'],1)

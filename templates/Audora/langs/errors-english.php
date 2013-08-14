@@ -3,6 +3,7 @@ return array(
 	#For Classes/AdminErrors.php
 	'INCORRECT_EMAIL'=>'E-mail address is entered incorrectly!',
 	'add'=>'Add page',
+	'save'=>'Save page',
 	'enabled'=>'Enabled',
 	'disabled'=>'Disabled',
 	'to_pages'=>'Errors on page: %s',

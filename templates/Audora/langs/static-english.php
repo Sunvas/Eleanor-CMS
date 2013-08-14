@@ -2,6 +2,7 @@
 return array(
 	#For Classes/AdminStatic.php
 	'add'=>'Add page',
+	'save'=>'Save page',
 	'not_found'=>'Static pages are not found',
 	'to_pages'=>'Per page: %s',
 	'subpages'=>'Subpages:',

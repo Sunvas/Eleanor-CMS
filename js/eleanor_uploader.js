@@ -329,7 +329,7 @@ CORE.UPLOADER=function(opts)
 		preview=preview ? " preview="+opts.realpath+preview : "";
 		link="[attach="+opts.realpath+link+preview+"]";
 		if (!e || !e.altKey)
-			EDITOR.Insert(link,th.editor);
+			EDITOR.Insert(link,"",th.editor);
 		else
 			prompt(CORE.Lang("copy_and_paste"),link);
 	};

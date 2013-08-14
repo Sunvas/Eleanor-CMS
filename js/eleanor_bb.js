@@ -11,11 +11,12 @@
 	http://forum.vingrad.ru/forum/topic-35775.html
 	http://forum.vingrad.ru/forum/topic-84449.html
 */
-CORE.BBEditor=function(opts)
+CORE.BBEditor=function(o)
 {
-	opts=$.extend({id:"",service:false,smiles:false,ownbb:false,Preview:function(){}},opts);
+	o=$.extend({id:"",Preview:function(){},preview:{type:"preview"}},o);
+	this.options=o;
 	var th=this,
-		div=$("#ed-"+opts.id),
+		div=$("#ed-"+o.id),
 		textarea=div.find("textarea:first");
 	div.find("a").each(function(){
 		var m=$(this).prop("className").match(/bb_([a-z0-9\-]+)/),
@@ -98,7 +99,7 @@ CORE.BBEditor=function(opts)
 					selector:this,
 					left:true,
 					top:false,
-					rel:"#ed-"+opts.id+" .bb_fonts",
+					rel:"#ed-"+o.id+" .bb_fonts",
 					limiter:textarea
 				});
 			break;
@@ -357,14 +358,7 @@ CORE.BBEditor=function(opts)
 
 	this.Preview=function()
 	{
-		var req={type:"preview",text:this.GetText(),editor:"bb"};
-		if(opts.service)
-			req.service=opts.service;
-		if(opts.smiles)
-			req.smiles=true;
-		if(opts.ownbb)
-			req.ownbb=true;
-		CORE.Ajax(req,opts.Preview);
+		CORE.Ajax($.extend({},o.preview,{text:this.GetText()}),o.Preview);
 	};
 
 	this.IsEmail=function(C)
@@ -373,9 +367,9 @@ CORE.BBEditor=function(opts)
 		return(!A.test(C) && B.test(C));
 	};
 
-	textarea.focus(function(){EDITOR.Active(opts.id);EDITOR.activebb=th});
+	textarea.focus(function(){EDITOR.Active(o.id);EDITOR.activebb=th;});
 	EDITOR.New(
-		opts.id,
+		o.id,
 		{
 			Embed:function(type,data)
 			{

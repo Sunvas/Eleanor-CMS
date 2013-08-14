@@ -3,6 +3,7 @@ return array(
 	#For Classes/AdminMainpage.php
 	'list'=>'Modules',
 	'add'=>'Add module',
+	'save'=>'Save module',
 	'pos'=>'Position',
 	'pos_'=>'Leave blank to append',
 	'services'=>'Services',

@@ -192,7 +192,7 @@ $(function(){
 			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst->button(
-			$back.Eleanor::Button('OK','submit',array('tabindex'=>10))
+			$back.Eleanor::Button($id ? static::$lang['savet'] : static::$lang['add_tag'],'submit',array('tabindex'=>10))
 			.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>11,'onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 			.Eleanor::Input('_draft','t'.$id,array('type'=>'hidden'))
 			.Eleanor::$Template->DraftButton($links['draft'],1)
@@ -449,7 +449,7 @@ $(function(){
 		->submitline((string)$uploader)
 		->submitline(
 			$back
-			.Eleanor::Button('Ok','submit',array('tabindex'=>20))
+			.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add'],'submit',array('tabindex'=>20))
 			.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 			.Eleanor::Input('_draft','n'.$id,array('type'=>'hidden'))
 			.Eleanor::$Template->DraftButton($links['draft'],1)

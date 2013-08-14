@@ -1,5 +1,5 @@
 <?php
-$tfn=$tip=false;
+$tfn=false;
 return array(
 	'form'=>function($a=array())
 	{
@@ -8,9 +8,11 @@ return array(
 		$a+=array('method'=>'post');
 		return'<form'.Eleanor::TagParams($a).'>';
 	},
-	'endform'=>function() use (&$tip)
+	'endform'=>function()
 	{
-		$GLOBALS['jscripts'][]='js/jquery.poshytip.js';
+		$tip=defined('POSHYTIP');
+		if($tip)
+			$GLOBALS['jscripts'][]='js/jquery.poshytip.js';
 		return'</form>'.($tip ? '<script type="text/javascript">//<![CDATA[
 		$(function(){
 			$("span.labinfo").poshytip({
@@ -38,7 +40,7 @@ return array(
 		$a['tr']+=array('class'=>'infolabel first');
 		return'<tr'.Eleanor::TagParams($a['tr']).'>'.(empty($a[1]) ? '<td colspan="2">'.$a[0].'</td>' : '<td>'.$a[0].'</td><td>'.$a[1].'</td>').'</tr>';
 	},
-	'item'=>function($a) use (&$tip)
+	'item'=>function($a)
 	{
 		if(func_num_args()>1)
 			$a=func_get_args();
@@ -51,7 +53,8 @@ return array(
 			$a['td2']=array();
 		$t=!empty($a['tip']);
 		if($t)
-			$tip=true;
+			defined('POSHYTIP')||define('POSHYTIP',1);
+
 		return'<tr'.Eleanor::TagParams($a['tr']).'><td'.Eleanor::TagParams($a['td1']).'>'.($t ? '<span class="labinfo" title="'.htmlspecialchars($a['tip'],ENT_COMPAT,CHARSET).'">(?)</span> ' : '').$a[0].(empty($a['imp']) ? '' : ' <span class="imp">*</span>').(empty($a['descr']) ? '' : '<br /><span class="small">'.$a['descr'].'</span>').'</td><td'.Eleanor::TagParams($a['td2']).'>'.$a[1].'</td></tr>';
 	},
 	'button'=>'<tr><td colspan="2" style="text-align:center">{0}</td></tr>',

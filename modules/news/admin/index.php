@@ -895,7 +895,7 @@ function Save($id)
 		$voting=false;
 
 	$Eleanor->VotingManager->langs=Eleanor::$vars['multilang'] ? $langs : array();
-	$values['voting']=$Eleanor->VotingManager->Save($voting);
+	$values['voting']=$Eleanor->VotingManager->Save($voting,$errors);
 	if(is_array($values['voting']))
 		$errors+=$values['voting'];
 

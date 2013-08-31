@@ -415,7 +415,6 @@ elseif($id or $puri)
 	else
 		$cu=false;
 
-
 	$category=$Eleanor->Categories->GetCategory($cid ? $cid : $curls);
 	if($category)
 	{

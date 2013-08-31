@@ -21,18 +21,42 @@ function Finish($s,$a)
 	return (string)Eleanor::$Template->index(array('content'=>$s,'title'=>$title,'head'=>$head,'percent'=>$a[0],'navi'=>$a[1]));
 }
 
-function GoAway($info=false)
+/**
+ * Перенаправление на другую страницу
+ * @param mixed $info true - на префикс модуля, false - на предыдущую страницу, string - на адрес, array - компиляция адреса
+ * @param int $code Код редиректа 301 или 302
+ * @param string $hash Хеш редиректа
+ */
+function GoAway($info=false,$code=301,$hash='')
 {global$Eleanor;
-	if(!$ref=getenv('HTTP_REFERER') or $info)
+	$ref=getenv('HTTP_REFERER');
+	$current=PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'];
+	if(!$ref or $ref==$current or $info)
 	{
 		if(is_bool($info))
-			$info=PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$Eleanor->Url->Prefix();
+			$info=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.($info ? $Eleanor->Url->Prefix() : '');
 		elseif(is_array($info))
-			$info=PROTOCOL.Eleanor::$domain.Eleanor::$site_path.html_entity_decode($Eleanor->Url->Construct($info));
+			$info=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($info);
+		else
+		{
+			$d=parse_url($info);
+			if(isset($d['host'],$d['scheme']))
+			{
+				if(preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
+					$info=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$info);
+			}
+			elseif(strpos($d,'/')!==0)
+				$info=Eleanor::$site_path.$info;
+		}
+
+		if($info==$current)
+			return ExitPage(404);
 		$ref=$info;
 	}
-	header('HTTP/1.1 301 Moved Permanently');
-	header('Location: '.$ref);
+	if($hash)
+		$ref=preg_replace('%#.*$%','',$ref).'#'.$hash;
+	header('Cache-Control: no-store');
+	header('Location: '.rtrim(html_entity_decode($ref),'&?'),true,$code);
 	die;
 }
 

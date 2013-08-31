@@ -131,7 +131,7 @@ $(function(){
 				return "<a href=\""+url+"\" target=\"_blank\">"+(title ? title : url)+"</a>";
 			},
 			maxWidth:Math.round(screen.width/1.5),
-			maxHeight:Math.round(screen.height/1.5),
+			maxHeight:Math.round(screen.height/1.5)
 		});
 	}
 	if(CORE.in_ajax.length)

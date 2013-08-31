@@ -250,14 +250,28 @@ function Finish($s)
 
 function GoAway($info=false,$code=301,$hash='')
 {global$Eleanor;
-	if(!$ref=getenv('HTTP_REFERER') or $ref==PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'] or $info)
+	$ref=getenv('HTTP_REFERER');
+	$current=PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'];
+	if(!$ref or $ref==$current or $info)
 	{
 		if(is_bool($info))
 			$info=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.($info ? $Eleanor->Url->Prefix() : '');
 		elseif(is_array($info))
 			$info=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($info);
-		elseif($d=parse_url($info) and isset($d['host'],$d['scheme']) and preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
-			$info=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$info);
+		else
+		{
+			$d=parse_url($info);
+			if(isset($d['host'],$d['scheme']))
+			{
+				if(preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
+					$info=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$info);
+			}
+			elseif(strpos($d,'/')!==0)
+				$info=Eleanor::$site_path.$info;
+		}
+
+		if($info==$current)
+			return ExitPage(404);
 		$ref=$info;
 	}
 	if($hash)

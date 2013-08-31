@@ -152,10 +152,10 @@ class VotingManager extends BaseClass
 
 	/**
 	 * Сохранение опроса в БД
-	 *
 	 * @param int|FALSE Идентификатор сохраняемого опроса
+	 * @param bool $nosave Флаг, который показывается, что в форме уже есть ошибки, таким образом сохранять не нужно, а только проверить на ошибки.
 	 */
-	public function Save($id=false)
+	public function Save($id=false,$nosave=false)
 	{
 		$C=new Controls;
 		$C->langs=$this->langs;
@@ -239,7 +239,7 @@ class VotingManager extends BaseClass
 					}
 
 			$erri=array('ERROR_INPUT'=>$this->Language['errorva']);
-			if(!isset($qv['answers'],$lqv[$qk]['variants']) or !is_array($lqv[$qk]['variants']) or !is_array($qv['answers']))
+			if(!isset($qv['answers'],$lqv[$qk]['variants']) or !is_array($lqv[$qk]['variants']) or !is_array($qv['answers']) or $nosave)
 				return$erri;
 
 			if($this->noans)

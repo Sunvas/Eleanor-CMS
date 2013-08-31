@@ -117,7 +117,7 @@ class Comments extends BaseClass
 			}
 			else
 			{
-				GoAway(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$this->Url());
+				GoAway($this->Url());
 				return false;
 			}
 		}
@@ -167,10 +167,10 @@ class Comments extends BaseClass
 					$page=$page==((int)($cnt/$this->pp)+1) ? false : $page;
 				else
 					$page=$page>1 ? $page : false;
-				GoAway(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$this->Url(array($this->upref.'page'=>$page)),301,'comment'.$a['id']);
+				GoAway($this->Url(array($this->upref.'page'=>$page)),301,'comment'.$a['id']);
 			}
 			else
-				GoAway(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$this->Url());
+				GoAway($this->Url());
 			return false;
 		}
 

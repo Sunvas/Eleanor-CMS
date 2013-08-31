@@ -24,7 +24,7 @@ else
 
 $R=Eleanor::$Db->Query('SELECT `id`,`http_code`,`image`,`mail`,`log`,`title`,`text`,`meta_title`,`meta_descr` FROM `'.P.'errors` INNER JOIN `'.P.'errors_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND '.($id ? '`id`='.$id : '`uri`='.Eleanor::$Db->Escape($uri)).' LIMIT 1');
 if(!$a=$R->fetch_assoc())
-	return GoAway(PROTOCOL.Eleanor::$domain.Eleanor::$site_path);
+	return GoAway('');
 
 $isu=Eleanor::$Login->IsUser();
 $back=isset($_POST['back']) ? (string)$_POST['back'] : getenv('HTTP_REFERER');

@@ -16,7 +16,7 @@ require'./init.php';
 $step=isset($_GET['step']) ? (int)$_GET['step'] : 1;
 Eleanor::StartSession(isset($_REQUEST['s']) ? $_REQUEST['s'] : '','INSTALLSESSION');
 if(empty($_SESSION['agree_sanc']) or empty($_SESSION['agree_lic']))
-	return GoAway(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.'index.php?s='.session_id());
+	return GoAway('index.php?s='.session_id());
 if(isset($_SESSION['lang']))
 {
 	Language::$main=$_SESSION['lang'];

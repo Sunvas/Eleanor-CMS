@@ -269,9 +269,12 @@ function Save($id,$gn=array())
 	$Eleanor->VotingManager->noans=!Eleanor::$Permissions->IsAdmin();
 
 	$Eleanor->VotingManager->langs=Eleanor::$vars['multilang'] ? $langs : array();
-	$voting=$Eleanor->VotingManager->Save($id ? $old['voting'] : false);
+	$voting=$Eleanor->VotingManager->Save($id ? $old['voting'] : false,$errors);
 	if(is_array($voting))
 		$errors+=$voting;
+	elseif(!$errors)
+		$values['voting']=$voting;
+
 
 	$values+=array(
 		'cats'=>$cats,
@@ -280,7 +283,6 @@ function Save($id,$gn=array())
 		'show_detail'=>isset($_POST['show_detail']),
 		'show_sokr'=>isset($_POST['show_sokr']),
 		'tags'=>'',
-		'voting'=>$voting,
 	);
 
 	if(Eleanor::$vars['multilang'])

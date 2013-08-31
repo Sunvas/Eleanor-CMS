@@ -65,17 +65,36 @@ elseif(isset($_REQUEST['direct']) and is_string($_REQUEST['direct']) and is_file
 else
 	return ExitPage();
 
-#Предопределенные функции.
+/**
+ * Перенаправление на другую страницу
+ * @param mixed $info true - на префикс модуля, false - на предыдущую страницу, string - на адрес, array - компиляция адреса
+ * @param int $code Код редиректа 301 или 302
+ * @param string $hash Хеш редиректа
+ */
 function GoAway($info=false,$code=301,$hash='')
 {global$Eleanor;
-	if(!$ref=getenv('HTTP_REFERER') or $ref==PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'] or $info)
+	$ref=getenv('HTTP_REFERER');
+	$current=PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'];
+	if(!$ref or $ref==$current or $info)
 	{
 		if(is_bool($info))
 			$info=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.($info ? $Eleanor->Url->Prefix() : '');
 		elseif(is_array($info))
 			$info=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($info);
-		elseif($d=parse_url($info) and isset($d['host'],$d['scheme']) and preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
-			$info=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$info);
+		else
+		{
+			$d=parse_url($info);
+			if(isset($d['host'],$d['scheme']))
+			{
+				if(preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
+					$info=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$info);
+			}
+			elseif(strpos($d,'/')!==0)
+				$info=Eleanor::$site_path.$info;
+		}
+
+		if($info==$current)
+			return ExitPage(404);
 		$ref=$info;
 	}
 	if($hash)
@@ -159,7 +178,7 @@ function ExitPage($code=403,$r=301)
 {global$Eleanor;
 	BeAs('user');
 	$Eleanor->Url->file=Eleanor::$services['user']['file'];
-	GoAway(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>'errors','code'=>$code),false,''),$r);
+	GoAway($Eleanor->Url->special.$Eleanor->Url->Construct(array('module'=>'errors','code'=>$code),false,''),$r);
 }
 
 function ApplyLang($gl=false)

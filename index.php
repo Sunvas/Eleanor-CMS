@@ -178,7 +178,12 @@ if($m)
 		'id'=>$a['id'],
 		'sections'=>$a['sections'],
 	);
-	$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
+
+	if(Eleanor::$vars['prefix_free_module']!=$a['id'])
+		$Eleanor->Url->SetPrefix(Eleanor::$vars['multilang'] && Language::$main!=LANGUAGE ? array('lang'=>Eleanor::$langs[Language::$main]['uri'],'module'=>$Eleanor->module['name']) : array('module'=>$Eleanor->module['name']));
+	elseif(Eleanor::$vars['multilang'] and Language::$main!=LANGUAGE)
+		$Eleanor->Url->SetPrefix(array('lang'=>Eleanor::$langs[Language::$main]['uri']));
+
 	if(!Modules::Load($Eleanor->module['path'],$a['multiservice'],$a['file'] ? $a['file'] : 'index.php'))
 	{
 		$Eleanor->Url->SetPrefix('');
@@ -340,16 +345,36 @@ function Finish($s)
 	return$s;
 }
 
+/**
+ * Перенаправление на другую страницу
+ * @param mixed $info true - на префикс модуля, false - на предыдущую страницу, string - на адрес, array - компиляция адреса
+ * @param int $code Код редиректа 301 или 302
+ * @param string $hash Хеш редиректа
+ */
 function GoAway($info=false,$code=301,$hash='')
 {global$Eleanor;
-	if(!$ref=getenv('HTTP_REFERER') or $ref==PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'] or $info)
+	$ref=getenv('HTTP_REFERER');
+	$current=PROTOCOL.Eleanor::$punycode.$_SERVER['REQUEST_URI'];
+	if(!$ref or $ref==$current or $info)
 	{
 		if(is_bool($info))
 			$info=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.($info ? $Eleanor->Url->Prefix() : '');
 		elseif(is_array($info))
 			$info=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$Eleanor->Url->Construct($info);
-		elseif($d=parse_url($info) and isset($d['host'],$d['scheme']) and preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
-			$info=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$info);
+		else
+		{
+			$d=parse_url($info);
+			if(isset($d['host'],$d['scheme']))
+			{
+				if(preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
+					$info=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$info);
+			}
+			elseif(strpos($d,'/')!==0)
+				$info=Eleanor::$site_path.$info;
+		}
+
+		if($info==$current)
+			return ExitPage(404);
 		$ref=$info;
 	}
 	if($hash)

@@ -205,7 +205,7 @@ class AccountExternals
 		if($a=$R->fetch_assoc())
 		{
 			if(Eleanor::$Login->Auth($a['id']))
-				return GoAway(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path);
+				return GoAway('');
 			Eleanor::$Db->Delete(P.'users_external_auth','`id`='.$a['id']);
 		}
 
@@ -214,7 +214,7 @@ class AccountExternals
 			return self::Register($r);
 		Eleanor::StartSession();
 		$_SESSION[__class__]=$r;
-		GoAway(PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$GLOBALS['Eleanor']->Url->Construct(array('do'=>'externals','s'=>session_id()),true,''));
+		GoAway($GLOBALS['Eleanor']->Url->Construct(array('do'=>'externals','s'=>session_id()),true,''));
 	}
 
 	public static function Register($loginza,$errors=array())

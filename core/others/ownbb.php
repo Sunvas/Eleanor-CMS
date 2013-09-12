@@ -24,7 +24,6 @@ class OwnBbCode extends BaseClass
 
 	/**
 	 * Обработка информации перед показом на странице
-	 *
 	 * @param string $t Тег, который обрабатывается
 	 * @param string $p Параметры тега
 	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
@@ -37,7 +36,6 @@ class OwnBbCode extends BaseClass
 
 	/**
 	 * Обработка информации перед её правкой
-	 *
 	 * @param string $t Тег, который обрабатывается
 	 * @param string $p Параметры тега
 	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
@@ -46,12 +44,11 @@ class OwnBbCode extends BaseClass
 	 */
 	public static function PreEdit($t,$p,$c,$cu,$e=self::SINGLE)
 	{
-		return self::PreSave($t,$p,$c,true,$e);
+		return static::PreSave($t,$p,$c,true,$e);
 	}
 
 	/**
 	 * Обработка информации перед её сохранением
-	 *
 	 * @param string $t Тег, который обрабатывается
 	 * @param string $p Параметры тега
 	 * @param string $c Содержимое тега [tag...] Вот это [/tag]
@@ -98,7 +95,6 @@ class OwnBbCode extends BaseClass
 		public static function TotalPreSave($s,$ts,$cu){ return$s; }
 		public static function TotalPreEdit($s,$ts,$cu){ return$s; }
 		public static function TotalPreDisplay($s,$ts,$cu){ return$s; }
-
 		@param string $s Весь текст
 		@param array $ts Массив тегов, которые необходимо обрабатывать
 		@param bool $cu Флаг возможности использования тега
@@ -121,21 +117,19 @@ class OwnBB extends BaseClass
 
 	/**
 	 * Грамотная обработка ownbb кодов
-	 *
 	 * @param string $s Текст для обработки, должен содержать ownbb коды
 	 * @param int $t Тип обработки (см. константы выше)
 	 * @param array $codes Исключительный массив только эти ББ коды нужно парсить
 	 */
 	public static function Parse($s,$t=self::DISPLAY,array$c=array())
 	{
-		$s=self::StoreNotParsed($s,$t);
-		$s=self::ParseBBCodes($s,$t,$c);
-		return self::ParseNotParsed($s,$t);
+		$s=static::StoreNotParsed($s,$t);
+		$s=static::ParseBBCodes($s,$t,$c);
+		return static::ParseNotParsed($s,$t);
 	}
 
 	/**
 	 * Непосредственная обработка ownbb кодов. Отличие от Parse в том, именно этот метод обрабатывает ownbb коды, в то время как Parse всего лишь надстройка
-	 *
 	 * @param string $s Текст для обработки, должен содержать ownbb коды
 	 * @param int $type Тип обработки (см. константы выше)
 	 * @param array $codes Исключительный массив только эти ББ коды нужно парсить
@@ -144,28 +138,28 @@ class OwnBB extends BaseClass
 	{
 		switch($type)
 		{
-			case self::EDIT:
+			case static::EDIT:
 				$mth='PreEdit';
 			break;
-			case self::SAVE:
+			case static::SAVE:
 				$mth='PreSave';
 			break;
 			default:
 				$mth='PreDisplay';
 		}
 		$groups=Eleanor::GetUserGroups();
-		foreach(self::$bbs as &$bb)
+		foreach(static::$bbs as &$bb)
 		{
 			$ts=explode(',',$bb['tags']);
 			if($codes and count(array_intersect($codes,$ts))==0 or !$codes and $bb['special'])
 				continue;
 
 			$cu=true;
-			if($type&self::SAVE)
+			if($type&static::SAVE)
 				$grs=$bb['gr_use'];
-			elseif($type&self::DISPLAY)
+			elseif($type&static::DISPLAY)
 				$grs=$bb['gr_see'];
-			elseif($type&self::SHOW)
+			elseif($type&static::SHOW)
 				$grs=array_merge($bb['gr_use'],$bb['gr_see']);
 			else
 				$grs=false;
@@ -174,9 +168,9 @@ class OwnBB extends BaseClass
 				$cu=(bool)array_intersect($grs,$groups);
 
 			$h=(false===$p=strrpos($bb['handler'],'.')) ? $bb['handler'] : substr($bb['handler'],0,$p);
-			if(isset(self::$replace[$h]))
+			if(isset(static::$replace[$h]))
 			{
-				$c=self::$replace[$h];
+				$c=static::$replace[$h];
 				$cch=false;#Class Check
 			}
 			else
@@ -242,12 +236,13 @@ class OwnBB extends BaseClass
 				}
 			}
 		}
-		return $s;
+
+		#Удаление лишних <br>. Например, после цитаты, которая заканчивается блочным элементом </blockquot>, <br> не нужен.
+		return $type&(static::DISPLAY|static::SHOW) ? preg_replace('#<!-- NOBR --><br\s?/?>#i','',$s) : str_replace('<!-- NOBR -->','',$s);
 	}
 
 	/**
 	 * Сохранение содержимого специальных ownbb кодов, в которых нельзя производить парсинг содержимого
-	 *
 	 * @param string $s Текст для обработки, должен содержать ownbb коды
 	 * @param int $type Тип обработки (см. константы выше)
 	 */
@@ -255,19 +250,19 @@ class OwnBB extends BaseClass
 	{
 		$s=str_replace('<!-- NP ','<!-- ',$s);
 		$n=0;
-		self::$np=array();
+		static::$np=array();
 		$groups=Eleanor::GetUserGroups();
-		foreach(self::$bbs as &$bb)
+		foreach(static::$bbs as &$bb)
 		{
 			if(!$bb['no_parse'])
 				continue;
 
 			$cu=true;
-			if($type&self::SAVE)
+			if($type&static::SAVE)
 				$grs=$bb['gr_use'];
-			elseif($type&self::DISPLAY)
+			elseif($type&static::DISPLAY)
 				$grs=$bb['gr_see'];
-			elseif($type&self::SHOW)
+			elseif($type&static::SHOW)
 				$grs=array_merge($bb['gr_use'],$bb['gr_see']);
 			else
 				$grs=false;
@@ -276,9 +271,9 @@ class OwnBB extends BaseClass
 				continue;
 
 			$h=(false===$p=strrpos($bb['handler'],'.')) ? $bb['handler'] : substr($bb['handler'],0,$p);
-			if(isset(self::$replace[$h]))
+			if(isset(static::$replace[$h]))
 			{
-				$c=self::$replace[$h];
+				$c=static::$replace[$h];
 				$cch=false;#Class Check
 			}
 			else
@@ -331,7 +326,7 @@ class OwnBB extends BaseClass
 					$r='<!-- NP '.$n++.' -->';
 					$ct=substr($s,$cp,$l);
 					$s=substr_replace($s,$r,$cp,$l);
-					self::$np[]=array(
+					static::$np[]=array(
 						'r'=>$r,
 						't'=>$ct,
 						's'=>$bb['sp_tags'] ? $bb['sp_tags']+array(''=>$t) : array($t),
@@ -345,20 +340,19 @@ class OwnBB extends BaseClass
 
 	/**
 	 * Обработка содержимого специальных ownbb кодов. Вызывается после их сохранения методом StoreNotParsed и обработки основных кодов методом ParseBBCodes
-	 *
 	 * @param string $s Текст для обработки, должен содержать ownbb коды
 	 * @param int $type Тип обработки (см. константы выше)
 	 */
 	public static function ParseNotParsed($s,$type)
 	{
-		if(self::$np)
+		if(static::$np)
 			if($type)
-				foreach(self::$np as &$v)
-					$s=str_replace($v['r'],self::ParseBBCodes($v['t'],$type,$v['s']),$s);
+				foreach(static::$np as &$v)
+					$s=str_replace($v['r'],static::ParseBBCodes($v['t'],$type,$v['s']),$s);
 			else
-				foreach(self::$np as &$v)
+				foreach(static::$np as &$v)
 					$s=str_replace($v['r'],$v['t'],$s);
-		self::$np=array();
+		static::$np=array();
 		return$s;
 	}
 
@@ -367,16 +361,16 @@ class OwnBB extends BaseClass
 	 */
 	public static function Recache()
 	{
-		self::$bbs=array();
+		static::$bbs=array();
 		$R=Eleanor::$Db->Query('SELECT `handler`,`tags`,`no_parse`,`special`,`sp_tags`,`gr_use`,`gr_see`,`sb` FROM `'.P.'ownbb` WHERE `active`=1 ORDER BY `pos` ASC');
 		while($a=$R->fetch_assoc())
 		{
 			$a['sp_tags']=$a['sp_tags'] ? explode(',',$a['sp_tags']) : array();
 			$a['gr_use']=$a['gr_use'] ? explode(',',$a['gr_use']) : array();
 			$a['gr_see']=$a['gr_see'] ? explode(',',$a['gr_see']) : array();
-			self::$bbs[]=$a;
+			static::$bbs[]=$a;
 		}
-		Eleanor::$Cache->Put('ownbb',self::$bbs);
+		Eleanor::$Cache->Put('ownbb',static::$bbs);
 	}
 }
 

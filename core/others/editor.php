@@ -130,6 +130,8 @@ class Editor extends BaseClass
 			{
 				if(type=="image" && data.src)
 					editor.insertElement(CKEDITOR.dom.element.createFromHtml("<img src=\""+data.src+"\" title=\""+(data.title||"")+"\" alt=\""+(data.alt||data.title||"")+"\" />"));
+				else if(type=="nick" && data.name)
+					editor.insertElement(CKEDITOR.dom.element.createFromHtml("<b>"+data.name.replace(/</g,"&lt;").replace(/>/g,"&gt;")+"</b>, "));
 			},
 			Insert:function(pre,after,F){
 				var s=editor.getSelection().getSelectedText();

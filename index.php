@@ -271,7 +271,17 @@ function Start($tpl='index',$code=200)
 		#Если модулем задан оригинальный URL страницы, сравним его с полученным
 		elseif(isset($Eleanor->origurl))
 		{
-			$u=isset($Eleanor->module['general']) ? PROTOCOL.Eleanor::$punycode.Eleanor::$site_path : $Eleanor->origurl;
+			$u=isset($Eleanor->module['general']) ? '' : $Eleanor->origurl;
+
+			$d=parse_url($u);
+			if(isset($d['host'],$d['scheme']))
+			{
+				if(preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
+					$u=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$u);
+			}
+			else
+				$u=PROTOCOL.Eleanor::$punycode.Eleanor::$site_path.$u;
+
 			$du=Url::Decode($u);
 			$du=str_replace('&amp;','&',$du);
 
@@ -369,7 +379,7 @@ function GoAway($info=false,$code=301,$hash='')
 				if(preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
 					$info=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$info);
 			}
-			elseif(strpos($d,'/')!==0)
+			elseif(strpos($info,'/')!==0)
 				$info=Eleanor::$site_path.$info;
 		}
 

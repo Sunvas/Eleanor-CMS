@@ -70,7 +70,7 @@ class TplUserContacts
 			if($captcha)
 				$Lst->item(array(static::$lang['captcha'],$captcha.'<br />'.Eleanor::Input('check','',array('tabindex'=>5)),'descr'=>static::$lang['captcha_']));
 
-			$content.=$Lst->end()->submitline(Eleanor::Input('sess',$values['sess'],array('type'=>'hidden')).Eleanor::Button('OK','submit',array('tabindex'=>6)))->endform();
+			$content.=$Lst->end()->submitline(Eleanor::Input('sess',$values['sess'],array('type'=>'hidden')).Eleanor::Button(static::$lang['send'],'submit',array('tabindex'=>6)))->endform();
 		}
 		return$content;
 	}

@@ -16,4 +16,5 @@ return array(
 	'file'=>'Supplementary material',
 	'maxfs'=>'Max allowed file size: %s',
 	'sent'=>'<b>Your message has been successfully sent</b><br /><a href="%s">Send another message</a>',
+	'send'=>'Send message',
 );

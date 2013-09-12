@@ -42,7 +42,7 @@ $(function(){
 		}
 	});
 });//]]></script>';
-		return'<div class="code"><pre><code'.(isset($p['auto']) ? '' : ' class="'.(isset($p[$t]) ? 'language-'.$p[$t] : 'no-highlight').'"').'>'.$c.'</code></pre></div>';
+		return'<div class="code"><pre><code'.(isset($p['auto']) ? '' : ' class="'.(isset($p[$t]) ? 'language-'.$p[$t] : 'no-highlight').'"').'><!-- NOBR -->'.$c.'</code></pre></div><!-- NOBR -->';
 	}
 
 	/**

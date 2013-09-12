@@ -95,7 +95,7 @@ $a['text']=OwnBB::Parse($a['text']);
 if($a['meta_title'])
 	$title=$a['meta_title'];
 else
-	$title[]=$a['title'];
+	$title=array($a['title']);
 $Eleanor->module['description']=$a['meta_descr'] ? $a['meta_descr'] : Strings::CutStr(strip_tags(str_replace("\n",' ',$a['text'])),250);
 
 if($a['mail'])

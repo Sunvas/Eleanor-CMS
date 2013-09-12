@@ -101,7 +101,7 @@ function GoAway($info=false,$code=301,$hash='')
 				if(preg_match('#^[a-z0-9\-\.]+$#',$d['host'])==0)
 					$info=preg_replace('#^'.$d['scheme'].'://'.preg_quote($d['host']).'#',$d['scheme'].'://'.Punycode::Domain($d['host']),$info);
 			}
-			elseif(strpos($d,'/')!==0)
+			elseif(strpos($info,'/')!==0)
 				$info=Eleanor::$site_path.$info;
 		}
 

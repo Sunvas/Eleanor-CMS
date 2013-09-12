@@ -373,8 +373,10 @@ CORE.BBEditor=function(o)
 		{
 			Embed:function(type,data)
 			{
-				if(type=="image")
+				if(type=="image" && data.src)
 					th.SetSelectedText("[img]"+data.src+"[/img]");
+				else if(type=="nick" && data.name)
+					th.SetSelectedText("[b]"+data.name+"[/b], ");
 			},
 			Insert:function(pre,after,F){ th.SetSelectedText(pre,after,F); },
 			Get:function(){ return textarea.val(); },

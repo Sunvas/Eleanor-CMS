@@ -20,10 +20,27 @@ CORE.Comments=function(opts)
 			pages:1,
 			parent:0,
 			baseurl:window.location.href,
-			container:"#comments",
-			nc:"#newcomment",
 			autoupdate:15000,
 			editor:"text",
+
+			////////////////////////////////
+			//Только строковые представления!
+			////////////////////////////////
+			container:"#comments",//Глобальный контейнер комментариев
+			comments:"> .comments",//Контейнер с комментариями, относительно container
+			paginator:"> .paginator",//Контейнер с листалкой страниц, относительно container
+			moderate:"> .moderate",//Контейнер с инструментами модератора, относительно container
+			counter:"> .cnt",//Контейнер со счетчиком комментариев
+			status:"> .status",//Контейнер со статусной строкой относительно container, которая отображает индикацию текущего ajax действия 
+			parent:"> .parent",//Контейнер с родительским комментарием относительно container
+			closestparent:".parent",//Контейнер с родительским комментарием относительно его содержимого
+			comment:"> .comment",//Контейнер с комментарием относительно container
+			closestcomment:".comment",//Контейнер с комментарием относительно его содержимого
+			text:".text",//Конейнер с текстом комментария относительно comment
+			signature:".signature",//Контейнер с подписью пользователя относительно comment
+			buttons:".buttons",//Контейнер с кнопками комментария относительно comment
+
+			nc:"#newcomment",//Форма нового комментария
 		},
 		opts
 	);
@@ -59,9 +76,9 @@ CORE.Comments=function(opts)
 		HistoryGo,
 		ModerateDo=function()
 		{
-			if(container.children(".moderate").size()>0 && !container.children(".moderate").is(":empty"))
+			if(container.find(opts.moderate).size()>0 && !container.find(opts.moderate).is(":empty"))
 			{
-				var ch=container.children(".comments").find("[name=\"mass[]\"]").unbind("click").data("one2all",false);
+				var ch=container.find(opts.comments).find("[name=\"mass[]\"]").unbind("click").data("one2all",false);
 				$("#masscheck").unbind("click").prop("checked",false);
 				One2AllCheckboxes(container,"#masscheck","[name=\"mass[]\"]",true);
 				ch.filter(":first").triggerHandler("click");
@@ -126,7 +143,7 @@ CORE.Comments=function(opts)
 				),
 				function(r)
 				{
-					$(".cnt",container).text(r.cnt);
+					container.find(opts.counter).text(r.cnt);
 					opts.pages=r.pages;
 					if(p!=r.page)
 					{
@@ -153,7 +170,7 @@ CORE.Comments=function(opts)
 									paginators[p]=paginators[op].clone().empty().insertAfter(paginators[op]).html(v).find("script").remove().end();
 							break;
 							case "nocomments":
-								container.children(".comments,.paginator,.moderate").empty().hide();
+								container.find(opts.comments+","+opts.paginator+","+opts.moderate).empty().hide();
 							opts.nextn=0;
 							default:
 								var ex=container.children("."+i);
@@ -233,9 +250,9 @@ CORE.Comments=function(opts)
 								ex.empty().hide();
 					}
 				});
-				$(".cnt",container).text(opts.nextn);
+				container.find(opts.counter).text(opts.nextn);
 			}
-			$(".status",container).show().removeClass("load error").addClass("ok").text(CORE.Lang(r ? "comments_loaded" : "comments_nonew"));
+			container.find(opts.status).show().removeClass("load error").addClass("ok").text(CORE.Lang(r ? "comments_loaded" : "comments_nonew"));
 			Finish();
 		},
 		DoLNC=function(auto)
@@ -259,7 +276,7 @@ CORE.Comments=function(opts)
 						{
 							if(autoupdate)
 								updateskip=1;
-							$(".status",container).removeClass("ok error").addClass("load").text(CORE.Lang("comments_ln")).show();
+							container.find(opts.status).removeClass("ok error").addClass("load").text(CORE.Lang("comments_ln")).show();
 							clearTimeout(to);
 						}
 					},
@@ -278,7 +295,7 @@ CORE.Comments=function(opts)
 							autoupdate=false;
 						else
 						{
-							$(".status",container).removeClass("load ok").addClass("error").text(s);
+							container.find(opts.status).removeClass("load ok").addClass("error").text(s);
 							Finish(10000);
 						}
 					}
@@ -303,7 +320,7 @@ CORE.Comments=function(opts)
 					});
 					if(reload)
 						window.location.reload();
-					else if(container.children(".comments").children(".comment").size()==0)
+					else if(container.find(opts.comments).find(opts.comment).size()==0)
 						GoToPage(opts.page,false,true);
 				}
 			);
@@ -313,8 +330,8 @@ CORE.Comments=function(opts)
 	urls[opts.page]=window.location.href.replace(/#.+/,"");
 	HistoryGo=function(p){ GoToPage(p,false,false,true) };
 	this.GoToPage=GoToPage;
-	comments[opts.page]=container.children(".comments").find("script").remove().end();
-	paginators[opts.page]=container.children(".paginator").find("script").remove().end();
+	comments[opts.page]=container.find(opts.comments).find("script").remove().end();
+	paginators[opts.page]=container.find(opts.paginator).find("script").remove().end();
 	CORE.HistoryInit(HistoryGo,opts.page);
 
 	container.on("click",".cb-lnc",function(){ DoLNC();return false; }).on("click",".cb-findcomment",function(){
@@ -332,7 +349,7 @@ CORE.Comments=function(opts)
 		EDITOR.Insert("[b]"+$(this).text()+"[/b], ");
 		return false;
 	}).on("click",".cb-delete",function(){
-		if(confirm(CORE.Lang("comments_del",[$(this).closest(".comment").find(".cb-findcomment").text(),$(this).data("answers")+1])))
+		if(confirm(CORE.Lang("comments_del",[$(this).closest(opts.closestcomment).find(".cb-findcomment").text(),$(this).data("answers")+1])))
 			DeleteComments([$(this).data("id")]);
 		return false;
 	}).on("click",".cb-edit",function(){
@@ -347,7 +364,7 @@ CORE.Comments=function(opts)
 			),
 			function(r)
 			{
-				var comm=th.closest(".comment");
+				var comm=th.closest(opts.closestcomment);
 				comm.find("form").remove().end().find(".text,.signature,.buttons").hide().end().find(".text").after(r).end()
 				.find("form").submit(function(){
 					var params=CORE.Inputs2object($(this));
@@ -376,7 +393,7 @@ CORE.Comments=function(opts)
 					return false;
 				}).end()
 				.on("click",".cb-cancel",function(){
-					th.closest(".comment").find("form").remove().end().find(".text,.signature,.buttons").not(":empty").show();
+					th.closest(opts.closestcomment).find("form").remove().end().find(".text,.signature,.buttons").not(":empty").show();
 					EDITOR.Active("text");
 					return false;
 				});
@@ -386,7 +403,7 @@ CORE.Comments=function(opts)
 	}).on("click",".cb-qquote",function(){
 		var o=$(this),
 			name=o.data("name"),
-			text=o.closest(".comment").find(".text:first").html(),
+			text=o.closest(opts.closestcomment).find(".text:first").html(),
 			sel,sele,m;
 
 		if(!o.data("id") || !o.data("date") || !name)
@@ -425,7 +442,7 @@ CORE.Comments=function(opts)
 	}).on("click",".cb-answer",function(){
 		var o=$(this),
 			id=o.data("id"),
-			p=o.closest(".comment");
+			p=o.closest(opts.closestcomment);
 		if(oldanswer)
 			oldanswer.show();
 		oldanswer=id ? p.find(".cb-qquote,.cb-answer").hide() : false;
@@ -476,7 +493,7 @@ CORE.Comments=function(opts)
 				{
 					autoupdate=false;
 					clearTimeout(to);
-					$(".status",container).removeClass("ok error").addClass("load").text(CORE.Lang("comments_waitpost")).show();
+					container.find(opts.status).removeClass("ok error").addClass("load").text(CORE.Lang("comments_waitpost")).show();
 				},
 				OnSuccess:function(r)
 				{
@@ -490,7 +507,7 @@ CORE.Comments=function(opts)
 						{
 							NewHash("comment"+r.merged);
 							$("#comment"+r.merged+" .text:first").html(r.text);
-							$(".status",container).removeClass("load error").addClass("ok").text(CORE.Lang("comments_merged"));
+							container.find(opts.status).removeClass("load error").addClass("ok").text(CORE.Lang("comments_merged"));
 							Finish();
 						}
 						else
@@ -511,7 +528,7 @@ CORE.Comments=function(opts)
 						r=r.error;
 					}
 					NewHash("commentsinfo");
-					$(".status",container).removeClass("load ok").addClass("error").text(r);
+					container.find(opts.status).removeClass("load ok").addClass("error").text(r);
 					Finish(10000);
 				}
 			}
@@ -519,12 +536,12 @@ CORE.Comments=function(opts)
 		return false;
 	});
 
-	container.on("change",".moderate select.modevent",function(){
+	container.on("change",opts.moderate+" select.modevent",function(){
 		var ids=[],nums=[],reload=false;
-		container.children(".comments,.parent").find("[name=\"mass[]\"]:checked").each(function(){
+		container.find(opts.comments+","+opts.parent).find("[name=\"mass[]\"]:checked").each(function(){
 			ids.push($(this).val());
-			if($(this).closest(".parent").size()==0)
-				nums.push("#"+$(this).closest(".comment").find(".cb-findcomment").text());
+			if($(this).closest(opts.closestparent).size()==0)
+				nums.push("#"+$(this).closest(opts.closestcomment).find(".cb-findcomment").text());
 			else
 				reload=true;
 		});

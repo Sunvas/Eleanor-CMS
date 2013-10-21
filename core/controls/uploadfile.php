@@ -18,7 +18,6 @@ class ControlUploadFile extends BaseClass implements ControlsBase
 
 	/**
 	 * Получение настроек контрола
-	 *
 	 * @param ControlsManager $Obj
 	 */
 	public static function GetSettings($Obj)
@@ -195,7 +194,6 @@ $(function(){
 
 	/**
 	 * Получение контрола
-	 *
 	 * @param array $a Опции контрола
 	 * @param ControlsManager $Obj
 	 */
@@ -216,7 +214,7 @@ $(function(){
 		else
 			$writed=$a['value'] && strpos($a['value'],'://')!==false;
 		if($a['value'] and !$writed and basename($a['value'])==$a['value'])
-			$a['value']=rtrim($a['options']['path'],'/\\').$a['value'];
+			$a['value']=rtrim($a['options']['path'],'/\\').DIRECTORY_SEPARATOR.$a['value'];
 		$uploaded=$a['value'] && !$writed && is_file(Eleanor::FormatPath($a['value'])) && dirname($a['value'])==($a['options']['path'] ? trim($a['options']['path'],'/\\') : Eleanor::$uploads);
 
 		return Eleanor::$Template->ControlUploadFile('control',$uploaded,$writed,$a['value'],$a['controlname'],$a['options']);
@@ -224,7 +222,6 @@ $(function(){
 
 	/**
 	 * Сохранение контрола
-	 *
 	 * @param array $a Опции контрола
 	 * @param ControlsManager $Obj
 	 */
@@ -242,11 +239,17 @@ $(function(){
 		);
 
 		$writed=$a['value'] && strpos($a['value'],'://')!==false;
-		$full=$a['value'] && !$writed ? Eleanor::FormatPath($a['value']) : false;
-		$uploaded=$full && is_file($full) && dirname($a['value'])==($a['options']['path'] ? trim($a['options']['path'],'/\\') : Eleanor::$uploads);
+		$single=$writed ? false : basename($a['value'])==$a['value'];#Значение подано без каталога
+
+		$full=$a['value'] && !$writed ? Eleanor::FormatPath($a['value'],$single ? $a['options']['path'] : '') : false;
+		$uploaded=$full && is_file($full) && ($single or dirname($a['value'])==($a['options']['path'] ? trim($a['options']['path'],'/\\') : Eleanor::$uploads));
+
 
 		if($uploaded and $Obj->GetPostVal(array_merge($a['name'],array('delete')),false))
+		{
 			Files::Delete($full);
+			$a['value']='';
+		}
 
 		$a['name']=(array)$a['name'];
 		if($Obj->GetPostVal(array_merge($a['name'],array('type')),'w')=='w' and $text=$Obj->GetPostVal(array_merge($a['name'],array('text')),false))
@@ -254,10 +257,12 @@ $(function(){
 			if($a['options']['types'] and preg_match('#\.('.join('|',$a['options']['types']).')$#i',$text)==0)
 			{
 				if($Obj->throw)
-					throw new EE(static::$Language['error_ext'],EE::USER);
-				$Obj->errors[__class__]=static::$Language['error_ext'];
+					throw new EE(sprintf(static::$Language['error_ext'],join(', ',$a['options']['types'])),EE::USER);
+				$Obj->errors[__class__]=sprintf(static::$Language['error_ext'],join(', ',$a['options']['types']));
 				return;
  			}
+ 			if($uploaded and $a['value'])
+ 				Files::Delete($full);
  			return$text;
 		}
 
@@ -266,9 +271,9 @@ $(function(){
 		$name=$Obj->GetPostVal(array_merge(array('name'),$a['name'],array('file')),false);
 		$Obj->POST=null;
 		if(!$tmp or !$name or !is_uploaded_file($tmp))
-			return'';
+			return$a['value'];
 
-		$path=$a['options']['path'] ? Eleanor::FormatPath($a['options']['path']) : Eleanor::$root.Eleanor::$uploads.'/';
+		$path=$a['options']['path'] ? Eleanor::FormatPath($a['options']['path']).'/' : Eleanor::$root.Eleanor::$uploads.'/';
 		if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
 		{
 			if($Obj->throw)
@@ -280,8 +285,8 @@ $(function(){
 		if($a['options']['types'] and preg_match('#\.('.join('|',$a['options']['types']).')$#i',$name)==0)
 		{
 			if($Obj->throw)
-				throw new EE(static::$Language['error_ext'],EE::USER);
-			$Obj->errors[__class__]=static::$Language['error_ext'];
+				throw new EE(sprintf(static::$Language['error_ext'],join(', ',$a['options']['types'])),EE::USER);
+			$Obj->errors[__class__]=sprintf(static::$Language['error_ext'],join(', ',$a['options']['types']));
 			return;
 		}
 
@@ -306,12 +311,20 @@ $(function(){
 
 		if(!$a['options']['path'])
 			$a['options']['path']=Eleanor::$uploads;
-		if(move_uploaded_file($tmp,$path.$filename))
+
+		if($uploaded and $a['value'])
+			Files::Delete($full);
+
+		$fullfile=$path.$filename;
+		if(is_file($fullfile))
+			Files::Delete($fullfile);
+
+		if(move_uploaded_file($tmp,$fullfile))
 		{
 			if(substr($a['options']['path'],-1)!='/')
 				$a['options']['path'].='/';
 			$a['options']['path'].=$filename;
-			static::$bypost[$Obj->GenName($a['name'])]=$a['options']['path'];
+			static::$bypost[ $Obj->GenName($a['name']) ]=$a['options']['path'];
 			return$a['options']['path'];
 		}
 		return'';
@@ -319,7 +332,6 @@ $(function(){
 
 	/**
 	 * Получение результата контрола
-	 *
 	 * @param array $a Опции контрола
 	 * @param ControlsManager $Obj
 	 */

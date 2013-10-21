@@ -162,14 +162,7 @@ final class GlobalsWrapper implements ArrayAccess
 }
 
 /**
- * @property Db $Db Основной объект базы данных
- * @property Db $UsersDb Объект базы данных, для доступа к таблице пользователей (при включенной синхронизации), при выключенной - ссылка на $Db
- * @property Cache $Cache Основной объект кэша системы
- * @property TemplateMixed $Template Шаблонизатор системы
- * @property Language $Language Языковой объект, при конвертации его в строку - вернет имя языка
- * @property LoginClass $Login Объект главного логина. Именно объект, а не строка (название класса), только ради удобства доступа к методам
- * @property Permissions $Permissions Объект разрешений главного логина
- * @property GlobalWrapper $POST,#Отфильтрованный POST запрос
+ * Main Eleanor CMS class
  */
 final class Eleanor extends BaseClass
 {
@@ -224,22 +217,36 @@ final class Eleanor extends BaseClass
 		$services,#Данные всех сервисов
 		$perms=array(),#Данные разрешений. [таблица] => [ID] => [опция] => значение
 
-		#Объекты
-		$Db,#Объект базы данных
-		$UsersDb,#Объект базы данных, для доступа к таблице пользователей (при включенной синхронизации), при выключенной - ссылка на $Db
-		$Cache,#Кэш
-		$Template,#Шаблон оформления
-		$Language,#Языковой объект, при конвертации его в строку - вернет имя языка
-		$Login,#Объект главного логина. Именно объект, а не строка (название класса), только ради удобства доступа к методам
-		$Permissions,#Разрешения главного логина
-		$POST,#Отфильтрованный POST запрос
-
 		#Системные свойства
 		$os,#Тип системы, на которой стоит сайт u - *nix, w - windows
 		$root,#Корень сайта
 		$rootf,#Корень файла, с которого мы запустились
 		$service,#Сервиса
 		$nolog=false;#Флаг отключения логирования ошибок
+
+	#Объекты
+	/** @var Db*/
+	public static
+			$Db,#Объект базы данных
+			$UsersDb;#Объект базы данных, для доступа к таблице пользователей (при включенной синхронизации), при выключенной - ссылка на $Db
+
+	/** @var Cache */
+	public static $Cache;#Кэш
+
+	/** @var Template_Mixed */
+	public static $Template;#Шаблон оформления
+
+	/** @var Language */
+	public static $Language;#Языковой объект, при конвертации его в строку - вернет имя языка
+
+	/** @var LoginClass */
+	public static $Login;#Объект главного логина. Именно объект, а не строка (название класса), только ради удобства доступа к методам
+
+	/** @var Permissions */
+	public static $Permissions;#Разрешения главного логина
+
+	/** @var GlobalsWrapper */
+	public static $POST;#Отфильтрованный POST запрос
 
 	private static
 		$Instance;#Единственный объект этого класса. Singleton
@@ -1263,7 +1270,7 @@ final class Eleanor extends BaseClass
 		$n='';
 		if(!$uid and self::$vars['bots_enable'] and $ua)
 			foreach(self::$vars['bots_list'] as $k=>&$v)
-				if(stripos($_SERVER['HTTP_USER_AGENT'],$k)!==false)
+				if(stripos($ua,$k)!==false)
 				{
 					$n=self::$is_bot=$v;
 					break;
@@ -1788,14 +1795,20 @@ class Cache
 	}
 }
 
-### DB
+/**
+ * Database class
+ * @property MySQLi $Driver Объект MySQLi
+ * @property mysqli_result $Result Объект результата MySQLi
+ * @property string $db Имя базы данных
+ * @property int $queries Счетчик запросов
+ */
 class Db extends BaseClass
 {
 	public
-		$Driver,#Объект MySQLi
-		$Result,#Объект результата MySQLi
-		$db,#Имя базы данных
-		$queries=0;#Счетчик запросов
+		$Driver,
+		$Result,
+		$db,
+		$queries=0;
 
 	/**
 	 * Соединение с БД

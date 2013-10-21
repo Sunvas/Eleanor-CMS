@@ -19,7 +19,6 @@ class ControlUploadImage extends BaseClass implements ControlsBase
 
 	/**
 	 * Получение настроек контрола
-	 *
 	 * @param ControlsManager $Obj
 	 */
 	public static function GetSettings($Obj)
@@ -252,7 +251,6 @@ $(function(){
 
 	/**
 	 * Получение контрола
-	 *
 	 * @param array $a Опции контрола
 	 * @param ControlsManager $Obj
 	 */
@@ -354,7 +352,6 @@ $(function(){
 
 	/**
 	 * Сохранение контрола
-	 *
 	 * @param array $a Опции контрола
 	 * @param ControlsManager $Obj
 	 */
@@ -429,7 +426,7 @@ $(function(){
 		if(!$sess['value'])
 			return'';
 
-		$path=($a['options']['path'] ? Eleanor::FormatPath($a['options']['path']) : Eleanor::$root.Eleanor::$uploads).DIRECTORY_SEPARATOR;
+		$path=($a['options']['path'] ? Eleanor::FormatPath($a['options']['path']).'/' : Eleanor::$root.Eleanor::$uploads).DIRECTORY_SEPARATOR;
 		if(!is_dir($path) and !Files::MkDir($path) or !is_writeable($path))
 		{
 			if($Obj->throw)
@@ -488,7 +485,6 @@ $(function(){
 
 	/**
 	 * Получение результата контрола
-	 *
 	 * @param array $a Опции контрола
 	 * @param ControlsManager $Obj
 	 */

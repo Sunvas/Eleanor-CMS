@@ -9,7 +9,7 @@
 	copy_link:"Copy the link",
 	del:"Are you sure you want to delete {0}?",
 	threaddel:"Are you sure you want to delete the entire thread?",
-	qqe:"Used {0} does not write this!",
+	qqe:"User {0} does not write this!",
 	answer:"Reply to comment {0}",
 	addc:"Add new comment"
 },"comments_");

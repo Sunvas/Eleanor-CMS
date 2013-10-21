@@ -18,7 +18,7 @@ CORE.BBEditor=function(o)
 	var th=this,
 		div=$("#ed-"+o.id),
 		textarea=div.find("textarea:first");
-	div.find("a").each(function(){
+	div.find("a").off("click").each(function(){
 		var m=$(this).prop("className").match(/bb_([a-z0-9\-]+)/),
 			f;
 		if(!m)

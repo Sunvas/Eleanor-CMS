@@ -20,11 +20,12 @@ class Url extends BaseClass
 		$string,#Строка УРЛа, которую мы парсим
 		$is_static=false,
 		$file,#файл для динамических ссылок
-		$furl=false;#ЧПУ - включает человекопонятный УРЛ
+		$furl=false,#ЧПУ - включает человекопонятный УРЛ
+		$mixedget=array();#Значение динамической части в мешаных URLах вида forum/topic?page=1
 
 	protected
 		$sp,#Префикс всех УРЛов в статике
-		$dp='?';#Префикс всех УРЛов в динамике
+		$dp='';#Префикс всех УРЛов в динамике
 
 /*
 	#ToDo!
@@ -36,7 +37,6 @@ class Url extends BaseClass
 
 	/**
 	 * Генерация URL-ов
-	 *
 	 * @param array $p Массив параметров ссылки. Например, если передать массив array('k1'=>'v1','k2'=>'v2') в результате получим k1=>v1&amp;k2=>v2 для динамических ссылок и v1/v2.html для ЧПУ
 	 * @param bool $pr Флаг использования префикса
 	 * @param bool|string $e Окончание будущего URLа, имеет смысл только для ЧПУ. Передача true включает использование стандартного окончания, false - в качестве окончания подставится разделитесь, если передать строку - она и станет окончанием
@@ -103,10 +103,11 @@ class Url extends BaseClass
 
 			if($suf)
 				$r[]=$suf;
+
 			if($pr===true)
 			{
 				$pr=$this->file;
-				if($this->dp!=='')
+				if($this->dp)
 				{
 					$pr.='?'.$this->dp;
 					if($r)
@@ -128,7 +129,6 @@ class Url extends BaseClass
 
 	/**
 	 * Разбор текущей ссылки для преобразования ЧПУ в понятный массив запроса
-	 *
 	 * @param array $params Массив недостающих ключей для ЧПУ, поскольку при генерации ЧПУ ключи выкидываются
 	 * @param bool $pd Флаг обработки значений с дефисом, как разделитель ключ=>значения
 	 */
@@ -176,7 +176,6 @@ class Url extends BaseClass
 	/**
 	 * Функция возвращает "окончание" строки. т.е. ".html", "/". Работает только для статики (по понятным причинам)
 	 * Внимание! Рекомендуется всегда использовать окончание в УРЛах, если окончания не будет - функция будет работать неправильно.
-	 *
 	 * @param array $es Массив возможных окончаний
 	 * @param bool $cut Флаг удаления окончания из обрабатываемой ссылки
 	*/
@@ -201,7 +200,6 @@ class Url extends BaseClass
 
 	/**
 	 * Распарсить до первого нужного значения. Все, что идет после этого - уже параметры модуля.
-	 *
 	 * @param string $p Параметр, до которого нужно парсить ссылку
 	 * @param bool $cut Флаг удаления обработанных значений из обрабатываемой ссылки
 	 * @param bool $pd Флаг обработки значений с дефисом, как разделитель ключ=>значения
@@ -245,7 +243,6 @@ class Url extends BaseClass
 
 	/**
 	 * Преобразование строки в корректную последовательность символов для возможности использования её в URI
-	 *
 	 * @param string $s Входящая строка
 	 * @param string|FALSE $l Язык строки для корректной транслитерации, в случае передачи false, используется текущей язык систмы
 	 * @param string|FALSE $rep Последовательность символов, которыми будут заменены пробелы
@@ -268,7 +265,6 @@ class Url extends BaseClass
 
 	/**
 	 * Получение текущего префикса для использования его в качестве корректного URL
-	 *
 	 * @param bool|string $e Окончание URL
 	 */
 	public function Prefix($e=true)
@@ -282,7 +278,7 @@ class Url extends BaseClass
 		}
 
 		$p=$this->file;
-		if($this->dp!=='')
+		if($this->dp)
 			$p.='?'.$this->dp;
 		elseif($e===false)
 			$e='?';
@@ -291,7 +287,6 @@ class Url extends BaseClass
 
 	/**
 	 * Установка перефикса для всех генерируемых URL-ов
-	 *
 	 * @param array|string $p Префикс в виде строки, либо массива сходного с первым параметром метода Construct
 	 * @param bool $a Флаг добавления к ссылки к текщуему префиксу
 	 */
@@ -312,10 +307,9 @@ class Url extends BaseClass
 			$this->furl=false;
 			$ap=$this->Construct($p,false);
 			if($a && $this->dp && $ap)
-				$this->dp.='&amp;';
+				$this->dp.='&amp;'.$ap;
 			else
-				$this->dp='';
-			$this->dp.=$ap;
+				$this->dp=$ap;
 
 			$this->furl=$f;
 		}
@@ -332,8 +326,9 @@ class Url extends BaseClass
 			$p=preg_replace('#(&amp;|&)+$#','',$p);
 			if(false!==$qp=strpos($p,'?'))
 				$p=substr($p,$qp+1);
-			if($p!=='')
-				$this->dp=$a ? $this->dp.'&amp;'.$p : $p;
+
+			if($p)
+				$this->dp=($a && $this->dp ? $this->dp.'&amp;' : '').$p;
 			elseif(!$a)
 				$this->dp='';
 		}
@@ -341,7 +336,6 @@ class Url extends BaseClass
 
 	/**
 	 * Конструктор, самый обыкновенный, ничем не приметный конструктор.
-	 *
 	 * @param string|bool $qs Строка запроса для дальнейшего разбора
 	 */
 	public function __construct($qs=false)
@@ -349,21 +343,47 @@ class Url extends BaseClass
 		if($qs===false)
 		{
 			$qs=isset($_SERVER['REDIRECT_QUERY_STRING']) ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
-			$qs.='&';
+			$direct=false;
 		}
-		if(strpos($qs,'!')===0 and false!==$ap=strpos($qs,'!&'))
+		else
+			$direct=true;
+
+		if(strpos($qs,'!')===0 and false!==$ap=strpos($qs.'&','!&'))
 		{
 			$qs=substr($qs,0,$ap);
 			$qs=substr($qs,1);
 			$this->string=static::Decode($qs);
 			$this->is_static=true;
 		}
+		elseif($direct)
+		{
+			if(false!==$p=strpos($qs,'?'))
+			{
+				$mixedget=substr($qs,$p+1);
+				if($mixedget)
+					parse_str($mixedget,$this->mixedget);
+
+				if($p>0)
+				{
+					$qs=substr($qs,0,$p);
+					$this->string=static::Decode($qs);
+					$this->is_static=true;
+				}
+				else
+					$this->is_static=false;
+			}
+			else
+			{
+				$this->is_static=true;
+				$this->string=static::Decode($qs);
+			}
+		}
+
 		$this->file=Eleanor::$filename;
 	}
 
 	/**
 	 * Кодирование строк для использования кириличных и других символов, не относящихся к латиннице, в ссылках
-	 *
 	 * @param string $s Входящая строка
 	 */
 	public static function Encode($s)
@@ -373,7 +393,6 @@ class Url extends BaseClass
 
 	/**
 	 * Декодирование строк, обратное действие методу Encode
-	 *
 	 * @param string $s Входящая строка
 	 */
 	public static function Decode($s)
@@ -384,7 +403,6 @@ class Url extends BaseClass
 
 	/**
 	 * Генерация сложных динамических URLов, состоящих из многомерных массивов
-	 *
 	 * @param array $a Многомерный массив параметров, которых должен быть преобразован в URL
 	 * @param string $d Разделитель параметров, получаемого URLа
 	 */
@@ -404,7 +422,6 @@ class Url extends BaseClass
 
 	/**
 	 * Генерация многомерных параметров для метода Query.
-	 *
 	 * @param array $a Массив параметров
 	 * @param string $p Префикс для каждого параметра
 	 * @param array &$r Ссылка на массив для помещения результатов

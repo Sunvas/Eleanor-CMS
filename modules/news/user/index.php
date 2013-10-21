@@ -739,7 +739,7 @@ function ShowTag($tag)
 		$offset+=$np;
 
 	if($tag['cnt'] and $offset>=$tag['cnt'])
-		$offset=max(0,$cnt-$limit);
+		$offset=max(0,$tag['cnt']-$limit);
 
 	$R=Eleanor::$Db->Query('SELECT `id`,`cats`,IF(`pinned`=\'0000-00-00 00:00:00\',`date`,`pinned`) `date`,`author`,`author_id`,`show_detail`,`r_average`,`r_total`,`r_sum`,`status`,`reads`,`comments`,`tags`,`uri`,`title`,`announcement`,IF(`text`=\'\',0,1) `_hastext`,UNIX_TIMESTAMP(`last_mod`) `last_mod`,`voting` FROM `'.$mc['t'].'` INNER JOIN `'.$mc['tl'].'` USING(`id`) WHERE `id` IN (SELECT `id` FROM `'.$mc['rt'].'` WHERE `tag`='.$tag['id'].') AND `language`IN(\'\',\''.Language::$main.'\') AND `lstatus`=1 ORDER BY `ldate` DESC LIMIT '.$offset.', '.$limit);
 	$d=FormatList($R);

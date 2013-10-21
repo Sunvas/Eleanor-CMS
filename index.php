@@ -540,17 +540,14 @@ function LangNewUrl($url,$l)
 	if(rtrim($url,'?')=='')
 		return$l==LANGUAGE ? $base : $Eleanor->Url->Construct(array('lang'=>Eleanor::$langs[$l]['uri']),true,!$Eleanor->Url->furl);
 
-	if(0!==$p=strpos($url,'?'))
-	{
-		parse_str(substr($url,$p+1),$dynamic);
-		$Eleanor->Url->__construct('!'.($p===false ? $url.'!&' : str_replace('?','!&',$url)));
-	}
+	if(strpos($url,'?')!==0)
+		$Eleanor->Url->__construct($url);
 	else
 	{
-		$dynamic=array();
 		$url=ltrim($url,'?');
 		$Eleanor->Url->is_static=false;
 	}
+
 	$Eleanor->Url->furl=$Eleanor->Url->is_static;
 
 	if($l!=LANGUAGE)
@@ -576,7 +573,7 @@ function LangNewUrl($url,$l)
 					return$base.$special;
 				break;
 			}
-		$q=$dynamic;
+		$q=$Eleanor->Url->mixedget;
 	}
 	else
 	{
@@ -650,6 +647,7 @@ function LangNewUrl($url,$l)
 		$olds=$Eleanor->Url->string;
 		if(method_exists($Plug,'LangUrl') and $r=$Plug->LangUrl($q,$l))
 			return$base.$r;
+
 		$Eleanor->Url->string=$olds;
 	}
 
@@ -663,7 +661,7 @@ function LangNewUrl($url,$l)
 			$v=Url::Encode($v);
 		return$base.$Eleanor->Url->Prefix(false)
 			.join('/',$s).$Eleanor->Url->ending
-			.($dynamic ? '?'.Url::Query($dynamic) : '');
+			.($Eleanor->Url->mixedget ? '?'.Url::Query($Eleanor->Url->mixedget) : '');
 	}
 	return$base.Url::Query($q);
 }

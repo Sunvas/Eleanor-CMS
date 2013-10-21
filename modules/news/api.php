@@ -239,8 +239,8 @@ class ApiNews extends BaseClass
 		$Url->delimiter=$vars['url_static_delimiter'];
 		$Url->defis=$vars['url_static_defis'];
 		$Url->ending=$vars['url_static_ending'];
+		$Url->file=Eleanor::$services['user']['file'];
 
-		$Url->special=$Url->furl ? '' : Eleanor::$filename.'?';
 		foreach(Eleanor::$langs as $lang=>&$_)
 		{
 			if($limit<1)

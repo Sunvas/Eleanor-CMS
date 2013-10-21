@@ -38,12 +38,12 @@ if($suser)
 			);
 			$u++;
 		}
-		elseif($a['name'] and Eleanor::$vars['bots_enable'])
+		elseif($a['botname'] and Eleanor::$vars['bots_enable'])
 		{
-			if(isset($bots[$a['name']]))
-				$bots[$a['name']]['cnt']++;
+			if(isset($bots[ $a['botname'] ]))
+				$bots[ $a['botname'] ]['cnt']++;
 			else
-				$bots[$a['name']]=array(
+				$bots[ $a['botname'] ]=array(
 					'cnt'=>1,
 					't'=>$a['enter'],
 				);

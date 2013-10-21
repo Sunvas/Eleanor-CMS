@@ -22,7 +22,7 @@ $uploaded=&$v_1;
 $writed=&$v_2;
 $value=&$v_3;
 $name=&$v_4;
-$options=&$v_4;
+$options=&$v_5;
 $lang=Eleanor::$Language->Load($theme.'langs/uploadfile-*.php',false);
 
 $img=(($uploaded or $writed) and preg_match('#\.(png|jpe?g|bmp|gif)$#i',$value)>0);

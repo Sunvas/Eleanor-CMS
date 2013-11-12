@@ -32,6 +32,11 @@ class OwnBbCode_attach extends OwnBbCode
 		}
 		if(!$cu)
 			return static::RestrictDisplay($t,$p,$c);
+
+		#Если параметр пропущен - тег считаем сбойным и не показываем
+		if($p['file']===true)
+			return'';
+
 		$is_our=strpos($p['file'],'://')===false;
 		if($is_our)
 			$p['file']=PROTOCOL.Eleanor::$domain.Eleanor::$site_path.$p['file'];

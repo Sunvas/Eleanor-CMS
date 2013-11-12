@@ -26,6 +26,17 @@ $(function(){
 	$(window).resize(function(){
 		$("#loading").triggerHandler("show");
 	});
+
+	//Подсветим активные пункты меню
+	var now="";
+	with(location)
+	{
+		now+=protocol+"//"+hostname+(port ? ":"+port : "")+CORE.site_path;
+		now=href.substr(now.length);
+	}
+	$("nav a").filter(function(){
+		return $(this).attr("href")==now && now!="#";
+	}).addClass("active");
 });//]]></script>
 <?php
 if(Eleanor::$Permissions->IsAdmin())

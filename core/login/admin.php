@@ -87,7 +87,7 @@ class LoginAdmin extends LoginBase implements LoginClass
 	{
 		if(!static::IsUser())
 			return false;
-		return$uid ? Eleanor::$services['admin']['file'].'?'.Eleanor::getInstance()->Url->Construct(array('section'=>'management','module'=>'users','edit'=>$uid),false,false,false) : '';
+		return$uid ? Eleanor::$services['admin']['file'].'?'.Eleanor::getInstance()->Url->Construct(array('section'=>'management','module'=>'users','edit'=>$uid),false) : '';
 	}
 
 	/**

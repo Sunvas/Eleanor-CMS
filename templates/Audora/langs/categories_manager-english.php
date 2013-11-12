@@ -4,6 +4,7 @@ return array(
 	'list'=>'Categories',
 	'pos'=>'Position',
 	'add'=>'Add category',
+	'save'=>'Save category',
 	'subitems'=>'Subcategories:',
 	'addsubitem'=>'Add subcategory',
 	'up'=>'Move up',

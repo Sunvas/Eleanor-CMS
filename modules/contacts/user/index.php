@@ -18,6 +18,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 {
 	$isu=Eleanor::$Login->IsUser();
 	$Eleanor->Editor->ownbb=$Eleanor->Editor->smiles=$Eleanor->Editor->antilink=false;
+	$Eleanor->Editor_result->ownbb=$Eleanor->Editor_result->smiles=$Eleanor->Editor_result->antilink=false;
 	$values=array(
 		'subject'=>isset($_POST['subject']) ? trim((string)Eleanor::$POST['subject']) : '',
 		'message'=>$Eleanor->Editor_result->GetHtml('message'),

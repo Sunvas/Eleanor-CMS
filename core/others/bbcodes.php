@@ -15,7 +15,7 @@ class BBCodes extends BaseClass
 		$checkout=true,
 
 		#BB теги, подлежащие замене.
-		$tags=array('b','p','i','s','a','q','li','ul','ol','em','tt','big','sub','sup','var','abbr','cite','code','spansmall','strong','noindex','legend','blockquote','span','address','option','optgroup','select','table','tr','td','th','thead','tfoot','tbody','caption','col','colgroup','legend','fieldset','object','param','article','aside','details','details','figcaption','figure','footer','header','hgroup','mark','nav','wbr','source','video','time','summary','section','ruby','rp','rt','progress','output');
+		$tags=array('b','p','i','s','a','q','li','ul','ol','em','tt','big','sub','sup','var','abbr','cite','code','spansmall','strong','noindex','legend','blockquote','span','small','address','option','optgroup','select','table','tr','td','th','thead','tfoot','tbody','caption','col','colgroup','legend','fieldset','object','param','article','aside','details','details','figcaption','figure','footer','header','hgroup','mark','nav','wbr','source','video','time','summary','section','ruby','rp','rt','progress','output');
 
 	/**
 	 * Преобразование текста, размеченного BB кодами в HTML разметку

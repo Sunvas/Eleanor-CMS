@@ -130,11 +130,7 @@ class TplCategoriesManager
 		foreach($controls as $k=>&$v)
 			if($v)
 				if(is_array($v) and !empty($values[$k]))
-				{
-					if(!isset($v['title']))
-						die(var_dump($values[$k],$k));
 					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
-				}
 				elseif(is_string($v))
 					$Lst->head($v);
 
@@ -147,7 +143,7 @@ class TplCategoriesManager
 		$Lst->end()
 		->submitline((string)Eleanor::getInstance()->Uploader->Show('categories'))
 		->submitline(
-			$back.Eleanor::Button('OK','submit',array('tabindex'=>10))
+			$back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add'],'submit',array('tabindex'=>10))
 			.($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('tabindex'=>11,'onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 			.Eleanor::Input('_draft',$id,array('type'=>'hidden'))
 			.Eleanor::$Template->DraftButton($links['draft'],1)

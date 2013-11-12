@@ -94,9 +94,13 @@ class Image extends BaseClass
 			throw new EE('File not found! ('.$path.')',EE::DEV);
 		if(!list($w,$h)=getimagesize($path))
 			throw new EE('Image failed!',EE::ENV);
+
+		#Размер превьюшки по умолчанию 100 на 100 будет установлен если в $o отсутствуют указатели размера
+		$setsize=!isset($o['width']) && !isset($o['height']);
+
 		$o+=array(
-			'width'=>$w>$h ? 100 : 0,#Ширина будущей превьюшки; целое число: 0 - без изменений
-			'height'=>$h>$w ? 100 : 0,#Высота будущем превьюшки; целое число: 0 - без изменений
+			'width'=>$setsize && $w>$h ? 100 : 0,#Ширина будущей превьюшки; целое число: 0 - без изменений
+			'height'=>$setsize && $h>$w ? 100 : 0,#Высота будущем превьюшки; целое число: 0 - без изменений
 			'cut_first'=>false,#Если true - превьюшка будет не ужиматься, а тупо обрезаться
 			'cut_last'=>false,#Если true - превьюшка будет уменьшена по одной стороне, а по другой - обрезана
 			'first'=>'b',#Что будет уменьшаться первое: высота или ширина. w,h . Автоматически: b - по наибольшей стороне, s - по наименьшей стороне
@@ -105,6 +109,7 @@ class Image extends BaseClass
 			'newname'=>false,
 			'suffix'=>'_preview',#Суффикс для имени файла
 		);
+
 		$newpath=$o['newname'] ? (preg_match('#[/\\\]#',$o['newname'])>0 ? '' : dirname($path).'/').$o['newname'] : substr_replace($path,$o['suffix'],strrpos($path,'.'),0);
 		if(!is_writable($dn=dirname($newpath)))#Нам нужно проверить, сможем ли записать не только в каталог файла, но и в сам файл.
 			throw new EE('Folder '.$dn.' is write-protected!',EE::ENV);
@@ -138,6 +143,8 @@ class Image extends BaseClass
 					$width=$o['cut_last'] ? $o['width'] : round($o['width']*$o['height']/$height);
 					$temp=$r;
 					$r=imagecreatetruecolor($width,$o['height']);
+					imagealphablending($r,false);
+					imagesavealpha($r,true);
 					imagecopyresampled($r,$temp,0,0,0,0,$width,$o['height'],$o['width'],$o['cut_last'] ? $o['height'] : $height);
 				}
 			break;
@@ -154,6 +161,8 @@ class Image extends BaseClass
 					$height=$o['cut_last'] ? $o['height'] : round($o['height']*$o['width']/$width);
 					$temp=$r;
 					$r=imagecreatetruecolor($o['width'],$height);
+					imagealphablending($r,false);
+					imagesavealpha($r,true);
 					imagecopyresampled($r,$temp,0,0,0,0,$o['width'],$height,$o['cut_last'] ? $o['width'] : $width,$o['height']);
 				}
 		}

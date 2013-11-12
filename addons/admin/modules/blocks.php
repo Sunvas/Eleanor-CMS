@@ -599,7 +599,11 @@ function FatalError($e)
 
 function SaveGroupValues()
 {
-	$group=array();
+	$group=array(
+		'places'=>array(),
+		'blocks'=>array(),
+		'extra'=>isset($_POST['extra']) ? (string)$_POST['extra'] : '',
+	);
 	if(isset($_POST['place']) and is_array($_POST['place']))
 		foreach($_POST['place'] as $k=>&$v)
 		{
@@ -612,7 +616,6 @@ function SaveGroupValues()
 			if(isset($group['blocks'][$k]))
 				$group['blocks'][$k]=(array)$v;
 
-	$group['extra']=isset($_POST['extra']) ? (string)$_POST['extra'] : '';
 	return$group;
 }
 

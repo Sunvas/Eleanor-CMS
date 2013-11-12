@@ -163,7 +163,7 @@ class TplUserNewsCorrect
 			)
 			->submitline((string)$uploader)
 			->submitline(
-				$back.Eleanor::Button($id ? static::$lang['edit'] : static::$lang['add'],'submit',array('tabindex'=>14))
+				$back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add'],'submit',array('tabindex'=>14))
 				.($id ? ' '.Eleanor::Button(Eleanor::$Language['tpl']['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 				.($links['draft'] ? Eleanor::Input('_draft',$id,array('type'=>'hidden')).Eleanor::$Template->DraftButton($links['draft'],1).($hasdraft ? ' <a href="'.$links['nodraft'].'">'.static::$lang['nodraft'].'</a>' : '') : '')
 			)

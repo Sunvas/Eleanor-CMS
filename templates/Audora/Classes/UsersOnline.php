@@ -54,9 +54,9 @@ class TplUsersOnline
 			$b=isset($sscnt[$k]['bot']) ? $sscnt[$k]['bot'] : count($v['bots']);
 
 			$c.='<div><h2>'.$k.' ('.(isset($scnt[$k]) ? $scnt[$k] : $u+$b+$g).')</h2>'
-				.($u>0 ? '<div><h4>'.call_user_func(static::$lang['users'],$u).'</h4>'.join(', ',$v['users']).(isset($sscnt[$k]['user']) && $b<$sscnt[$k]['user'] ? ' ...' : '').'</div>' : '')
-				.($g>0 ? '<div><h4>'.call_user_func(static::$lang['guests'],$g).'</h4>'.join(', ',$v['guests']).(isset($sscnt[$k]['guest']) && $b<$sscnt[$k]['guest'] ? ' ...' : '').'</div>' : '')
-				.($b>0 ? '<div><h4>'.call_user_func(static::$lang['bots'],$b).'</h4>'.join(', ',$v['bots']).(isset($sscnt[$k]['bot']) && $b<$sscnt[$k]['bot'] ? ' ...' : '').'</div>' :'')
+				.($u>0 ? '<div><h4>'.call_user_func(static::$lang['users'],$u).'</h4>'.join(', ',$v['users']).(isset($sscnt[$k]['user']) && count($v['users'])<$sscnt[$k]['user'] ? ' ...' : '').'</div>' : '')
+				.($g>0 ? '<div><h4>'.call_user_func(static::$lang['guests'],$g).'</h4>'.join(', ',$v['guests']).(isset($sscnt[$k]['guest']) && count($v['guests'])<$sscnt[$k]['guest'] ? ' ...' : '').'</div>' : '')
+				.($b>0 ? '<div><h4>'.call_user_func(static::$lang['bots'],$b).'</h4>'.join(', ',$v['bots']).(isset($sscnt[$k]['bot']) && count($v['bots'])<$sscnt[$k]['bot'] ? ' ...' : '').'</div>' :'')
 				.'</div>';
 		}
 		return$c;

@@ -9,7 +9,7 @@
 	*Pseudonym
 */
 if(!defined('CMS'))die;
-global$Eleanor;
+global$Eleanor,$title;
 $lang=Eleanor::$Language->Load($Eleanor->module['path'].'admin-*.php','mp');
 Eleanor::$Template->queue[]='AdminMainpage';
 
@@ -34,7 +34,7 @@ if(isset($_GET['do']))
 			Resort(true);
 		break;
 		default:
-			ShowList();
+			goto ShowList;
 	}
 elseif(isset($_GET['edit']))
 {
@@ -111,11 +111,8 @@ elseif(isset($_GET['down']))
 	GoAway(false,301,'it'.$id);
 }
 else
-	ShowList();
-
-function ShowList()
-{global$Eleanor,$title;
-	$title[]=Eleanor::$Language['mp']['listmp'];
+{ShowList:
+	$title[]=$lang['listmp'];
 	$items=array();
 	$R=Eleanor::$Db->Query('SELECT `id`,`services`,`title_l` `title`,`descr_l` `descr`,`protected`,`path`,`image`,`active`,`pos` FROM `'.P.'modules` INNER JOIN `'.P.'mainpage` USING(`id`) ORDER BY `pos` ASC');
 	while($a=$R->fetch_assoc())
@@ -171,7 +168,7 @@ function AddEdit($id,$error='')
 		$bypost=false;
 
 	$modules=array();
-	$R=Eleanor::$Db->Query('SELECT `id`,`title_l` FROM `'.P.'modules` WHERE `id` NOT IN (SELECT `id` FROM `'.P.'mainpage` WHERE `id`!='.$values['id'].') AND `id`!='.$Eleanor->module['id']);
+	$R=Eleanor::$Db->Query('SELECT `id`,`title_l` FROM `'.P.'modules` WHERE `active`=1 AND `services` LIKE \'%,user,%\' AND `id` NOT IN (SELECT `id` FROM `'.P.'mainpage` WHERE `id`!='.$values['id'].') AND `id`!='.$Eleanor->module['id']);
 	while($a=$R->fetch_assoc())
 		$modules[$a['id']]=$a['title_l'] ? Eleanor::FilterLangValues(unserialize($a['title_l'])) : '';
 	asort($modules,SORT_STRING);

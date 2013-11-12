@@ -181,7 +181,7 @@ class Editor_Result extends BaseClass
 		$clforget=array('p','li','colgroup');
 
 		#Строчные теги. Они могут находится друг в друге неограниченное число раз.
-		$inline=array('a','abbr','address','span','i','b','s','em','strong','q','big','small','sup','sub','var','tt','cite','code','input','select','br','img');
+		$inline=array('a','abbr','address','span','small','i','b','s','em','strong','q','big','small','sup','sub','var','tt','cite','code','input','select','br','img');
 
 		#Накладывает ограничения на вложенность тегов. Теги, не указанные в массиве справа, вложенные в тег слева, будут игнорироваться как неправильно вложенные.
 		$children=array(
@@ -459,7 +459,7 @@ class Editor_Result extends BaseClass
 		$s=preg_replace('#</figcaption>[^<]+</figure>#','</figcaption></figure>',$s);
 
 		#Убираем любые пустые конструкции типа <b>   </b>
-		$s=preg_replace('#<(b|i|u|s|a|q|li|ul|ol|em|tt|big|sub|sup|var|cite|code|span|spansmall|strong|noindex|legend|blockquote|select|table)[^>]*>\s*</\1>#i','',$s);
+		$s=preg_replace('#<(b|i|u|s|a|q|li|ul|ol|em|tt|big|sub|sup|var|cite|code|span|small|spansmall|strong|noindex|legend|blockquote|select|table)[^>]*>\s*</\1>#i','',$s);
 
 		$op=array();
 		$w=strtok($s,'<');

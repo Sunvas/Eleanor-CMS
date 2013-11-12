@@ -13,14 +13,14 @@ class Modules
 {
 	/**
 	 * Запуск модуля
-	 *
 	 * @param string $p Путь к каталогу модуля
 	 * @param bool $us От "UseService", флаг указывающий на необходимость добавления к $p каталога с именем сервиса
 	 * @param string $f Файл, который будет проинклужен
 	 */
 	public static function Load($p,$us=true,$f='index.php')
 	{
-		Eleanor::$Template->paths[__class__]=$p.'Template/';
+		if(isset(Eleanor::$Template))
+			Eleanor::$Template->paths[__class__]=$p.'Template/';
 		if($us)
 			$p.=Eleanor::$service.DIRECTORY_SEPARATOR;
 		$p.=$f;
@@ -57,7 +57,6 @@ class Modules
 
 	/**
 	 * Получение кэша имен модулей и секций
-	 *
 	 * @param string|FALSE $s Название сервиса системы
 	 * @param string|FALSE $l Язык
 	 * @param bool Флаг регенерации кэша

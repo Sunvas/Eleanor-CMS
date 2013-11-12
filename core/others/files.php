@@ -386,7 +386,7 @@ class Files
 					{
 						$seek=$limiter;
 						fseek($fh,$seek,SEEK_SET);
-						$data=fread($fh,$buf-$limiter+$i);
+						$data=fread($fh,$buf+$limiter-$i);
 					}
 					fseek($fh,$seek+$diff,SEEK_SET);
 					fwrite($fh,$data);

@@ -25,7 +25,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 	{
 		if(typeof s=="string")
 		{
-			var r=typeof CORE.lang[s]=="undefined" ? "" : CORE.lang[s];
+			var r=s in CORE.lang ? CORE.lang[s] : "";
 
 			if(typeof r=="string")
 			{
@@ -104,7 +104,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 					try{info.OnSuccess(r.data)}catch(e){}
 					$.each(r.head,function(i,H){ CORE.AddHead(i,H) });
 				};
-				if(!r || r.error || typeof r.data=="undefined")
+				if(!r || r.error || !("data" in r))
 					try{info.OnFail(r.error ? r.error : r||"No data")}catch(e){}
 				else if($.isArray(r.scripts) && r.scripts.length>0)
 					CORE.AddScript(r.scripts,Soccess);
@@ -162,7 +162,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 					emp+="*";
 					if(typeof ef!="object")
 						ef={};
-					if(typeof ef[emp]=="undefined")
+					if(!(emp in ef))
 						ef[emp]=0;
 					vv=ef[emp]++;
 				}
@@ -182,7 +182,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 	{
 		var i;
 		for(i in O)
-			if(typeof O[i][""]!="undefined")
+			if("" in O[i])
 				O[i]=O[i][""];
 			else if(typeof O[i]=="object")
 				CORE.NormObj(O[i]);
@@ -315,7 +315,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 
 		var OnPop=function(e){
 			var st=e.state||false;
-			if(st && st.f!==false && typeof CORE.history[st.f]!="undefined")
+			if(st && st.f!==false && st.f in CORE.history)
 				CORE.history[st.f](st.data);
 		};
 		if(window.addEventListener)
@@ -348,7 +348,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 	MSQueue:1,
 	MSLogin:function(sn)
 	{
-		if(CORE.MSQueue.state()!="resolved" || typeof CORE.mssites[sn]=="undefined" || CORE.msisuser)
+		if(CORE.MSQueue.state()!="resolved" || !(sn in CORE.mssites) || CORE.msisuser)
 			return;
 
 		CORE.ShowLoading();
@@ -375,7 +375,7 @@ var uagent=navigator.userAgent.toLowerCase(),
 	},
 	MSJump:function(sn)
 	{
-		if(typeof CORE.mssites[sn]=="undefined" || !CORE.msisuser)
+		if(!(sn in CORE.mssites) || !CORE.msisuser)
 			return false;
 		CORE.Ajax(
 			{
@@ -503,17 +503,6 @@ $(function(){
 	else
 		CORE.MSQueue.reject();
 
-	//Подсветим активные пункты меню
-	var now="";
-	with(location)
-	{
-		now+=protocol+"//"+hostname+(port ? ":"+port : "")+CORE.site_path;
-		now=href.substr(now.length);
-	}
-	$("nav a").filter(function(){
-		return $(this).attr("href")==now && now!="#";
-	}).addClass("active");
-
 	//Определим какие скрипты подключены
 	var cut=$("head base").attr("href");
 	$("head script").each(function(){
@@ -523,7 +512,7 @@ $(function(){
 
 	//CTRL + Enter для всех форм
 	$(this).on("keypress","form textarea",function(e){
-		if(e.keyCode==13 && e.ctrlKey)
+		if(e.keyCode==10 && e.ctrlKey)
 			$(this).closest("form").submit();
 	})
 

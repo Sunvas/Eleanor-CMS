@@ -1008,9 +1008,9 @@ INSERT INTO `{$prefix}menu_l` (`id`, `language`, `title`, `url`, `eval_url`, `pa
 (1, 'russian', 'Личный кабинет', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''аккаунт''),false,false);', ''),
 (2, 'russian', 'Новости', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''новости''),false,false);', ''),
 (3, 'russian', 'Поиск', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''поиск''),false);', ' rel="search"'),
-(4, 'russian', 'Карта сайта', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''карта сайта''),false);', ''),
+(4, 'russian', 'Карта сайта', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''карта-сайта''),false);', ''),
 (5, 'russian', 'Информация', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''страницы''),false,false);', ''),
-(6, 'russian', 'Обратная связь', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''обратная связь''),false);', ' rel="contact"'),
+(6, 'russian', 'Обратная связь', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''обратная-связь''),false);', ' rel="contact"'),
 (7, 'russian', 'Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
 (8, 'russian', 'Официальный сайт Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
 (9, 'russian', 'Форум поддержки', 'http://eleanor-cms.ru/%D1%84%D0%BE%D1%80%D1%83%D0%BC/', '', '')
@@ -1040,7 +1040,7 @@ INSERT INTO `{$prefix}menu_l` (`id`, `language`, `title`, `url`, `eval_url`, `pa
 (1, 'ukrainian', 'Особистий кабінет', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''аккаунт''),false,false);', ''),
 (2, 'ukrainian', 'Новини', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''новини''),false,false);', ''),
 (3, 'ukrainian', 'Пошук', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''пошук''),false);', ' rel="search"'),
-(4, 'ukrainian', 'Мапа сайту', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''мапа сайту''),false);', ''),
+(4, 'ukrainian', 'Мапа сайту', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''мапа-сайту''),false);', ''),
 (5, 'ukrainian', 'Інформація', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''сторінки''),false,false);', ''),
 (6, 'ukrainian', 'Зворотній зв''язок', '', 'return\$Eleanor->Url->special.\$Eleanor->Url->Construct(array(''module''=>''зворотній зв\\\\''язок''),false);', ' rel="contact"'),
 (7, 'ukrainian', 'Eleanor CMS', 'http://eleanor-cms.ru', '', ''),
@@ -1127,9 +1127,9 @@ $ser=array(
 	array(
 		str_replace('\'','\'\'',serialize(array(
 			'contacts'=>array(
-				'russian'=>array('обратная связь','contacts'),#Russian
+				'russian'=>array('обратная-связь','contacts'),#Russian
 				'english'=>array('contacts'),#English
-				'ukrainian'=>array('зворотній зв\'язок','contacts'),#Ukrainian
+				'ukrainian'=>array('зворотній-зв\'язок','contacts'),#Ukrainian
 			),
 		))),
 		serialize(array(
@@ -1160,9 +1160,9 @@ $ser=array(
 	array(
 		serialize(array(
 			'menu'=>array(
-				'russian'=>array('карта сайта','меню','menu','sitemap'),#Russian
+				'russian'=>array('карта-сайта','меню','menu','sitemap'),#Russian
 				'english'=>array('sitemap','menu'),#English
-				'ukrainian'=>array('мапа сайту','меню','menu','sitemap'),#Ukrainian
+				'ukrainian'=>array('мапа-сайту','меню','menu','sitemap'),#Ukrainian
 			),
 		)),
 		serialize(array(

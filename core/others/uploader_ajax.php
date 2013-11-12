@@ -277,17 +277,15 @@ class Uploader_Ajax extends Uploader
 
 	/**
 	 * Проверка корректности имени файла или каталога
-	 *
 	 * @param string $f Имя файла или каталога для проверки
 	 */
 	protected static function EF($f)
 	{
-		return preg_match('%[\s#"\'\\/:*\?<>|]+%',$f)>0;
+		return preg_match('~[\s#"\'\\\\/:*\?<>|%]+~',$f)>0;
 	}
 
 	/**
 	 * Генерация относительного путь для перехода из одного каталога в другой
-	 *
 	 * @param string $a Путь к первому каталогу
 	 * @param string $b Путь ко второму каталогу
 	 * @return string Например: ../../aa/bb/cc

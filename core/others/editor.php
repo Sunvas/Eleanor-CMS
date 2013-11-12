@@ -53,6 +53,7 @@ class Editor extends BaseClass
 	 */
 	public function GetEdit($text)
 	{
+		$text=(string)$text;
 		if($this->ownbb)
 		{
 			OwnBB::$opts['visual']=in_array($this->type,$this->visual);
@@ -88,6 +89,7 @@ class Editor extends BaseClass
 	 */
 	public function Area($name,$value='',$extra=array(),$tpl='Editor')
 	{
+		$value=(string)$value;
 		if(empty($extra['bypost']))
 			$value=$this->GetEdit($value);
 		$id=preg_replace('#\W+#','',$name);

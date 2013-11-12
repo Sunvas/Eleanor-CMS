@@ -29,6 +29,9 @@ if(CHARSET!='utf-8' and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['H
 
 ApplyLang();
 
+#Заплатка. В новой версии все исправить.
+Eleanor::$Template=new Template_Mixed;
+
 if(Eleanor::$vars['site_closed'] and !Eleanor::LoadLogin(Eleanor::$services['admin']['login'])->IsUser())
 	return Error(Eleanor::$Language['main']['site_closed']);
 

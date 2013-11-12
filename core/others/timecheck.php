@@ -56,7 +56,7 @@ class TimeCheck extends BaseClass
 		if($ids)
 		{
 			$t=time();
-			$R=Eleanor::$Db->Query('SELECT `contid`,`author_id`,`ip`,`value`,`timegone`,`date` FROM `'.$this->table.'` WHERE '.($this->mid ? '`mid`='.Eleanor::$Db->Escape($this->mid).' AND ' : '').'`contid`'.Eleanor::$Db->In($ids).' AND `author_id`='.(int)$this->uid.($this->uid ? '' : ' AND `ip`=\''.Eleanor::$ip.'\''));
+			$R=Eleanor::$Db->Query('SELECT `contid`,`author_id`,`ip`,`value`,`timegone`,`date` FROM `'.$this->table.'` WHERE '.($this->mid ? '`mid`='.Eleanor::$Db->Escape($this->mid).' AND ' : '').'`contid`'.Eleanor::$Db->In($ids).' AND `author_id`='.(int)$this->uid.($this->uid ? '' : ' AND `ip`='.Eleanor::$Db->Escape(Eleanor::$ip)));
 			while($a=$R->fetch_assoc())
 				if($t<$a['_datets']=strtotime($a['date']) or !$a['timegone'])
 				{
@@ -129,6 +129,6 @@ class TimeCheck extends BaseClass
 	 */
 	public function Delete($id)
 	{
-		Eleanor::$Db->Delete($this->table,($this->mid ? '`mid`'.Eleanor::$Db->Escape($this->mid,true).' AND ' : '').'`contid`'.Eleanor::$Db->Escape($id,true).' AND `author_id`'.Eleanor::$Db->Escape($this->uid,true).($this->uid ? '' : ' AND `ip`='.Eleanor::$Db->Escape(Eleanor::$ip,true)));
+		Eleanor::$Db->Delete($this->table,($this->mid ? '`mid`'.Eleanor::$Db->Escape($this->mid,true).' AND ' : '').'`contid`'.Eleanor::$Db->Escape($id,true).' AND `author_id`'.Eleanor::$Db->Escape($this->uid,true).($this->uid ? '' : ' AND `ip`='.Eleanor::$Db->Escape(Eleanor::$ip)));
 	}
 }

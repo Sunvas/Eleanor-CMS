@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Шаблон для админки модуля обратной связи
 */
@@ -28,7 +24,7 @@ class TplAdminContacts
 				elseif(is_string($v))
 					$Lst->head($v);
 
-		return Eleanor::$Template->Cover((string)$Lst->button(Eleanor::Button())->end()->endform(),$error)
+		return Eleanor::$Template->Cover((string)$Lst->button(Eleanor::Button(Eleanor::$Language['tpl']['save']))->end()->endform(),$error)
 			.'<script type="text/javascript">//<![CDATA[
 $(function(){
 	$("table.whoms").each(function(){
@@ -59,11 +55,11 @@ $(function(){
 });//]]></script>';
 	}
 
-	/*
-		Элемент шаблона. Таблица ввода электронных адресов получателей обратной связи
-		$n - имя-префикс всех контролов
-		$emails - массив получателей формат email=>имя
-	*/
+	/**
+	 * Элемент шаблона. Таблица ввода электронных адресов получателей обратной связи
+	 * @param string $n имя-префикс всех контролов
+	 * @param array $emails Получатели в формате email=>имя
+	 */
 	public static function LoadWhom($n,$emails)
 	{
 		$GLOBALS['jscripts'][]='js/jquery.drag.js';

@@ -4,6 +4,7 @@ return array(
 	'NOFILE'=>'File of smile does not exists',
 	'NOEMO'=>'Not given emotion',
 	'add'=>'Add smile',
+	'save'=>'Save smile',
 	'smile'=>'Smile',
 	'no_smiles'=>'Smiles was not found',
 	'deleting'=>'Do you really want to remove smile %s?',

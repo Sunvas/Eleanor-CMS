@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Шаблоны для админки генератора sitemap-ов
 */
@@ -15,9 +11,9 @@ class TPLSitemap
 	public static
 		$lang;
 
-	/*
-		Меню модуля
-	*/
+	/**
+	 * Меню модуля
+	 */
 	protected static function Menu($act='')
 	{
 		$links=&$GLOBALS['Eleanor']->module['links'];
@@ -245,7 +241,7 @@ $(function(){
 					'<div id="mod-options"'.($opts ? ' style="display:none"' : '').'>'.Eleanor::$Template->Message(static::$lang['nomops'],'info').'</div><div id="msetts"'.($opts ? '' : ' style="display:none"').'>'.$opts.'</div>'
 				)
 			)
-			->submitline($back.Eleanor::Button().($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
+			->submitline($back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add']).($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
 			->endform();
 
 		foreach($errors as $k=>&$v)
@@ -363,12 +359,11 @@ $(function(){
 		return$Lst->end();
 	}
 
-	/*
-		Страница правки файла robots.txt
-
-		$v - содержимое файла
-		$save - флаг сохраненности
-	*/
+	/**
+	 * Страница правки файла robots.txt
+	 * @param string $v содержимое файла
+	 * @param bool $save Флаг сохраненности
+	 */
 	public static function EditRobots($v,$saved)
 	{
 		static::Menu('er');
@@ -376,19 +371,19 @@ $(function(){
 			->form()
 			->begin()
 			->item(static::$lang['robots'],Eleanor::Text('text',$v,array(),0))
-			->button(Eleanor::Button())
+			->button(Eleanor::Button(Eleanor::$Language['tpl']['save']))
 			->end()
 			->endform();
 		return Eleanor::$Template->Cover(($saved ? Eleanor::$Template->Message(static::$lang['rsaved'],'info') : '').$Lst);
 	}
 
-	/*
-		Страница удаления карты сайта
-		$a - массив удаляемой карты сайта, ключи:
-			file - файл карты сайта
-			title - название карты сайта
-		$back - URL возврата
-	*/
+	/**
+	 * Страница удаления карты сайта
+	 * @param array $a Удаляемый sitemap, ключи:
+	 *   file - файл карты сайта
+	 *   title - название карты сайта
+	 * @param string $back URL возврата
+	 */
 	public static function Delete($a,$back)
 	{
 		static::Menu();

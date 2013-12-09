@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Админка управления смайлами
 */
@@ -15,9 +11,9 @@ class TPLSmiles
 	public static
 		$lang;
 
-	/*
-		Меню модуля
-	*/
+	/**
+	 * Меню модуля
+	 */
 	protected static function Menu($act='')
 	{
 		$lang=Eleanor::$Language['smiles'];
@@ -196,7 +192,7 @@ class TPLSmiles
 			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst->button(
-			$back.Eleanor::Button()
+			$back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add'])
 			.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 		)->end()->endform();
 

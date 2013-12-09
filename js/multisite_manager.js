@@ -142,7 +142,7 @@ $(function(){
 	//Changing secret of site
 	.on("change","[name$=\"[secret]\"]",function(){
 		var th=$(this),
-			trs=th.closest(children).find(".checkdb").closest("tr").nextAll().andSelf();
+			trs=th.closest(children).find(".checkdb").closest("tr").nextAll().addBack();
 		if(th.val()=="")
 			trs.show();
 		else

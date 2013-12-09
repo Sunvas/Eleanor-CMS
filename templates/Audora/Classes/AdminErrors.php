@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Шаблон админки системного модуля страниц ошибок
 */
@@ -214,7 +210,7 @@ $(function(){
 				$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
 			elseif($v)
 				$Lst->head($v);
-		$Lst->button(Eleanor::Button())->end()->endform();
+		$Lst->button(Eleanor::Button(Eleanor::$Language['tpl']['save']))->end()->endform();
 
 		foreach($errors as $k=>&$v)
 			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))

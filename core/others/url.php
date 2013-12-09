@@ -83,7 +83,7 @@ class Url extends BaseClass
 					$r[]=static::Encode($pv);
 
 			if($pr===true)
-				$pr=$this->sp ? $this->sp.$this->delimiter : '';
+				$pr=$this->sp ? $this->sp : '';
 			$r=$r ? $pr.join($this->delimiter,$r).$e : $pr;
 
 			if($suf)
@@ -290,19 +290,19 @@ class Url extends BaseClass
 	 * @param array|string $p Префикс в виде строки, либо массива сходного с первым параметром метода Construct
 	 * @param bool $a Флаг добавления к ссылки к текщуему префиксу
 	 */
-	public function SetPrefix($p,$a=false)
+	public function SetPrefix($p,$a=false,$ending=false)
 	{
 		if($p and is_array($p))
 		{
 			$f=$this->furl;
 
 			$this->furl=true;
-			$ap=$this->Construct($p,false,'');
-			if($a && $this->sp && $ap)
-				$this->sp.=$this->delimiter;
+			$ap=$this->Construct($p,false,$ending);
+
+			if($a)
+				$this->sp.=$ap;
 			else
-				$this->sp='';
-			$this->sp.=$ap;
+				$this->sp=$ap;
 
 			$this->furl=false;
 			$ap=$this->Construct($p,false);
@@ -315,9 +315,8 @@ class Url extends BaseClass
 		}
 		elseif($this->furl)
 		{
-			$p=preg_replace('#('.preg_quote($this->delimiter,'#').'|'.preg_quote($this->ending,'#').')+$#','',$p);
 			if($p!=='')
-				$this->sp=$a ? $this->sp.$this->delimiter.$p : $p;
+				$this->sp=$a ? $this->sp.$p : $p;
 			elseif(!$a)
 				$this->sp='';
 		}

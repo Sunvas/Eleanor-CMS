@@ -175,27 +175,27 @@ $(function(){
 			->item(static::$lang['author'],$values['author_id'] ? '<a href="'.Eleanor::$Login->UserLink(htmlspecialchars_decode($values['author'],ELENT),$values['author_id']).'">'.$values['author'].'</a>' : $values['author'])
 			->item(static::$lang['text'],$GLOBALS['Eleanor']->Editor->Area('text',$values['text'],array('bypost'=>$bypost)))
 			->item(static::$lang['status'],Eleanor::Select('status',Eleanor::Option($ltpl['activate'],1,$values['status']==1).Eleanor::Option($ltpl['deactivate'],0,$values['status']==0).Eleanor::Option($ltpl['waiting_act'],-1,$values['status']==-1)))
-			->button($back.Eleanor::Button().' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')))
+			->button($back.Eleanor::Button($ltpl['save']).' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')))
 			->end()
 			->endform(),$error);
 	}
 
-	/*
-		Страница удаления комментария
-		$t - массив удаляемого комментария, ключи:
-			text - текст удаляемого комментария
-		$back - URL возврата
-	*/
+	/**
+	 * Страница удаления комментария
+	 * @param array $t Удаляемый комментарий, ключи:
+	 *   text - текст удаляемого комментария
+	 * @param string $back URL возврата
+	 */
 	public static function Delete($a,$back)
 	{
 		static::Menu();
 		return Eleanor::$Template->Cover(Eleanor::$Template->Confirm(sprintf(static::$lang['deleting'],Strings::CutStr(strip_tags($a['text']),200)),$back));
 	}
 
-	/*
-		Обертка для настроек
-		$c - интерфейс настроек
-	*/
+	/**
+	 * Обертка для настроек
+	 * @param string $c Интерфейс настроек
+	 */
 	public static function Options($c)
 	{
 		static::Menu('options');

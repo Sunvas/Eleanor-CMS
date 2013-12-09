@@ -333,8 +333,8 @@ final class Eleanor extends BaseClass
 				if(!isset(self::$services) and false===self::$services=self::$Cache->Get('system-services'))
 				{
 					self::$services=array();
-					self::$Db->Query('SELECT `name`,`file`,`theme`,`login` FROM `'.P.'services`');
-					while($a=self::$Db->fetch_assoc())
+					$R=self::$Db->Query('SELECT `name`,`file`,`theme`,`login` FROM `'.P.'services`');
+					while($a=$R->fetch_assoc())
 						self::$services[$a['name']]=array_slice($a,1);
 					self::$Cache->Put('system-services',self::$services);
 				}
@@ -541,8 +541,8 @@ final class Eleanor extends BaseClass
 			$ml=$config=$cache=array();
 			$oid=0;
 			$ogname='';
-			self::$Db->Query('SELECT `o`.`id`,`o`.`name`,`l`.`value`,`l`.`serialized`,`l`.`language`,`o`.`multilang`,`g`.`name` `gname`,`g`.`keyword` FROM `'.P.'config` `o` INNER JOIN `'.P.'config_l` `l` USING(`id`) INNER JOIN `'.P.'config_groups` `g` ON `g`.`id`=`o`.`group` WHERE `g`.`keyword` REGEXP \''.join('|',$kw).'\' ORDER BY `o`.`id` ASC');
-			while($a=self::$Db->fetch_assoc())
+			$R=self::$Db->Query('SELECT `o`.`id`,`o`.`name`,`l`.`value`,`l`.`serialized`,`l`.`language`,`o`.`multilang`,`g`.`name` `gname`,`g`.`keyword` FROM `'.P.'config` `o` INNER JOIN `'.P.'config_l` `l` USING(`id`) INNER JOIN `'.P.'config_groups` `g` ON `g`.`id`=`o`.`group` WHERE `g`.`keyword` REGEXP \''.join('|',$kw).'\' ORDER BY `o`.`id` ASC');
+			while($a=$R->fetch_assoc())
 			{
 				if($a['serialized'])
 					$a['value']=unserialize($a['value']);
@@ -1189,8 +1189,8 @@ final class Eleanor extends BaseClass
 			if(false===$g=self::$Cache->Get($t))
 			{
 				$g=array();
-				self::$Db->Query('SELECT * FROM `'.$t.'`');
-				while($a=self::$Db->fetch_assoc())
+				$R=self::$Db->Query('SELECT * FROM `'.$t.'`');
+				while($a=$R->fetch_assoc())
 				{
 					$r=array();
 					$id=0;
@@ -1798,7 +1798,6 @@ class Cache
 /**
  * Database class
  * @property MySQLi $Driver Объект MySQLi
- * @property mysqli_result $Result Объект результата MySQLi
  * @property string $db Имя базы данных
  * @property int $queries Счетчик запросов
  */
@@ -1806,7 +1805,6 @@ class Db extends BaseClass
 {
 	public
 		$Driver,
-		$Result,
 		$db,
 		$queries=0;
 
@@ -1844,8 +1842,6 @@ class Db extends BaseClass
 	{
 		if(method_exists($this->Driver,$n))
 			return call_user_func_array(array($this->Driver,$n),$p);
-		elseif(is_object($this->Result) and method_exists($this->Result,$n))
-			return call_user_func_array(array($this->Result,$n),$p);
 		return parent::__call($n,$p);
 	}
 
@@ -1889,12 +1885,18 @@ class Db extends BaseClass
 
 	/**
 	 * Выполнение SQL запроса в базу
-	 * @param string $q SQL запрос
-	 * @return FALSE|mysqli_result
+	 * @param string|array $q SQL запрос (в случае array, будет использовано multi_query)
+	 * @param int|false $mode
+	 * @return FALSE|mysqli_result|mysqli_object
 	 */
-	public function Query($q)
+	public function Query($q,$mode=MYSQLI_STORE_RESULT)
 	{
 		++$this->queries;
+
+		$isa=is_array($q);
+		if($isa)
+			$q=join(';',$q);
+
 		if(DEBUG)
 		{
 			$d=debug_backtrace();
@@ -1913,8 +1915,24 @@ class Db extends BaseClass
 			);
 			$timer=microtime();
 		}
-		$this->Result=$this->Driver->query($q);
-		if($this->Result===false)
+
+		if($isa)
+		{
+			$R=$this->Driver->multi_query($q);
+			$return_r=false;
+		}
+		elseif($mode===false)
+		{
+			$R=$this->Driver->real_query($q);
+			$return_r=false;
+		}
+		else
+		{
+			$R=$this->Driver->query($q,$mode);
+			$return_r=!defined('MYSQLI_ASYNC') || $mode!=MYSQLI_ASYNC;
+		}
+
+		if($R===false)
 		{
 			if($q)
 			{
@@ -1928,12 +1946,14 @@ class Db extends BaseClass
 			}
 			throw new EE_SQL('query',array('error'=>$e,'no'=>$en,'query'=>$q));
 		}
+
 		if(DEBUG)
 		{
 			$debug['t']=round(array_sum(explode(' ',microtime()))-array_sum(explode(' ',$timer)),4);
 			Eleanor::$debug[]=$debug;
 		}
-		return$this->Result;
+
+		return$return_r ? $R : $this->Driver;
 	}
 
 	/**

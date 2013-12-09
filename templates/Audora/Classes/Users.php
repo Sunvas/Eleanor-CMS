@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Шаблоны управления пользователями в админке
 */
@@ -444,7 +440,7 @@ $(function(){
 				array(static::$lang['block'],$block),
 				$id ? array(static::$lang['statistics'],$stats) : false
 			)
-			->submitline($back.Eleanor::Button().($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
+			->submitline($back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add']).($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
 			->endform();
 
 		if($errors)
@@ -713,7 +709,7 @@ $(function(){
 					$Lst->item(array($v['title'],Eleanor::$Template->LangEdit($values[$k],null),'tip'=>$v['descr']));
 				elseif(is_string($v))
 					$Lst->head($v);
-		return Eleanor::$Template->Cover($Lst->button(Eleanor::Button())->end()->endform());
+		return Eleanor::$Template->Cover($Lst->button(Eleanor::Button(Eleanor::$Language['tpl']['save']))->end()->endform());
 	}
 
 	/*

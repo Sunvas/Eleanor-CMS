@@ -5,6 +5,7 @@ return array(
 	'NO_NEXT_RUN'=>'For a given run time, the task never runs',
 	'NOMODULES'=>'No modules selected',
 	'add'=>'Add sitemap',
+	'save'=>'Save sitemap',
 	'editrobots'=>'Edit robots.txt',
 	'file'=>'File',
 	'file_'=>'Relatively to site root. Without extension.',

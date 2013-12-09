@@ -270,8 +270,8 @@ function GoAway($info=false,$code=301,$hash='')
 				$info=Eleanor::$site_path.$info;
 		}
 
-		if($info==$current)
-			return ExitPage(404);
+		if($info==$current and $_SERVER['REQUEST_METHOD']=='GET')
+			die('.');
 		$ref=$info;
 	}
 	if($hash)

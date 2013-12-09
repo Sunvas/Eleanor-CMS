@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Шаблоны сервисов
 */
@@ -15,9 +11,9 @@ class TPLServices
 	public static
 		$lang;
 
-	/*
-		Меню модуля
-	*/
+	/**
+	 * Меню модуля
+	 */
 	protected static function Menu($act='')
 	{
 		$links=&$GLOBALS['Eleanor']->module['links'];
@@ -80,7 +76,7 @@ class TPLServices
 	*/
 	public static function AddEdit($name,$controls,$values,$errors,$back,$links)
 	{
-		static::Menu($name ? '' : 'add');
+		static::Menu($name ? 'edit' : 'add');
 		$ltpl=Eleanor::$Language['tpl'];
 		$Lst=Eleanor::LoadListTemplate('table-form')->form()->begin();
 
@@ -95,7 +91,7 @@ class TPLServices
 			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst->button(
-			$back.Eleanor::Button()
+			$back.Eleanor::Button($name ? static::$lang['save'] : static::$lang['add'])
 			.($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 		)->end()->endform();
 
@@ -107,13 +103,13 @@ class TPLServices
 	}
 
 
-	/*
-		Страница удаления сервиса
-		$a - массив удаляемого сервиса, ключи:
-			name - название сервиса
-			file - файл сервиса
-		$back - URL возврата
-	*/
+	/**
+	 * Страница удаления сервиса
+	 * @param array $a Удаляемый комментарий, ключи:
+	 *   name - название сервиса
+	 *   file - файл сервиса
+	 * @param string $back URL возврата
+	 */
 	public static function Delete($a,$back)
 	{
 		static::Menu('');

@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Админка управления модулями
 */
@@ -15,9 +11,9 @@ class TPLModules
 	public static
 		$lang;
 
-	/*
-		Меню модуля
-	*/
+	/**
+	 * Меню модуля
+	 */
 	protected static function Menu($act='')
 	{
 		$links=&$GLOBALS['Eleanor']->module['links'];
@@ -193,7 +189,7 @@ class TPLModules
 			->form()
 			->begin()
 			->item(array($ltpl['name'],Eleanor::$Template->LangEdit($ml['title'],null),'imp'=>true))
-			->item(static::$lang['sections'].'<br /><a href="#" id="addsession">'.static::$lang['add'].'</a>',$sections)
+			->item(static::$lang['sections'].'<br /><a href="#" id="addsession">'.static::$lang['addsec'].'</a>',$sections)
 			->item(array($ltpl['descr'],Eleanor::$Template->LangEdit($ml['descr'],null),'tip'=>static::$lang['descr_']))
 			->item(array(static::$lang['m_folder'],Eleanor::Input('path',$values['path'],$extra),'imp'=>true))
 			->item(array(static::$lang['access_in_s'],Eleanor::Items('services[]',$services,$extra),'imp'=>true))
@@ -204,7 +200,7 @@ class TPLModules
 			->item(array(static::$lang['img'],Eleanor::Input('image',$values['image'],array('id'=>'image')).' <img id="preview" src="'.$prevm.'" '.($values['image'] ? '' : ' style="display:none"').' />','tip'=>static::$lang['img_']))
 			->item('API',Eleanor::Input('api',$values['api']))
 			//->item(array(static::$lang['prot'],Eleanor::Check('protected',$values['protected'],$id ? array('disabled'=>true) : array()),'imp'=>static::$lang['prot_']))
-			->button($back.Eleanor::Button().($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
+			->button($back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add']).($links['delete'] ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))
 			->end()
 			->endform();
 
@@ -222,12 +218,12 @@ function AppyDragAndDrop()
 }//]]></script>';
 	}
 
-	/*
-		Страница удаления модуля
-		$a - массив удаляемого модуля, ключи:
-			title - название удаляемого модуля
-		$back - URL возврата
-	*/
+	/**
+	 * Страница удаления модуля
+	 * @param array $a Удаляемый модуль, ключи:
+	 *   title - название удаляемого модуля
+	 * @param string $back URL возврата
+	 */
 	public static function Delete($a,$back)
 	{
 		static::Menu('');

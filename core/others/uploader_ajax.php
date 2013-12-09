@@ -155,7 +155,7 @@ class Uploader_Ajax extends Uploader
 				}
 				$result+=array(
 					'content'=>Eleanor::$Template->UplContent($this->buttons_item,$short,$fshort,$dirs,$files,$previews,$this->prevsuff),
-					'path'=>self::ShortPathTo($this->path,$path),
+					'path'=>Files::ShortPath($this->path,$path),
 					'realpath'=>$fshort,
 					'upload_limit'=>$max_upload,
 				);
@@ -227,7 +227,7 @@ class Uploader_Ajax extends Uploader
 				$E=new Editor;
 				$E->type='codemirror';
 				$E->ownbb=$E->smiles=false;
-				Result(Eleanor::$Template->UplEditFile($what,$E->Area('text',file_get_contents($p),array('codemirror'=>array('type'=>$type))),self::ShortPathTo($this->path,$p),false));
+				Result(Eleanor::$Template->UplEditFile($what,$E->Area('text',file_get_contents($p),array('codemirror'=>array('type'=>$type))),Files::ShortPath($this->path,$p),false));
 			break;
 			case'save':
 				$what=isset($_POST['what']) ? (string)$_POST['what'] : '';
@@ -270,7 +270,7 @@ class Uploader_Ajax extends Uploader
 				$E=new Editor;
 				$E->type='codemirror';
 				$E->ownbb=$E->smiles=false;
-				Result(Eleanor::$Template->UplEditFile($f,$E->Area('text','',array('codemirror'=>array('type'=>$type))),self::ShortPathTo($this->path,$path),true));
+				Result(Eleanor::$Template->UplEditFile($f,$E->Area('text','',array('codemirror'=>array('type'=>$type))),Files::ShortPath($this->path,$path),true));
 			break;
 		}
 	}
@@ -282,28 +282,5 @@ class Uploader_Ajax extends Uploader
 	protected static function EF($f)
 	{
 		return preg_match('~[\s#"\'\\\\/:*\?<>|%]+~',$f)>0;
-	}
-
-	/**
-	 * Генерация относительного путь для перехода из одного каталога в другой
-	 * @param string $a Путь к первому каталогу
-	 * @param string $b Путь ко второму каталогу
-	 * @return string Например: ../../aa/bb/cc
-	 */
-	public static function ShortPathTo($a,$b)
-	{
-		$a=preg_split('#[/\\\\]+#',$a);
-		$b=preg_split('#[/\\\\]+#',$b);
-		$m=min($acnt=count($a),count($b));
-		for($i=0;$i<$m;++$i)
-		{
-			if($i==0 and $a[0]!=$b[0])
-				return false;
-			if($a[$i]!=$b[$i])
-				break;
-		}
-		$acnt-=$i+1;
-		$ret=$acnt>0 ? array_merge(array_fill(0,$acnt,'..'),array_slice($b,$i)) : array_slice($b,$i);
-		return join('/',$ret);
 	}
 }

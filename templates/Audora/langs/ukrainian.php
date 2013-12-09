@@ -43,6 +43,7 @@ return array(
 	'filters'=>'Фільтри',
 	'moveup'=>'Перемістити вгору',
 	'movedown'=>'Перемістити вниз',
+	'save'=>'Зберегти',
 
 	#Для Enter.php
 	'login'=>'Логін:',

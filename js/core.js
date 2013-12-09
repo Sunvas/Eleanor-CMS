@@ -512,7 +512,7 @@ $(function(){
 
 	//CTRL + Enter для всех форм
 	$(this).on("keypress","form textarea",function(e){
-		if(e.keyCode==10 && e.ctrlKey)
+		if((e.keyCode==10 || e.keyCode==13) && e.ctrlKey)
 			$(this).closest("form").submit();
 	})
 

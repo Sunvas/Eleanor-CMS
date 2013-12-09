@@ -149,11 +149,11 @@ $(function(){
 		.Eleanor::$Template->Pages($cnt,$pp,$page,array($links['pages'],$links['first_page'])));
 	}
 
-	/*
-		Шаблон страницы удаления пользователей с указанием причины
-		$users Массив пользователей id=>имя пользователя
-		$back URI возврата
-	*/
+	/**
+	 * Шаблон страницы удаления пользователей с указанием причины
+	 * @param array $users Массив пользователей id=>имя пользователя
+	 * @param string $back URI возврата
+	 */
 	public static function ToDelete($users,$back)
 	{
 		static::Menu();
@@ -164,14 +164,14 @@ $(function(){
 		foreach($users as $k=>&$v)
 			$tusers.='<label>'.Eleanor::Check('ids[]',true,array('value'=>$k)).' '.htmlspecialchars($v['name'],ELENT,CHARSET).($v['name']==$v['full_name'] ? '' : ' ('.htmlspecialchars($v['name'],ELENT,CHARSET).')').'</label><br />';
 		return Eleanor::$Template->Cover('<div class="wbpad"><div class="warning"><img src="'.Eleanor::$Template->default['theme'].'/images/confirm.png" class="info" alt="" /><div><form method="post" action="">'
-		.$back.'<h4>'.static::$lang['del_users'].'</h4><hr />'.$tusers.'<br /><h4>'.static::$lang['dreason'].'</h4><hr />'.$GLOBALS['Eleanor']->Editor->Area('reason').'<div style="text-align:center"><input class="button" type="submit" value="'.$ltpl['yes'].'" /><input class="button" type="button" value="'.$ltpl['no'].'" onclick="history.go(-1); return false;" /></div></form></div><div class="clr"></div></div></div>');
+			.$back.'<h4>'.static::$lang['del_users'].'</h4><hr />'.$tusers.'<br /><h4>'.static::$lang['dreason'].'</h4><hr />'.$GLOBALS['Eleanor']->Editor->Area('reason').'<div style="text-align:center"><input class="button" type="submit" value="'.$ltpl['yes'].'" /><input class="button" type="button" value="'.$ltpl['no'].'" onclick="history.go(-1); return false;" /></div></form></div><div class="clr"></div></div></div>');
 	}
 
-	/*
-		Шаблон страницы с редактированием форматов писем
-		$controls Перечень контролов в соответствии с классом контролов. Если какой-то элемент массива не является массивом, значит это заголовок подгруппы контролов
-		$values Результирующий HTML код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
-	*/
+	/**
+	 * Шаблон страницы с редактированием форматов писем
+	 * @param array $controls Перечень контролов в соответствии с классом контролов. Если какой-то элемент массива не является массивом, значит это заголовок подгруппы контролов
+	 * @param array $values Результирующий HTML код контролов, который необходимо вывести на странице. Ключи данного массива совпадают с ключами $controls
+	 */
 	public static function Letters($controls,$values)
 	{
 		static::Menu('letters');
@@ -183,13 +183,13 @@ $(function(){
 				elseif(is_string($v))
 					$Lst->head($v);
 
-		return Eleanor::$Template->Cover($Lst->button(Eleanor::Button())->end()->endform());
+		return Eleanor::$Template->Cover($Lst->button(Eleanor::Button(Eleanor::$Language['tpl']['save']))->end()->endform());
 	}
 
-	/*
-		Обертка для настроек
-		$c Интерфейс настроек
-	*/
+	/**
+	 * Обертка для настроек
+	 * @param string $c Интерфейс настроек
+	 */
 	public static function Options($c)
 	{
 		static::Menu('options');

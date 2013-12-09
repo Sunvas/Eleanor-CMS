@@ -4,6 +4,8 @@ return array(
 	'NOSERVICES'=>'You have not selected any service, which will be available this module',
 	'WRONG_PATH'=>'Wrong path',
 	'add'=>'Add module',
+	'save'=>'Save module',
+	'addsec'=>'Add section',
 	'module'=>'Module',
 	'services'=>'Services',
 	'groups'=>'Groups',

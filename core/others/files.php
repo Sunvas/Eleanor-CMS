@@ -1,19 +1,14 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 */
 
 class Files
 {
 	/**
 	 * Преобразования числа байт в приблизительный читаемый формат
-	 *
 	 * @param int $b Число байт
 	 */
 	public static function BytesToSize($b)
@@ -37,7 +32,6 @@ class Files
 
 	/**
 	 * Преобразование приблизительного читаемого размера файла в количество байт
-	 *
 	 * @param string $b Приблизительный читаем формат
 	 */
 	public static function SizeToBytes($b)
@@ -72,7 +66,6 @@ class Files
 
 	/**
 	 * Отдача содержимого клиенту в виде файла
-	 *
 	 * @param array $a Опции передачи. Детальнее смотрите в теле метода
 	 */
 	public static function OutputStream(array$a)
@@ -213,7 +206,6 @@ class Files
 
 	/**
 	 * Копирование файлов и каталогов
-	 *
 	 * @param string $source Источник: путь откуда будет происходить копирование
 	 * @param string $dest Назначение: путь, куда будет происходить копирование
 	 */
@@ -221,32 +213,280 @@ class Files
 	{
 		if(!file_exists($source))
 			return false;
+
+		if(is_link($source) or Eleanor::$os=='w' and readlink($source)!=$source)#Ниже важная информация
+			return symlink(readlink($source),$dest);
+
 		if(is_file($source))
 		{
-			self::MkDir(dirname($dest));
+			static::MkDir(dirname($dest));
 			return copy($source,$dest);
 		}
-		if(is_link($source))
-			return symlink(readlink($source),$dest);
-		$Dir=dir($source);
+
 		$f=__function__;
-		$dots=2;
-		while($entry=$Dir->read())
-		{
-			if($dots and ($entry=='.' or $entry=='..'))
-			{
-				$dots--;
-				continue;
-			}
-			self::$f($source.DIRECTORY_SEPARATOR.$entry,$dest.DIRECTORY_SEPARATOR.$entry);
-		}
-		$Dir->close();
+		$files=array_diff(scandir($source),array('.','..'));
+
+		foreach($files as $entry)
+			static::$f($source.DIRECTORY_SEPARATOR.$entry,$dest.DIRECTORY_SEPARATOR.$entry);
+
 		return true;
 	}
 
 	/**
+	 * Рекурсивное создание симлинков. Каталоги копируются и симлинки копируются, а не симлинкуются
+	 * @param string $source Источник: путь откуда будет происходить копирование
+	 * @param string $dest Назначение: путь, куда будет происходить копирование
+	 * @param bool $deldest Флаг обязательно очистки каталога-приемника
+	 */
+	public static function SymLink($source,$dest,$deldest=true)
+	{
+		#Очистка значений
+		$source=rtrim($source,'/\\');
+		$dest=rtrim($dest,'/\\');
+
+		/*
+			В винде символические ссылки всегда будут с полным путем, а в *nix системах - относительным.
+			http://lists.unixcenter.ru/archives/mlug/2004-April/025317.html
+		*/
+		$nix=Eleanor::$os!='w';
+
+		if(!file_exists($source))
+			return false;
+
+		if(is_link($source))
+		{
+			$source=readlink($source);
+			if($nix)
+			{
+				$source=realpath($source);
+				$source=static::ShortPath($dest,$source);
+			}
+			return symlink($source,$dest);
+		}
+
+		if($deldest ? file_exists($dest) : is_file($dest))
+			static::Delete($dest);
+
+		if(is_file($source))
+		{
+			static::MkDir(dirname($dest));
+			return symlink($nix ? static::ShortPath($dest,$source) : $source,$dest);
+		}
+
+		$f=__function__;
+		$files=array_diff(scandir($source),array('.','..'));
+
+		foreach($files as $entry)
+			static::$f($source.DIRECTORY_SEPARATOR.$entry,$dest.DIRECTORY_SEPARATOR.$entry);
+
+		return true;
+	}
+
+	/**
+	 * Обновление каталога с файлами, после сохранения записи к которой каталог относится
+	 * @param string $temp Каталог, в котором происходили изменения
+	 * @param string $dest "Рабочий" каталог с файлами, прикрепленный к записи
+	 */
+	public static function UpdateDir($temp,$dest)
+	{
+		#Очистка значений
+		$temp=rtrim($temp,'/\\');
+		$dest=rtrim($dest,'/\\');
+
+		/*
+			Внимание! Функция is_link на винде работает крайне нестабильно!
+			Поэтому проверяем через костыли: если readlink($path)!=$path, значит перед нами ссылка,
+			но есть ньюанс, в эту функцию в винде ВСЕГДА нужно передавать полные пути, иначе может не срабоать.
+		*/
+		$windows=Eleanor::$os=='w';
+
+		if($windows)
+		{#readlink на винде всегда возвращает ссылки с \
+			$temp=str_replace('/',DIRECTORY_SEPARATOR,$temp);
+			$dest=str_replace('/',DIRECTORY_SEPARATOR,$dest);
+		}
+
+		if(!is_dir($temp))
+			return false;
+
+		$links=array_diff(scandir($temp),array('.','..'));
+
+		#Если $dest не существует или попросту не каталог - это существенно упрощает нам работу
+		if(!is_dir($dest))
+		{
+			if(count($links)==0)
+				return static::Delete($temp);
+
+			if(file_exists($dest))
+				static::Delete($dest);
+
+			return rename($temp,$dest);
+		}
+
+		foreach($links as $k=>$file)
+		{
+			$fulltemp=$temp.DIRECTORY_SEPARATOR.$file;
+
+			if($windows ? is_file($fulltemp) && readlink($fulltemp)!=$fulltemp : is_link($fulltemp))
+			{
+				#Сперва проверим: возможно, мы пытаемся обновить совершенно чужие между собой каталоги
+				$orig=readlink($fulltemp);
+
+				if(!is_file($orig) || dirname($orig)!=$dest)
+					throw new EE('DISPARATE_DIRS',EE::ENV);
+				#Файл переименовали?
+				elseif(basename($orig)!=$file)
+					rename($orig,dirname($orig).DIRECTORY_SEPARATOR.$file);
+			}
+			#Переименовали каталог?
+			elseif(is_dir($fulltemp) and !is_dir($dest.DIRECTORY_SEPARATOR.$file))
+				if(static::FixRanamedDir($fulltemp,$dest)==='d')
+				{
+					die(__line__.' Delete: '.$links[$k]);
+					unset($links[$k]);
+				}
+		}
+
+		$files=array_diff(scandir($dest),array('.','..'));
+
+		#Удалим удаленное
+		foreach(array_diff($files,$links) as $file)
+		{
+			$fulldest=$dest.DIRECTORY_SEPARATOR.$file;
+			$fulltemp=$temp.DIRECTORY_SEPARATOR.$file;
+
+			#Если удалили или перезалили (файл)
+			if(is_dir($fulldest) or $windows ? !is_file($fulltemp) || readlink($fulltemp)==$fulltemp : !is_link($fulltemp))
+				static::Delete($fulldest);
+		}
+
+		#Перенесем теперь загруженное
+		$f=__function__;
+		foreach($links as $file)
+		{
+			$full=$temp.'/'.$file;
+			$fulldest=$dest.'/'.$file;
+
+			if(!in_array($file,$files))
+				rename($full,$fulldest);
+			elseif(is_dir($full))
+				static::$f($full,$fulldest);
+		}
+
+		static::Delete($temp);
+		return true;
+	}
+
+	/**
+	 * Реализация действия, когда переименовывается каталог. Часть метода UpdateDir
+	 * @param string $path Путь к каталогу, который переименовали
+	 * @param string $parent Путь к каталогу-родителю, в котором содержтся непереименовый каталог
+	 * @return string d - каталог удален
+	 */
+	protected static function FixRanamedDir($path,$parent)
+	{
+		$links=array_diff(scandir($path),array('.','..'));
+		$windows=Eleanor::$os=='w';#Выше важная информация
+
+		if(!$links)
+		{
+			ReturnD:
+			static::Delete($path);
+			return'd';
+		}
+
+		$recrsym=false;#Массив ссылок, которые нужно будет пересоздать
+		$dirs=array();
+
+		foreach($links as $k=>$file)
+		{
+			$full=$path.DIRECTORY_SEPARATOR.$file;
+			if(is_dir($full))
+				$dirs[$k]=$full;
+			elseif($windows ? $rl=readlink($full) and $rl!=$full : is_link($full))
+			{
+				$orig=readlink($full);
+
+				if(strpos($orig,$parent)===0)
+				{
+					#Что надо переименовать
+					$torename=substr(dirname($orig),strlen($parent)+1);
+					$torename=explode(DIRECTORY_SEPARATOR,$torename);
+
+					#Во что надо переименовать
+					$names=explode(DIRECTORY_SEPARATOR,$path);
+					$names=array_slice($names,-count($torename));
+
+					#Получим массив всех удаленных симлинков и путей, куда они вели
+					$recrsym=static::GetDelSym($path,$links);
+					break;
+				}
+			}
+		}
+
+		if($recrsym===false)
+		{
+			$f=__function__;
+			foreach($dirs as $k=>$dir)
+				if(static::$f($dir,$parent)==='d')
+					unset($links[$k]);
+
+			if(!$links)
+				goto ReturnD;
+		}
+		else
+		{
+			$from=$to=$parent;
+			foreach($names as $k=>$name)
+			{
+				$from.=DIRECTORY_SEPARATOR.$torename[$k];
+				$to.=DIRECTORY_SEPARATOR.$name;
+
+				if(rename($parent.DIRECTORY_SEPARATOR.$torename[$k],$parent.DIRECTORY_SEPARATOR.$name))
+					$parent.=DIRECTORY_SEPARATOR.$name;
+				else
+					return false;
+			}
+
+			foreach($recrsym as $k=>$v)
+				symlink(str_replace($from,$to,$v),$k);
+		}
+	}
+
+	public static function GetDelSym($path,array$links=array())
+	{
+		if(!$links)
+		{
+			$links=array_diff(scandir($path),array('.','..'));
+			if(!$links)
+			{
+				static::Delete($path);
+				return array();
+			}
+		}
+
+		$windows=Eleanor::$os=='w';#Выше важная информация
+		$recrsym=array();
+		$f=__function__;
+
+		foreach($links as $k=>$file)
+		{
+			$full=$path.DIRECTORY_SEPARATOR.$file;
+
+			if(is_dir($full))
+				$recrsym+=static::$f($full);
+			elseif($windows ? $rl=readlink($full) and $rl!=$full : is_link($full))
+			{
+				$recrsym[ $full ]=readlink($full);
+				unlink($full);
+			}
+		}
+
+		return$recrsym;
+	}
+
+	/**
 	 * Создание каталога. В отличии от стандартной функции mkdir, метод позволяет создать сразу цепочку каталогов
-	 *
 	 * @param string $path Путь до каталога, который необходимо создать
 	 */
 	public static function MkDir($path)
@@ -254,7 +494,7 @@ class Files
 		$f=__function__;
 		if(!is_dir($path))
 		{
-			self::$f(dirname($path));
+			static::$f(dirname($path));
 			return mkdir($path);
 		}
 		return true;
@@ -262,35 +502,27 @@ class Files
 
 	/**
 	 * Удаление файлов, каталогов и ссылок на файлы
-	 *
 	 * @param string $path Путь к файлу, каталогу или ссылке которые нужно удалить
 	 */
-	public static function Delete($path)
+	public static function Delete($path,$nocheck=false)
 	{
-		if(is_dir($path) and !is_link($path))
+		if(is_dir($path))
 		{
 			$f=__function__;
-			$Dir=dir($path);
-			$dots=2;
-			while($entry=$Dir->read())
-			{
-				if($dots and ($entry=='.' or $entry=='..'))
-				{
-					$dots--;
-					continue;
-				}
-				if(!self::$f($path.DIRECTORY_SEPARATOR.$entry))
+			$entries=array_diff(scandir($path),array('.','..'));
+
+			foreach($entries as $entry)
+				if(!static::$f($path.DIRECTORY_SEPARATOR.$entry,true))
 					return true;
-			}
-			$Dir->close();
+
 			return rmdir($path);
 		}
-		return is_file($path) ? unlink($path) : true;
+		#Если ссылка битая, file_exists её не определяет, поэтому $check
+		return $nocheck||file_exists($path) ? unlink($path) : true;
 	}
 
 	/**
 	 * Получение размера каталога
-	 *
 	 * @param sting $path Путь к каталогу, размер которого необходимо узнать
 	 * @param callback|FALSE Функция для фильтрации, в случае если нужно считать размер каких-то определенных файлов. На первым аргументом получает адрес к файлу, должна вернуть bool
 	 * @return int Возвращает СУММУ размеров всех внутрилежащих файлов, а не реальное занимаемое место на диске
@@ -303,17 +535,11 @@ class Files
 		{
 			$size=0;
 			$f=__function__;
-			$Dir=dir($path);
-			$dots=2;
-			while($entry=$Dir->read())
-			{
-				if($dots and ($entry=='.' or $entry=='..'))
-				{
-					$dots--;
-					continue;
-				}
-				$size+=self::$f($path.DIRECTORY_SEPARATOR.$entry,$filter);
-			}
+			$entries=array_diff(scandir($path),array('.','..'));
+
+			foreach($entries as $entry)
+				$size+=static::$f($path.DIRECTORY_SEPARATOR.$entry,$filter);
+
 			$Dir->close();
 			return$size;
 		}
@@ -322,7 +548,6 @@ class Files
 
 	/**
 	 * Преобразование имен файлов в корректную последовательность символов для ОС Windows, где имена файлов задаются в однобайтовой кодировке.
-	 *
 	 * @param string $f Имя файла
 	 * @param bool $dec Флаг декодирования (включение обратного преобразования)
 	 */
@@ -335,9 +560,7 @@ class Files
 
 	/**
 	 * Дописывание в средину файла. Метод идентичен функции substr_replace, только для работы с файлом.
-	 *
 	 * Для корректно работы функции, нужно открывать файлы в режиме rb+. Режим a (дописывание в конец файла) НЕ ПОДДЕРЖИВАЕТСЯ (особенность PHP)!
-	 *
 	 * @param resource $fh Файловый указатель, возвращаемый функцией fopen
 	 * @param string $s Строка на замену (идентично 2му параметру функции substr_replace)
 	 * @param int $o Отступ в байтах (идентично 3му параметру функции substr_replace)
@@ -410,5 +633,28 @@ class Files
 			}
 		}
 		return$diff;
+	}
+
+	/**
+	 * Генерация относительного путь для перехода из одного каталога в другой
+	 * @param string $a Путь к первому каталогу
+	 * @param string $b Путь ко второму каталогу
+	 * @return string Например: ../../aa/bb/cc
+	 */
+	public static function ShortPath($a,$b)
+	{
+		$a=preg_split('#[/\\\\]+#',$a);
+		$b=preg_split('#[/\\\\]+#',$b);
+		$m=min($acnt=count($a),count($b));
+		for($i=0;$i<$m;++$i)
+		{
+			if($i==0 and $a[0]!=$b[0])
+				return false;
+			if($a[$i]!=$b[$i])
+				break;
+		}
+		$acnt-=$i+1;
+		$ret=$acnt>0 ? array_merge(array_fill(0,$acnt,'..'),array_slice($b,$i)) : array_slice($b,$i);
+		return join('/',$ret);
 	}
 }

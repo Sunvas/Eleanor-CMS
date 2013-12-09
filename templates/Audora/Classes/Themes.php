@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Шаблоны менеджера шаблонов
 */
@@ -214,7 +210,7 @@ $(function(){
 			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
 				$v=static::$lang[$v];
 
-		return Eleanor::$Template->Cover($Lst->button(Eleanor::Button())->end()->endform(),$errors,'error');
+		return Eleanor::$Template->Cover($Lst->button(Eleanor::Button(Eleanor::$Language['tpl']['save']))->end()->endform(),$errors,'error');
 	}
 
 	/*

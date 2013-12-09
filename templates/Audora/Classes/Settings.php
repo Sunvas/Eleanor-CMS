@@ -238,7 +238,7 @@ class TPLSettings
 		return($error ? Eleanor::$Template->Message($error,'error') : '')
 			.'<form method="post" enctype="multipart/form-data" action="'.$links['form'].'">'
 			.$c.'</table>'.Eleanor::Input('ids',join(',',$ids),array('type'=>'hidden'))
-			.'<div class="submitline">'.Eleanor::Button().'</div>'
+			.'<div class="submitline">'.Eleanor::Button($ltpl['save']).'</div>'
 			.Eleanor::$Template->CloseTable().'</form>'
 			.($tip ? '<script type="text/javascript">//<![CDATA[
 $(function(){

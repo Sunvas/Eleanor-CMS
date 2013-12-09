@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Шаблон отвечает за оформление админки "своих" BB кодов
 */
@@ -15,9 +11,9 @@ class TplOwnBB
 	public static
 		$lang;
 
-	/*
-		Меню модуля
-	*/
+	/**
+	 * Меню модуля
+	 */
 	protected static function Menu($act='')
 	{
 		$lang=Eleanor::$Language['ownbb'];
@@ -132,7 +128,7 @@ class TplOwnBB
 
 		if($back)
 			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
-		$Lst->form()->tabs($tabs)->submitline($back.Eleanor::Button().($id ? ' '.Eleanor::Button(Eleanor::$Language['tpl']['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))->endform();
+		$Lst->form()->tabs($tabs)->submitline($back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add']).($id ? ' '.Eleanor::Button(Eleanor::$Language['tpl']['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : ''))->endform();
 
 		foreach($errors as $k=>&$v)
 			if(is_int($k) and is_string($v) and isset(static::$lang[$v]))
@@ -141,13 +137,12 @@ class TplOwnBB
 		return Eleanor::$Template->Cover((string)$Lst,$errors,'error');
 	}
 
-	/*
-		Шаблон страницы удаления контрола
-
-		$a - массив удаляемого своего BB кода, ключи:
-			tags - теги
-		$back - адрес страницы, с которой мы пришли чтобы удалить контрол. На эту страницу будет совершен возврат после удаления
-	*/
+	/**
+	 * Шаблон страницы удаления BB кода
+	 * @param string $a Удаляемый BB код, ключи:
+	 *   tags - теги
+	 * @param string $back URL возврата
+	 */
 	public static function Delete($a,$back)
 	{
 		static::Menu();

@@ -108,6 +108,8 @@ class Image extends BaseClass
 			#Параметры нового имени
 			'newname'=>false,
 			'suffix'=>'_preview',#Суффикс для имени файла
+
+			'returnbool'=>false,
 		);
 
 		$newpath=$o['newname'] ? (preg_match('#[/\\\]#',$o['newname'])>0 ? '' : dirname($path).'/').$o['newname'] : substr_replace($path,$o['suffix'],strrpos($path,'.'),0);
@@ -119,7 +121,7 @@ class Image extends BaseClass
 			$o['first']=$w>$h ? 'h' : 'w';
 
 		if($o['first']=='w' and ($o['width']>=$w or $o['width']==0) or $o['first']=='h' and ($o['height']>=$h or $o['height']==0))
-			return$path;
+			return $o['returnbool'] ? false : $path;
 
 		#Очень часто создание изображение приводит к логируемым ошибкам. Это нам не надо совершенно.
 		Eleanor::$nolog=true;
@@ -169,7 +171,7 @@ class Image extends BaseClass
 		imagedestroy($img);
 		self::SaveImage($r,$newpath);
 		imagedestroy($r);
-		return$newpath;
+		return$o['returnbool'] ? true : $newpath;
 	}
 
 	/**

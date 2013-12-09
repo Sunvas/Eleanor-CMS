@@ -55,7 +55,7 @@ return array(
 		if($t)
 			defined('POSHYTIP')||define('POSHYTIP',1);
 
-		return'<tr'.Eleanor::TagParams($a['tr']).'><td'.Eleanor::TagParams($a['td1']).'>'.($t ? '<span class="labinfo" title="'.htmlspecialchars($a['tip'],ENT_COMPAT,CHARSET).'">(?)</span> ' : '').$a[0].(empty($a['imp']) ? '' : ' <span class="imp">*</span>').(empty($a['descr']) ? '' : '<br /><span class="small">'.$a['descr'].'</span>').'</td><td'.Eleanor::TagParams($a['td2']).'>'.$a[1].'</td></tr>';
+		return'<tr'.Eleanor::TagParams($a['tr']).'><td'.Eleanor::TagParams($a['td1']).'>'.($t ? '<span class="labinfo" title="'.htmlspecialchars($a['tip'],ENT_COMPAT,CHARSET).'">(?)</span> ' : '').$a[0].(empty($a['imp']) ? '' : ' <span class="imp">*</span>').(empty($a['descr']) ? '' : '<br /><span class="small">'.$a['descr'].'</span>').'</td>'.(isset($a[1]) ? '<td'.Eleanor::TagParams($a['td2']).'>'.$a[1].'</td>' : '').'</tr>';
 	},
 	'button'=>'<tr><td colspan="2" style="text-align:center">{0}</td></tr>',
 	'submitline'=>'<div class="submitline">{0}</div>',

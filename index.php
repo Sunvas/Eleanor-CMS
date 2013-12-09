@@ -383,7 +383,7 @@ function GoAway($info=false,$code=301,$hash='')
 				$info=Eleanor::$site_path.$info;
 		}
 
-		if($info==$current)
+		if($info==$current and $_SERVER['REQUEST_METHOD']=='GET')
 			return ExitPage(404);
 		$ref=$info;
 	}

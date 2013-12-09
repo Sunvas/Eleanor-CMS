@@ -19,6 +19,7 @@ return array(
 
 	#For Classes/Users.php
 	'add'=>'Create user',
+	'save'=>'Save user',
 	'not_imp'=>'-No matter-',
 	'begins'=>'Begins with',
 	'contains'=>'Contains',

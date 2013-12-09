@@ -115,8 +115,6 @@ elseif(isset($_GET['up']))
 elseif(isset($_GET['down']))
 {
 	$id=(int)$_GET['down'];
-	if(!Eleanor::$our_query)
-		return GoAway();
 	$R=Eleanor::$Db->Query('SELECT `parents`,`pos` FROM `'.$mc['t'].'` WHERE `id`='.$id.' LIMIT 1');
 	if($R->num_rows==0 or !Eleanor::$our_query)
 		return GoAway();

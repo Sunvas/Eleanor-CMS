@@ -1,12 +1,8 @@
 <?php
 /*
 	Copyright © Eleanor CMS
-	URL: http://eleanor-cms.ru, http://eleanor-cms.com
-	E-mail: support@eleanor-cms.ru
-	Developing: Alexander Sunvas*
-	Interface: Rumin Sergey
-	=====
-	*Pseudonym
+	http://eleanor-cms.ru
+	info@eleanor-cms.ru
 
 	Шаблоны менеджера задач
 */
@@ -15,9 +11,9 @@ class TPLTasks
 	public static
 		$lang;
 
-	/*
-		Меню модуля
-	*/
+	/**
+	 * Меню модуля
+	 */
 	protected static function Menu($act='')
 	{
 		$links=&$GLOBALS['Eleanor']->module['links'];
@@ -138,7 +134,7 @@ class TPLTasks
 			$back=Eleanor::Input('back',$back,array('type'=>'hidden'));
 
 		$Lst->button(
-			$back.Eleanor::Button()
+			$back.Eleanor::Button($id ? static::$lang['save'] : static::$lang['add'])
 			.($id ? ' '.Eleanor::Button($ltpl['delete'],'button',array('onclick'=>'window.location=\''.$links['delete'].'\'')) : '')
 		)->end()->endform();
 
@@ -149,12 +145,12 @@ class TPLTasks
 		return Eleanor::$Template->Cover($Lst,$errors,'error');
 	}
 
-	/*
-		Страница удаления задачи
-		$a - массив удаляемого задания, ключи:
-			title - название задания
-		$back - URL возврата
-	*/
+	/**
+	 * Страница удаления задачи
+	 * @param string $a Удаляемое задание, ключи:
+	 *   string title название задания
+	 * @param string $back URL возврата
+	 */
 	public static function Delete($a,$back)
 	{
 		static::Menu();

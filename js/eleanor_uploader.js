@@ -183,6 +183,12 @@ CORE.UPLOADER=function(opts)
 					data.append("uniq",opts.uniq);
 					data.append("Filedata",v);
 
+					if(opts.watermark)
+						data.append("watermark",1);
+
+					if(opts.dopreviews)
+						data.append("dopreviews",1);
+
 					$.ajax({
 						url:opts.upload_path,
 						data:data,

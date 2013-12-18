@@ -540,7 +540,6 @@ class Files
 			foreach($entries as $entry)
 				$size+=static::$f($path.DIRECTORY_SEPARATOR.$entry,$filter);
 
-			$Dir->close();
 			return$size;
 		}
 		return is_file($path) && (!is_callable($filter) or call_user_func($filter,$path)) ? filesize($path) : 0;

@@ -64,7 +64,13 @@ return array(
 		}
 		return$ret.'</tr>';
 	},
-	'empty'=>'<tr class="empty"><td colspan="'.$size.'" style="font-weight:bold;text-align:center">{0}</td></tr>',
+	'empty'=>function($a=array(''))use($size){
+		if(!is_array($a))
+			$a=array($a);
+		if(!isset($a['style']))
+			$a['style']='font-weight:bold;text-align:center';
+		return'<tr class="empty"><td colspan="'.$size.'" style="'.$a['style'].'">'.$a[0].'</td></tr>';
+	},
 	'item'=>function()
 	{static$n=0;
 		$a=func_get_args();

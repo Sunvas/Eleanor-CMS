@@ -64,9 +64,17 @@ class Uploader_Upload extends Uploader
 				)
 			);
 		}
+
 		if((!isset($this->previews) and !empty($_POST['dopreviews']) or $this->previews) and in_array(strtolower(pathinfo($path,PATHINFO_EXTENSION)),$this->preview))
 			try
 			{
+				if($this->vars['thumb_width']==0)
+					$first='h';
+				elseif($this->vars['thumb_height']==0)
+					$first='w';
+				else
+					$first=$this->vars['thumb_first'];
+
 				Image::Preview(
 					$path,
 					array(
@@ -74,12 +82,12 @@ class Uploader_Upload extends Uploader
 						'height'=>$this->vars['thumb_height'],
 						'cut_first'=>in_array($this->vars['thumb_reducing'],array('cut','cutsmall')),
 						'cut_last'=>in_array($this->vars['thumb_reducing'],array('cut','smallcut')),
-						'first'=>$this->vars['thumb_first'],#Что будет уменьшаться первое: высота или ширина. w,h . Автоматически: b - по наибольше стороне, s - по наименьше стороне.
+						'first'=>$first,#Что будет уменьшаться первое: высота или ширина. w,h . Автоматически: b - по наибольше стороне, s - по наименьше стороне.
 						'suffix'=>$this->prevsuff,
 					)
 				);
 			}
-			catch(EE$E){}
+			catch(EE$E){file_put_contents(Eleanor::$root.'tttt.txt',$E->getMessage());}
 		Result('Ok');
 		return true;
 	}

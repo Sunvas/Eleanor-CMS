@@ -411,11 +411,11 @@ function Save($id)
 			$values[]=array(
 				'id'=>$id,
 				'language'=>$v,
-				'uri'=>isset($lvalues['uri'][$lng]) ? $lvalues['uri'][$lng] : '',
-				'title'=>isset($lvalues['title'][$lng]) ? $lvalues['title'][$lng] : '',
-				'text'=>isset($lvalues['text'][$lng]) ? $lvalues['text'][$lng] : '',
-				'meta_title'=>isset($lvalues['meta_title'][$lng]) ? $lvalues['meta_title'][$lng] : '',
-				'meta_descr'=>isset($lvalues['meta_descr'][$lng]) ? $lvalues['meta_descr'][$lng] : '',
+				'uri'=>isset($lvalues['uri'][$v]) ? $lvalues['uri'][$v] : '',
+				'title'=>isset($lvalues['title'][$v]) ? $lvalues['title'][$v] : '',
+				'text'=>isset($lvalues['text'][$v]) ? $lvalues['text'][$v] : '',
+				'meta_title'=>isset($lvalues['meta_title'][$v]) ? $lvalues['meta_title'][$v] : '',
+				'meta_descr'=>isset($lvalues['meta_descr'][$v]) ? $lvalues['meta_descr'][$v] : '',
 				'last_mod'=>date('Y-m-d H:i:s'),
 			);
 		Eleanor::$Db->Replace($mc['tl'],$values);

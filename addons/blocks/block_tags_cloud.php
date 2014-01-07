@@ -13,7 +13,7 @@ if(!isset($op) or !is_array($op))
 	$op=array();
 try
 {
-	return Eleanor::$Template->BlockTagCloud($op,null);
+	return (string)Eleanor::$Template->BlockTagCloud($op,null);
 }
 catch(EE$E)
 {

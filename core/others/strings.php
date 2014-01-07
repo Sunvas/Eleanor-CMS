@@ -12,7 +12,6 @@ class Strings extends BaseClass
 {
 	/**
 	 * Проверка корректиности e-mail
-	 *
 	 * @param string $s Проверяемый e-mail
 	 * @param bool $ep Флаг интерпретации пустого значения, как корректного
 	 */
@@ -28,14 +27,17 @@ class Strings extends BaseClass
 
 	/**
 	 * Проверка корректности адреса ссылки
-	 *
 	 * @param string $s Проверямая ссылка
 	 */
 	public static function CheckUrl($s)
 	{
 		$s=trim($s);
 		if(strpos($s,'mailto:')===0)
-			return self::CheckEmail(substr($s,7));
+		{
+			#Вырежем параметры
+			$parpos=strpos($s,'?');
+			return self::CheckEmail(substr($s,7,$parpos===false ? strlen($s) : $parpos-7));
+		}
 		$ab=constant(Language::$main.'::ALPHABET');
 		return preg_match('~^([a-z]{3,10}://[\wa-z'.$ab.'0-9/\._\-:]+\.[\wa-z'.$ab.'\-]{2,}/)?(?:[^\s{}]*)?$~i',$s)>0;
 	}
@@ -43,7 +45,6 @@ class Strings extends BaseClass
 	/**
 	 * Преобразование текстовой строки параметров в массив. Корректно обрабатывает даже некорректные данные.
 	 * Метод корректно работает с UTF-8: lобавлять параметры mb_ в substr не нужно.
-	 *
 	 * @param string $s Строка параметров, формата param1="value1" param2=   value2 param3=  "value3"
 	 * @param string $first Имя первого параметра, в случае если $s начинается с "=" (в BB кодах такое возможно [url=http://eleanor-cms.ru]CMS[/url]
 	 */
@@ -109,7 +110,6 @@ class Strings extends BaseClass
 
 	/**
 	 * Корректная обрезка строки до N символов. Метод не ломает html мнемоники.
-	 *
 	 * @param string $s Строка, которую необходимо обрезать
 	 * @param int $n Число символов, до которых нужно обрезать строку, считая слева направо
 	 * @param string $e Замена обрезанных символов
@@ -126,7 +126,6 @@ class Strings extends BaseClass
 
 	/**
 	 * Версия ucfirst функции, корректно работающая с utf-8
-	 *
 	 * @param string $s Воходящая строка
 	 */
 	public static function UcFirst($s)
@@ -139,7 +138,6 @@ class Strings extends BaseClass
 	/**
 	 * Преобработка строки для последующего корректного преобразования в массив при помощи explode.
 	 * Удаляет дубли разделителей, убирает резделити в начале и в конце строки.
-	 *
 	 * @param string $s Входящая строка
 	 * @param string $d Разделитель для последующего explode
 	 */
@@ -152,7 +150,6 @@ class Strings extends BaseClass
 
 	/**
 	 * Выделение слов в тексте определенным цветов. Метод корректно минут все теги.
-	 *
 	 * @param string|array $w Слово для выделения
 	 * @param string $s Текст в котором слово необходимо выделить
 	 * @param string $c Цвет текста в выделении

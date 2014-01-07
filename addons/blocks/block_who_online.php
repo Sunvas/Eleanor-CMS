@@ -70,8 +70,8 @@ if($suser)
 try
 {
 	if($suser)
-		return Eleanor::$Template->BlockWhoOnline($users,$bots,$u,$b,$g);
-	return Eleanor::$Template->BlockWhoOnline();
+		return (string)Eleanor::$Template->BlockWhoOnline($users,$bots,$u,$b,$g);
+	return (string)Eleanor::$Template->BlockWhoOnline();
 }
 catch(EE$E)
 {

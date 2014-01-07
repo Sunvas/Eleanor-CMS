@@ -55,7 +55,7 @@ $days=ArchiveDays($y,$m,$conf,$mname);
 
 try
 {
-	return Eleanor::$Template->BlockArchive($days,$mname,false,$months);
+	return (string)Eleanor::$Template->BlockArchive($days,$mname,false,$months);
 }
 catch(EE$E)
 {

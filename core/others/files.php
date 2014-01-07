@@ -214,6 +214,7 @@ class Files
 		if(!file_exists($source))
 			return false;
 
+		$source=realpath($source);#Путь может быть неполным
 		if(is_link($source) or Eleanor::$os=='w' and readlink($source)!=$source)#Ниже важная информация
 			return symlink(readlink($source),$dest);
 
@@ -241,7 +242,7 @@ class Files
 	public static function SymLink($source,$dest,$deldest=true)
 	{
 		#Очистка значений
-		$source=rtrim($source,'/\\');
+		$source=rtrim(realpath($source),'/\\');#Путь может быть неполным
 		$dest=rtrim($dest,'/\\');
 
 		/*
@@ -290,7 +291,7 @@ class Files
 	public static function UpdateDir($temp,$dest)
 	{
 		#Очистка значений
-		$temp=rtrim($temp,'/\\');
+		$temp=rtrim(realpath($temp),'/\\');#Путь может быть неполным
 		$dest=rtrim($dest,'/\\');
 
 		/*
@@ -327,6 +328,7 @@ class Files
 		{
 			$fulltemp=$temp.DIRECTORY_SEPARATOR.$file;
 
+			$fulltemp=realpath($fulltemp);#Путь может быть неполным
 			if($windows ? is_file($fulltemp) && readlink($fulltemp)!=$fulltemp : is_link($fulltemp))
 			{
 				#Сперва проверим: возможно, мы пытаемся обновить совершенно чужие между собой каталоги

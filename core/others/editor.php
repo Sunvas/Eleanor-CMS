@@ -121,7 +121,7 @@ class Editor extends BaseClass
 			case'ckeditor':
 				array_push($GLOBALS['jscripts'],'addons/ckeditor/ckeditor.js');
 				$html=Eleanor::Text($name,$value,array('id'=>$id)+(isset($extra['ckeditor']) ? (array)$extra['ckeditor'] : array())).'<script type="text/javascript">//<![CDATA[
-//$(function(){
+(function(){
 	if(typeof CKEDITOR.instances.'.$id.'!="undefined")
 		try{ CKEDITOR.instances.'.$id.'.destroy(); }catch(e){};
 	var editor=CKEDITOR.replace("'.$id.'",{language:"'.substr(Language::$main,0,2).'"});
@@ -147,7 +147,7 @@ class Editor extends BaseClass
 		}
 	);
 	editor.on("focus",function(){EDITOR.Active(this.name)});
-//});//]]></script>';
+})();//]]></script>';
 			break;
 			case'tinymce':#Tiny MCE
 				array_push($GLOBALS['jscripts'],'addons/tiny_mce/jquery.tinymce.js','addons/tiny_mce/tiny_config.js');
@@ -248,7 +248,7 @@ $(function(){
 					$class='OwnBbCode_'.((false===$p=strrpos($bb['handler'],'.')) ? $bb['handler'] : substr($bb['handler'],0,$p));
 					if(!class_exists($class,false) and !include(Eleanor::$root.'core/ownbb/'.$bb['handler']))
 						continue;
-					$ownbb[]=array(
+					$ownbb[ $bb['handler'] ]=array(
 						't'=>$bb['tags'],
 						's'=>$class::SINGLE,
 						'l'=>isset($lang[$bb['handler']]) ? $lang[$bb['handler']] : false,

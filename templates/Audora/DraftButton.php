@@ -4,7 +4,9 @@
 
 	@var URL, куда отправлять сохраняемые данные
 */
-$url=isset($v_0) ? $v_0 : array();
+$url=isset($v_0) ? $v_0 : '';
+$ti=isset($v_1) ? $v_1 : 1;
+
 $GLOBALS['head']['draft']='<script type="text/javascript">//<![CDATA[
 CORE.drafts=[];
 $(function(){
@@ -41,7 +43,7 @@ if(!isset(Eleanor::$vars['drafts_autosave']))
 array_push($GLOBALS['jscripts'],'js/eleanor_drafts.js','js/eleanor_drafts-'.Language::$main.'.js');
 $u=uniqid();
 
-echo Eleanor::Button(' ','button',array('id'=>$u,'style'=>'color:lightgray;display:none')),'<script type="text/javascript">//<![CDATA[
+echo Eleanor::Button(' ','button',array('id'=>$u,'style'=>'color:lightgray;display:none','tabindex'=>++$ti)),'<script type="text/javascript">//<![CDATA[
 $(function(){
 	var D',$u,'=new CORE.DRAFT({
 		form:$("#',$u,'").closest("form"),

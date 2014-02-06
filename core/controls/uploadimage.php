@@ -294,6 +294,8 @@ $(function(){
 					}
 					unset($sv['moved']);
 				}
+				elseif($sv['value'])
+					$a['value']=$sv['value'];
 
 				if(isset($sv['deleted']))
 				{
@@ -317,7 +319,7 @@ $(function(){
 		$a['value']=$a['value'] ? (array)$a['value'] : array();
 		$full=array();
 		foreach($a['value'] as $k=>&$v)
-			if(strpos($v,'://')===false)
+			if($v and strpos($v,'://')===false)
 			{
 				if($v==basename($v))
 					$v=$a['options']['path'].'/'.$v;
@@ -362,7 +364,7 @@ $(function(){
 			'path'=>Eleanor::$uploads,
 			'filename_eval'=>null,
 			'filename'=>null,
-			'preview'=>false,
+			'preview'=>null,
 			'prevsuff'=>'_preview',
 		);
 		if(!$sessid=$Obj->GetPostVal($a['name'],''))
@@ -578,9 +580,11 @@ $(function(){
 	{
 		$session=isset($_POST['session']) ? (string)$_POST['session'] : '';
 		$name=isset($_POST['name']) ? (string)$_POST['name'] : '';
+
 		Eleanor::StartSession($session);
 		if(!isset($_SESSION[__class__][$name]))
 			return Error('Session lost');
+
 		$sess=$_SESSION[__class__][$name];
 
 		if(!isset($_FILES['image']) or !is_uploaded_file($_FILES['image']['tmp_name']) or !in_array('upload',$sess['source']))
@@ -628,7 +632,7 @@ $(function(){
 				);
 			$sess['value']=array(
 				'image'=>$to,
-				'preview'=>$sess['preview'] ? Eleanor::$uploads.'/temp/'.basename(Image::Preview($ufn,array('suffix'=>$sess['prevsuff'])+(is_array($sess['preview']) ? $sess['preview'] : array()))) : false
+				'preview'=>$sess['preview'] ? Eleanor::$uploads.'/temp/'.basename(Image::Preview($ufn,array('suffix'=>$sess['prevsuff'])+(is_array($sess['preview']) ? $sess['preview'] : array()))) : null
 			);
 		}
 		catch(EE$E)
@@ -636,6 +640,7 @@ $(function(){
 			return Error($E->getMessage());
 		}
 		$_SESSION[__class__][$name]=$sess;
+
 		Result($sess['preview'] ? array('file'=>$sess['value']['image'],'preview'=>$sess['value']['preview']) : array('file'=>$sess['value']['image']));
 	}
 }

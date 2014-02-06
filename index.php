@@ -236,7 +236,7 @@ function Start($tpl='index',$code=200)
 	elseif(is_string($title))
 		$t=$title;
 	else
-		$t=(is_array($title) ? join(Eleanor::$vars['site_defis'],$title) : $title).(Eleanor::$vars['site_name'] ? Eleanor::$vars['site_defis'].Eleanor::$vars['site_name'] : '');
+		$t=(is_array($title) ? join(Eleanor::$vars['site_defis'],array_reverse($title)) : $title).(Eleanor::$vars['site_name'] ? Eleanor::$vars['site_defis'].Eleanor::$vars['site_name'] : '');
 
 	$t=htmlspecialchars($t,ELENT,CHARSET,false);
 	if(isset($Eleanor->module['description']))

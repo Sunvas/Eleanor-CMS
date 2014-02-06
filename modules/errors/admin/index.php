@@ -114,7 +114,7 @@ if(isset($_GET['do']))
 			echo'ok';
 		break;
 		default:
-			ShowList();
+			goto ShowList;
 	}
 elseif(isset($_GET['edit']))
 {
@@ -150,12 +150,9 @@ elseif(isset($_GET['delete']))
 	echo$c;
 }
 else
-	ShowList();
-
-function ShowList()
-{global$Eleanor,$title;
-	$mc=$Eleanor->module['config'];
-	$title=Eleanor::$Language[$mc['n']]['list'];
+{
+	ShowList:
+	$title[]=Eleanor::$Language[$mc['n']]['list'];
 	$page=isset($_GET['page']) ? (int)$_GET['page'] : 1;
 	$where=$qs=array();
 	if(isset($_REQUEST['fi']) and is_array($_REQUEST['fi']))

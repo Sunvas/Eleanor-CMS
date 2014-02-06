@@ -193,7 +193,7 @@ function Start($tpl='index',$code=200)
 		$Lst=Eleanor::LoadListTemplate('headfoot')
 			->metahttp('text/html; charset='.DISPLAY_CHARSET)
 			->base(PROTOCOL.getenv('HTTP_HOST').Eleanor::$site_path)
-			->title(is_array($title) ? join(' &raquo; ',$title) : $title)
+			->title(is_array($title) ? join(' &laquo; ',array_reverse($title)) : $title)
 			->meta('robots','noindex, nofollow');
 
 		array_unshift($jscripts,'js/jquery.min.js','js/core.js','js/lang-'.Language::$main.'.js');

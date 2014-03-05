@@ -260,7 +260,7 @@ class ApiNews extends BaseClass
 			{
 				if(!$data[$lang]['stat'])
 					call_user_func($opts['callback'],5);
-				$R=Eleanor::$Db->Query('SELECT COUNT(`lstatus`) `cnt` FROM `'.$this->config['tl'].'` WHERE `language`'.$qlang.' AND `lstatus`=1'.($data[$lang]['date'] ? ' AND `ldate`>'.($data[$lang]['eqdate'] ? '=' : '').'\''.$data[$lang]['date'].'\'' : '').' LIMIT '.$data[$lang]['o'].','.$limit);
+				$R=Eleanor::$Db->Query('SELECT COUNT(`lstatus`)-'.$data[$lang]['o'].' `cnt` FROM `'.$this->config['tl'].'` WHERE `language`'.$qlang.' AND `lstatus`=1'.($data[$lang]['date'] ? ' AND `ldate`>'.($data[$lang]['eqdate'] ? '=' : '').'\''.$data[$lang]['date'].'\'' : ''));
 				list($cnt)=$R->fetch_row();
 				call_user_func($opts['callback'],$cnt);
 			}

@@ -211,26 +211,36 @@ class Files
 	 */
 	public static function Copy($source,$dest)
 	{
-		if(!file_exists($source))
+		$args=func_num_args();
+		$origdest=$args==3 ? func_get_arg(2) : $dest;
+
+		#Предотвращение копирования самого в себя
+		if($source=='' or !file_exists($source) or strpos($source,$origdest)===0)
 			return false;
 
-		$source=realpath($source);#Путь может быть неполным
+		#Путь может быть неполным
+		$source=realpath($source);
+
+		$destdir=dirname($dest);
+		static::MkDir($destdir);
+		$dest=realpath($destdir).DIRECTORY_SEPARATOR.basename($dest);
+
+		if($args==2)
+			$origdest=$dest;
+
 		if(is_link($source) or Eleanor::$os=='w' and readlink($source)!=$source)#Ниже важная информация
 			return symlink(readlink($source),$dest);
 
 		if(is_file($source))
-		{
-			static::MkDir(dirname($dest));
 			return copy($source,$dest);
-		}
 
-		$f=__function__;
+		$f=__FUNCTION__;
 		$files=array_diff(scandir($source),array('.','..'));
 
 		foreach($files as $entry)
-			static::$f($source.DIRECTORY_SEPARATOR.$entry,$dest.DIRECTORY_SEPARATOR.$entry);
+			static::$f($source.DIRECTORY_SEPARATOR.$entry,$dest.DIRECTORY_SEPARATOR.$entry,$origdest);
 
-		return true;
+		return true;	
 	}
 
 	/**
@@ -242,7 +252,7 @@ class Files
 	public static function SymLink($source,$dest,$deldest=true)
 	{
 		#Очистка значений
-		$source=rtrim(realpath($source),'/\\');#Путь может быть неполным
+		$source=realpath($source);#Путь может быть неполным
 		$dest=rtrim($dest,'/\\');
 
 		/*
@@ -291,7 +301,7 @@ class Files
 	public static function UpdateDir($temp,$dest)
 	{
 		#Очистка значений
-		$temp=rtrim(realpath($temp),'/\\');#Путь может быть неполным
+		$temp=realpath($temp);#Путь может быть неполным
 		$dest=rtrim($dest,'/\\');
 
 		/*
@@ -494,11 +504,13 @@ class Files
 	public static function MkDir($path)
 	{
 		$f=__function__;
-		if(!is_dir($path))
+
+		if($path!='' and !is_dir($path))
 		{
 			static::$f(dirname($path));
 			return mkdir($path);
 		}
+
 		return true;
 	}
 
@@ -533,6 +545,7 @@ class Files
 	{
 		if(is_link($path))
 			return 0;
+
 		if(is_dir($path))
 		{
 			$size=0;
@@ -544,6 +557,7 @@ class Files
 
 			return$size;
 		}
+
 		return is_file($path) && (!is_callable($filter) or call_user_func($filter,$path)) ? filesize($path) : 0;
 	}
 

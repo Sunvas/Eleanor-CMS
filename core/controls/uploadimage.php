@@ -410,7 +410,7 @@ $(function(){
 				else
 				{
 					$del=$temp.basename($v);
-					if(rename($v,$del))
+					if(is_file($v) and rename($v,$del))
 						$sess['deleted'][]=$del;
 				}
 			}

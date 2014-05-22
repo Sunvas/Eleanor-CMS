@@ -5,6 +5,16 @@
 	*Pseudonym
 */
 if(!defined('CMS'))die;
+
+/*$langs=array();
+if(in_array('russian',$languages))
+	$langs[]='russian';
+if(in_array('english',$languages))
+	$langs[]='english';
+if(in_array('ukrainian',$languages))
+	$langs[]='ukrainian';
+$langs='`'.join('`,`',$langs).'`';*/
+
 $tables[]='SET FOREIGN_KEY_CHECKS=0;';
 
 $tables[]="DROP TABLE IF EXISTS `{$prefix}blocks`";
@@ -483,7 +493,7 @@ CREATE TABLE `{$prefix}sessions` (
 `enter` timestamp NOT NULL default '0000-00-00 00:00:00',
 `expire` timestamp NOT NULL default '0000-00-00 00:00:00',
 `ip_guest` varchar(39) NOT NULL,
-`ip_user` varchar(39) NOT NULL,
+`ip_user` varchar(39) NOT NULL default '',
 `info` text NOT NULL,
 `service` varchar(10) NOT NULL,
 `browser` varchar(200) NOT NULL,

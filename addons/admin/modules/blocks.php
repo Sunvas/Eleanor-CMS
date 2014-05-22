@@ -158,9 +158,9 @@ if(isset($_GET['do']))
 
 			if($groups)
 			{
-				$groups=array();
 				$pref=$Eleanor->Url->file.'?&amp;module=groups&amp;';
 				$R=Eleanor::$Db->Query('SELECT `id`,`title_l` `title`,`html_pref`,`html_end` FROM `'.P.'groups` WHERE `id`'.Eleanor::$Db->In($groups));
+				$groups=array(); 
 				while($a=$R->fetch_assoc())
 				{
 					$a['title']=$a['title'] ? Eleanor::FilterLangValues((array)unserialize($a['title'])) : '';

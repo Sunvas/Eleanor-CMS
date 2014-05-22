@@ -723,7 +723,7 @@ function ShowList()
 			}
 			$qs['']['fi']['sname']=$_REQUEST['fi']['sname'];
 			$qs['']['fi']['snamet']=$_REQUEST['fi']['snamet'];
-			$where[]='`u`.`full_name`='.$name;
+			$where[]='`u`.`full_name`'.$name;
 		}
 		if(!empty($_REQUEST['fi']['id']))
 		{

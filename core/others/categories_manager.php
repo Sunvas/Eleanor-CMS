@@ -4,7 +4,7 @@
 	For details, visit the web site http://eleanor-cms.ru, emails send to support@eleanor-cms.ru .
 	*Pseudonym
 */
-defined('CMS')||die;
+if(!defined('CMS'))die;
 class Categories_Manager extends Categories
 {
 	public
@@ -371,7 +371,7 @@ class Categories_Manager extends Categories
 			$El->module['links_categories']['add']=$El->Url->Construct(array($this->pp.'do'=>'add',$this->pp.'parent'=>$parent));
 		}
 
-		$R=Eleanor::$Db->Query('SELECT COUNT(`'.($parent>0 ? 'parent' : 'id').'`) FROM `'.$this->table.'` WHERE `parent`'.($parent>0 ? '='.$parent : 'IS NULL'));
+		$R=Eleanor::$Db->Query('SELECT COUNT(`parent`) FROM `'.$this->table.'` WHERE `parent`='.$parent);
 		list($cnt)=$R->fetch_row();
 
 		$page=isset($_GET[$this->pp.'page']) ? (int)$_GET[$this->pp.'page'] : 1;
@@ -400,7 +400,7 @@ class Categories_Manager extends Categories
 
 		if($cnt>0)
 		{
-			$R=Eleanor::$Db->Query('SELECT `id`,`title`,`parent`,`image`,`pos` FROM `'.$this->table.'` INNER JOIN `'.$this->table.'_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `parent`'.($parent>0 ? '='.$parent : 'IS NULL').' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.','.$pp);
+			$R=Eleanor::$Db->Query('SELECT `id`,`title`,`parent`,`image`,`pos` FROM `'.$this->table.'` INNER JOIN `'.$this->table.'_l` USING(`id`) WHERE `language` IN (\'\',\''.Language::$main.'\') AND `parent`='.$parent.' ORDER BY `'.$sort.'` '.$so.' LIMIT '.$offset.','.$pp);
 			while($a=$R->fetch_assoc())
 			{
 				$a['_aedit']=$El->Url->Construct(array($this->pp.'edit'=>$a['id']));
@@ -612,9 +612,6 @@ class Categories_Manager extends Categories
 				unset($values[$v]);
 			}
 		}
-
-		if(!$values['parent'])
-			$values['parent']=null;
 
 		$El=Eleanor::getInstance();
 		foreach($lvalues['uri'] as $k=>&$v)

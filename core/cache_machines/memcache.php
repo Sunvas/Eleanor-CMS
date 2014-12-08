@@ -7,31 +7,49 @@
 	Interface: Rumin Sergey
 	=====
 	*Pseudonym
+ *
+ * TODO: DELETE метод стоит сделать protected и разделить удаление кэша на 2 метода:
+ * deleteById() - удаление по Id кэша
+ * flush() - полная чистка кэша
+ * Таким образом можно обезопаситься от случайной чистки всего кэша
 */
 class CacheMachineMemCache implements CacheMachineInterface
 {
+    /**
+     * Объект Memcache
+     * @var Memcache
+     */
+    protected $_memcache;
+
 	private
 		$u,#Уникализация кэш машины
-		$n=array(''=>true),#Массив имен того, что у нас есть в кеше.
-		$M=false;#Объект MemCache-a
+		$n=array(''=>true);#Массив имен того, что у нас есть в кеше.
 
 	/**
-	 * Конструктор кэш машины
+	 * Конструктор кэш машины.
 	 *
-	 * @param string $u Строка уникализации кэша (на одной кэш машине может быть запущено несколько копий Eleanor CMS)
+     * Строка уникализации кэша (на одной кэш машине может быть запущено несколько копий Eleanor CMS).
+     *
+	 * @param string $u
 	 */
 	public function __construct($u='')
 	{
+        if($this->_memcache === null)
+            $this->_memcache = new Memcache();
+
 		$this->u=$u;
 		Eleanor::$nolog=true;
-		$this->M=memcache_connect('localhost');
+
+		$this->_memcache->connect('localhost');
+
 		Eleanor::$nolog=false;
-		if(!$this->M)
-			throw new Exception('MemCache failure '.__file__);
 
-		#memcache_add_server($this->M, 'server', 'port');
+		if(!$this->_memcache)
+			throw new Exception('MemCache failure '.dirname(__FILE__));
 
-		memcache_set_compress_threshold($this->M,20000,0.2);
+        // $this->_memcache->addServer('server', 'port');
+
+        $this->_memcache->setCompressThreshold(20000,0.2);
 		$this->n=$this->Get('');
 		if(!$this->n or !is_array($this->n))
 			$this->n=array();
@@ -40,8 +58,8 @@ class CacheMachineMemCache implements CacheMachineInterface
 	public function __destruct()
 	{
 		$this->Put('',$this->n);
-		if($this->M)
-			memcache_close($this->M);
+		if($this->_memcache)
+            $this->_memcache->close();
 	}
 
 	/**
@@ -52,11 +70,14 @@ class CacheMachineMemCache implements CacheMachineInterface
 	 * @param int $t Время жизни этой записи кэша в секундах
 	 */
 	public function Put($k,$v,$t=0)
-	{
-		$r=$this->M ? memcache_set($this->M,$this->u.$k,$v,is_bool($v) || is_int($v) || is_float($v) ? 0 : MEMCACHE_COMPRESSED,$t) : false;
-		if($r)
-			$this->n[$k]=$t+time();
-		return$r;
+    {
+
+		$r = $this->_memcache->set($this->u.$k, $v, is_bool($v) || is_int($v) || is_float($v) ? 0 : MEMCACHE_COMPRESSED, $t);
+
+        if($r)
+			$this->n[$k] = $t+time();
+
+		return $r;
 	}
 
 	/**
@@ -68,10 +89,13 @@ class CacheMachineMemCache implements CacheMachineInterface
 	{
 		if(!isset($this->n[$k]))
 			return false;
-		$r=memcache_get($this->M,$this->u.$k);
+
+        $r = $this->_memcache->get($this->u.$k);
+
 		if($r===false)
 			unset($this->n[$k]);
-		return$r;
+
+		return $r;
 	}
 
 	/**
@@ -82,7 +106,8 @@ class CacheMachineMemCache implements CacheMachineInterface
 	public function Delete($k)
 	{
 		unset($this->n[$k]);
-		return memcache_delete($this->M,$this->u.$k);
+
+        return $this->_memcache->delete($this->u.$k);
 	}
 
 	/**

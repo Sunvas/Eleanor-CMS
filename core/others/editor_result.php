@@ -425,7 +425,7 @@ class Editor_Result extends BaseClass
 							--$used[$n][$tag];
 					}
 					elseif(isset($parents[$tag]))
-						foreach($parents[$tag] as $k=>&$v)
+						foreach($parents[$tag] as $k=>$v)
 							if($k==$opened[$n] and $v>0)
 								$used[$n][$tag]=$v-1;
 					$opened[++$n]=$tag;

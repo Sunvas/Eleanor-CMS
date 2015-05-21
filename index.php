@@ -192,8 +192,10 @@ if($m)
 }
 elseif(isset($_REQUEST['direct']) and is_file($f=Eleanor::$root.'addons/direct/'.preg_replace('#[^a-z0-9]+#i','',(string)$_REQUEST['direct']).'.php'))
 	include$f;
-elseif(join(array_filter($_GET,function($v){ return is_scalar($v); })))#Для запросов вида key_value. Фильтр на пустой запрос. Подмассивы не учитываем.
-	MainPage('',$ending);
+	
+// фикс для работы с UTM метками	
+//elseif(join(array_filter($_GET,function($v){ return is_scalar($v); })))#Для запросов вида key_value. Фильтр на пустой запрос. Подмассивы не учитываем.
+//	MainPage('',$ending);
 else
 	MainPage();
 
@@ -250,7 +252,8 @@ function Start($tpl='index',$code=200)
 	{
 		$Lst=Eleanor::LoadListTemplate('headfoot')
 			->metahttp('text/html; charset='.DISPLAY_CHARSET)
-			->base(PROTOCOL.Eleanor::$domain.Eleanor::$site_path)
+			// ->base(PROTOCOL.Eleanor::$domain.Eleanor::$site_path)
+			->base(PROTOCOL.Eleanor::$domain.'/') // фикс для корректной работы в IE
 			->title($t)
 			->meta('generator','Eleanor CMS '.ELEANOR_VERSION);
 

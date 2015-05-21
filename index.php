@@ -252,8 +252,7 @@ function Start($tpl='index',$code=200)
 	{
 		$Lst=Eleanor::LoadListTemplate('headfoot')
 			->metahttp('text/html; charset='.DISPLAY_CHARSET)
-			// ->base(PROTOCOL.Eleanor::$domain.Eleanor::$site_path)
-			->base(PROTOCOL.Eleanor::$domain.'/') // фикс для корректной работы в IE
+			->base(PROTOCOL.Eleanor::$domain.'/') // todo фикс с IE
 			->title($t)
 			->meta('generator','Eleanor CMS '.ELEANOR_VERSION);
 

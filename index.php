@@ -22,6 +22,8 @@ $Eleanor->Url->delimiter=Eleanor::$vars['url_static_delimiter'];
 $Eleanor->Url->defis=Eleanor::$vars['url_static_defis'];
 $Eleanor->Url->ending=Eleanor::$vars['url_static_ending'];
 
+CliInit();
+
 if(isset($_GET['newtpl']) and Eleanor::$vars['templates'] and in_array($_GET['newtpl'],Eleanor::$vars['templates']))
 {
 	if(Eleanor::$Login->IsUser())
@@ -192,10 +194,52 @@ if($m)
 }
 elseif(isset($_REQUEST['direct']) and is_file($f=Eleanor::$root.'addons/direct/'.preg_replace('#[^a-z0-9]+#i','',(string)$_REQUEST['direct']).'.php'))
 	include$f;
-elseif(join(array_filter($_GET,function($v){ return is_scalar($v); })))#Для запросов вида key_value. Фильтр на пустой запрос. Подмассивы не учитываем.
-	MainPage('',$ending);
+
+// фикс для корректной работы UTM меток
+//elseif(join(array_filter($_GET,function($v){ return is_scalar($v); })))#Для запросов вида key_value. Фильтр на пустой запрос. Подмассивы не учитываем.
+//	MainPage('',$ending);
 else
 	MainPage();
+
+
+
+
+// Инициализация CLI демона, запускается в одном экземпляре
+function CliInit(){
+    $file = __DIR__.'/cli.lock';
+    $time = time();
+    $config = [$_SERVER['REQUEST_SCHEME'],$_SERVER['HTTP_HOST'],$time];
+    $launch = false;
+
+    if(file_exists($file) && is_writable($file)){
+        $c = explode('|', file_get_contents(__DIR__.'/cli.lock'));
+        $t = $time-(int)$c[2];
+        if($t>1) $launch = true;
+    }else{
+        file_put_contents($file, implode('|', $config));
+        $launch = true;
+    }
+
+    if($launch == true){
+        $php = 'php';//путь к php
+        $script = __DIR__.'/cliDemon.php';//путь к скрипту
+
+        $pl = substr(php_uname(), 0, 7); // среда запуска
+        if ($pl == "Windows"){
+            // PHP необходимо добавить в переменную PATH системы
+
+            $PATH = explode(';', $_SERVER['PATH']);
+            foreach($PATH as $P)
+                if(file_exists($P.'\\php.exe'))
+                    $php = $P.'\\php.exe';
+
+            pclose(popen("start /b $php -f $script", 'w'));
+        }
+        else
+            exec("$php $script > /dev/null &"); // для *.nix систем
+    }
+}
+
 
 #Предопределенные функции.
 function Start($tpl='index',$code=200)

@@ -1,0 +1,3 @@
+[submodule "cms/library"]
+	path = cms/library
+	url = https://github.com/Sunvas/eleanor-php-library.git

@@ -1,3 +1,0 @@
-<filesmatch "\.php$">
-deny from all
-</filesmatch>

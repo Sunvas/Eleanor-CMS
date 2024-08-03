@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-Host: {domain}
-Sitemap: {protocol}{domain}{site_path}sitemap.xml

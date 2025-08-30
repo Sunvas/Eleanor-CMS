@@ -18,12 +18,13 @@ use function Eleanor\AwareInclude;
 
 const
 	JSON = \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE,
-	LOCK=__DIR__.'/install.lock';
+	LOCK = __DIR__.'/install.lock',
+	BASE = __DIR__.'/../';
 
-require __DIR__.'/../cms/library/core.php';
-require __DIR__.'/../cms/constants.php';//Just for VERSION
+require BASE.'cms/library/core.php';
+require BASE.'cms/constants.php';//Just for VERSION
 
-Library::$logs=\rtrim($_SERVER['DOCUMENT_ROOT'],\DIRECTORY_SEPARATOR).'/cms/logs/';
+Library::$logs=BASE.'cms/logs/';
 
 /** Проверка среды для возможности установки
  * @return array of errors */
@@ -46,17 +47,15 @@ function CheckEnv():array
 	elseif(!\is_writeable(Library::$logs))
 		$errors['NOT_WRITABLE'][]=Library::$logs;
 
-	$dr=\rtrim($_SERVER['DOCUMENT_ROOT'],\DIRECTORY_SEPARATOR);
-
 	#Проверка на запись robots.txt, конфига главной страницы, конфига для доступа к БД и константы
-	foreach([$dr.'/robots.txt',$dr.'/cms/config/db.php',$dr.'/cms/constants.php'] as $f)
+	foreach([BASE.'robots.txt',BASE.'cms/config/db.php',BASE.'cms/constants.php'] as $f)
 		if(!\is_file($f))
 			$errors['NOT_EXIST'][]=$f;
 		elseif(!\is_writeable($f))
 			$errors['NOT_WRITABLE'][]=$f;
 
 	#Uploads, config
-	foreach([$dr.'/static/uploads/',$dr.'/cms/config/'] as $d)
+	foreach([BASE.'static/uploads/',BASE.'cms/config/'] as $d)
 		if(!\is_dir($d))
 			$errors['NOT_EXIST'][]=$d;
 		elseif(!\is_writeable($d))
@@ -289,8 +288,6 @@ function Step6():string
 
 	if($_SESSION['finished'])
 	{
-		$dr=\rtrim($_SERVER['DOCUMENT_ROOT'],\DIRECTORY_SEPARATOR);
-
 		#config of connection to database
 		$db=\var_export($_SESSION['db'],true);
 		$host=\var_export($_SESSION['host'],true);
@@ -306,7 +303,7 @@ return[
 	'db'=>{$db},
 ];
 PHP;
-		\file_put_contents($dr.'/cms/config/db.php',$config_db);
+		\file_put_contents(BASE.'cms/config/db.php',$config_db);
 
 		#robots.txt
 		$protocol=\Eleanor\PROTOCOL;
@@ -315,14 +312,14 @@ PHP;
 User-agent: *
 Sitemap: {$protocol}{$domain}{$sitedir}sitemap.xml
 TEXT;
-		\file_put_contents($dr.'/robots.txt',$config_robots);
+		\file_put_contents(BASE.'robots.txt',$config_robots);
 
 		#system constants
 		$l10ns=\is_array($_SESSION['l10ns']) ? \join(',',\array_map(fn($item)=>\var_export($item,true),$_SESSION['l10ns'])) : '';
-		$config=\file_get_contents($dr.'/cms/constants.php');
+		$config=\file_get_contents(BASE.'cms/constants.php');
 		$config=\preg_replace('#L10N=[^,]+#',"L10N='{$_SESSION['l10n']}'",$config);
 		$config=\preg_replace('#L10NS=[^;]+#',$_SESSION['l10ns']===null ? 'L10NS=null' : "L10NS=[{$l10ns}]",$config);
-		\file_put_contents($dr.'/cms/constants.php',$config);
+		\file_put_contents(BASE.'cms/constants.php',$config);
 
 		#system config
 		$system=\json_encode([
@@ -333,7 +330,7 @@ TEXT;
 			'hcaptcha'=>$_SESSION['hcaptcha'],
 			'hcaptcha_secret'=>$_SESSION['hsecret'],
 		],JSON);
-		\file_put_contents($dr.'/cms/config/system.json',$system);
+		\file_put_contents(BASE.'cms/config/system.json',$system);
 
 		#config of main page
 		$mono=$_SESSION['l10ns']===null;
@@ -342,7 +339,7 @@ TEXT;
 			'title'=>$mono ? '' : [''=>''],
 			'description'=>$mono ? $_SESSION['description'] : [''=>$_SESSION['description']],
 		],JSON);
-		\file_put_contents($dr.'/cms/config/site.json',$mainpage);
+		\file_put_contents(BASE.'cms/config/site.json',$mainpage);
 
 		#locking the installer to prevent another installation
 		\file_put_contents(__DIR__.'/install.lock',1);

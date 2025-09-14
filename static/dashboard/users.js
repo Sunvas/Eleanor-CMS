@@ -36,7 +36,7 @@
 			is_admin,
 			groups:groups.toSorted((a,b)=>a.title-b.title),
 			group2title:groups.reduce((a,v)=>Object.assign(a,{[v.id]:v.title}),{}),
-			sort_default:"id",
+			default_sort:"id",
 
 			//Filters
 			id:"",

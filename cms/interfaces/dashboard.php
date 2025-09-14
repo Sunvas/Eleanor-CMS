@@ -8,4 +8,5 @@ interface Dashboard
 	function Dashboard(\CMS\Classes\UriDashboard$Uri):never;
 }
 
+#Not necessary here, since interface name equals filename
 return Dashboard::class;

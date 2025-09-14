@@ -2,7 +2,10 @@
 
 function Url(USP)
 {
-	return location.pathname+"?"+USP.toString();
+	//Filter empty values
+	USP.forEach((v,k,o)=>v==="" && o.delete(k,v));
+
+	return location.pathname+(USP.size>0 ? "?"+USP.toString() : "");
 }
 
 export default ({total,pp,sort,desc})=>({
@@ -10,7 +13,8 @@ export default ({total,pp,sort,desc})=>({
 		USP:new URLSearchParams(location.search),//For reading purposes only
 		pps:[25,50,100,200],
 		page:1,
-		sort_default:"",
+		default_sort:"",
+		default_order:1,
 
 		pp,
 		desc,
@@ -52,17 +56,26 @@ export default ({total,pp,sort,desc})=>({
 			return Url(USP);
 		},
 
+		/** Page by user input */
+		InputPage(){
+			let page=prompt(document.documentElement.lang=="ru" ? "Введите номер страницы" : "Input page number","");
+			page=parseInt(page,10);
+
+			if(Number.isInteger(page) && page<=this.pages)
+				location.href=this.Page(page);
+		},
+
 		/** For links of sort */
 		Sort(sort){
 			const
 				USP=new URLSearchParams(location.search),
 				desc=USP.has("order") ? USP.get("order")=="desc" : this.desc;
 
-			if(this.sort_default==sort)
+			if(this.default_sort==sort)
 			{
 				USP.delete("sort");
 
-				if(desc ^ this.desc)
+				if(desc ^ this.default_order)
 					USP.delete("order");
 				else
 					USP.set("order",this.desc ? "asc" : "desc");
@@ -97,6 +110,8 @@ export default ({total,pp,sort,desc})=>({
 		}
 	},
 	created(){
+		this.USP.forEach((v,k,o)=>v==="" && o.delete(k,v));
+
 		const page=this.USP.has("page") ? parseInt(this.USP.get("page")) || 0 : 0;
 
 		if(page>0)

@@ -32,3 +32,6 @@ trait Events
 			CMS::$Cache->Delete('cron');
 	}
 }
+
+#Not necessary here, since trait name equals filename
+return Events::class;

@@ -67,8 +67,8 @@ $template=<<<HTML
 					<a :href="Filter(['group'])" class="ms-auto small"><i class="fa-solid fa-xmark"></i></a>
 				</p>
 				<div class="mb-1">
-					<label for="filter-login" class="form-label mb-1">{$l10n['login']}</label><a :href="Filter(['name'])" v-if="name" v-once class="ms-2 small"><i class="fa-solid fa-xmark"></i></a>
-					<input type="text" name="name" class="form-control" id="filter-login" :value="name" autocomplete="off">
+					<label for="filter-name" class="form-label mb-1">{$l10n['login']}</label><a :href="Filter(['name'])" v-if="name" v-once class="ms-2 small"><i class="fa-solid fa-xmark"></i></a>
+					<input type="text" name="name" class="form-control" id="filter-name" :value="name" autocomplete="off">
 				</div>
 				<button type="submit" class="btn btn-primary bg-gradient">{$l10n['do-filter']}</button>
 			</form>

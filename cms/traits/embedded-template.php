@@ -21,4 +21,5 @@ trait EmbeddedTemplate
 	}
 }
 
+#Not necessary here, since trait name equals filename
 return EmbeddedTemplate::class;

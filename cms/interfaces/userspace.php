@@ -13,4 +13,5 @@ interface UserSpace
 	function UserSpace(?string$uri):never;
 }
 
+#Not necessary here, since interface name equals filename
 return UserSpace::class;

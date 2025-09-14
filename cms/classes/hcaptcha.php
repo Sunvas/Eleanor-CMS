@@ -1,6 +1,7 @@
 <?php
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS\Classes;
+
 use CMS\CMS;
 
 /** Проверка решения hCaptcha
@@ -42,4 +43,5 @@ class hCaptcha extends \Eleanor\Basic
 	}
 }
 
+#Not necessary here, since class name equals filename
 return hCaptcha::class;

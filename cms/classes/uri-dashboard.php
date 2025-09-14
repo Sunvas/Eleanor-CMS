@@ -62,4 +62,5 @@ class UriDashboard extends \Eleanor\Basic
 	}
 }
 
+#Not necessary here, since class name equals filename
 return UriDashboard::class;

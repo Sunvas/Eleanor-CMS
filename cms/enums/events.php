@@ -16,3 +16,6 @@ enum Events:string
 	/** Users signed in. Expected parameters: id (user id), way (username, telegram), ip (IP of the user), ua (user agent of user's browser), where (userspace, dashboard) */
 	case UserSignedIn='user_signed_in';
 }
+
+#Not necessary here, since enum name equals filename
+return Events::class;

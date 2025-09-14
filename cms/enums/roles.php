@@ -13,3 +13,6 @@ enum Roles:string
 	/** Member of site team. Can access to dashboard but with limited rights */
 	case Team='team';
 }
+
+#Not necessary here, since enum name equals filename
+return Roles::class;

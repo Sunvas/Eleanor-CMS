@@ -19,4 +19,5 @@ interface External
 	function SignOut(int|array$ids):void;
 }
 
+#Not necessary here, since interface name equals filename
 return External::class;

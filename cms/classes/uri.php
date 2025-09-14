@@ -61,4 +61,5 @@ class Uri extends \Eleanor\Classes\Uri
 	}
 }
 
+#Not necessary here, since class name equals filename
 return Uri::class;

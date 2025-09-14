@@ -14,4 +14,5 @@ interface Cron
 	function Cron(?array$remnant):array|int;
 }
 
+#Not necessary here, since interface name equals filename
 return Cron::class;

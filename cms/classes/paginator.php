@@ -66,4 +66,5 @@ class Paginator extends \Eleanor\Basic
 	}
 }
 
+#Not necessary here, since class name equals filename
 return Paginator::class;

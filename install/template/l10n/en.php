@@ -42,6 +42,7 @@ return[
 	'p2'=>'Repeat password',
 	'PASS_MISMATCH'=>'Passwords don\'t match',
 	'MYSQL_CONNECT'=>'Unable to connect to the MySQL server',
+	'MYSQL_LOW'=>'👎 The version of MySQL server is required to be at least <b>8.0</b>',
 	'install'=>'📦 Install',
 
 	'installing'=>'Installing&hellip;',

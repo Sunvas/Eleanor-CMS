@@ -1,9 +1,5 @@
 <?php
-/**
-	Eleanor CMS © 2025
-	https://eleanor-cms.com
-	info@eleanor-cms.com
-*/
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 use Eleanor\Classes\L10n,
 	Eleanor\Classes\MySQL;

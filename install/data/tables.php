@@ -1,9 +1,5 @@
 <?php
-/**
-	Eleanor CMS © 2025
-	https://eleanor-cms.com
-	info@eleanor-cms.com
-*/
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 $l10ns=$_SESSION['l10ns'];
 
 $tables[]='DROP TABLE IF EXISTS `a11n`';

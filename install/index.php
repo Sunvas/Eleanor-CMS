@@ -1,9 +1,5 @@
 <?php
-/**
-	Eleanor CMS © 2025
-	https://eleanor-cms.com
-	info@eleanor-cms.com
-*/
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 use Eleanor\Library,
@@ -55,7 +51,7 @@ function CheckEnv():array
 			$errors['NOT_WRITABLE'][]=$f;
 
 	#Uploads, config
-	foreach([BASE.'static/uploads/',BASE.'cms/config/'] as $d)
+	foreach([BASE.'static/uploads/',BASE.'cms/config/',BASE.'cms/cache/',BASE.'cms/cache/storage/'] as $d)
 		if(!\is_dir($d))
 			$errors['NOT_EXIST'][]=$d;
 		elseif(!\is_writeable($d))
@@ -191,6 +187,9 @@ function Step4():string
 	}catch(EM){
 		return Step3(['MYSQL_CONNECT']);
 	}
+
+	if($Db->server_version<80000)
+		return Step3(['MYSQL_LOW']);
 
 	$status=[];
 	$tables=AwareInclude(__DIR__.'/data/tables.php',['Db'=>$Db]);

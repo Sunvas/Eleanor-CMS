@@ -1,9 +1,5 @@
 <?php
-/**
-	Eleanor CMS © 2025
-	https://eleanor-cms.com
-	info@eleanor-cms.com
-*/
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 use Eleanor\Classes\Html,
@@ -236,9 +232,11 @@ HTML;
 })</script>
 HTML;
 
-		$connection=in_array('MYSQL_CONNECT',$errors)
-			? $this->Message($this->l10n['MYSQL_CONNECT'])
-			: '';
+		$db_errors='';
+
+		foreach(['MYSQL_CONNECT','MYSQL_LOW'] as $err)
+			if(in_array($err,$errors))
+				$db_errors.=$this->Message($this->l10n[$err]);
 
 		$content=<<<HTML
 <div class="wpbox wpbwhite">
@@ -246,7 +244,7 @@ HTML;
 	<div class="wpmid">
 		<div class="wpcont">
 			<form method="post" id="main">
-				<h2 class="subhead">{$this->l10n['db']}</h2>{$connection}
+				<h2 class="subhead">{$this->l10n['db']}</h2>{$db_errors}
 				<ul class="reset formfield">
 					<li class="ffield">
 						<label for="host">{$this->l10n['db_host']}</label>

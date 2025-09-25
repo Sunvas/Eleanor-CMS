@@ -17,8 +17,12 @@ return new class implements Interfaces\UserSpace, Interfaces\Dashboard {
 
 	function UserSpace(?string$uri):never
 	{
+		$cache=CMS::$A->current ? 0 : 'main';//Page should be cached for guests only
+
+		if($cache and Return304($cache))
+			die;
+
 		$code=200;
-		$cache=CMS::$A->current ? 0 : 86400;//Page should be cached for guests only
 		$output=require __DIR__."/{$this->name}/userspace.php";
 
 		static::OutPut($output,$code,$cache);

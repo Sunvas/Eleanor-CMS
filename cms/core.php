@@ -209,7 +209,7 @@ Assign::For(CMS::$Db,fn()=>new \Eleanor\Classes\MySQL(
 	CMS::$config['db']['pass'],
 	CMS::$config['db']['db'],
 ));
-Assign::For(CMS::$Cache,fn()=>new Cache(ROOT.'cache/',ROOT.'cache/storage/'));
+Assign::For(CMS::$Cache,fn()=>new Cache(ROOT.'cache'));
 Assign::For(CMS::$T,fn()=>new class extends Template {
 	/** @var bool Flag to run cron.php (background tasks) */
 	private(set) bool $cron {
@@ -487,6 +487,12 @@ SQL )->fetch_assoc();
 function Nonce():string
 {
 	return OutPut::Nonce();
+}
+
+/** Alias. Attempt to return 304 http code (Not Modified) when browser's cache is up to date */
+function Return304(...$a):bool
+{
+	return OutPut::Return304(...$a);
 }
 
 /** Стандартный вывод

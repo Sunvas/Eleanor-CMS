@@ -45,6 +45,8 @@ if(is_array($title))
 
 $l10n=new L10n('',__DIR__.'/l10n/');
 $Menu=new Uri()->IAM();
+
+Link('//cdn.jsdelivr.net');
 ?>
 <!DOCTYPE html>
 <html lang="<?=L10n::$code?>">

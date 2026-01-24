@@ -495,19 +495,28 @@ function Return304(...$a):bool
 	return OutPut::Return304(...$a);
 }
 
+/** Alias */
+function Link(...$a):void
+{
+	OutPut::Link(...$a);
+}
+
 /** Стандартный вывод
  * @param string $output Содержимое страницы
- * @rnever-return */
+ * @never-return */
 function HTML(string$output,...$a):never
 {
-	Output::SendHeaders(Output::HTML,...$a);
+	if($output=='')
+		header('Cache-Control: no-store',true,204);
+	else
+		Output::SendHeaders(Output::HTML,...$a);
 
 	die($output);
 }
 
 /** Вывод JSON
  * @param ?array $json Содержимое страницы
- * @rnever-return */
+ * @never-return */
 function JSON(?array$json,...$a):never
 {
 	Output::SendHeaders(Output::JSON,...$a);

@@ -18,8 +18,8 @@ $head??=[];
 $nonce=Nonce();
 $scripts??=[];
 
-if(is_array($title))
-	array_push($title,$l10n['dashboard'],is_array(CMS::$config['site']['name']) ? L10n::Item(CMS::$config['site']['name']) : CMS::$config['site']['name']);
+if(\is_array($title))
+	\array_push($title,$l10n['dashboard'],\is_array(CMS::$config['site']['name']) ? L10n::Item(CMS::$config['site']['name']) : CMS::$config['site']['name']);
 
 if($formfuse ?? false)
 	$scripts['confirm']=<<<'SCRIPT'
@@ -61,6 +61,8 @@ HTML
 		: <<<HTML
 <script nonce="{$nonce}">L.then(async()=>{{$script}})</script>
 HTML;
+
+Link('//cdn.jsdelivr.net');
 ?>
 <!DOCTYPE html>
 <html lang="<?=L10n::$code?>">

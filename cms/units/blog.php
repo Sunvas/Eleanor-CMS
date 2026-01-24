@@ -2,7 +2,7 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-return new class implements Interfaces\UserSpace, Interfaces\Dashboard {
+return new class extends Abstracts\Dashboard implements Interfaces\UserSpace {
 	readonly string
 		/** @var string $slug URL prefix of the unit */
 		$slug,
@@ -30,14 +30,5 @@ HTML )
 
 		#Output: cache is off for users
 		HTML($output,200,CMS::$A->current ? 0 : 86400);
-	}
-
-	function Dashboard(Classes\UriDashboard$Uri):never
-	{
-		$code=200;
-		$cache=0;
-		$output=require __DIR__."/{$this->name}/dashboard.php";
-
-		CMS::$json ? JSON($output,$code,$cache) : HTML($output,$code,$cache);
 	}
 };

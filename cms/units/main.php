@@ -2,7 +2,7 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-return new class implements Interfaces\UserSpace, Interfaces\Dashboard {
+return new class extends Abstracts\Dashboard implements Interfaces\UserSpace {
 	readonly string
 		/** @var string $slug URL prefix of the unit */
 		$slug,
@@ -17,7 +17,7 @@ return new class implements Interfaces\UserSpace, Interfaces\Dashboard {
 
 	function UserSpace(?string$uri):never
 	{
-		$cache=CMS::$A->current ? 0 : 'main';//Page should be cached for guests only
+		$cache=CMS::$A->current ? 0 : $this->name;//Page should be cached for guests only
 
 		if($cache and Return304($cache))
 			die;
@@ -25,29 +25,7 @@ return new class implements Interfaces\UserSpace, Interfaces\Dashboard {
 		$code=200;
 		$output=require __DIR__."/{$this->name}/userspace.php";
 
-		static::OutPut($output,$code,$cache);
-	}
-
-	function Dashboard(Classes\UriDashboard$Uri):never
-	{
-		$code=200;
-		$cache=0;
-		$output=require __DIR__."/{$this->name}/dashboard.php";
-
-		static::OutPut($output,$code,$cache);
-	}
-
-	static function OutPut($output,...$a):never
-	{
-		if(CMS::$json)
-			JSON($output,...$a);
-		elseif($output)
-			HTML($output,...$a);
-		else
-		{
-			header('Cache-Control: no-store',true,204);
-			die;
-		}
+		CMS::$json ? JSON($output,$code,$cache) : HTML($output,$code,$cache);
 	}
 
 	/** Get file with contents of main page

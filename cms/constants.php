@@ -1,32 +1,33 @@
 <?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+# Eleanor CMS © 2026 --> https://eleanor-cms.com
 namespace CMS;
 
 const
-	/** @const string Версия системы. Число до точки увеличивается при внесении изменений, ломающих обратную совместимость;
-	 * после точки - не ломающих */
-	VERSION='1.0-concept',
+	/** @const string System version, contains 2 numbers separated by the dot (left and right).
+	 * The number before the dot (left) increases when there were made breaking backwards compatibility changes. */
+	VERSION='1.1',
 
 	/** @const string Path to static files */
 	STATIC_PATH=__DIR__.'/../static/',
 
-	/** @const string Имя куки авторизации */
+	/** @const string Authorization (a11n) cookie name */
 	A11N_COOKIE='a',
 
-	/** @const int Очистить таблицу единой авторизации по достижению этого ID. Значение определяется по размеру поля id
-	 * в таблице a11n. По умолчанию это UNSIGNED SMALLINT (2 байта), что соответствует ~180 входам в сутки. Для 99%
-	 * проектов этого с избытком хватит. При необходимости размер поля id можно увеличить доя UNSIGNED */
+	/** @const int After reaching this ID, unified authorization table will be truncated. The value is determined by the
+	 * size of the id field in the `a11n` table. By default, it is UNSIGNED SMALLINT (2 bytes), which means ~180 entries
+	 * per day. For 99% of projects, this is more than enough. */
 	A11N_TRUNCATE_AFTER=65500,
 
-	/** @const string Код языковой локализации по умолчанию
-	 * @url https://ru.wikipedia.org/wiki/Локализация_программного_обеспечения
+	/** @const string Default language localization (l10n) code
+	 * @url https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
 	 * @url https://ru.wikipedia.org/wiki/Коды_языков */
 	L10N='ru',
 
-	/** @const ?array Перечень других доступных языковых локализаций сайта.
-	 * Если константа пуста ([] или null) - мультиязычность сайта выключена: при null включить мультиязычность невозможно,
-	 * (данные в БД сохраняются напрямую), а при [] - можно (данные сохраняются в виде JSON объектов).
-	 * Тип (null, Array) задаётся на этапе установки и определяет формат хранения данных в БД, поэтому не может быть
-	 * просто изменен вручную null <-> Array. Сокращение перечня возможно, а вот перед добавлением необходимо добавить
-	 * соответствующие файлы переводов */
+	/** @const ?array List of available language localizations of the site. If the constant is empty ([] or null) - site
+	 * will be monolingual as defined in L10N constant: if null is used, enabling multilingualism is impossible (data in
+	 * DB is stored directly), but if [] is used, enabling multilingualism is possible (data is stored as JSON objects).
+	 * The type (null or array) is set at the installation stage and determines the format of data storage in the
+	 * database, so it cannot be simply changed manually null <-> array without reworking the database. It is possible
+	 * to shorten the list, but before adding a new language, it is necessary to add the congruent translation files and
+	 * fields to DB tables. */
 	L10NS=[];

@@ -18,9 +18,13 @@ return new class implements Interfaces\UserSpace, Interfaces\Cron {
 	/** Userspace entry point */
 	function UserSpace(?string$uri):never
 	{
+		$cache=CMS::$A->current ? 0 : $this->name;//Page should be cached for guests only
+
+		if($cache and Return304($cache))
+			die;
+
 		$Uri=new Uri($this->slug)->IAM();
 		$code=200;
-		$cache=0;
 		$output=require __DIR__."/{$this->name}/userspace.php";
 
 		CMS::$json ? JSON($output,$code,$cache) : HTML($output,$code,$cache);

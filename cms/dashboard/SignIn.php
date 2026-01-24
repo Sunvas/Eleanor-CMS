@@ -7,6 +7,8 @@ use const Eleanor\SITEDIR;
 /** Sign in page to dashboard
  * @var string $hcaptcha hcaptcha key (if empty - off) */
 
+Link('//cdn.jsdelivr.net');
+
 $nonce=Nonce();
 $site=is_array(CMS::$config['site']['name']) ? L10n::Item(CMS::$config['site']['name']) : CMS::$config['site']['name'];
 $l10n=new L10n('sign-in',__DIR__.'/l10n/');

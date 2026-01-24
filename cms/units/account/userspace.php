@@ -61,7 +61,6 @@ function StoreAvatar(int$id,string$url):string
 	$errno=\curl_errno($curl);
 
 	\fclose($fh);
-	\curl_close($curl);
 
 	if($errno>0 or $info['http_code']!=200 or $info['size_download']<5120)
 		return'';

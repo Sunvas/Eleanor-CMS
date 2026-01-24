@@ -33,8 +33,6 @@ class hCaptcha extends \Eleanor\Basic
 		$json=\curl_exec($curl);
 		$errn=\curl_errno($curl);
 
-		\curl_close($curl);
-
 		if($errn>0)
 			return \strlen($resp)>100;
 

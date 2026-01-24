@@ -9,6 +9,8 @@ use const Eleanor\SITEDIR;
  * Default:
  * @var array $links List of links */
 
+Link('//cdn.jsdelivr.net');
+
 $l10n=new L10n('error',__DIR__.'/l10n/');
 $info=$l10n[$code] ?? $l10n['happened'];
 

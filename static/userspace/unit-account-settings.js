@@ -1,29 +1,29 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
 
 (({template,container,data})=>{
-	data=JSON.parse($(data).text());
+	const{settings,timezones}=JSON.parse($(data).text());
 
 	const app=Vue.createApp({
 		template,
 		data:()=>({
-			l10n:{
+			l10n:Object.seal({
 				save:{ru:'Сохранить',en:"Save"},
 				saved:{ru:'Сохранено',en:"Saved"},
 				change:{ru:'Сменить...',en:"Change..."},
 				upload:{ru:'Загрузить...',en:"Upload..."},
-			},
+			}),
 
-			asia:data.timezones.filter(item=>item.startsWith("Asia")),
-			europe:data.timezones.filter(item=>item.startsWith("Europe")),
-			has_l10n:Object.hasOwn(data.settings,"l10n"),
-			settings:{...data.settings},
+			asia:timezones.filter(item=>item.startsWith("Asia")),
+			europe:timezones.filter(item=>item.startsWith("Europe")),
+			has_l10n:Object.hasOwn(settings,"l10n"),
+			settings:Object.create(null),
 
 			blob:null,
 			avatar:"",
 			max_width:250,
 			max_height:250,
 
-			changed:new Set(),
+			changed:new Set,
 			saving:false
 		}),
 		computed:{
@@ -41,19 +41,16 @@
 				if(this.blob)
 					return false;
 
-				for(const k of this.changed.values())
-					if(data.settings[k]!==this.settings[k])
-						return false;
-					else
-						this.changed.delete(k);
-
-				return true;
+				return this.changed.size<1;
 			},
 		},
 
 		methods:{
-			Changed(field){
-				this.changed.add(field);
+			Changed(field,val){
+				if(JSON.stringify(settings[field])===JSON.stringify(val))
+					this.changed.delete(field);
+				else
+					this.changed.add(field);
 			},
 			UploadAvatar(){
 				const app=this;
@@ -85,11 +82,11 @@
 					img.src=URL.createObjectURL(this.files[0]);
 				}).get(0).click();
 			},
-			Submit(){
-				const store={};
+			async Submit(){
+				const store=Object.create(null);
 
-				for(const k of this.changed.values())
-					if(data.settings[k]!==this.settings[k])
+				for(const k of this.changed)
+					if(settings[k]!==this.settings[k])
 						store[k]=this.settings[k];
 
 				if(!this.blob && Object.keys(store).length<1)
@@ -113,19 +110,20 @@
 
 				this.saving=true;
 
-				fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
+				await fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
 					.then(J)
 					.then(({ok,error})=>{
 						if(ok)
 						{
 							this.blob=null;
-							Object.assign(data.settings,store);
+							Object.assign(settings,store);
 							this.changed.clear();
 						}
 						else
 							alert(this.l10n[error] ?? error);
-					},r=>r.text().then(console.error))
-					.finally(()=>this.saving=false);
+					},r=>r.text().then(console.error));
+
+				this.saving=false;
 			},
 		},
 		created(){
@@ -134,6 +132,12 @@
 			for(const[k,v] of Object.entries(this.l10n))
 				if(v[lang])
 					this.l10n[k]=v[lang];
+
+			for(const[k,v] of Object.entries(settings))
+			{
+				this.settings[k]??=Array.isArray(v) ? v.slice() : v;
+				this.$watch("settings."+k,val=>this.Changed(k,val));
+			}
 
 			$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 		}

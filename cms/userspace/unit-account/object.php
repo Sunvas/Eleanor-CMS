@@ -238,20 +238,20 @@ HTML;
 			<th class="label">
 				<label for="display-name">{$this->l10n['display_name']}</label>
 			</th>
-			<td><input tabindex="1" type="text" id="display-name" v-model="settings.display_name" @change="Changed('display_name')" autocomplete="name" maxlength="35"></td>
+			<td><input tabindex="1" type="text" id="display-name" v-model="settings.display_name" autocomplete="name" maxlength="35"></td>
 		</tr>
 		<tr>
 			<th class="label">
 				<label for="info">{$this->l10n['info']}</label>
 			</th>
-			<td><textarea id="info" v-model="settings.info" rows="3" @change="Changed('info')"></textarea></td>
+			<td><textarea id="info" v-model="settings.info" rows="3"></textarea></td>
 		</tr>
 		<tr>
 			<th class="label">
 				<label for="timezone">{$this->l10n['timezone']}</label>
 			</th>
 			<td>
-				<select id="timezone" v-model="settings.timezone" @change="Changed('timezone')">
+				<select id="timezone" v-model="settings.timezone">
 					<option value="">{$this->l10n['default']}</option>
 					<optgroup label="Asia"><option v-for="item in asia" v-text="item"></option></optgroup>
 					<optgroup label="Europe"><option v-for="item in europe" v-text="item"></option></optgroup>
@@ -263,7 +263,7 @@ HTML;
 				<label for="l10n">{$this->l10n['l10n']}</label>
 			</th>
 			<td>
-				<select id="l10n" v-model="settings.l10n" @change="Changed('l10n')">
+				<select id="l10n" v-model="settings.l10n">
 					<option value="en">🇺🇸 English</option>
 					<option value="ru">🇷🇺 Русский язык</option>
 				</select>

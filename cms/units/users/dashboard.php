@@ -4,7 +4,7 @@ namespace CMS;
 use CMS\Classes\Paginator,
 	Eleanor\Classes\L10n;
 
-/** Users unit
+/** Dashboard of unit "users"
  * @var Classes\UriDashboard $Uri
  * @var object $this This unit
  * @var int &$code Response code
@@ -317,12 +317,12 @@ function Groups(Classes\UriDashboard$Uri):array|string
 			$id=(int)($_GET['group'] ?? 0);
 			$data=[];
 
-			#Roles
-			if($id>4 and \is_array($_POST['roles'] ?? 0))
+			#Roles (not for predefined groups)
+			if(($id<1 or $id>4) and \is_array($_POST['roles'] ?? 0))
 				$data['roles']=join(',',$_POST['roles']);
 
-			#Slow mode
-			if($id>2 and isset($_POST['slow_mode']))
+			#Slow mode (not for admin & team groups)
+			if(($id<1 or $id>2) and isset($_POST['slow_mode']))
 				$data['slow_mode']=(int)$_POST['slow_mode'];
 
 			if(L10NS===null)
@@ -377,6 +377,7 @@ SQL );
 			];
 
 		$group['roles']=$group['roles'] ? \explode(',',$group['roles']) : [];
+		$group['slow_mode']=(int)$group['slow_mode'];
 
 		if(L10NS!==null)
 			$group['title']=\json_decode($group['title'],true);
@@ -415,6 +416,7 @@ SQL );
 	return(CMS::$T)('groups',\compact('items','roles'));
 }
 
+#Assigning folder with templates
 if(!CMS::$json)
 	CMS::$T->queue[]=ROOT.'dashboard/'.$this->name;
 

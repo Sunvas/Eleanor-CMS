@@ -78,11 +78,11 @@ $template=<<<HTML
 				<div class="row mb-1e">
 					<div class="col">
 						<label for="group-title" class="form-label mb-0">{$l10n['caption']}</label>
-						<input type="text" class="form-control" id="group-title" v-model.lazy="group.title" @change="Changed('title')" required maxlength="25">
+						<input type="text" class="form-control" id="group-title" v-model.lazy="group.title" required maxlength="25">
 					</div>
 					<div class="col" v-if="l10ns.length>0">
 						<label for="lang" class="form-label mb-0"><i class="fa-solid fa-arrow-left"></i> {$l10n['l10n']}</label>
-						<select id="lang" class="form-select" v-model="lang" @change="Changed('l10n')">
+						<select id="lang" class="form-select" v-model="lang">
 							<option v-for="[code,title] in l10ns" :value="code" v-text="title"></option>
 						</select>
 					</div>
@@ -90,14 +90,14 @@ $template=<<<HTML
 				<hr v-if="l10ns.length>0">
 				<div class="mb-1">
 					<label for="group-roles" class="form-label mb-0">{$l10n['roles']}</label>
-					<select id="group-roles" :disabled="group_id && group_id<5" class="form-select" multiple size="3" v-model="group.roles" @change="Changed('roles')">
+					<select id="group-roles" :disabled="group_id && group_id<5" class="form-select" multiple size="3" v-model="group.roles">
 						<option v-for="role in roles" :value="role" v-text="role" :class="'role-'+group.id"></option>
 					</select>
 				</div>
 				<div class="row mb-1">
 					<div class="col col-md-6">
 						<label for="group-sm" class="form-label mb-0" title="{$l10n['slow_mode_']}">{$l10n['slow_mode']}</label>
-						<input type="number" class="form-control" :disabled="group_id && group_id<3" id="group-sm" v-model.lazy="group.slow_mode" @change="Changed('slow_mode')" min="0">
+						<input type="number" class="form-control" :disabled="group_id && group_id<3" id="group-sm" v-model.lazy.number="group.slow_mode" min="0">
 					</div>
 				</div>
 			</div>

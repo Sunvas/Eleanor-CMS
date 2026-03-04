@@ -38,7 +38,7 @@
 				url.searchParams.set("iam",id);
 				location.href=url.href;
 			},
-			Submit(){
+			async Submit(){
 				if(this.hcaptcha && !this.captcha)
 					return alert(this.l10n.W8C);
 
@@ -50,7 +50,8 @@
 				});
 
 				this.loading=true;
-				fetch(account,{body,method:"post",headers:{accept:"application/json"}})
+
+				await fetch(account,{body,method:"post",headers:{accept:"application/json"}})
 					.then(J)
 					.then(r=>{
 						if(r.ok)
@@ -70,8 +71,9 @@
 							this.CaptchaReset();
 
 						alert(error ?? this.l10n[r.error] ?? r.error);
-					},r=>r.text().then(console.error))
-					.finally(()=>this.loading=false);
+					},r=>r.text().then(console.error));
+
+				this.loading=false;
 			},
 
 			Forgot(){

@@ -6,10 +6,10 @@ namespace CMS;
  * Default:
  * @var array $links List of links */
 
-$l10n=new \Eleanor\Classes\L10n('system-settings',__DIR__.'/l10n/');
+$l10n=new \Eleanor\Classes\L10n('settings-system',__DIR__.'/l10n/');
 $data=['L10N'=>L10N,'L10NS'=>L10NS,'config'=>$config];
 $title=[$l10n['title']];
-$script='static/dashboard/system-settings.js';
+$script='static/dashboard/settings-system.js';
 
 $template=<<<HTML
 <div class="d-flex justify-content-between mb-2">
@@ -19,7 +19,7 @@ $template=<<<HTML
 			<a class="nav-link py-1 text-body border-bottom border-2" href="{$links['settings']}">{$l10n['site']}</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link py-1 text-primary active" href="{$links['system-settings']}">{$l10n['system']}</a>
+			<a class="nav-link py-1 text-primary active" href="{$links['settings-system']}">{$l10n['system']}</a>
 		</li>
 	</ul>
 </div>
@@ -46,7 +46,7 @@ $template=<<<HTML
 		<div class="card-body">
 			<div class="form-check form-switch mb-2">
 				<input class="form-check-input" type="checkbox" role="switch" id="captcha" v-model="config.captcha">
-				<label class="form-check-label" for="captcha">{$l10n['captcha']}</label>
+				<label class="form-check-label user-select-none" for="captcha">{$l10n['captcha']}</label>
 			</div>
 			<div class="row">
 				<div class="col-md-6 col-lg-4 col-12">
@@ -65,7 +65,7 @@ $template=<<<HTML
 		<div class="card-body">
 			<div class="form-check form-switch mb-2">
 				<input class="form-check-input" type="checkbox" role="switch" id="maintenance" v-model="config.maintenance">
-				<label class="form-check-label" for="maintenance">{$l10n['maintenance']}</label>
+				<label class="form-check-label user-select-none" for="maintenance">{$l10n['maintenance']}</label>
 			</div>
 		</div>
 	</div>

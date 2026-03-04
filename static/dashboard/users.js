@@ -3,14 +3,14 @@
 	const
 		{L10N,L10NS,items,groups,is_admin,my_id,...extra}=JSON.parse($(data).text()),
 		items4=(await import('./4items.js')).default(extra),
-		user={};
+		user=Object.create(null);
 
 	Vue.createApp({
 		extends:items4,
 		template,
 		data:()=>({
 			//L10n
-			l10n:{
+			l10n:Object.seal({
 				recently:{ru:"Менее часа назад",en:"Less then hour ago"},
 				today:{ru:"Менее суток назад",en:"Less than a day ago"},
 				long_ago:{ru:"Более суток назад",en:"More than a day ago"},
@@ -26,7 +26,7 @@
 				delete_user:{ru:"Вы действительно хотите удалить пользователя?",en:"Are you sure you want to delete the user?"},
 
 				NAME_EXISTS:{ru:"Этот логин уже используется",en:"This login is already taken"},
-			},
+			}),
 			lang:document.documentElement.lang,
 			l10ns:[],
 
@@ -35,7 +35,7 @@
 			my_id,
 			is_admin,
 			groups:groups.toSorted((a,b)=>a.title-b.title),
-			group2title:groups.reduce((a,v)=>Object.assign(a,{[v.id]:v.title}),{}),
+			group2title:groups.reduce((a,v)=>a.set(v.id,v.title),new Map),
 			default_sort:"id",
 
 			//Filters
@@ -46,7 +46,7 @@
 
 			//Confirmation modal
 			confirm:"",
-			confirm_title:2,
+			confirm_title:"",
 			confirmed:false,
 
 			//User creation & modification modal
@@ -65,7 +65,8 @@
 			},
 
 			saving:false,
-			changed:new Set(),
+			loading:false,
+			changed:new Set,
 		}),
 		computed:{
 			/** It shows that there are some filters applied to the userlist */
@@ -79,13 +80,7 @@
 				if(this.user_title==="")
 					return true;
 
-				for(const k of this.changed.values())
-					if(JSON.stringify(user[k])!==JSON.stringify(this.user[k]))
-						return false;
-					else
-						this.changed.delete(k);
-
-				return true;
+				return this.changed.size<1;
 			},
 
 			/** Text on submit button in modal of modifying user */
@@ -133,6 +128,7 @@
 			SignIn({id},index){
 				const USP=this.Filter(this.reset,false);
 				USP.set("sign-in",id);
+
 				fetch(location.pathname+"?"+USP.toString(),{headers:{accept:"application/json"}})
 					.then(J).then(r=>{
 						if(r.ok)
@@ -146,21 +142,20 @@
 
 			/** User removal */
 			async Delete(item,index){
-				if(item.id==this.my_id)
+				if(item.id===this.my_id)
 					return;
 
 				if(!await this.Confirm(this.l10n.delete_user,item.name+" #"+item.id))
 					return;
 
-				fetch(this.URL(item.id),{method:"delete",headers:{accept:"application/json"}})
+				fetch(this.UserURL(item.id),{method:"delete",headers:{accept:"application/json"}})
 					.then(J)
 					.then(({ok,error})=>{
 						if(ok)
 							this.items.splice(index,1);
 						else
 							alert(this.l10n[error] ?? error);
-					},r=>r.text().then(console.error))
-					.finally(()=>this.saving=false);
+					},r=>r.text().then(console.error));
 			},
 
 			/** Showing modal to create the user */
@@ -168,6 +163,7 @@
 				this.user_id=0;
 				this.user_title=this.l10n.creating_user;
 
+				this.loading=true;
 				Object.assign(user,{
 					groups:[3],
 					name:"",
@@ -177,14 +173,17 @@
 					password:"",
 					display_name:"",
 				});
-				Object.assign(this.user,user);
+				this.Load();
+				this.loading=false;
 
 				coreui.Modal.getOrCreateInstance(this.$refs.user).show();
 			},
 
 			/** Modifying the user */
-			Modify({id},index){
-				fetch(this.URL(id),{headers:{accept:"application/json"}})
+			async Modify({id},index){
+				this.loading=true;
+
+				await fetch(this.UserURL(id),{headers:{accept:"application/json"}})
 				.then(J).then(r=>{
 					if(r.ok)
 					{
@@ -192,19 +191,30 @@
 						this.user_title=r.user.name;
 
 						Object.assign(user,r.user,{password:""});
-
-						Object.assign(this.user,user);
+						this.Load();
 
 						coreui.Modal.getOrCreateInstance(this.$refs.user).show();
 					}
 					else if(r.error)
 						alert( this.l10n[r.error] ?? r.error );
 				});
+
+				this.loading=false;
+			},
+
+			/** Loading values to the local variable */
+			Load(){
+				for(const[k,v] of Object.entries(user))
+					this.user[k]=Array.isArray(v) ? v.slice() : v;
 			},
 
 			/** Should be called each time form control being changed by user real time */
-			Changed(item,is_mono){
-				this.changed.add(item);
+			Changed(field,val){
+				//Array values
+				if(Array.isArray(user[field]) && JSON.stringify(user[field])===JSON.stringify(val))
+					this.changed.delete(field);
+				else
+					this.changed.add(field);
 			},
 
 			/** Checking user's new name */
@@ -228,14 +238,14 @@
 			/** Submitting user modification form */
 			async Submit(){
 				const
-					store=this.user_id ? {} : this.user,
+					store=this.user_id ? Object.create(null) : this.user,
 					USP=this.Filter(this.reset,false);
 
 				if(this.user_id)
 				{
 					USP.set("user",this.user_id);
 
-					for(const k of this.changed.values())
+					for(const k of this.changed)
 						if(JSON.stringify(user[k])!==JSON.stringify(this.user[k]))
 							store[k]=this.user[k];
 				}
@@ -245,40 +255,42 @@
 
 				this.saving=true;
 
-				fetch(location.pathname+"?"+USP.toString(),{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
-				.then(J).then(({ok,error,id})=>{
-					if(ok){
-						Object.assign(user,store);
+				await fetch(location.pathname+"?"+USP.toString(),{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
+					.then(J)
+					.then(({ok,error,id})=>{
+						if(ok){
+							Object.assign(user,store);
 
-						this.user_title=user.name;
+							this.user_title=user.name;
 
-						//Adding user
-						if(id)
-						{
-							this.NormalizeItem(store);
-							store.created=this.l10n.just_now;
+							//Adding user
+							if(id)
+							{
+								this.NormalizeItem(store);
+								store.created=this.l10n.just_now;
 
-							this.user_id=id;
-							this.items.unshift({id,...store});
+								this.user_id=id;
+								this.items.unshift({id,...store});
+							}
+							else
+							{
+								const user=this.items.find(item=>item.id===this.user_id);
+
+								if(user)
+									Object.assign(user,store,store.password ? {empty_password:false} : {});
+							}
+
+							this.CheckName();
+							this.changed.clear();
 						}
-						else
-						{
-							const user=this.items.find(item=>item.id===this.user_id);
+						else if(error)
+							alert( this.l10n[error] ?? error );
+					},r=>r.text().then(console.error));
 
-							if(user)
-								Object.assign(user,store,store.password ? {empty_password:false} : {});
-						}
-
-						this.CheckName();
-						this.changed.clear();
-					}
-					else if(error)
-						alert( this.l10n[error] ?? error );
-				})
-				.finally(()=>this.saving=false);
+				this.saving=false;
 			},
 
-			URL(id){
+			UserURL(id){
 				const USP=this.Filter(this.reset,false);
 				USP.set("user",id);
 				return location.pathname+"?"+USP.toString();
@@ -330,12 +342,15 @@
 					this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 				});
 
-			$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
+			for(const k of Object.keys(this.user))
+				this.$watch("user."+k,val=>this.loading || this.Changed(k,val));
 
 			this.items.map(this.NormalizeItem);
 
 			for(const f of ["id","name","group"])
 				this[f]=this.USP.has(f) ? this.USP.get(f) : "";
+
+			$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 		},
 		mounted(){
 			$(this.$refs.user).one("hidden.coreui.modal",()=>this.user_title="");

@@ -61,12 +61,17 @@ elseif(!$_SERVER['QUERY_STRING'])
 	if(CMS::$delete)
 	{
 		CMS::$A->SignOut();
-		JSON(['ok'=>true]);
+		JSON([
+			'ok'=>true
+		]);
 	}
 
 	//Sign in
-	if(!IsS($_POST['username'] ?? 0,$_POST['password'] ?? 0,$_POST['captcha'] ?? 0))
-		JSON(['ok'=>false,'error'=>'INSUFFICIENT']);
+	if(!\array_all([$_POST['username'] ?? 0,$_POST['password'] ?? 0,$_POST['captcha'] ?? 0],fn($t)=>\is_string($t)))
+		JSON([
+			'ok'=>false,
+			'error'=>'INSUFFICIENT'
+		]);
 
 	$R=CMS::$Db->Execute(<<<SQL
 SELECT `id`, `name`, `password_hash`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
@@ -75,18 +80,29 @@ WHERE `name`=?
 LIMIT 1
 SQL ,[$_POST['username']]);
 	if(!$user=$R->fetch_assoc())
-		JSON(['ok'=>false,'error'=>'NOT_FOUND']);
+		JSON([
+			'ok'=>false,
+			'error'=>'NOT_FOUND'
+		]);
 
 	$id=(int)$user['id'];
 
 	if(CMS::$A->current==$id)
-		JSON(['ok'=>false,'error'=>'ALREADY']);
+		JSON([
+			'ok'=>false,
+			'error'=>'ALREADY'
+		]);
 
 	CMS::$Db->Update('users',['last_login_attempt'=>fn()=>'NOW()'],'`id`='.$user['id']);
 
 	#Too ofter and no captcha
 	if($user['seconds']<SECONDS and !\CMS\Classes\hCaptcha::Check('captcha'))
-		JSON(['ok'=>false,'error'=>'W8','seconds'=>SECONDS,'remain'=>SECONDS-$user['seconds']]);
+		JSON([
+			'ok'=>false,
+			'error'=>'W8',
+			'seconds'=>SECONDS,
+			'remain'=>SECONDS-$user['seconds']
+		]);
 
 	$empty=$user['password_hash']==='';
 
@@ -99,7 +115,10 @@ SQL ,[$_POST['username']]);
 		#Check rights
 		$P=Permissions($id);
 		if(!array_intersect(['admin','team'],$P->roles))
-			JSON(['ok'=>false,'error'=>'ACCESS_DENIED']);
+			JSON([
+				'ok'=>false,
+				'error'=>'ACCESS_DENIED'
+			]);
 
 		//2FA should be injected somewhere here
 		CMS::$A->SignIn($id);
@@ -112,10 +131,16 @@ SQL ,[$_POST['username']]);
 			'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
 		]);
 
-		JSON(['ok'=>true,'id'=>$id]);
+		JSON([
+			'ok'=>true,
+			'id'=>$id
+		]);
 	}
 
-	JSON(['ok'=>false,'error'=>'WRONG_PASSWORD']);
+	JSON([
+		'ok'=>false,
+		'error'=>'WRONG_PASSWORD'
+	]);
 }
 
 #Localization

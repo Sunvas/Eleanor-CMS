@@ -1,6 +1,10 @@
 <?php
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
+$l10n=$_SESSION['l10n'];
 $l10ns=$_SESSION['l10ns'];
+
+if($l10ns!==null)
+	$l10ns[]=$l10n;
 
 $tables[]='DROP TABLE IF EXISTS `a11n`';
 
@@ -68,7 +72,42 @@ CREATE TABLE `groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
 
-$l10n=$_SESSION['l10n'];
+#Static pages
+$tables[]='DROP TABLE IF EXISTS `static`';
+
+if($l10ns===null)
+	$tables['static']=<<<SQL
+CREATE TABLE `static` (
+	`id` smallint UNSIGNED NOT NULL,
+	`status` enum('ACTIVE','DRAFT') NOT NULL DEFAULT 'DRAFT',
+	`slug` varchar(50) NOT NULL,
+	`title` tinytext NOT NULL,
+	`content` mediumtext NOT NULL,
+	`content_source` json NOT NULL,
+	`modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+SQL;
+else
+{
+	$slug=$title=$content='';
+
+	foreach($l10ns as $code)
+	{
+		$slug.="`slug_{$code}` varchar(50) NULL,";
+		$title.="`title_{$code}` tinytext NULL,";
+		$content.="`content_{$code}` mediumtext NULL,`content_{$code}_source` json NULL,";
+	}
+
+	$tables['static']=<<<SQL
+CREATE TABLE `static` (
+	`id` smallint UNSIGNED NOT NULL,
+	`status` enum('ACTIVE','DRAFT') NOT NULL DEFAULT 'DRAFT',
+	{$slug}{$title}{$content}
+	`modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+SQL;
+}
+
 $tables[]='DROP TABLE IF EXISTS `users`';
 $tables['users']=<<<SQL
 CREATE TABLE `users` (
@@ -131,6 +170,26 @@ ALTER TABLE `groups`
 	ADD PRIMARY KEY (`id`);
 SQL;
 
+#Static pages
+if($l10ns===null)
+	$tables['static_primary']=<<<'SQL'
+ALTER TABLE `static`
+	ADD PRIMARY KEY (`id`),
+	ADD UNIQUE KEY `slug` (`slug`);
+SQL;
+else
+{
+	$slug='';
+
+	foreach($l10ns as $code)
+		$slug.=",ADD UNIQUE KEY `slug_{$code}` (`slug_{$code}`)";
+
+	$tables['static_primary']=<<<'SQL'
+ALTER TABLE `static`
+	ADD PRIMARY KEY (`id`){$slug};
+SQL;
+}
+
 $tables['users_primary']=<<<'SQL'
 ALTER TABLE `users`
 	ADD PRIMARY KEY (`id`),
@@ -153,6 +212,11 @@ SQL;
 $tables['groups_autoincrement']=<<<'SQL'
 ALTER TABLE `groups`
 	MODIFY `id` tinyint UNSIGNED NOT NULL AUTO_INCREMENT;
+SQL;
+
+$tables['static_autoincrement']=<<<'SQL'
+ALTER TABLE `static`
+	MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT;
 SQL;
 
 $tables['users_autoincrement']=<<<'SQL'

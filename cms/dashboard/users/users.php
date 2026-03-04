@@ -14,7 +14,7 @@ use Eleanor\Classes\L10n;
  * Default:
  * @var array $links List of links */
 
-$l10n=new \Eleanor\Classes\L10n('users',__DIR__.'/l10n/');
+$l10n=new L10n('users',__DIR__.'/l10n/');
 
 $items=[];
 foreach($users as $item)
@@ -50,7 +50,7 @@ $mpl=MIN_PASSWORD_LENGTH;
 $template=<<<HTML
 <div class="d-flex justify-content-between mb-2">
 	<h1 class="h3 mb-0 pt-1"><i class="nav-icon fa-solid fa-user-group d-none d-md-inline"></i> {$l10n['title']}</h1>
-	<div class="gap-1 gap-md-2 d-flex">
+	<div class="gap-1 gap-md-2 d-flex align-items-end">
 		<div class="dropdown">
 			<button type="button" class="btn bg-gradient d-block d-md-none" :class="is_filtered ? 'btn-info' : 'btn-secondary'" title="{$l10n['filter']}" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter"></i></button>
 			<button type="button" class="btn bg-gradient d-none d-md-block" :class="is_filtered ? 'btn-info' : 'btn-secondary'" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter me-2"></i> {$l10n['filter']}</button>
@@ -63,7 +63,7 @@ $template=<<<HTML
 				</p>
 				<p v-if="group" class="d-flex mb-1">
 					<span>{$l10n['by-group']}</span>
-					<mark :class="'group-'+group" class="py-0 ms-1">{{group2title[group] ?? group}}</mark>
+					<mark :class="'group-'+group" class="py-0 ms-1">{{group2title.get(group) ?? group}}</mark>
 					<a :href="Filter(['group'])" class="ms-auto small"><i class="fa-solid fa-xmark"></i></a>
 				</p>
 				<div class="mb-1">
@@ -87,7 +87,7 @@ $template=<<<HTML
 				<th class="bg-body-secondary">
 					<i v-if="sort=='name'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-up-a-z'"></i>
 					<a :href="Sort('name')" class="text-decoration-none">{$l10n['login']}</a>
-					<a :href="Filter(['sort','order'])" v-if="sort!='id'" class="ms-3 small"><i class="fa-solid fa-xmark"></i></a>
+					<a :href="Filter(['sort','order'])" v-if="sort=='name'" class="ms-3 small"><i class="fa-solid fa-xmark"></i></a>
 				</th>
 				<th class="bg-body-secondary">{$l10n['comment']}</th>
 				<th class="bg-body-secondary">{$l10n['display_name']}</th>
@@ -112,7 +112,7 @@ $template=<<<HTML
 				</td>
 				<td>
 					<div class="text-nowrap" v-text="item.name"></div>
-					<small class="text-body-secondary text-nowrap"><span v-for="gid in item.groups" class="group" :class="'group-'+gid" v-text="group2title[gid] ?? gid"></span> | <span title="{$l10n['reg']}" v-text="item.created"></span></small>
+					<small class="text-body-secondary text-nowrap"><span v-for="gid in item.groups" class="group" :class="'group-'+gid" v-text="group2title.get(gid) ?? gid"></span> | <span title="{$l10n['reg']}" v-text="item.created"></span></small>
 				</td>
 				<td v-text="item.comment || '&mdash;'"></td>
 				<td v-text="item.display_name || '&mdash;'"></td>
@@ -129,12 +129,12 @@ $template=<<<HTML
 <div class="row mb-1 gap-1 gap-md-0">
 	<div class="col-12 col-md order-1 order-md-2 mt-2 mt-md-0"><div class="mx-auto" style="width: fit-content">{$paginator}</div></div>
 	<div class="col order-2 order-md-1 pt-1">{$say_total}</div>
-		<ul class="col order-3 nav justify-content-end">
-			<li class="nav-item" v-for="item in pps">
-				<b v-if="item==pp" class="nav-link ps-3 pe-0 py-1 disabled" v-text="item"></b>
-				<a v-else :href="PP(item)" class="nav-link ps-3 pe-0 py-1" v-text="item"></a>
-			</li>
-		</ul>
+	<ul class="col order-3 nav justify-content-end">
+		<li class="nav-item" v-for="item in pps">
+			<b v-if="item==pp" class="nav-link ps-3 pe-0 py-1 disabled" v-text="item"></b>
+			<a v-else :href="PP(item)" class="nav-link ps-3 pe-0 py-1" v-text="item"></a>
+		</li>
+	</ul>
 </div>
 </template>
 
@@ -167,40 +167,40 @@ $template=<<<HTML
 				<div class="row mb-1">
 					<div class="col" :class="{'was-validated':user_name_error!==null}">
 						<label for="user-name" class="form-label mb-0">{$l10n['login']}</label>
-						<input type="text" class="form-control" id="user-name" v-model.lazy="user.name" autocomplete="username" @change="Changed('name')" ref="user_name" required maxlength="25">
+						<input type="text" class="form-control" id="user-name" v-model.lazy="user.name" autocomplete="username" ref="user_name" required maxlength="25">
 						<div class="invalid-feedback" v-text="user_name_error"></div>
 					</div>
 					<div class="col">
 						<label for="user-password" class="form-label mb-0">{$l10n['password']}</label>
-						<input type="password" class="form-control" id="user-password" v-model="user.password" minlength="{$mpl}" :required="!user_id" autocomplete="new-password" @change="Changed('password')">
+						<input type="password" class="form-control" id="user-password" v-model.lazy="user.password" minlength="{$mpl}" :required="!user_id" autocomplete="new-password">
 					</div>
 				</div>
 				<div class="mb-1">
 					<label for="user-l10n" class="form-label mb-0">{$l10n['groups']}</label>
-					<select class="form-select" multiple size="3" v-model="user.groups" @change="Changed('groups')" required>
+					<select class="form-select" multiple size="3" v-model="user.groups" required>
 						<option v-for="group in groups" :value="group.id" v-text="group.title" :class="'group-'+group.id"></option>
 					</select>
 				</div>
 				<div class="row mb-1">
 					<div class="col">
 						<label for="user-dn" class="form-label mb-0">{$l10n['display_name']}</label>
-						<input type="text" class="form-control" id="user-dn" v-model="user.display_name" autocomplete="off" @change="Changed('display_name')">
+						<input type="text" class="form-control" id="user-dn" v-model.lazy="user.display_name" autocomplete="off">
 					</div>
 					<div class="col" v-if="l10ns.length>0">
 						<label for="user-l10n" class="form-label mb-0">{$l10n['l10n']}</label>
-						<select id="user-l10n" class="form-select" v-model="user.l10n" @change="Changed('l10n')">
+						<select id="user-l10n" class="form-select" v-model="user.l10n">
 							<option v-for="[code,title] in l10ns" :value="code" v-text="title"></option>
 						</select>
 					</div>
 				</div>
 				<div class="mb-1">
 					<label for="user-comment" class="form-label mb-0">{$l10n['comment']}</label>
-					<textarea class="form-control" rows="2" v-model="user.comment" @change="Changed('comment')" style="resize:none"></textarea>
+					<textarea class="form-control" rows="2" v-model.lazy="user.comment" style="resize:none"></textarea>
 					<small class="form-text">{$l10n['only4dashboard']}</small>
 				</div>
 				<div class="mb-1">
 					<label for="user-info" class="form-label mb-0">{$l10n['info']}</label>
-					<textarea class="form-control" rows="2" v-model="user.info" @change="Changed('info')" style="resize:none"></textarea>
+					<textarea class="form-control" rows="2" v-model.lazy="user.info" style="resize:none"></textarea>
 					<small class="form-text">{$l10n['4anybody']}</small>
 				</div>
 			</div>

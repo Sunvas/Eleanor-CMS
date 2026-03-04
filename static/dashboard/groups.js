@@ -3,14 +3,14 @@
 	template,
 	data:()=>({
 		//L10n
-		l10n:{
+		l10n:Object.seal({
 			save:{ru:"Сохранить",en:"Save"},
 			saved:{ru:"Сохранено",en:"Saved"},
 			create:{ru:"Создать",en:"Create"},
 			creating_group:{ru:"Создание группы",en:"Creating the group"},
 
 			delete_group:{ru:"Вы действительно хотите удалить группу?",en:"Are you sure you want to delete the group?"},
-		},
+		}),
 		lang:document.documentElement.lang,
 		mono:false,
 		l10ns:[],
@@ -21,7 +21,7 @@
 
 		//Confirmation modal
 		confirm:"",
-		confirm_title:2,
+		confirm_title:"",
 		confirmed:false,
 
 		//Group creation & modification modal
@@ -29,17 +29,23 @@
 		group_id:0,
 		group_title:"",
 		group:{
-			title:"s",
+			title:"",
 			roles:[],
 			slow_mode:0,
 		},
-		group_l10n:{},
+		group_l10n:{
+			title:Object.create(null)
+		},
 
 		saving:false,
-		changed:new Set(),
+		loading:false,
+		changed:new Set,
 	}),
 	watch:{
-		lang:"Load"
+		lang(lang){
+			for(const[k,v] of Object.entries(this.group_l10n))
+				this.group[k]=v[lang] ?? v[""];
+		}
 	},
 	computed:{
 		/** It shows that there are no unsaved fields in modal of modifying group */
@@ -48,13 +54,7 @@
 			if(this.group_title==="")
 				return true;
 
-			for(const k of this.changed.values())
-				if(JSON.stringify(group[k])!==JSON.stringify(this.group_l10n[k] ?? this.group[k]))
-					return false;
-				else
-					this.changed.delete(k);
-
-			return true;
+			return this.changed.size<1;
 		},
 
 		/** Text on submit button in modal of modifying group */
@@ -87,26 +87,31 @@
 		},
 
 		/** Should be called each time form control input being changed by user real time */
-		Changed(item){
-			if(!this.mono && group[item]?.constructor?.name === "Object")
+		Changed(field,val){
+			if(field in this.group_l10n)
 			{
 				//Default language is always stored with empty key
 				const lang=this.L10N===this.lang ? "" : this.lang;
 
-				this.group_l10n[item]??={...group[item]};
-				this.group_l10n[item][lang]=this.group[item];
+				this.group_l10n[field][lang]=val;
 			}
 
-			this.changed.add(item);
+			if(JSON.stringify(group[field])===JSON.stringify(this.group_l10n[field] ?? val))
+				this.changed.delete(field);
+			else
+				this.changed.add(field);
 		},
 
-		/** Loading l10n version of values */
+		/** Loading values to the local variable */
 		Load(){
 			for(const[k,v] of Object.entries(group))
-				if(v?.constructor?.name === "Object")
-					this.group[k]=this.group_l10n[k]?.[this.lang] ?? this.group_l10n[k]?.[""] ?? v[this.lang] ?? v[""];
+				if(k in this.group_l10n)
+				{
+					this.group[k]=v[this.lang] ?? v[""];
+					this.group_l10n[k]=Object.seal({...v});
+				}
 				else
-					this.group[k]??=v;
+					this.group[k]=Array.isArray(v) ? v.slice() : v;
 		},
 
 		/** Group removal */
@@ -124,8 +129,7 @@
 						this.items.splice(index,1);
 					else
 						alert(this.l10n[error] ?? error);
-				},r=>r.text().then(console.error))
-				.finally(()=>this.saving=false);
+				},r=>r.text().then(console.error));
 		},
 
 		/** Showing modal to create the group */
@@ -133,22 +137,23 @@
 			this.group_id=0;
 			this.group_title=this.l10n.creating_group;
 
+			this.loading=true;
 			Object.assign(group,{
-				title:this.mono ? "" : this.l10ns.reduce((a,[code])=>Object.assign(a,{[code==this.L10N ? "" : code]:''}),{}),
+				title:this.mono ? "" : this.l10ns.reduce((a,[code])=>Object.assign(a,{[code===this.L10N ? "" : code]:''}),{}),
 				roles:[],
 				slow_mode:10,
 			});
-			Object.assign(this.group,group);
-
-			if(!this.mono)
-				this.Load();
+			this.Load();
+			this.loading=false;
 
 			coreui.Modal.getOrCreateInstance(this.$refs.group).show();
 		},
 
 		/** Modifying the group */
-		Modify({id},index){
-			fetch(this.URL(id),{headers:{accept:"application/json"}})
+		async Modify({id},index){
+			this.loading=true;
+
+			await fetch(this.URL(id),{headers:{accept:"application/json"}})
 			.then(J).then(r=>{
 				if(r.ok)
 				{
@@ -158,16 +163,15 @@
 						: (r.group.title[this.lang] ?? r.group.title[""] ?? "#"+id);
 
 					Object.assign(group,r.group);
-					Object.assign(this.group,group);
-
-					if(!this.mono)
-						this.Load();
+					this.Load();
 
 					coreui.Modal.getOrCreateInstance(this.$refs.group).show();
 				}
 				else if(r.error)
 					alert( this.l10n[r.error] ?? r.error );
 			});
+
+			this.loading=false;
 		},
 
 		/** Submitting group modification form */
@@ -180,7 +184,7 @@
 			{
 				USP.set("group",this.group_id);
 
-				for(const k of this.changed.values())
+				for(const k of this.changed)
 					if(JSON.stringify(group[k])!==JSON.stringify(this.group_l10n[k] ?? this.group[k]))
 						store[k]=this.group_l10n[k] ?? this.group[k];
 			}
@@ -190,36 +194,38 @@
 
 			this.saving=true;
 
-			fetch(location.pathname+"?"+USP.toString(),{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
-			.then(J).then(({ok,error,id})=>{
-				if(ok){
-					Object.assign(group,store);
+			await fetch(location.pathname+"?"+USP.toString(),{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
+				.then(J)
+				.then(({ok,error,id})=>{
+					if(ok){
+						Object.assign(group,store);
 
-					const title=this.mono ? group.title : (group.title[this.lang] ?? group.title[""]);
+						const title=this.mono ? group.title : (group.title[this.lang] ?? group.title[""]);
 
-					this.group_title=title;
+						this.group_title=title;
 
-					//Adding group
-					if(id)
-					{
-						this.group_id=id;
-						this.items.unshift({id,...store,...{title,deletable:true}});
+						//Adding group
+						if(id)
+						{
+							this.group_id=id;
+							this.items.unshift({id,...store,...{title,deletable:true}});
+						}
+						else
+						{
+							const group=this.items.find(item=>item.id===this.group_id);
+
+							if(group)
+								Object.assign(group,store,{title});
+						}
+
+						this.changed.clear();
+						this.group_l10n=Object.create(null);
 					}
-					else
-					{
-						const group=this.items.find(item=>item.id===this.group_id);
+					else if(error)
+						alert( this.l10n[error] ?? error );
+				},r=>r.text().then(console.error));
 
-						if(group)
-							Object.assign(group,store,{title});
-					}
-
-					this.changed.clear();
-					this.group_l10n={};
-				}
-				else if(error)
-					alert( this.l10n[error] ?? error );
-			})
-				.finally(()=>this.saving=false);
+			this.saving=false;
 		},
 
 		URL(id){
@@ -252,10 +258,12 @@
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 			});
 
+		//Switch off multilingual values
 		if(this.mono)
-			Object.assign(this.group,group);
-		else
-			this.Load();
+			this.group_l10n=Object.create(null);
+
+		for(const k of Object.keys(this.group))
+			this.$watch("group."+k,val=>this.loading || this.Changed(k,val));
 
 		$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 	},

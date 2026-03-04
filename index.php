@@ -11,7 +11,7 @@ use Eleanor\Assign,
 
 use const Eleanor\SITEDIR;
 
-/** @const Время старта системы, используется для отображения служебной информации внизу страницы */
+/** @const Script start time, used to display service information at the bottom of the page. */
 \define('CMS\STARTED',\hrtime(true));
 
 #If system is not install - redirect to installation setup. You can remove this block after installation
@@ -30,9 +30,9 @@ if(\str_starts_with(Uri::$current,'index.php'))
 #Import Uri class to CMS namespace
 class_alias(Uri::class,__NAMESPACE__.'\Uri');
 
-/** Страница с ошибкой
- * @param int $code Код ошибки 4XX
- * @param string $allow405 Значение заголовка allow для ошибки 405 */
+/** Error page
+ * @param int $code Error code 4XX
+ * @param string $allow405 'Allow' header value for 405 error */
 function Halt(int$code=404,string$allow405='DELETE'):never
 {
 	if(CMS::$json)
@@ -56,7 +56,7 @@ function Halt(int$code=404,string$allow405='DELETE'):never
 	die($output);
 }
 
-/** Каноническая ссылка
+/** Canonical link
  * @param Uri|string $Uri
  * @param string|array $slug
  * @return void */
@@ -95,7 +95,7 @@ function Alternate(\Closure$Gen):void
 	}
 }
 
-/** Разбиение URI на SLUG и URI
+/** Split URI to SLUG and URI
  * @param ?string $uri
  * @return array [slug, uri] */
 function SlugUri(?string$uri):array
@@ -110,18 +110,17 @@ $uri=Uri::GetURI();
 #Redirecting user to the appropriate language version
 if(L10NS)
 {
-	#Перечень доступных языков
 	$stack=L10NS;
 	$stack[]=L10N;
 
-	#Запросы /ru и /en перенаправляем на /ru/ и /en/ соответственно
+	#Requests like /ru or /en are redirected to /ru/ or /en/ (added slash at the end)
 	if(\in_array($uri,$stack))
 		Redirect(SITEDIR.$uri.'/'.($_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''),307);
 
-	#Языковой префикс
+	#localizaion prefix
 	[$l10n,$uri]=SlugUri($uri);
 
-	//Проверка префикса
+	#Prefix verification
 	if(\in_array($l10n,$stack,true))
 	{
 		L10n::$code=$l10n;
@@ -153,7 +152,8 @@ SQL );
 		$loc=[$l10n];
 		\array_push($loc,...($uri!==null ? \explode('/',$uri) : []));
 
-		#Если при включённой мультиязычности перешли по моноязычной ссылке, перенаправим пользователя по новому адресу с флагом from=autol10n. Далее будет разбираться юнит: либо оставит всё как есть (дубля страницы не возникнет из-за заголовка canonical) либо перенаправит по актуальному адресу
+		#If a monolingual link is followed while multilingualism is enabled, we redirect the user to a new address with the from=autol10n flag.
+		#Next, the unit will decide what to do: to leave everything as is (no duplicate page due to the canonical header) or redirect to the correct address.
 		Redirect(SITEDIR.$preferred.'/'.Uri::Make($loc).'?from=autol10n'.($_SERVER['QUERY_STRING'] ? '&'.$_SERVER['QUERY_STRING'] : ''),307);
 	}
 

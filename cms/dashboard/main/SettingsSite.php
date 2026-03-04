@@ -19,7 +19,7 @@ $template=<<<HTML
 			<a class="nav-link py-1 text-primary active" href="{$links['settings']}">{$l10n['site']}</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link py-1 text-body border-bottom border-2" href="{$links['system-settings']}">{$l10n['system']}</a>
+			<a class="nav-link py-1 text-body border-bottom border-2" href="{$links['settings-system']}">{$l10n['system']}</a>
 		</li>
 	</ul>
 </div>

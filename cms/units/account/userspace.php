@@ -105,19 +105,28 @@ SQL ,[CMS::$a11n]);
 	if(CMS::$json)
 	{
 		if($total>=MAX_USERS)
-			return['ok'=>false,'error'=>'USERS_LIMIT','max'=>MAX_USERS];
+			return[
+				'ok'=>false,
+				'error'=>'USERS_LIMIT',
+				'max'=>MAX_USERS
+			];
 
 		#Via telegram
 		if(\is_array($_POST['telegram'] ?? 0))
 		{
 			#Bot's key is missed
 			if(!CMS::$config['system']['bot_key'])
-				return['ok'=>false];
+				return[
+					'ok'=>false
+				];
 
 			$ok=\Eleanor\Classes\Telegram::CheckAuth($_POST['telegram'],CMS::$config['system']['bot_key']);
 
 			if(!$ok)
-				return['ok'=>false,'error'=>'INCORRECT'];
+				return[
+					'ok'=>false,
+					'error'=>'INCORRECT'
+				];
 
 			$telegram=$_POST['telegram'];
 
@@ -133,7 +142,10 @@ SQL );
 				$upd=[];
 
 				if(CMS::$A->current==$id)
-					return['ok'=>false,'error'=>'ALREADY'];
+					return[
+						'ok'=>false,
+						'error'=>'ALREADY'
+					];
 
 				if($telegram['username'] and $user['telegram_username']!=$telegram['username'])
 					$upd['telegram_username']=$telegram['username'];
@@ -160,18 +172,27 @@ SQL );
 					'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
 				]);
 
-				return['ok'=>true,'id'=>$id];
+				return[
+					'ok'=>true,
+					'id'=>$id
+				];
 			}
 
 			Session();
 			$_SESSION=['telegram'=>$telegram];
 
-			return['ok'=>true,'sign_up'=>$Uri('sign-up')];
+			return[
+				'ok'=>true,
+				'sign_up'=>$Uri('sign-up')
+			];
 		}
 
 		#Sign in by username and password
-		if(!IsS($_POST['username'] ?? 0,$_POST['password'] ?? 0,$_POST['captcha'] ?? 0) or !isset($_POST['temp']))
-			return['ok'=>false,'error'=>'INSUFFICIENT'];
+		if(!\array_all([$_POST['username'] ?? 0,$_POST['password'] ?? 0,$_POST['captcha'] ?? 0],fn($t)=>\is_string($t)) or !isset($_POST['temp']))
+			return[
+				'ok'=>false,
+				'error'=>'INSUFFICIENT'
+			];
 
 		$R=CMS::$Db->Execute(<<<SQL
 SELECT `id`, `name`, `password_hash`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
@@ -180,18 +201,29 @@ WHERE `name`=?
 LIMIT 1
 SQL ,[$_POST['username']]);
 		if(!$user=$R->fetch_assoc())
-			return['ok'=>false,'error'=>'NOT_FOUND'];
+			return[
+				'ok'=>false,
+				'error'=>'NOT_FOUND'
+			];
 
 		$id=(int)$user['id'];
 
 		if(CMS::$A->current==$id)
-			return['ok'=>false,'error'=>'ALREADY'];
+			return[
+				'ok'=>false,
+				'error'=>'ALREADY'
+			];
 
 		CMS::$Db->Update('users',['last_login_attempt'=>fn()=>'NOW()'],'`id`='.$user['id']);
 
 		#Too ofter and no captcha
 		if($user['seconds']<SECONDS and !\CMS\Classes\hCaptcha::Check('captcha'))
-			return['ok'=>false,'error'=>'W8','seconds'=>SECONDS,'remain'=>SECONDS-$user['seconds']];
+			return[
+				'ok'=>false,
+				'error'=>'W8',
+				'seconds'=>SECONDS,
+				'remain'=>SECONDS-$user['seconds']
+			];
 
 		$empty=$user['password_hash']==='';
 
@@ -212,10 +244,16 @@ SQL ,[$_POST['username']]);
 				'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
 			]);
 
-			return['ok'=>true,'id'=>$id];
+			return[
+				'ok'=>true,
+				'id'=>$id
+			];
 		}
 
-		return['ok'=>false,'error'=>'WRONG_PASSWORD'];
+		return[
+			'ok'=>false,
+			'error'=>'WRONG_PASSWORD'
+		];
 	}
 
 	if($total>=MAX_USERS)
@@ -277,7 +315,7 @@ function SignUp(Uri$Uri,int&$code):array|string
 	#AJAX request
 	if(CMS::$json)
 	{
-		if(!IsS($_POST['name'] ?? 0,$_POST['display_name'] ?? 0,$_POST['password'] ?? 0))
+		if(!\array_all([$_POST['name'] ?? 0,$_POST['display_name'] ?? 0,$_POST['password'] ?? 0],fn($t)=>\is_string($t)))
 			return[
 				'ok'=>false,
 				'error'=>'INSUFFICIENT'
@@ -439,8 +477,11 @@ SQL ,[CMS::$a11n,CMS::$A->current]);
 				'ok'=>false
 			];
 
-		if(!IsS($_POST['new'] ?? 0,$_POST['old'] ?? ($old_required ? 0 : '')))
-			return['ok'=>false,'error'=>'INSUFFICIENT'];
+		if(!\array_all([$_POST['new'] ?? 0,$_POST['old'] ?? ($old_required ? 0 : '')],fn($t)=>\is_string($t)))
+			return[
+				'ok'=>false,
+				'error'=>'INSUFFICIENT'
+			];
 
 		#Checking the old password when it needed
 		if($old_required)
@@ -451,7 +492,10 @@ SQL ,[CMS::$A->current]);
 			$hash=$R->fetch_column();
 
 			if($hash!=='' and !\password_verify($_POST['old'],$hash))
-				return['ok'=>false,'error'=>'INCORRECT'];
+				return[
+					'ok'=>false,
+					'error'=>'INCORRECT'
+				];
 		}
 
 		if(strlen($_POST['new'])<MIN_PASSWORD_LENGTH)

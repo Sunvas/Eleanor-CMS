@@ -40,7 +40,7 @@ export default ({total,pp,sort,desc})=>({
 		Page(page){
 			const USP=new URLSearchParams(location.search);
 
-			if(page==1)
+			if(page===1)
 			{
 				USP.delete("page");
 				USP.delete("total");

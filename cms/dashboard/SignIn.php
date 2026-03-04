@@ -26,7 +26,7 @@ $l10n=new L10n('sign-in',__DIR__.'/l10n/');
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@coreui/coreui@5/dist/css/coreui.min.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7/css/all.min.css">
 
-	<script src="//cdn.jsdelivr.net/combine/npm/jquery@3/dist/jquery.slim.min.js,npm/vue@3/dist/vue.global.prod.min.js,npm/@coreui/coreui@5/dist/js/coreui.bundle.min.js" nonce="<?=$nonce?>" defer></script>
+	<script src="//cdn.jsdelivr.net/combine/npm/jquery@4/dist/jquery.slim.min.js,npm/vue@3/dist/vue.global.prod.min.js,npm/@coreui/coreui@5/dist/js/coreui.bundle.min.js" nonce="<?=$nonce?>" defer></script>
 	<script src="static/dashboard/sign-in.js" nonce="<?=$nonce?>" defer data-container="#sign-in" data-template="#sign-in-tpl" data-hcaptcha="<?=$hcaptcha?>"></script>
 <?php
 	if($hcaptcha)

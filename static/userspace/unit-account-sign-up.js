@@ -16,8 +16,6 @@
 			avatar,
 			name_error:false,
 			password2:"",
-
-			saved:false,
 			loading:false
 		}),
 		watch:{
@@ -40,7 +38,7 @@
 					this.$refs.name.setCustomValidity(ok ? "" : this.l10n.NAME_EXISTS);
 				});
 			},
-			Submit(){
+			async Submit(){
 				if(this.loading)
 					return;
 
@@ -51,18 +49,17 @@
 				});
 
 				this.loading=true;
-				fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
+
+				await fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
 					.then(J)
 					.then(({ok,error})=>{
 						if(ok)
-						{
-							this.saved=true;
 							location.reload();
-						}
 						else
 							alert(this.l10n[error] ?? error);
-					},r=>r.text().then(console.error))
-					.finally(()=>this.loading=false);
+					},r=>r.text().then(console.error));
+
+				this.loading=false;
 			},
 		},
 		created(){

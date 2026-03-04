@@ -9,7 +9,7 @@ use const
 	Eleanor\CHARSET,
 	Eleanor\SITEDIR;
 
-return new class extends \Eleanor\Basic{
+return new class extends \Eleanor\Basic {
 	readonly L10n $l10n;
 	readonly string $http;
 
@@ -51,7 +51,7 @@ HTML;
 		$lang=L10n::$code;
 		$sitedir=SITEDIR;
 		$version=VERSION;
-		$head=join('',$this->head);
+		$head=\join('',$this->head);
 
 		return<<<HTML
 <!DOCTYPE html>
@@ -148,7 +148,7 @@ HTML;
 	/** Шаг 2: формальное лицензионное соглашение */
 	function Step2(...$d):string
 	{
-		$year=idate('Y');
+		$year=\idate('Y');
 		$content=<<<HTML
 <div class="wpbox wpbwhite">
 	<div class="wptop"><b>&nbsp;</b></div>
@@ -213,9 +213,11 @@ HTML;
 		$p1=Html::Input('password',$password,['class'=>'f_text','tabindex'=>1,'required','type'=>'password','id'=>'p1','minlength'=>10,'autocomplete'=>'new-password'],0b10);
 		$p2=Html::Input('password2',$password2,['class'=>'f_text','tabindex'=>1,'required','type'=>'password','id'=>'p2','autocomplete'=>'new-password'],0b10);
 
+		Link('//cdn.jsdelivr.net');
+
 		$nonce=Nonce();
 		$this->head[]=<<<HTML
-<script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.slim.min.js" nonce="{$nonce}" defer></script>
+<script src="//cdn.jsdelivr.net/npm/jquery@4/dist/jquery.slim.min.js" nonce="{$nonce}" defer></script>
 <script nonce="{$nonce}">addEventListener('DOMContentLoaded',function(){
 	$("#p2").on("change",function(){
 		this.setCustomValidity($(this).val()!==$("#p1").val() ? "{$this->l10n['PASS_MISMATCH']}" : "");
@@ -343,9 +345,11 @@ HTML;
 		}
 		else
 		{
+			Link('//cdn.jsdelivr.net');
+
 			$nonce=Nonce();
 			$this->head[]=<<<HTML
-<script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.slim.min.js" nonce="{$nonce}" defer></script>
+<script src="//cdn.jsdelivr.net/npm/jquery@4/dist/jquery.slim.min.js" nonce="{$nonce}" defer></script>
 <script nonce="{$nonce}">addEventListener('DOMContentLoaded',function(){
 	$("span.red").on("click",function(){ alert($(this).attr("title")); });
 })</script>

@@ -4,12 +4,12 @@
 	const app=Vue.createApp({
 		template,
 		data:()=>({
-			l10n:{
+			l10n:Object.seal({
 				telegram:{ru:"Телеграм",en:"Telegram"},
 				username:{ru:"Логин",en:"Login"},
 				current:{ru:"Текущая сессия",en:"Current session"},
 				ays:{ru:"Вы уверены?",en:"Are you sure?"},
-			},
+			}),
 
 			current:+current,
 			sessions:JSON.parse($(data).text()).toSorted((a,b)=>b.sort-a.sort),
@@ -29,8 +29,7 @@
 							this.sessions.splice(index,1);
 						else
 							alert(this.l10n[error] ?? error);
-					},r=>r.text().then(console.error))
-					.finally(()=>this.saving=false);
+					},r=>r.text().then(console.error));
 			},
 		},
 		created(){

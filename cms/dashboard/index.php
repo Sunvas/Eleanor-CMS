@@ -75,10 +75,11 @@ Link('//cdn.jsdelivr.net');
 
 	<link rel="shortcut icon" href="favicon.ico">
 	<link rel="stylesheet" href="static/dashboard/style.min.css">
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7/css/all.min.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7/css/fontawesome.min.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7/css/solid.min.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.css">
 
-	<script src="//cdn.jsdelivr.net/combine/npm/jquery@3/dist/jquery.slim.min.js,npm/vue@3/dist/vue.global.prod.min.js,npm/swiped-events@1,npm/@coreui/coreui@5/dist/js/coreui.bundle.min.js<?=$jsdelivr ?? ''?>" nonce="<?=$nonce?>" crossorigin="anonymous" defer></script>
+	<script src="//cdn.jsdelivr.net/combine/npm/jquery@4/dist/jquery.slim.min.js,npm/vue@3/dist/vue.global.prod.min.js,npm/swiped-events@1,npm/@coreui/coreui@5/dist/js/coreui.bundle.min.js<?=$jsdelivr ?? ''?>" nonce="<?=$nonce?>" crossorigin="anonymous" defer></script>
 	<script nonce="<?=Nonce()?>">const L=new Promise(F=>document.readyState==="loading"?addEventListener('DOMContentLoaded',F):F());</script>
 	<script src="static/dashboard/index.js" nonce="<?=$nonce?>" data-cron="<?=CMS::$T->cron ? 1 : ''?>" defer></script>
 	<?=join('',$scripts),join('',$head)?>
@@ -137,7 +138,7 @@ Link('//cdn.jsdelivr.net');
 						<li class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-1"><?=$l10n['theme']?></li>
 						<li>
 							<button class="dropdown-item d-flex align-items-center" type="button" name="light">
-								<i class="fa-regular fa-sun me-2"></i> <?=$l10n['light']?>
+								<i class="fa-solid fa-sun me-2"></i> <?=$l10n['light']?>
 							</button>
 						</li>
 						<li>

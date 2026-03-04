@@ -67,7 +67,7 @@ function Main(object$Unit):array|string
 }
 
 /** Site config settings */
-function SiteSettings():array|string
+function SettingsSite():array|string
 {
 	if(CMS::$json)
 	{
@@ -81,7 +81,7 @@ function SiteSettings():array|string
 
 		#Multilingual values
 		foreach(['name','title','description'] as $f)
-			if($mono ? \is_string($_POST[$f] ?? 0) : \is_array($_POST[$f] ?? 0) && IsS(...$_POST[$f]))
+			if($mono ? \is_string($_POST[$f] ?? 0) : \is_array($_POST[$f] ?? 0) && \array_all($_POST[$f],fn($t)=>\is_string($t)))
 				$storage[$f]=$_POST[$f];
 
 		$ok=$storage && \file_put_contents(ROOT.'config/site.json',\json_encode($storage + CMS::$config['site'],JSON));
@@ -97,11 +97,11 @@ function SiteSettings():array|string
 		];
 	}
 
-	return(CMS::$T)('SiteSettings',config:CMS::$config['site']);
+	return(CMS::$T)('SettingsSite',config:CMS::$config['site']);
 }
 
 /** System config settings */
-function SystemSettings():array|string
+function SettingsSystem():array|string
 {
 	if(CMS::$json)
 	{
@@ -135,7 +135,7 @@ function SystemSettings():array|string
 		];
 	}
 
-	return(CMS::$T)('SystemSettings',config:CMS::$config['system']);
+	return(CMS::$T)('SettingsSystem',config:CMS::$config['system']);
 }
 
 if(!CMS::$json)
@@ -143,7 +143,7 @@ if(!CMS::$json)
 	CMS::$T->queue[]=ROOT.'dashboard/'.$this->name;
 	CMS::$T->default['links']+=[
 		'settings'=>$Uri(zone:'settings'),
-		'system-settings'=>$Uri(zone:'system-settings'),
+		'settings-system'=>$Uri(zone:'settings-system'),
 	];
 }
 
@@ -151,8 +151,8 @@ if(!CMS::$json)
 $is_admin=\in_array('admin',CMS::$P->roles);
 
 return match($_GET['zone'] ?? ''){
-	'settings'=>$is_admin ? SiteSettings() : Halt(),
-	'system-settings'=>$is_admin ? SystemSettings() : Halt(),
+	'settings'=>$is_admin ? SettingsSite() : Halt(),
+	'settings-system'=>$is_admin ? SettingsSystem() : Halt(),
 	''=>Main($this),
 	default=>Halt()
 };

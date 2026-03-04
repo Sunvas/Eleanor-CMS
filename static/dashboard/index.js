@@ -3,7 +3,7 @@ async function J(r)
 	return r.ok ? r.json() : Promise.reject(r);
 }
 
-//Sidebar
+//Sidebar toggler
 L.then(()=>{
 	const
 		narrow="sidebar-narrow-unfoldable",
@@ -45,15 +45,16 @@ L.then(()=>{
 	});
 });
 
-//ToolTip
+//Make ToolTip workable
 L.then(()=>$('[data-coreui-toggle="tooltip"]').each((i,el)=>new coreui.Tooltip(el)));
 
-//Nav links
-L.then(()=>$(`nav a.nav-link[href='${location.pathname}']`).addClass("active"));
+//Make nav links active
+L.then(()=>$("nav a.nav-link").toArray().filter(item=>location.href.startsWith($(item).prop("href"))).toSorted((a,b)=>$(a).attr("href").length-$(b).attr("href").length).pop())
+ .then(item=>item ? $(item).addClass("active").closest(".nav-group").addClass("show") : 0);
 
 //Sign out
 L.then(()=>$("#sign-out").on("click",()=>fetch(location.pathname,{method:"delete",headers:{accept:"application/json"}}).then(J).then(r=>r.ok ? location.reload() : alert(r.error))));
 
-//Cron
+//Cron run
 if(document.currentScript.dataset.cron)
 	(function F(){ fetch("cron.php").then(async r=>r.status==200 ? setTimeout(F,1000*(await r.text())) : 0); })();

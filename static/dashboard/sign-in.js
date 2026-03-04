@@ -2,7 +2,7 @@
 (({template,container,hcaptcha})=>Vue.createApp({
 	template,
 	data:()=>({
-		l10n:{
+		l10n:Object.seal({
 			ALREADY:{ru:"Вы уже вошли под этим пользователем",en:"You have already signed in into this account"},
 			NOT_FOUND:{ru:"Пользователь не найден",en:"User not found"},
 			WRONG_PASSWORD:{ru:"Неверный пароль",en:"Wrong password"},
@@ -10,7 +10,7 @@
 			W8C:{ru:"Пожалуйста, решите капчу",en:"Please, solve the captcha"},
 			ACCESS_DENIED:{ru:"Доступ запрещён",en:"Access denied"},
 			restore_password:{ru:"Перейдите в базу данных, откройте таблицу <code>users</code>, найдите своего пользователя и очистите у него поле <code>password_hash</code>.\nПосле этого сможете войти под любым паролем, который будет сохранён.",en:"Go to the database, open the <code>users</code> table, find your user and clear the <code>password_hash</code> field.\nAfter that, you will be able to sign in with any password that will be saved."},
-		},
+		}),
 
 		username:"",
 		password:"",
@@ -35,7 +35,7 @@
 			});
 		},
 
-		Submit(){
+		async Submit(){
 			if(this.hcaptcha && !this.captcha)
 				return this.Alert(this.l10n.W8C,"🫵");
 
@@ -46,7 +46,7 @@
 			});
 
 			this.loading=true;
-			fetch(location.pathname,{body,method:"post",headers:{accept:"application/json"}})
+			await fetch(location.pathname,{body,method:"post",headers:{accept:"application/json"}})
 				.then(r=>r.ok ? r.json() : Promise.reject(r))
 				.then(r=>{
 					if(r.ok)
@@ -66,8 +66,9 @@
 						this.CaptchaReset();
 
 					this.Alert(error ?? this.l10n[r.error] ?? r.error,"⛔️");
-				},r=>r.text().then(console.error))
-				.finally(()=>this.loading=false);
+				},r=>r.text().then(console.error));
+
+			this.loading=false;
 		},
 
 		Forgot(){

@@ -2,17 +2,17 @@
 (({template,container,data})=>Vue.createApp({
 	template,
 	data:()=>({
-		l10n:{
+		l10n:Object.seal({
 			save:{ru:"Сохранить",en:"Save"},
 			saved:{ru:"Сохранено",en:"Saved"},
 			placeholder: {ru:"Введите содержимое главной страницы",en:"Enter the contents of the main page"}
-		},
+		}),
 		lang:document.documentElement.lang,
 		mono:false,
 		l10ns:[],
 
 		editor:null,
-		content:{},
+		content:Object.create(null),
 
 		loading:false,
 		saving:false,
@@ -38,13 +38,14 @@
 
 			const url=new URL(location.href);
 			url.searchParams.set("lang",lang);
-			fetch(url.toString(),{headers:{accept:"application/json"}})
+			await fetch(url.toString(),{headers:{accept:"application/json"}})
 				.then(J)
 				.then(r=>{
 					this.content[lang]=r;
 					return r ? this.editor.render(r) : this.editor.clear();
-				},r=>r.text().then(console.error))
-				.finally(()=>this.loading=false);
+				},r=>r.text().then(console.error));
+
+			this.loading=false;
 		}
 	},
 	methods:{
@@ -59,13 +60,16 @@
 				body.append(k,b,k+".json");
 			}
 
-			fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
+			this.saving=true;
+
+			await fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
 				.then(J)
 				.then(r=>{
 					if(r.ok)
 						this.saved=true;
-				},r=>r.text().then(console.error))
-				.finally(()=>this.saving=false);
+				},r=>r.text().then(console.error));
+
+			this.saving=false;
 		},
 	},
 	created(){

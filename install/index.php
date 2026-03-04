@@ -68,6 +68,12 @@ function Nonce():string
 	return OutPut::Nonce();
 }
 
+/** Alias */
+function Link(...$a):void
+{
+	OutPut::Link(...$a);
+}
+
 /** Шаг 1: выбор языка системы */
 function Step1():string
 {global$T;

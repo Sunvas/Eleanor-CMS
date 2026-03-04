@@ -4,10 +4,10 @@
 	const app=Vue.createApp({
 		template,
 		data:()=>({
-			l10n:{
+			l10n:Object.seal({
 				ok:{ru:"✅ Пароль успешно изменен",en:"✅ Password was successfully changed"},
 				PASS_MISMATCH:{ru:"Пароли не совпадают",en:"Passwords don't match"}
-			},
+			}),
 
 			password:"",
 			old_password:"",
@@ -23,7 +23,7 @@
 			}
 		},
 		methods:{
-			Submit(){
+			async Submit(){
 				if(this.saving)
 					return;
 
@@ -33,7 +33,7 @@
 				});
 
 				this.saving=true;
-				fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
+				await fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
 					.then(J)
 					.then(({ok,error})=>{
 						if(ok)
@@ -51,8 +51,9 @@
 							if(error=="INCORRECT")
 								this.old_required=true;
 						}
-					},r=>r.text().then(console.error))
-					.finally(()=>this.saving=false);
+					},r=>r.text().then(console.error));
+
+				this.saving=false;
 			},
 		},
 		created(){

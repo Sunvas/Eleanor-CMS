@@ -86,16 +86,6 @@ function Redirect(string$to,int$code=301,string$hash=''):never
 	die;
 }
 
-/** Проверка набора параметров, являются ли они строками. Пример: IsS($_POST['p1'] ?? 0,$_POST['p2'] ?? 0) */
-function IsS(...$a):bool
-{
-	foreach($a as $v)
-		if(!\is_string($v))
-			return false;
-
-	return true;
-}
-
 /** Основной "верблюд" системы: объект служит для хранения общих данных. Динамические свойства по умолчанию содержат
  * либо одноимённые юниты, либо объекты классов */
 #[\AllowDynamicProperties]
@@ -358,18 +348,21 @@ SQL ,[CMS::$a11n]);
  class Permissions extends Basic
  {
 	/** @param array $groups of user groups, first one is user's main group
-	 * @param array $rights right name => group id => value
+	 * @param array $rights right name => group id => value OR right name => [IDS of groups] (array should be list)
 	 * @param array $roles list of roles */
 	function __construct(readonly array$groups,readonly array$rights,readonly array$roles=[]){}
 
-	function __get(string$n):array
+	function __get(string$n):array|bool
 	{
 		//Если гость, то у него все права пустые
 		if(!$this->rights)
 			return[];
 
-		if(!isset($this->rights[$n]))
-			new E('Reading unknown right: '.$n,E::PHP,...BugFileLine($this))->Log();
+		if(!\is_array($this->rights[$n] ?? 0))
+			new E('Reading incorrect right: '.$n,E::PHP,...BugFileLine($this))->Log();
+
+		if(\array_is_list($this->rights[$n]))
+			return \boolval(\array_intersect($this->rights[$n],$this->groups));
 
 		$result=[];
 
@@ -452,7 +445,8 @@ function A11N():void
  * @param array|string $keys fields from users table
  * @param ?int $id User ID
  * @param string $table Table name
- * @return string|array depends on type of $keys param */
+ * @return string|array depends on type of $keys param
+ * @throws \Throwable */
 function GetUsers(array|string$keys,?int$id=null,string$table='users'):array|string
 {static$data=[];
 	$id??=CMS::$A->current;

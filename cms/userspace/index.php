@@ -9,7 +9,7 @@ $title??=$var_0 ?? '';
  * @var string|array $title Head title
  * @var string $content Content of the page
  * @var ?array $head Extra injections into head section
- * @var ?array $scripts njection of scripts: values with integer keys will be injected as files, with string values - as scripts themselves
+ * @var ?array $scripts injection of scripts: values with integer keys will be injected as files, with string values - as scripts themselves
  * @var ?string $jsdelivr JsDelivr script injection via combine
  * @var ?string $canonical Canonical link to the genuine page
  * Default:
@@ -58,7 +58,7 @@ Link('//cdn.jsdelivr.net');
 	<link media="screen" type="text/css" href="static/userspace/styles/main.css" rel="stylesheet">
 	<link rel="shortcut icon" href="favicon.ico">
 
-	<script src="//cdn.jsdelivr.net/combine/npm/jquery@3/dist/jquery.slim.min.js,npm/vue@3/dist/vue.global.prod.min.js<?=$jsdelivr ?? ''?>" nonce="<?=$nonce?>" defer></script>
+	<script src="//cdn.jsdelivr.net/combine/npm/jquery@4/dist/jquery.slim.min.js,npm/vue@3/dist/vue.global.prod.min.js<?=$jsdelivr ?? ''?>" nonce="<?=$nonce?>" defer></script>
 	<script nonce="<?=$nonce?>">
 		const L=new Promise(F=>document.readyState==="loading"?addEventListener('DOMContentLoaded',F):F()),J=async r=>r.ok ? r.json() : Promise.reject(r);
 		L.then(()=>$(`nav a[href='${location.pathname+location.search}']`).addClass("active"));

@@ -1,33 +1,32 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
+//Universal abstract base for pages of settings.
 export default (template,{config,L10N,L10NS})=>({
 	template,
 	data:()=>({
-		config:Object.keys(config).reduce((a,key)=>Object.assign(a,{[key]:null}),{}),
-		config_l10n:{},
+		config:Object.keys(config).reduce((a,key)=>Object.assign(a,{[key]:null}),Object.create(null)),//Copy of config where all keys are NULL
+		config_l10n:Object.create(null),
 
 		lang:document.documentElement.lang,
-		l10n:{
+		l10n:Object.seal({
 			save:{ru:"Сохранить",en:"Save"},
 			saved:{ru:"Сохранено",en:"Saved"},
-		},
+		}),
 		mono:L10NS===null,//Mono language
 		l10ns:[],
-		changed:new Set(),
+
+		changed:new Set,
 		saving:false,
 		loading:false,
 	}),
 	watch:{
-		lang:"Load"
+		lang(lang){
+			for(const[k,v] of Object.entries(this.config_l10n))
+				this.config[k]=v[lang] ?? v[""];
+		}
 	},
 	computed:{
 		saved(){
-			for(const k of this.changed.values())
-				if(JSON.stringify(config[k])!==JSON.stringify(this.config_l10n[k] ?? this.config[k]))
-					return false;
-				else
-					this.changed.delete(k);
-
-			return true;
+			return this.changed.size<1;
 		},
 		submit_text(){
 			return this.saved ? this.l10n.saved : this.l10n.save;
@@ -35,33 +34,27 @@ export default (template,{config,L10N,L10NS})=>({
 	},
 	methods:{
 		/** Should be called each time form control being changed by user real time */
-		Changed(item){
-			if(!this.mono && config[item]?.constructor?.name === "Object")
+		Changed(field,val){
+			//Multilingual values
+			if(field in this.config_l10n)
 			{
 				//Default language is always stored with empty key
 				const lang=this.L10N===this.lang ? "" : this.lang;
 
-				this.config_l10n[item]??={...config[item]};
-				this.config_l10n[item][lang]=this.config[item];
+				this.config_l10n[field][lang]=val;
 			}
 
-			this.changed.add(item);
-		},
-
-		/** Loading l10n version of values */
-		Load(){
-			for(const[k,v] of Object.entries(config))
-				if(v?.constructor?.name === "Object")
-					this.config[k]=this.config_l10n[k]?.[this.lang] ?? this.config_l10n[k]?.[""] ?? v[this.lang] ?? v[""];
-				else
-					this.config[k]??=v;
+			if(JSON.stringify(config[field])===JSON.stringify(this.config_l10n[field] ?? val))
+				this.changed.delete(field);
+			else
+				this.changed.add(field);
 		},
 
 		/** Submitting modified form */
-		Submit(){
-			const store={};
+		async Submit(){
+			const store=Object.create(null);
 
-			for(const k of this.changed.values())
+			for(const k of this.changed)
 				if(JSON.stringify(config[k])!==JSON.stringify(this.config_l10n[k] ?? this.config[k]))
 					store[k]=this.config_l10n[k] ?? this.config[k];
 
@@ -70,18 +63,20 @@ export default (template,{config,L10N,L10NS})=>({
 
 			this.saving=true;
 
-			fetch(location.href,{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
-				.then(J).then(({ok,error})=>{
-				if(ok){
-					Object.assign(config,store);
+			await fetch(location.href,{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
+				.then(J)
+				.then(({ok,error})=>{
+					if(ok){
+						Object.assign(config,store);
 
-					this.changed.clear();
-					this.config_l10n={};
-				}
-				else if(error)
-					alert( this.l10n[error] ?? error );
-			})
-				.finally(()=>this.saving=false);
+						this.changed.clear();
+						this.config_l10n=Object.create(null);
+					}
+					else if(error)
+						alert( this.l10n[error] ?? error );
+				},r=>r.text().then(console.error));
+
+			this.saving=false;
 		}
 	},
 	created(){
@@ -97,13 +92,18 @@ export default (template,{config,L10N,L10NS})=>({
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 			});
 
-		Object.assign(this.config,config);
+		for(const[k,v] of Object.entries(config))
+		{
+			if(!this.mono && v?.constructor?.name === "Object")
+			{
+				this.config[k]=v[this.lang] ?? v[""];
+				this.config_l10n[k]=Object.seal({...v});
+			}
+			else
+				this.config[k]=Array.isArray(v) ? v.slice() : v;
 
-		if(!this.mono)
-			this.Load();
-
-		for(const k of Object.keys(config))
 			this.$watch("config."+k,val=>this.Changed(k,val));
+		}
 
 		$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 	}

@@ -1,7 +1,6 @@
 <?php
 namespace CMS;
 
-use Eleanor\Classes\L10n;
 use const Eleanor\SITEDIR;
 
 /** Sign in page to dashboard
@@ -22,8 +21,8 @@ $l10n=new L10n('sign-in',__DIR__.'/l10n/');
 	<meta name="robots" content="none">
 	<title><?=$l10n['dashboard'],' :: ',$site?></title>
 
-	<link rel="shortcut icon" href="favicon.ico">
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@coreui/coreui@5/dist/css/coreui.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="static/dashboard/style.min.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7/css/all.min.css">
 
 	<script src="//cdn.jsdelivr.net/combine/npm/jquery@4/dist/jquery.slim.min.js,npm/vue@3/dist/vue.global.prod.min.js,npm/@coreui/coreui@5/dist/js/coreui.bundle.min.js" nonce="<?=$nonce?>" defer></script>
@@ -31,7 +30,7 @@ $l10n=new L10n('sign-in',__DIR__.'/l10n/');
 <?php
 	if($hcaptcha)
 	{
-		$hl=\Eleanor\Classes\L10n::$code;
+		$hl=L10n::$code;
 
 		echo<<<HTML
 	<script src="//js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&hl={$hl}" nonce="{$nonce}" defer></script>

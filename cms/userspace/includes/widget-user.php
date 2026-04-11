@@ -10,7 +10,7 @@ use const Eleanor\CHARSET;
  * @var string $hcaptcha hcaptcha key (if empty - off)
  * @var ?string $dashboard Link to dashboard */
 
-$account=$GLOBALS['Shared']->account->slug;
+$account=$GLOBALS['CMS']->account->slug;
 $bot=CMS::$config['system']['bot_name'];
 
 if(CMS::$A->current)

@@ -1,8 +1,6 @@
 <?php
 namespace CMS;
 
-use Eleanor\Classes\L10n;
-
 $title??=$var_0 ?? '';
 
 /** Index template for all pages
@@ -56,7 +54,7 @@ Link('//cdn.jsdelivr.net');
 	<title><?=strip_tags(is_array($title) ? join(' :: ',$title) : $title)?></title>
 
 	<link media="screen" type="text/css" href="static/userspace/styles/main.css" rel="stylesheet">
-	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
 
 	<script src="//cdn.jsdelivr.net/combine/npm/jquery@4/dist/jquery.slim.min.js,npm/vue@3/dist/vue.global.prod.min.js<?=$jsdelivr ?? ''?>" nonce="<?=$nonce?>" defer></script>
 	<script nonce="<?=$nonce?>">

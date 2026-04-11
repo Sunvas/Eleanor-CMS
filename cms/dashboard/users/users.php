@@ -1,8 +1,6 @@
 <?php
 namespace CMS;
 
-use Eleanor\Classes\L10n;
-
 /** Userlist
  * @var \Generator $users
  * @var \Generator $groups
@@ -48,33 +46,33 @@ $paginator=(CMS::$T)('app-paginator');
 $mpl=MIN_PASSWORD_LENGTH;
 
 $template=<<<HTML
-<div class="d-flex justify-content-between mb-2">
-	<h1 class="h3 mb-0 pt-1"><i class="nav-icon fa-solid fa-user-group d-none d-md-inline"></i> {$l10n['title']}</h1>
-	<div class="gap-1 gap-md-2 d-flex align-items-end">
-		<div class="dropdown">
-			<button type="button" class="btn bg-gradient d-block d-md-none" :class="is_filtered ? 'btn-info' : 'btn-secondary'" title="{$l10n['filter']}" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter"></i></button>
-			<button type="button" class="btn bg-gradient d-none d-md-block" :class="is_filtered ? 'btn-info' : 'btn-secondary'" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter me-2"></i> {$l10n['filter']}</button>
-			<form class="filter dropdown-menu dropdown-menu-end p-3 bg-body-secondary" style="min-width:18rem">
-				<input type="hidden" v-for="[name,value] in Filter(['name'],false)" :name :value />
-				<p v-if="id" class="d-flex mb-1">
-					<span>{$l10n['by-id']}</span>
-					<mark v-text="id" class="py-0 ms-1"></mark>
-					<a :href="Filter(['id'])" class="ms-auto small"><i class="fa-solid fa-xmark"></i></a>
-				</p>
-				<p v-if="group" class="d-flex mb-1">
-					<span>{$l10n['by-group']}</span>
-					<mark :class="'group-'+group" class="py-0 ms-1">{{group2title.get(group) ?? group}}</mark>
-					<a :href="Filter(['group'])" class="ms-auto small"><i class="fa-solid fa-xmark"></i></a>
-				</p>
-				<div class="mb-1">
-					<label for="filter-name" class="form-label mb-1">{$l10n['login']}</label><a :href="Filter(['name'])" v-if="name" v-once class="ms-2 small"><i class="fa-solid fa-xmark"></i></a>
-					<input type="text" name="name" class="form-control" id="filter-name" :value="name" autocomplete="off">
-				</div>
-				<button type="submit" class="btn btn-primary bg-gradient">{$l10n['do-filter']}</button>
-			</form>
-		</div>
-		<button v-if="is_admin" type="button" class="btn btn-primary bg-gradient d-block d-md-none" @click="Create" title="{$l10n['create']}"><i class="fa-solid fa-user-plus fa-lg"></i></button>
-		<button v-if="is_admin" type="button" class="btn btn-primary bg-gradient d-none d-md-block" @click="Create"><i class="fa-solid fa-user-plus fa-lg me-2"></i>{$l10n['create']}</button>
+<div class="d-flex gap-1 gap-md-2 mb-2">
+	<h1 class="h3 mb-0 pt-1 flex-grow-1"><i class="nav-icon fa-solid fa-user-group d-none d-md-inline"></i> {$l10n['title']}</h1>
+	<div class="dropdown">
+		<button type="button" class="btn bg-gradient d-block d-lg-none" :class="is_filtered ? 'btn-info' : 'btn-secondary'" title="{$l10n['filter']}" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter"></i></button>
+		<button type="button" class="btn bg-gradient d-none d-lg-block" :class="is_filtered ? 'btn-info' : 'btn-secondary'" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter me-2"></i> {$l10n['filter']}</button>
+		<form class="filter dropdown-menu dropdown-menu-end p-3 bg-body-secondary" style="min-width:18rem">
+			<input type="hidden" v-for="[name,value] in Filter(['name'],false)" :name :value />
+			<p v-if="id" class="d-flex mb-1">
+				<span>{$l10n['by-id']}</span>
+				<mark v-text="id" class="py-0 ms-1"></mark>
+				<a :href="Filter(['id'])" class="ms-auto small"><i class="fa-solid fa-xmark"></i></a>
+			</p>
+			<p v-if="group" class="d-flex mb-1">
+				<span>{$l10n['by-group']}</span>
+				<mark :class="'group-'+group" class="py-0 ms-1">{{group2title.get(group) ?? group}}</mark>
+				<a :href="Filter(['group'])" class="ms-auto small"><i class="fa-solid fa-xmark"></i></a>
+			</p>
+			<div class="mb-1">
+				<label for="filter-name" class="form-label mb-1">{$l10n['login']}</label><a :href="Filter(['name'])" v-if="name" v-once class="ms-2 small"><i class="fa-solid fa-xmark"></i></a>
+				<input type="text" name="name" class="form-control" id="filter-name" :value="name" autocomplete="off">
+			</div>
+			<button type="submit" class="btn btn-primary bg-gradient">{$l10n['do-filter']}</button>
+		</form>
+	</div>
+	<div v-if="is_admin">
+		<button type="button" class="btn btn-primary bg-gradient d-block d-lg-none" @click="Create" title="{$l10n['create']}"><i class="fa-solid fa-user-plus fa-lg"></i></button>
+		<button type="button" class="btn btn-primary bg-gradient d-none d-lg-block" @click="Create"><i class="fa-solid fa-user-plus fa-lg me-2"></i>{$l10n['create']}</button>
 	</div>
 </div>
 

@@ -1,6 +1,5 @@
 <?php
 namespace CMS;
-use Eleanor\Classes\L10n;
 
 /** Main page of the site
  * @var object $this This unit

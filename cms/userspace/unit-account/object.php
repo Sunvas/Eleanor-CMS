@@ -2,8 +2,6 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-use Eleanor\Classes\L10n;
-
 return new class {
 	use \CMS\Traits\EmbeddedTemplate;
 

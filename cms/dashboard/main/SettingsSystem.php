@@ -6,7 +6,7 @@ namespace CMS;
  * Default:
  * @var array $links List of links */
 
-$l10n=new \Eleanor\Classes\L10n('settings-system',__DIR__.'/l10n/');
+$l10n=new L10n('settings-system',__DIR__.'/l10n/');
 $data=['L10N'=>L10N,'L10NS'=>L10NS,'config'=>$config];
 $title=[$l10n['title']];
 $script='static/dashboard/settings-system.js';

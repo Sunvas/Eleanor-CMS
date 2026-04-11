@@ -6,15 +6,11 @@ namespace CMS;
  * Default:
  * @var array $links List of links */
 
-$l10n=new \Eleanor\Classes\L10n('mainpage',__DIR__.'/l10n/');
+require __DIR__.'/../includes/editorjs.php';
+
+$l10n=new L10n('mainpage',__DIR__.'/l10n/');
 $title=[$l10n['title']];
 $script='static/dashboard/mainpage.js';
-$scripts=[
-	'https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest',
-	'https://cdn.jsdelivr.net/npm/@editorjs/header@latest',
-	'https://cdn.jsdelivr.net/npm/@editorjs/raw@latest',
-	'https://cdn.jsdelivr.net/npm/@editorjs/list@2',
-];
 $head[]=<<<'HTML'
 <style>.codex-editor .ce-block__content, .codex-editor .ce-toolbar__content { max-width: calc(100% - 8em); }</style>
 HTML;
@@ -27,7 +23,7 @@ $template=<<<HTML
 <h1 class="h3"><i class="nav-icon fa-solid fa-chalkboard d-none d-sm-inline"></i> {$l10n['title']}</h1>
 <form @submit.prevent="Submit">
 	<div class="card">
-		<div class="card-bodyn" ref="editor"></div>
+		<div class="card-body" ref="editor"></div>
 	</div>
 	<div class="card mt-2">
 		<div class="card-body d-flex justify-content-between">

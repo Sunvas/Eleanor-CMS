@@ -43,15 +43,17 @@ function CheckEnv():array
 	elseif(!\is_writeable(Library::$logs))
 		$errors['NOT_WRITABLE'][]=Library::$logs;
 
+	$base=\realpath(BASE);
+
 	#Проверка на запись robots.txt, конфига главной страницы, конфига для доступа к БД и константы
-	foreach([BASE.'robots.txt',BASE.'cms/config/db.php',BASE.'cms/constants.php'] as $f)
+	foreach([$base.'/robots.txt',$base.'/cms/config/db.php',$base.'/cms/constants.php'] as $f)
 		if(!\is_file($f))
 			$errors['NOT_EXIST'][]=$f;
 		elseif(!\is_writeable($f))
 			$errors['NOT_WRITABLE'][]=$f;
 
 	#Uploads, config
-	foreach([BASE.'static/uploads/',BASE.'cms/config/',BASE.'cms/cache/',BASE.'cms/cache/storage/'] as $d)
+	foreach([$base.'/static/uploads/',$base.'/cms/config/',$base.'/cms/cache/'] as $d)
 		if(!\is_dir($d))
 			$errors['NOT_EXIST'][]=$d;
 		elseif(!\is_writeable($d))
@@ -214,6 +216,7 @@ function Step4():string
 			$status[$k]=$err;
 	}
 
+	#PHP 8.6
 	$ok=!array_any($status,fn($item)=>\is_string($item));
 
 	if($ok)
@@ -266,6 +269,7 @@ function Step5():string
 			$status[$k]=$err;
 	}
 
+	#PHP 8.6
 	$ok=!array_any($status,fn($item)=>\is_string($item));
 
 	if($ok)
@@ -340,9 +344,9 @@ TEXT;
 		#config of main page
 		$mono=$_SESSION['l10ns']===null;
 		$mainpage=\json_encode([
-			'name'=>$mono ? $_SESSION['title'] : [''=>$_SESSION['title']],
-			'title'=>$mono ? '' : [''=>''],
-			'description'=>$mono ? $_SESSION['description'] : [''=>$_SESSION['description']],
+			'name'=>$mono ? $_SESSION['title'] : [$_SESSION['l10n']=>$_SESSION['title']],
+			'title'=>$mono ? '' : [$_SESSION['l10n']=>''],
+			'description'=>$mono ? $_SESSION['description'] : [$_SESSION['l10n']=>$_SESSION['description']],
 		],JSON);
 		\file_put_contents(BASE.'cms/config/site.json',$mainpage);
 

@@ -1,8 +1,7 @@
 <?php
 namespace CMS;
 
-use CMS\Classes\Paginator,
-	Eleanor\Classes\L10n;
+use CMS\Classes\Paginator;
 
 /** Dashboard of unit "users"
  * @var Classes\UriDashboard $Uri
@@ -344,6 +343,8 @@ function Groups(Classes\UriDashboard$Uri):array|string
 						'ok'=>false,
 						'error'=>'TITLE_REQUIRED'
 					];
+
+				//Extra space for future keys
 			}
 
 			#Updating group

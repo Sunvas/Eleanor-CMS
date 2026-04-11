@@ -6,7 +6,6 @@ use Eleanor\Basic,
 	Eleanor\Assign,
 	Eleanor\Library,
 	Eleanor\Classes\E,
-	Eleanor\Classes\L10n,
 	Eleanor\Classes\Cache,
 	Eleanor\Classes\MySQL,
 	Eleanor\Classes\Template,
@@ -147,6 +146,19 @@ class Output extends \Eleanor\Classes\Output
 {
 	/** @const Powered by header. Feel free to get rid of this shit */
 	protected const string POWERED='X-Powered-CMS: Eleanor CMS https://eleanor-cms.com';
+}
+
+class L10n extends \Eleanor\Classes\L10n
+{
+	/** Static obtaining value from existed l10n pool
+	 * @param array $l10n Pool of values
+	 * @param mixed $d Default value
+	 * @param string $f Fallback value
+	 * @return mixed */
+	static function Item(array$l10n,mixed$d=null,string$f=L10N):mixed
+	{
+		return parent::Item($l10n,$d,$f);
+	}
 }
 
 CMS::$ip=\filter_var($_SERVER['REMOTE_ADDR'] ?? 0,FILTER_VALIDATE_IP) ? \inet_pton($_SERVER['REMOTE_ADDR']) : 0;

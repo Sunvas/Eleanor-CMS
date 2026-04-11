@@ -14,7 +14,11 @@ L.then(()=>{
 			.on("hidden.coreui.sidebar",()=>localStorage.removeItem("sidebar")),
 		SB=a=>coreui.Sidebar.getInstance(sidebar[0])[a]();
 
-	$(document).on('swiped-left',()=>SB("hide"));
+	$(document)
+		.on('swiped-left',()=>SB("hide"))
+		.on("click","nav.sidebar-narrow-unfoldable",e=>$(e.target).is(":hover") || e.preventDefault());//For landscape click on tablet
+
+	$(".sidebar button.btn-close").on("click",()=>SB("hide"));
 	$("button.header-toggler").on("click",()=>SB("toggle"));
 
 	$("button.sidebar-toggler").on("click",()=>{

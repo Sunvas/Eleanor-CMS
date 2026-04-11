@@ -12,7 +12,7 @@
 			delete_group:{ru:"Вы действительно хотите удалить группу?",en:"Are you sure you want to delete the group?"},
 		}),
 		lang:document.documentElement.lang,
-		mono:false,
+		monolingual:false,
 		l10ns:[],
 		L10N:null,
 
@@ -44,7 +44,7 @@
 	watch:{
 		lang(lang){
 			for(const[k,v] of Object.entries(this.group_l10n))
-				this.group[k]=v[lang] ?? v[""];
+				this.group[k]=v[lang] ?? v[this.L10N] ?? null;
 		}
 	},
 	computed:{
@@ -89,12 +89,7 @@
 		/** Should be called each time form control input being changed by user real time */
 		Changed(field,val){
 			if(field in this.group_l10n)
-			{
-				//Default language is always stored with empty key
-				const lang=this.L10N===this.lang ? "" : this.lang;
-
-				this.group_l10n[field][lang]=val;
-			}
+				this.group_l10n[field][this.lang]=val;
 
 			if(JSON.stringify(group[field])===JSON.stringify(this.group_l10n[field] ?? val))
 				this.changed.delete(field);
@@ -107,7 +102,7 @@
 			for(const[k,v] of Object.entries(group))
 				if(k in this.group_l10n)
 				{
-					this.group[k]=v[this.lang] ?? v[""];
+					this.group[k]=v[this.lang] ?? v[this.L10N];
 					this.group_l10n[k]=Object.seal({...v});
 				}
 				else
@@ -139,7 +134,7 @@
 
 			this.loading=true;
 			Object.assign(group,{
-				title:this.mono ? "" : this.l10ns.reduce((a,[code])=>Object.assign(a,{[code===this.L10N ? "" : code]:''}),{}),
+				title:this.monolingual ? "" : this.l10ns.reduce((a,[code])=>Object.assign(a,{[code]:''}),{}),
 				roles:[],
 				slow_mode:10,
 			});
@@ -158,9 +153,9 @@
 				if(r.ok)
 				{
 					this.group_id=id;
-					this.group_title=this.mono
+					this.group_title=this.monolingual
 						? (r.group.title!="" ? r.group.title : "#"+id)
-						: (r.group.title[this.lang] ?? r.group.title[""] ?? "#"+id);
+						: (r.group.title[this.lang] ?? r.group.title[this.L10N] ?? "#"+id);
 
 					Object.assign(group,r.group);
 					this.Load();
@@ -200,7 +195,7 @@
 					if(ok){
 						Object.assign(group,store);
 
-						const title=this.mono ? group.title : (group.title[this.lang] ?? group.title[""]);
+						const title=this.monolingual ? group.title : (group.title[this.lang] ?? group.title[this.L10N]);
 
 						this.group_title=title;
 
@@ -247,19 +242,19 @@
 			item.filter_users=item.filter_users.replace(/&amp;/g,"&");
 		});
 
-		this.mono=L10NS===null;
+		this.monolingual=L10NS===null;
 		this.L10N=L10N;
 		this.items=items;
 		this.roles=roles;
 
 		//Filling in the set of l10n
-		if(!this.mono && L10NS?.length)
+		if(!this.monolingual && L10NS?.length)
 			import("./l10ns.js").then(({default:l10ns})=>{
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 			});
 
 		//Switch off multilingual values
-		if(this.mono)
+		if(this.monolingual)
 			this.group_l10n=Object.create(null);
 
 		for(const k of Object.keys(this.group))

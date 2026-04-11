@@ -95,13 +95,16 @@ else
 	{
 		$slug.="`slug_{$code}` varchar(50) NULL,";
 		$title.="`title_{$code}` tinytext NULL,";
-		$content.="`content_{$code}` mediumtext NULL,`content_{$code}_source` json NULL,";
+		$content.="`content_{$code}` mediumtext NULL,`content_source_{$code}` json NULL,";
 	}
+
+	$set="'".join("','",$l10ns)."'";
 
 	$tables['static']=<<<SQL
 CREATE TABLE `static` (
 	`id` smallint UNSIGNED NOT NULL,
 	`status` enum('ACTIVE','DRAFT') NOT NULL DEFAULT 'DRAFT',
+	`l10ns` set($set) DEFAULT '{$l10n}',
 	{$slug}{$title}{$content}
 	`modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -182,9 +185,9 @@ else
 	$slug='';
 
 	foreach($l10ns as $code)
-		$slug.=",ADD UNIQUE KEY `slug_{$code}` (`slug_{$code}`)";
+		$slug.=", ADD UNIQUE KEY `slug_{$code}` (`slug_{$code}`)";
 
-	$tables['static_primary']=<<<'SQL'
+	$tables['static_primary']=<<<SQL
 ALTER TABLE `static`
 	ADD PRIMARY KEY (`id`){$slug};
 SQL;

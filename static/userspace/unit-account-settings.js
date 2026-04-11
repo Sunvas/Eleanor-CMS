@@ -97,7 +97,7 @@
 				//Uploading avatar
 				if(this.blob)
 				{
-					const fd=new FormData();
+					const fd=new FormData;
 					fd.append("avatar",this.blob);
 
 					for(const[k,v] of Object.entries(store))

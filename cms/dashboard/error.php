@@ -1,7 +1,6 @@
 <?php
 namespace CMS;
 
-use Eleanor\Classes\L10n;
 use const Eleanor\SITEDIR;
 
 /** Page with site error (404 - not found, 403 - restricted)
@@ -22,8 +21,8 @@ $info=$l10n[$code] ?? $l10n['happened'];
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="none">
 	<title><?=$code,' &ndash; ',$info?></title>
-	<link rel="shortcut icon" href="favicon.ico">
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@coreui/coreui@5/dist/css/coreui.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="static/dashboard/style.min.css">
 </head>
 <body>
 <main class="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">

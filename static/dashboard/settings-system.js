@@ -8,7 +8,7 @@
 		template,
 		extends:app,
 		data:()=>({
-			mono:true,//Mono language
+			monolingual:true,
 		})
 	}).mount(container);
 })(document.currentScript.dataset);

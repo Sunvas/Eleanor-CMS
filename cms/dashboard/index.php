@@ -1,8 +1,6 @@
 <?php
 namespace CMS;
 
-use Eleanor\Classes\L10n;
-
 /** Index template for all pages
  * @var array|string $title Head title
  * @var string $content Content of the page
@@ -73,7 +71,7 @@ Link('//cdn.jsdelivr.net');
 	<meta name="robots" content="none">
 	<title><?=strip_tags(is_array($title) ? join(' :: ',$title) : $title)?></title>
 
-	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="static/dashboard/style.min.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7/css/fontawesome.min.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7/css/solid.min.css">
@@ -95,7 +93,7 @@ Link('//cdn.jsdelivr.net');
 			<a href="" class="sidebar-brand-full link-underline-dark fw-medium text-light" target="_blank"><b class="nav-icon me-3 fs-5">🐎</b>Eleanor CMS</a>
 			<a href="" class="sidebar-brand-narrow link-underline-dark fs-5" target="_blank">🐎</a>
 		</div>
-		<button class="btn-close d-lg-none sidebar-toggle" type="button" data-coreui-dismiss="offcanvas" data-coreui-theme="dark"></button>
+		<button class="btn-close d-lg-none" type="button" data-coreui-theme="dark"></button>
 	</div>
 	<ul class="sidebar-nav" data-coreui="navigation"><?=require __DIR__.'/includes/sidebar.php'?></ul>
 	<footer class="sidebar-footer border-top d-none d-md-flex">
@@ -103,7 +101,7 @@ Link('//cdn.jsdelivr.net');
 	</footer>
 </nav>
 <div class="wrapper d-flex flex-column min-vh-100">
-	<header class="header header-sticky p-0 mb-3">
+	<header class="header header-sticky p-0 mb-3 shadow-sm">
 		<div class="container-fluid border-bottom px-4">
 			<button class="header-toggler" type="button" style="margin-inline-start: -1rem">
 				<i class="fa-solid fa-bars icon icon-xl"></i>

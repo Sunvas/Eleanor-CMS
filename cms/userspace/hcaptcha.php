@@ -8,7 +8,7 @@ namespace CMS;
 
 if($hcaptcha)
 {
-	$hl=\Eleanor\Classes\L10n::$code;
+	$hl=L10n::$code;
 	$nonce??=Nonce();
 
 	echo<<<HTML

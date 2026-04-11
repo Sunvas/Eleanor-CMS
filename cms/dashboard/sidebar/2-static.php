@@ -2,7 +2,7 @@
 namespace CMS;
 
 $Uri=new Classes\UriDashboard(u:'static');
-$l10n=new \Eleanor\Classes\L10n('static',__DIR__.'/l10n/');
+$l10n=new L10n('static',__DIR__.'/l10n/');
 $is_admin=\in_array('admin',CMS::$P->roles);
 
 if($is_admin){?>

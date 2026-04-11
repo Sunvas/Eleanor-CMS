@@ -8,7 +8,7 @@ namespace CMS;
 
 $text??=$var_0 ?? '';
 $type??=$var_1 ?? 'warning';
-$title??=$var_2 ?? new \Eleanor\Classes\L10n('message',__DIR__.'/l10n/')[$type] ?? $type;
+$title??=$var_2 ?? new L10n('message',__DIR__.'/l10n/')[$type] ?? $type;
 ?>
 <div class="binner">
 	<div class="warning">

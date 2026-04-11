@@ -69,7 +69,7 @@ export default ({total,pp,sort,desc})=>({
 		Sort(sort){
 			const
 				USP=new URLSearchParams(location.search),
-				desc=USP.has("order") ? USP.get("order")=="desc" : this.desc;
+				desc=USP.has("order") ? USP.get("order")==="desc" : this.desc;
 
 			if(this.default_sort==sort)
 			{
@@ -99,8 +99,8 @@ export default ({total,pp,sort,desc})=>({
 				for(const item of filter)
 					USP.delete(item);
 			else
-				for(const[item,key] of Object.entries(filter))
-					item=="" ? USP.delete(key) : USP.set(key,item);
+				for(const[key,item] of Object.entries(filter))
+					item==="" ? USP.delete(key) : USP.set(key,item);
 
 			USP.delete("pp");
 			USP.delete("page");

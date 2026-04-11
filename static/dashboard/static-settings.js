@@ -8,7 +8,7 @@
 		template,
 		extends:app,
 		data:()=>({
-			mono:true,//Mono language
+			monolingual:true,
 			group:groups[0].id,
 			groups
 		})

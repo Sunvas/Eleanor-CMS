@@ -7,7 +7,7 @@ namespace CMS;
  * Default:
  * @var array $links List of links */
 
-$l10n=new \Eleanor\Classes\L10n('settings',__DIR__.'/l10n/');
+$l10n=new L10n('settings',__DIR__.'/l10n/');
 $data=[
 	'config'=>$config,
 	'groups'=>\iterator_to_array($groups),
@@ -21,7 +21,7 @@ $template=<<<HTML
 
 <form @submit.prevent="Submit">
 	<div class="row">
-		<div class="col-lg-4 col-sm-6 col-xs-12">
+		<div class="col-lg-4 col-sm-6 col-12">
 			<div class="card border-primary border-top-3">
 				<h2 class="card-header bg-primary bg-gradient lh-base h6" style="--cui-bg-opacity: .25;">{$l10n['rights']}</h2>
 				<div class="card-body">

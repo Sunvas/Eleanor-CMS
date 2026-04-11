@@ -7,7 +7,7 @@ namespace CMS;
  * @var string $content JSON content for main page (from editorJS) */
 
 #Loading language values
-$l10n=new \Eleanor\Classes\L10n('main',__DIR__.'/l10n/');
+$l10n=new L10n('main',__DIR__.'/l10n/');
 $jsdelivr=',npm/editorjs-html@4/.build/edjsHTML.browser.js';
 $scripts['editorjs']=<<<SCRIPT
 L.then(()=>{

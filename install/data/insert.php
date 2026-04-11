@@ -24,7 +24,7 @@ function L10n2Db(MySQL$Db,array$values):array
 	}
 	elseif($l10ns!==null)
 		foreach($values as &$v)
-			$v=$Db->Escape(\json_encode([''=>$v[$l10n],JSON]));
+			$v=$Db->Escape(\json_encode([$l10n=>$v[$l10n]],JSON));
 
 	else
 		foreach($values as &$v)

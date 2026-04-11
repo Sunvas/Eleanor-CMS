@@ -13,7 +13,7 @@ const CACHE_NAME='account-last-event';
 function Notification(string$l10n):?array
 {static$objects=[];
 	if(!$l10n)
-		$l10n=\Eleanor\Classes\L10n::$code;
+		$l10n=L10n::$code;
 
 	if(!isset($objects[$l10n]))
 	{

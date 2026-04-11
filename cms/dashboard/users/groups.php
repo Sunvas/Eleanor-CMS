@@ -7,7 +7,7 @@ namespace CMS;
  * Default:
  * @var array $links List of links */
 
-$l10n=new \Eleanor\Classes\L10n('groups',__DIR__.'/l10n/');
+$l10n=new L10n('groups',__DIR__.'/l10n/');
 $data=['L10N'=>L10N,'L10NS'=>L10NS,'roles'=>$roles,'items'=>\iterator_to_array($items)];
 
 $title=[$l10n['title']];
@@ -17,8 +17,8 @@ $head['style']=(CMS::$T)('coloring-of-groups');
 $template=<<<HTML
 <div class="d-flex justify-content-between mb-2">
 	<h1 class="h3 mb-0 pt-1"><i class="nav-icon fa-solid fa-user-group"></i> {$l10n['title']}</h1>
-	<button type="button" class="btn btn-primary bg-gradient d-block d-sm-none" @click="Create" title="{$l10n['create']}"><i class="fa-solid fa-plus fa-lg"></i></button>
-	<button type="button" class="btn btn-primary bg-gradient d-none d-sm-block" @click="Create"><i class="fa-solid fa-folder-plus fa-lg me-2"></i>{$l10n['create']}</button>
+	<button type="button" class="btn btn-primary bg-gradient d-block d-lg-none" @click="Create" title="{$l10n['create']}"><i class="fa-solid fa-plus fa-lg"></i></button>
+	<button type="button" class="btn btn-primary bg-gradient d-none d-lg-block" @click="Create"><i class="fa-solid fa-folder-plus fa-lg me-2"></i>{$l10n['create']}</button>
 </div>
 
 <div class="table-responsive">

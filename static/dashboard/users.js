@@ -348,7 +348,8 @@
 			this.items.map(this.NormalizeItem);
 
 			for(const f of ["id","name","group"])
-				this[f]=this.USP.has(f) ? this.USP.get(f) : "";
+				if(this.USP.has(f))
+					this[f]=this.USP.get(f);
 
 			$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 		},

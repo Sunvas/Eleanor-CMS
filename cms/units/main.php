@@ -33,7 +33,7 @@ return new class extends Abstracts\Dashboard implements Interfaces\UserSpace {
 	 * @return string */
 	function GetMainPageFile(?string$code=null):string
 	{
-		$code??=\Eleanor\Classes\L10n::$code;
+		$code??=L10n::$code;
 		return __DIR__."/{$this->name}/mainpage-{$code}.json";
 	}
 };

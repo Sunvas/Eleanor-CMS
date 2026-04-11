@@ -1,7 +1,6 @@
 <?php
 namespace CMS;
 
-use Eleanor\Classes\L10n;
 use const Eleanor\SITEDIR;
 
 /** Page with site error (404 - not found, 403 - restricted)
@@ -16,7 +15,7 @@ $title=$l10n[$code] ?? $code;
 	<base href="<?=SITEDIR?>">
 	<meta charset="utf-8">
 	<title><?=$title?></title>
-	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<style>
 body { height: 100vh; width: 100vw; text-align: center; font-family: Tahoma, Arial, Sans-serif; margin:0; }
 main { padding-top: 50%; transform: translateY(-50%); user-select: none; }

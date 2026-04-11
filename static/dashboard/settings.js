@@ -11,7 +11,7 @@ export default (template,{config,L10N,L10NS})=>({
 			save:{ru:"Сохранить",en:"Save"},
 			saved:{ru:"Сохранено",en:"Saved"},
 		}),
-		mono:L10NS===null,//Mono language
+		monolingual:L10NS===null,//Mono language
 		l10ns:[],
 
 		changed:new Set,
@@ -21,7 +21,7 @@ export default (template,{config,L10N,L10NS})=>({
 	watch:{
 		lang(lang){
 			for(const[k,v] of Object.entries(this.config_l10n))
-				this.config[k]=v[lang] ?? v[""];
+				this.config[k]=v[lang] ?? v[L10N] ?? null;
 		}
 	},
 	computed:{
@@ -37,12 +37,7 @@ export default (template,{config,L10N,L10NS})=>({
 		Changed(field,val){
 			//Multilingual values
 			if(field in this.config_l10n)
-			{
-				//Default language is always stored with empty key
-				const lang=this.L10N===this.lang ? "" : this.lang;
-
-				this.config_l10n[field][lang]=val;
-			}
+				this.config_l10n[field][this.lang]=val;
 
 			if(JSON.stringify(config[field])===JSON.stringify(this.config_l10n[field] ?? val))
 				this.changed.delete(field);
@@ -87,16 +82,16 @@ export default (template,{config,L10N,L10NS})=>({
 				this.l10n[k]=v[lang];
 
 		//Filling in the set of l10n
-		if(!this.mono && L10NS?.length)
+		if(!this.monolingual && L10NS?.length)
 			import("./l10ns.js").then(({default:l10ns})=>{
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 			});
 
 		for(const[k,v] of Object.entries(config))
 		{
-			if(!this.mono && v?.constructor?.name === "Object")
+			if(!this.monolingual && v?.constructor?.name === "Object")
 			{
-				this.config[k]=v[this.lang] ?? v[""];
+				this.config[k]=v[this.lang] ?? v[L10N];
 				this.config_l10n[k]=Object.seal({...v});
 			}
 			else

@@ -53,8 +53,15 @@ Link('//cdn.jsdelivr.net');
 	<meta charset="utf-8">
 	<title><?=strip_tags(is_array($title) ? join(' :: ',$title) : $title)?></title>
 
-	<link media="screen" type="text/css" href="static/userspace/styles/main.css" rel="stylesheet">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="static/user-area/styles/main.css">
+<?php
+if(isset($hreflang))
+{
+	$base=\Eleanor\PROTOCOL.\Eleanor\PUNYCODE.\Eleanor\SITEDIR;
+	echo \array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."<link rel='alternate' href='{$base}{$hreflang[$code]}' hreflang='{$code}'>","\t<link rel='alternate' href='{$base}' hreflang='x-default'>");
+}
+?>
 
 	<script src="//cdn.jsdelivr.net/combine/npm/jquery@4/dist/jquery.slim.min.js,npm/vue@3/dist/vue.global.prod.min.js<?=$jsdelivr ?? ''?>" nonce="<?=$nonce?>" defer></script>
 	<script nonce="<?=$nonce?>">
@@ -73,11 +80,11 @@ Link('//cdn.jsdelivr.net');
 	<header>
 		<div id="headerboxic"><div class="dleft"><div class="dright">
 			<a class="logotype" href="">
-				<img src="static/userspace/images/eleanorcms.png" alt="">
+				<img src="static/user-area/images/eleanorcms.png" alt="">
 			</a>
 			<span class="headbanner">
 				<!-- Баннер 468x60-->
-				<!-- <a href="link.html" title="Ваш баннер"><img src="static/userspace/images/spacer.png" alt="Ваш баннер"></a> -->
+				<!-- <a href="link.html" title="Ваш баннер"><img src="static/user-area/images/spacer.png" alt="Ваш баннер"></a> -->
 			</span>
 		</div></div></div>
 
@@ -128,7 +135,7 @@ echo CMS::$T->BlockLight(title:'Light widget 1',content:'Light content 1')
 
 	<footer>
 		<div id="footmenu"><div class="dleft"><div class="dright">
-			<a title="<?=$l10n['to_top']?>" href="#" class="top-top" id="top"><img src="static/userspace/images/top-top.png" alt=""></a>
+			<a title="<?=$l10n['to_top']?>" href="#" class="top-top" id="top"><img src="static/user-area/images/top-top.png" alt=""></a>
 			<nav class="menu">
 				<a href="<?=Uri::$base?>blog"><?=$l10n['demo-blog']?></a>
 				<a href="<?=Uri::$base?>demo-static"><?=$l10n['demo-static']?></a>
@@ -142,7 +149,7 @@ echo CMS::$T->BlockLight(title:'Light widget 1',content:'Light content 1')
 		<div id="footer"><div class="dleft"><div class="dright">
 			<div class="count">
 				<span style="width: 88px;"><!-- кнопка, счетчик --></span>
-				<span style="width: 60px;">  <a href="https://validator.w3.org/check?uri=referer" rel="nofollow"><img src="static/userspace/images/html5_valid.png" alt="Valid HTML 5" title="Valid HTML 5" width="60" height="31"></a></span>
+				<span style="width: 60px;">  <a href="https://validator.w3.org/check?uri=referer" rel="nofollow"><img src="static/user-area/images/html5_valid.png" alt="Valid HTML 5" title="Valid HTML 5" width="60" height="31"></a></span>
 			</div>
 			<span class="copyright">Copyright &copy; <?=idate('Y')?></span>
 			<div class="clr"></div>

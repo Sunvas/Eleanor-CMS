@@ -13,7 +13,7 @@ return[
 	'demo-json'=>'Demo JSON',
 
 	#Sign in widget
-	'dashboard'=>'Dashboard',
+	'admin-panel'=>'Admin panel',
 	'sign-out'=>'Sign out',
 	'username'=>'Username',
 	'password'=>'Password',

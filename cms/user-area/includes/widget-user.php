@@ -8,7 +8,7 @@ use const Eleanor\CHARSET;
  * @var string $nonce
  * Default:
  * @var string $hcaptcha hcaptcha key (if empty - off)
- * @var ?string $dashboard Link to dashboard */
+ * @var ?string $adminpanel Link to admin panel */
 
 $account=$GLOBALS['CMS']->account->slug;
 $bot=CMS::$config['system']['bot_name'];
@@ -28,11 +28,11 @@ if(CMS::$A->current)
 	<div class="blocklogin"><div class="dbottom"><div class="dtop">
 		<div class="dcont">
 			<a href="<?=$Uri('settings')?>">
-				<img style="float:left;margin-right:10px;width:40px;" src="<?=$avatar ? "static/avatars/{$id}-{$avatar}.webp" : 'static/userspace/images/noavatar.png'?>" alt="<?=$name?>">
+				<img style="float:left;margin-right:10px;width:40px;" src="<?=$avatar ? "static/avatars/{$id}-{$avatar}.webp" : 'static/user-area/images/noavatar.png'?>" alt="<?=$name?>">
 			</a>
 			<h5 style="padding:4px 0 4px"><?=$display_name ?: $name?></h5>
 			<div>
-				<?=$dashboard ? "<a href='{$dashboard}'>{$l10n['dashboard']}</a> | " : ''?>
+				<?=$adminpanel ? "<a href='{$admin}'>{$l10n['admin-panel']}</a> | " : ''?>
 				<a href="<?=$Uri('sign-out')?>"><?=$l10n['sign-out']?></a>
 			</div>
 <?php if(CMS::$A->available){
@@ -69,16 +69,16 @@ HTML;
 		</div>
 	<?php }?>
 	</div></div></div>
-	<script src="static/userspace/widget-sign-in.js" nonce="<?=$nonce?>" defer data-account="<?=Uri::$base.Uri::Make([$account],'/')?>" data-container="#widget-sign-in" data-template="#widget-sign-in-tpl" data-hcaptcha="<?=$hcaptcha?>"></script>
+	<script src="static/user-area/widget-sign-in.js" nonce="<?=$nonce?>" defer data-account="<?=Uri::$base.Uri::Make([$account],'/')?>" data-container="#widget-sign-in" data-template="#widget-sign-in-tpl" data-hcaptcha="<?=$hcaptcha?>"></script>
 	<script id="widget-sign-in-tpl" type="text/x-template">
 		<form @submit.prevent="Submit">
 			<div class="logintext">
 				<label for="block-name"><?=$l10n['username']?></label>
-				<div><div><input tabindex="1" type="text" id="block-name" autocomplete="username" v-model.trim="username" :disabled="loading" autofocus required></div></div>
+				<div><div><input tabindex="1" type="text" id="block-name" autocomplete="username" v-model.trim="username" ref="username" :disabled="loading" autofocus required></div></div>
 			</div>
 			<div class="logintext">
 				<label for="block-password"><?=$l10n['password']?><a href="#" @click.prevent="Forgot"><?=$l10n['forgotten']?></a></label>
-				<div><div><input tabindex="1" type="password" id="block-password" autocomplete="current-password" v-model="password" :disabled="loading" required></div></div>
+				<div><div><input tabindex="1" type="password" id="block-password" autocomplete="current-password" v-model="password" ref="password" :disabled="loading" required></div></div>
 			</div>
 			<label title="<?=$l10n['cookie-explain']?>"><input tabindex="1" type="checkbox" v-model="allow_cookie" required :disabled="loading"> <span><?=$l10n['allow-cookie']?></span></label><br>
 			<label><input tabindex="1" type="checkbox" v-model="remember_me" :disabled="loading"> <span><?=$l10n['remember-me']?></span></label>

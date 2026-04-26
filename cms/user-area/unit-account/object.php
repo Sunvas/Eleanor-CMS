@@ -63,7 +63,7 @@ HTML;
 			return CMS::$T->Heading($this->l10n['title'],menu:$menu)
 				->hcaptcha()
 				->Append(<<<HTML
-<script src="static/userspace/widget-sign-in.js" nonce="{$nonce}" defer data-account="{$links['sign-in']}" data-container="#sign-in" data-template="#sign-in-tpl" data-hcaptcha="{$hcaptcha}"></script>
+<script src="static/user-area/widget-sign-in.js" nonce="{$nonce}" defer data-account="{$links['sign-in']}" data-container="#sign-in" data-template="#sign-in-tpl" data-hcaptcha="{$hcaptcha}"></script>
 <div id="sign-in"></div>{$telegram}
 <script id="sign-in-tpl" type="text/x-template">
 <form @submit.prevent="Submit">
@@ -132,7 +132,7 @@ HTML )
 		return CMS::$T->Heading($this->l10n['signing-up'])
 			->Append(<<<HTML
 <div id="app"></div>
-<script src="static/userspace/unit-account-sign-up.js" nonce="{$nonce}" defer data-container="#app" data-template="#app-tpl" data-avatar="{$telegram['photo_url']}" data-name="{$telegram['username']}" data-display_name="{$d_name}"></script>
+<script src="static/user-area/unit-account-sign-up.js" nonce="{$nonce}" defer data-container="#app" data-template="#app-tpl" data-avatar="{$telegram['photo_url']}" data-name="{$telegram['username']}" data-display_name="{$d_name}"></script>
 <script id="app-tpl" type="text/x-template">
 <form @submit.prevent="Submit">
 	<table class="tabstyle tabform">
@@ -217,7 +217,7 @@ HTML;
 		return CMS::$T->Heading($this->l10n['title'],menu:$menu)
 			->Append(<<<HTML
 <div id="app"></div>
-<script src="static/userspace/unit-account-settings.js" nonce="{$nonce}" defer data-container="#app" data-template="#app-tpl" data-data="#app-data"></script>
+<script src="static/user-area/unit-account-settings.js" nonce="{$nonce}" defer data-container="#app" data-template="#app-tpl" data-data="#app-data"></script>
 <script id="app-data" type="application/json">{$data}</script>
 <script id="app-tpl" type="text/x-template">
 <form @submit.prevent="Submit">
@@ -299,7 +299,7 @@ HTML )
 		return CMS::$T->Heading($this->l10n['title'],menu:$menu)
 			->Append(<<<HTML
 <div id="app"></div>
-<script src="static/userspace/unit-account-change-password.js" nonce="{$nonce}" defer data-container="#app" data-template="#app-tpl" data-old_required="{$old_required}"></script>
+<script src="static/user-area/unit-account-change-password.js" nonce="{$nonce}" defer data-container="#app" data-template="#app-tpl" data-old_required="{$old_required}"></script>
 <script id="app-tpl" type="text/x-template">
 <form @submit.prevent="Submit">
 	<table class="tabstyle tabform">
@@ -362,7 +362,7 @@ HTML )
 		return CMS::$T->Heading($this->l10n['title'],menu:$menu)
 			->Append(<<<HTML
 <div id="app" class="binner"></div>
-<script src="static/userspace/unit-account-sessions.js" nonce="{$nonce}" defer data-container="#app" data-template="#app-tpl" data-current="{$current}" data-data="#app-data"></script>
+<script src="static/user-area/unit-account-sessions.js" nonce="{$nonce}" defer data-container="#app" data-template="#app-tpl" data-current="{$current}" data-data="#app-data"></script>
 <script id="app-data" type="application/json">{$data}</script>
 <script id="app-tpl" type="text/x-template">
 <table class="tabstyle sessions" style="margin-bottom: 1em">

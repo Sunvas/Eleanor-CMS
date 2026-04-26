@@ -12,7 +12,7 @@ $title??=$var_2 ?? new L10n('message',__DIR__.'/l10n/')[$type] ?? $type;
 ?>
 <div class="binner">
 	<div class="warning">
-		<img src="static/userspace/images/<?=$type?>.png" alt="<?=$title?>" title="<?=$title?>">
+		<img src="static/user-area/images/<?=$type?>.png" alt="<?=$title?>" title="<?=$title?>">
 		<h4><?=$title?></h4>
 		<?=is_array($text) ? join('<br>',$text) : $text?>
 		<div class="clr"></div>

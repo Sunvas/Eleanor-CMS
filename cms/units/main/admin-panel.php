@@ -2,12 +2,12 @@
 namespace CMS;
 
 /** Main unit
- * @var Classes\UriDashboard $Uri
+ * @var Classes\Uri4AdminPanel $Uri
  * @var object $this This unit
  * @var int &$code Response code
  * @var int|string &$cache Defines cache on client (int specifies the number of seconds for which the result should be cached, string means etag content) */
 
-/** Contents of main page of dashboard */
+/** Contents of main page in admin panel */
 function Main(object$Unit):array|string
 {
 	if(CMS::$json)
@@ -43,9 +43,7 @@ function Main(object$Unit):array|string
 			if(!\is_file($file) or !\is_uploaded_file($F['tmp_name']))
 				continue;
 
-			$content=\file_get_contents($file);
-
-			if(\json_validate($content) and \move_uploaded_file($F['tmp_name'],$file))
+			if(\move_uploaded_file($F['tmp_name'],$file))
 				$success++;
 		}
 
@@ -79,6 +77,7 @@ function SettingsSite():array|string
 		$mono=L10NS===null;
 		$storage=[];
 
+		#PHP 8.6
 		#Multilingual values
 		foreach(['name','title','description'] as $f)
 			if($mono ? \is_string($_POST[$f] ?? 0) : \is_array($_POST[$f] ?? 0) && \array_all($_POST[$f],fn($t)=>\is_string($t)))
@@ -140,7 +139,7 @@ function SettingsSystem():array|string
 
 if(!CMS::$json)
 {
-	CMS::$T->queue[]=ROOT.'dashboard/'.$this->name;
+	CMS::$T->queue[]=ROOT.'admin-panel/'.$this->name;
 	CMS::$T->default['links']+=[
 		'settings'=>$Uri(zone:'settings'),
 		'settings-system'=>$Uri(zone:'settings-system'),
@@ -148,11 +147,11 @@ if(!CMS::$json)
 }
 
 #Some zones are available for administrators only
-$is_admin=\in_array('admin',CMS::$P->roles);
+$is_root=\in_array('root',CMS::$P->roles);
 
 return match($_GET['zone'] ?? ''){
-	'settings'=>$is_admin ? SettingsSite() : Halt(),
-	'settings-system'=>$is_admin ? SettingsSystem() : Halt(),
+	'settings'=>$is_root ? SettingsSite() : Halt(),
+	'settings-system'=>$is_root ? SettingsSystem() : Halt(),
 	''=>Main($this),
 	default=>Halt()
 };

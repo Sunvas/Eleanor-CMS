@@ -2,7 +2,7 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-return new class extends Abstracts\Dashboard implements Interfaces\UserSpace {
+return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 	readonly string
 		/** @var string $slug URL prefix of the unit */
 		$slug,
@@ -15,7 +15,7 @@ return new class extends Abstracts\Dashboard implements Interfaces\UserSpace {
 		$this->name=basename(__FILE__,'.php');
 	}
 
-	function UserSpace(?string$uri):never
+	function UserArea(?string $uri):never
 	{
 		Canonical($this->slug);
 

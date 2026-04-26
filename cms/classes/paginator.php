@@ -54,7 +54,7 @@ class Paginator extends \Eleanor\Basic
 			$desc=false;//When user clicks on column, he expects that column to be sorted by asc
 		}
 		else
-			$sort=\reset($sorting);
+			$sort=\array_first($sorting);
 
 		$order=match($_GET['order'] ?? 0){
 			'asc'=>'',

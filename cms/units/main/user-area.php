@@ -6,6 +6,9 @@ namespace CMS;
  * @var int &$code Response code
  * @var int|string &$cache Defines cache on client (int specifies the number of seconds for which the result should be cached, string means etag content) */
 
+if(CMS::$json)
+	Halt();
+
 #Main page doesn't have subpages
 Canonical('');
 
@@ -17,7 +20,7 @@ if(\is_array(L10NS))
 	foreach(['name','title','description'] as $f)
 		$config[$f]=isset($config[$f]) ? L10n::Item($config[$f]) : null;
 
-#Content from the dashboard
+#Content from the admin panel
 $file=$this->GetMainPageFile();
 $content=\file_get_contents($file);
 

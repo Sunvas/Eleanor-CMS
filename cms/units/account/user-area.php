@@ -73,7 +73,6 @@ function StoreAvatar(int$id,string$url):string
 
 	$salt=AvatarSalt();
 	\imagewebp($im,STATIC_PATH."avatars/{$id}-{$salt}.webp");
-	\imagedestroy($im);
 
 	return$salt;
 }
@@ -96,10 +95,15 @@ function Session(string$name='sign-up'):void
  * @return string|array */
 function SignIn(Uri$Uri,int&$code):array|string
 {
-	$R=CMS::$Db->Execute(<<<SQL
-SELECT COUNT(`a11n_id`) `total` FROM `a11n_userspace` WHERE `a11n_id`=? 
-SQL ,[CMS::$a11n]);
-	$total=(int)$R->fetch_column();
+	if(CMS::$a11n)
+	{
+		$R=CMS::$Db->Execute(<<<SQL
+	SELECT COUNT(`a11n_id`) `total` FROM `a11n_userarea` WHERE `a11n_id`=? 
+	SQL ,[CMS::$a11n]);
+		$total=(int)$R->fetch_column();
+	}
+	else
+		$total=0;
 
 	#AJAX request
 	if(CMS::$json)
@@ -167,7 +171,7 @@ SQL );
 				Events::UserSignedIn->Trigger([
 					'id'=>$id,
 					'way'=>'telegram',
-					'where'=>'userspace',
+					'where'=>'user-area',
 					'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
 					'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
 				]);
@@ -187,6 +191,7 @@ SQL );
 			];
 		}
 
+		#PHP 8.6
 		#Sign in by username and password
 		if(!\array_all([$_POST['username'] ?? 0,$_POST['password'] ?? 0,$_POST['captcha'] ?? 0],fn($t)=>\is_string($t)) or !isset($_POST['temp']))
 			return[
@@ -239,7 +244,7 @@ SQL ,[$_POST['username']]);
 			Events::UserSignedIn->Trigger([
 				'id'=>$id,
 				'way'=>'username',
-				'where'=>'userspace',
+				'where'=>'user-area',
 				'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
 				'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
 			]);
@@ -289,7 +294,7 @@ function SignUp(Uri$Uri,int&$code):array|string
 	Session();
 
 	#Check availability of username
-	if(CMS::$json and is_string($_GET['check_name'] ?? 0))
+	if(CMS::$json and \is_string($_GET['check_name'] ?? 0))
 		return[
 			'ok'=>CheckName($_GET['check_name']),
 		];
@@ -315,6 +320,7 @@ function SignUp(Uri$Uri,int&$code):array|string
 	#AJAX request
 	if(CMS::$json)
 	{
+		#PHP 8.6
 		if(!\array_all([$_POST['name'] ?? 0,$_POST['display_name'] ?? 0,$_POST['password'] ?? 0],fn($t)=>\is_string($t)))
 			return[
 				'ok'=>false,
@@ -435,8 +441,6 @@ function Settings(Uri$Uri,int&$code):array|string
 
 				if(\imagewebp($img,STATIC_PATH."avatars/{$id}-{$salt}.webp"))
 					$update['avatar']=$salt;
-
-				\imagedestroy($img);
 			}
 		}
 
@@ -464,7 +468,7 @@ function ChangePassword(Uri$Uri,int&$code):array|string
 		Halt(401);
 
 	$R=CMS::$Db->Execute(<<<SQL
-SELECT `way` FROM `a11n_userspace` WHERE `a11n_id`=? AND `user_id`=? LIMIT 1
+SELECT `way` FROM `a11n_userarea` WHERE `a11n_id`=? AND `user_id`=? LIMIT 1
 SQL ,[CMS::$a11n,CMS::$A->current]);
 	$way=$R->fetch_column();
 	$old_required=$way!='telegram' or GetUsers('password_hash')==='';
@@ -477,6 +481,7 @@ SQL ,[CMS::$a11n,CMS::$A->current]);
 				'ok'=>false
 			];
 
+		#PHP 8.6
 		if(!\array_all([$_POST['new'] ?? 0,$_POST['old'] ?? ($old_required ? 0 : '')],fn($t)=>\is_string($t)))
 			return[
 				'ok'=>false,
@@ -526,7 +531,7 @@ function Sessions(Uri$Uri,int&$code):array|string
 		Halt(401);
 
 	$R=CMS::$Db->Execute(<<<SQL
-SELECT `created` FROM `a11n_userspace` WHERE `a11n_id`=? AND `user_id`=? LIMIT 1
+SELECT `created` FROM `a11n_userarea` WHERE `a11n_id`=? AND `user_id`=? LIMIT 1
 SQL ,[CMS::$a11n,CMS::$A->current]);
 	$current=$R->fetch_column();
 
@@ -539,14 +544,14 @@ SQL ,[CMS::$a11n,CMS::$A->current]);
 
 			$R=CMS::$Db->Execute(<<<SQL
 SELECT `a`.`id`
-FROM `a11n_userspace` `u`
+FROM `a11n_userarea` `u`
 INNER JOIN `a11n` `a` ON `a`.`id`=`u`.`a11n_id`
 WHERE `a11n_id`=? AND `u`.`user_id`=? AND (`u`.`created`>? OR `a`.`used`<NOW() - INTERVAL ? MONTH)
 LIMIT 1
 SQL ,[$a11n,CMS::$A->current,$current,MONTHS_TO_STALE_SESSION]);
 
 			$amount=$R->num_rows>0
-				? CMS::$Db->Delete('a11n_userspace','`a11n_id`=? AND `user_id`=?',[$a11n,CMS::$A->current])
+				? CMS::$Db->Delete('a11n_userarea','`a11n_id`=? AND `user_id`=?',[$a11n,CMS::$A->current])
 				: 0;
 
 			return[
@@ -563,9 +568,9 @@ SQL ,[$a11n,CMS::$A->current,$current,MONTHS_TO_STALE_SESSION]);
 	$R=CMS::$Db->Execute(<<<SQL
 SELECT `u`.`a11n_id`, `u`.`created`, `u`.`way`, `a`.`used`, `a`.`ip`, `a`.`ua`,
 	IF(`u`.`created`>? OR `a`.`used`<NOW() - INTERVAL ? MONTH,1,0) `terminatable`
-FROM `a11n_userspace` `u`
+FROM `a11n_userarea` `u`
 INNER JOIN `a11n` `a` ON `a`.`id`=`u`.`a11n_id`
-WHERE `u`.`user_id`=? AND `u`.`way`!='dashboard'
+WHERE `u`.`user_id`=? AND `u`.`way`!='admin-panel'
 SQL ,[$current,MONTHS_TO_STALE_SESSION,CMS::$A->current]);
 	while($a=$R->fetch_assoc())
 	{
@@ -585,7 +590,7 @@ SQL ,[$current,MONTHS_TO_STALE_SESSION,CMS::$A->current]);
 if(!CMS::$json)
 {
 	#Loading template of the unit
-	CMS::$T->queue[]=require ROOT."userspace/unit-{$this->name}/object.php";
+	CMS::$T->queue[]=require ROOT."user-area/unit-{$this->name}/object.php";
 
 	#Checking URI correctness via canonical urls
 	Canonical($Uri,$slug);

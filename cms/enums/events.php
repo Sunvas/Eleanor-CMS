@@ -13,7 +13,7 @@ enum Events:string
 	/** New user has been added to the system. Expected parameters: id */
 	case UserCreated='user_created';
 
-	/** Users signed in. Expected parameters: id (user id), way (username, telegram), ip (IP of the user), ua (user agent of user's browser), where (userspace, dashboard) */
+	/** Users signed in. Expected parameters: id (user id), way (username, telegram), ip (IP of the user), ua (user agent of user's browser), where (user area, admin panel) */
 	case UserSignedIn='user_signed_in';
 }
 

@@ -3,11 +3,10 @@
 namespace CMS;
 
 use Eleanor\Assign,
-	Eleanor\Classes\L10n,
 	Eleanor\Classes\Output,
 
 	CMS\Classes\Uri,
-	CMS\Interfaces\UserSpace;
+	CMS\Interfaces\UserArea;
 
 use const Eleanor\SITEDIR;
 
@@ -103,21 +102,20 @@ function SlugUri(?string$uri):array
 	return $uri && \str_contains($uri,'/') ? \explode('/',$uri,2) : [$uri ?? '',null];
 }
 
-Assign::For(CMS::$A,fn()=>new Authorization('a11n_userspace',(int)($_GET['iam'] ?? 0),require ROOT.'external.php'));
+Assign::For(CMS::$A,fn()=>new Authorization('a11n_userarea',(int)($_GET['iam'] ?? 0),require ROOT.'external.php'));
 
 $uri=Uri::GetURI();
 
 #Redirecting user to the appropriate language version
-if(L10NS)
+if(L10NS!==null)
 {
-	$stack=L10NS;
-	$stack[]=L10N;
+	$stack=[L10N,...L10NS];
 
 	#Requests like /ru or /en are redirected to /ru/ or /en/ (added slash at the end)
 	if(\in_array($uri,$stack))
 		Redirect(SITEDIR.$uri.'/'.($_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''),307);
 
-	#localizaion prefix
+	#Localization prefix
 	[$l10n,$uri]=SlugUri($uri);
 
 	#Prefix verification
@@ -160,7 +158,7 @@ SQL );
 	#Links to other localizations
 	foreach($stack as $k)
 		if($k!=L10n::$code)
-			CMS::$T->default['hreflang'][$k]=SITEDIR.$k.'/';
+			CMS::$T->default['hreflang'][$k]=$k.'/';
 }
 else
 	L10n::$code=L10N;
@@ -168,10 +166,10 @@ else
 #Template binding
 if(!CMS::$json)
 {
-	CMS::$T->queue[]=ROOT.'userspace';
+	CMS::$T->queue[]=ROOT.'user-area';
 	CMS::$T->default+=[
-		#Link to dashboard
-		'dashboard'=>CMS::$a11n && CMS::$A->current && array_intersect(['admin','team'],CMS::$P->roles) ? CMS::$Cache->Get('dashboard',true) : null,
+		#Link to admin panel
+		'adminpanel'=>CMS::$a11n && CMS::$A->current && array_intersect(['root','team'],CMS::$P->roles) ? CMS::$Cache->Get('admin-panel',true) : null,
 
 		#hCaptcha key
 		'hcaptcha'=>CMS::$config['system']['captcha'] ? CMS::$config['system']['hcaptcha'] : ''
@@ -189,7 +187,7 @@ if(CMS::$config['system']['maintenance'] and !\in_array('maintainer',CMS::$P->ro
 }
 
 #Global object to carry shared data inside cms
-$Shared=new CMS;
+$CMS=new CMS;
 
 [$slug,$uri]=SlugUri($uri);
 
@@ -205,15 +203,15 @@ foreach($units as $unit)
 	if(!\is_object($U))
 		continue;
 
-	$Shared->$u=$U;
+	$CMS->$u=$U;
 
-	if($U instanceof UserSpace and $U->slug===$slug)
-		$U->UserSpace($uri);
+	if($U instanceof UserArea and $U->slug===$slug)
+		$U->UserArea($uri);
 }
 
 #Try static page
-if(isset($Shared->static))
-	$Shared->static?->Try($slug,$uri);
+if(isset($CMS->static))
+	$CMS->static?->Try($slug,$uri);
 
 #Still nothing found... Let's look for direct folder
 if($slug and \preg_match('#[^a-z\d\-_.]#i',$slug)==0 and \is_file($f=ROOT."direct/{$slug}.php"))

@@ -4,10 +4,10 @@ namespace CMS\Classes;
 
 use CMS\CMS;
 
-/** Проверка решения hCaptcha
- * @return bool */
 class hCaptcha extends \Eleanor\Basic
 {
+	/** Проверка решения hCaptcha
+	 * @return bool */
 	static function Check(string$k='h-captcha-response'):bool
 	{
 		$resp=\is_string($_POST[$k] ?? 0) ? $_POST[$k] : '';

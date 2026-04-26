@@ -16,8 +16,6 @@ use function
 	Eleanor\Autoloader,
 	Eleanor\BugFileLine;
 
-use const Eleanor\BASE_TIME;
-
 const
 	/** @const Квинтэссенция ENT_* констант  */
 	ENT = \ENT_QUOTES | \ENT_HTML5 | \ENT_SUBSTITUTE | \ENT_DISALLOWED,
@@ -91,37 +89,40 @@ function Redirect(string$to,int$code=301,string$hash=''):never
 class CMS extends Library
 {
 	static bool
-		/** @var bool $json флаг запроса, на который ожидается json */
+		/** @var bool $json Flag when JSON is expected in response */
 		$json=false,
 
-		/** @var bool $post флаг POST запроса */
+		/** @var bool $put Flag of PUT request method */
+		$put=false,
+
+		/** @var bool $post Flag of POST request method */
 		$post=false,
 
-		/** @var bool $delete флаг DELETE запроса */
+		/** @var bool $delete Flag of DELETE request method */
 		$delete=false;
 
-	/** @var ?int ID авторизации */
+	/** @var ?int Authorization (a11n) ID */
 	static ?int $a11n=null;
 
-	/** @var Authorization|Assign|null $A Эта переменная должна заполняться исключительно в файле, который запускает систему (index.php, admin.php) */
+	/** @var Authorization|Assign|null $A This property should be set exclusively in file where system starts from (index.php, admin.php) */
 	static Authorization|Assign|null $A;
 
-	/** @var Permissions|Assign|null $P Базовые разрешения пользователя на сайте, подтягиваются из таблицы groups */
+	/** @var Permissions|Assign|null $P Basic user permissions on the site are pulled from the groups table. */
 	static Permissions|Assign|null $P;
 
-	/** @var MySQL|Assign|null $Db Базы данных */
+	/** @var MySQL|Assign|null $Db DataBase object */
 	static MySQL|Assign|null $Db;
 
-	/** @var ?\ArrayObject Объект для получения доступа к конфигам */
+	/** @var ?\ArrayObject Object for accessing configs */
 	static ?\ArrayObject $config;
 
-	/** @var Cache|Assign|null $Cache Кэш */
+	/** @var Cache|Assign|null $Cache */
 	static Cache|Assign|null $Cache;
 
-	/** @var Template|Assign|null $T Шаблонизатор */
+	/** @var Template|Assign|null $T Template engine object */
 	static Template|Assign|null $T;
 
-	/** @var string IP адрес клиента в бинарном формате inet_pton() */
+	/** @var string IP in binary inet_pton() */
 	static string $ip;
 
 	/** Obtaining unit or object of class
@@ -161,11 +162,10 @@ class L10n extends \Eleanor\Classes\L10n
 	}
 }
 
-CMS::$ip=\filter_var($_SERVER['REMOTE_ADDR'] ?? 0,FILTER_VALIDATE_IP) ? \inet_pton($_SERVER['REMOTE_ADDR']) : 0;
 CMS::$config=new class extends \ArrayObject
 {
-	/** Получение значения
-	 * @param mixed $key Ключ, который необходимо получить
+	/** Obtaining values by key
+	 * @param mixed $key
 	 * @return mixed
 	 * @throws E */
 	function offsetGet(mixed$key):mixed
@@ -185,11 +185,22 @@ CMS::$config=new class extends \ArrayObject
 	}
 };
 
-CMS::$json=getenv('HTTP_ACCEPT')==='application/json';
-CMS::$post=$_SERVER['REQUEST_METHOD']==='POST';
-CMS::$delete=$_SERVER['REQUEST_METHOD']==='DELETE';
+CMS::$ip=\filter_var($_SERVER['REMOTE_ADDR'] ?? 0,FILTER_VALIDATE_IP) ? \inet_pton($_SERVER['REMOTE_ADDR']) : 0;
+CMS::$json=\getenv('HTTP_ACCEPT')==='application/json';
 
-//Чтобы сравнивать по $_SERVER['HTTP_CONTENT_TYPE']===Output::JSON, нужно передавать соответствующий заголовок, а это вызывает конфликт CORS (Access-Control-Allow-Headers)
+switch($_SERVER['REQUEST_METHOD'])
+{
+	case'PUT':
+		CMS::$put=true;
+	break;
+	case'POST':
+		CMS::$post=true;
+	break;
+	case'DELETE':
+		CMS::$delete=true;
+}
+
+//Comparison via header like $_SERVER['HTTP_CONTENT_TYPE']===Output::JSON causes CORS conflict (Access-Control-Allow-Headers)
 if(!$_POST && !$_FILES && CMS::$post)
 {
 	$json=\json_decode(\file_get_contents('php://input'),true);
@@ -228,18 +239,18 @@ Assign::For(CMS::$T,fn()=>new class extends Template {
 });
 Assign::For(CMS::$P,fn()=>Permissions());
 
-/** Механизм для проверки авторизации пользователя на сайте и его выхода. Аутентификация здесь не производится */
+/** Checking user authorization and logout on the site. No authentication is performed here. */
 class Authorization extends Basic
 {
-	/** @var int ID основного пользователя, из-под которого осуществляется работа (0 - пользователя нет) */
+	/** @var int ID of the current user (0 - no user) */
 	protected(set) int$current;
 
-	/** @var array ID пользователя доступных для быстрого переключения */
+	/** @var array User IDs available for quick switching */
 	protected(set) array$available;
 
-	/** @param string $table Таблица, связывающая пользователей с a11n
-	 * @param int $current ID текущего пользователя (если указан недоступный, будет выбран первый попавшийся)
-	 * @param ?External $Ext Внешняя авторизация пользователей
+	/** @param string $table A table linking users to a11n
+	 * @param int $current ID of the current user (if unavailable, the first available one will be used)
+	 * @param ?External $Ext Object of external user authorization. See cms/external.php
 	 * @throws \Throwable */
 	function __construct(readonly string$table,int$current=0,readonly ?External$Ext=null)
 	{
@@ -260,7 +271,7 @@ SQL ,[CMS::$a11n]);
 				if(\in_array($id,$available))
 					continue;
 
-				if($a['way']=='dashboard')
+				if($a['way']=='admin-panel')
 					$hidden[]=$id;
 
 				$salt=$this->Salt($id);
@@ -303,16 +314,16 @@ SQL ,[CMS::$a11n]);
 		}
 	}
 
-	/** Получение имени солёной куки для пользователя
-	 * @param int $id ID пользователя
+	/** Obtaining name of salt cookie for the user
+	 * @param int $id User ID
 	 * @return string */
 	protected function Salt(int$id):string
 	{
 		return A11N_COOKIE."-{$this->table}-".$id;
 	}
 
-	/** Выход из учётной записи
-	 * @param ?int $id ID пользователей на выход
+	/** Logout
+	 * @param ?int $id User ID
 	 * @param int $next ID of next current user (when $id is current user)
 	 * @throws \Throwable */
 	function SignOut(?int$id=null,int$next=0):void
@@ -331,9 +342,9 @@ SQL ,[CMS::$a11n]);
 			\array_splice($this->available,\array_search($id,$this->available));
 	}
 
-	/** Установка куки успешной авторизации
-	 * @param int $id ID пользователя
-	 * @param bool $temp Флаг временной сессии (куки удалятся после закрытия окна/вкладки браузера)
+	/** Setting cookie of the successful authorization
+	 * @param int $id User ID
+	 * @param bool $temp Temporary session flag (cookies are deleted after the browser window/tab is closed)
 	 * @param array $extra Extra DB parameters of session
 	 * @throws \Throwable */
 	function SignIn(int$id,bool$temp=false,array$extra=[]):void
@@ -356,9 +367,9 @@ SQL ,[CMS::$a11n]);
 	}
 }
 
-/** Проверка прав пользователя на сайте на основе его нахождения в определённых группах */
- class Permissions extends Basic
- {
+/** Checking user rights on the site based on their membership in groups. */
+class Permissions extends Basic
+{
 	/** @param array $groups of user groups, first one is user's main group
 	 * @param array $rights right name => group id => value OR right name => [IDS of groups] (array should be list)
 	 * @param array $roles list of roles */
@@ -366,7 +377,7 @@ SQL ,[CMS::$a11n]);
 
 	function __get(string$n):array|bool
 	{
-		//Если гость, то у него все права пустые
+		//If guest, all fields will be empty
 		if(!$this->rights)
 			return[];
 
@@ -388,7 +399,8 @@ SQL ,[CMS::$a11n]);
 
 /** Get permissions of the user
  * @param ?int $id UserID
- * @return Permissions */
+ * @return Permissions
+ * @throws \Throwable */
 function Permissions(?int$id=null):Permissions
 {
 	$groups=$rights=$roles=[];
@@ -429,7 +441,7 @@ SQL );
 	return new Permissions($groups,$rights,\array_unique($roles));
 }
 
-/** Установка $a11n
+/** Setting $a11n
  * @throws \Throwable */
 function A11N():void
 {
@@ -439,7 +451,7 @@ function A11N():void
 	$bytes=\random_bytes(7);
 	$id=CMS::$Db->Insert('a11n',\compact('bytes'));
 
-	//Если все ID закончились... Очистим таблицу. Для недавно вошедших пользователей создаётся неудобство, но случается такое нечасто
+	//If we'd run out of IDs... Let's clear the table. This creates an inconvenience for recently logged in users, but it doesn't happen often.
 	if($id>A11N_TRUNCATE_AFTER)
 	{
 		CMS::$Db->Query('DELETE FROM `a11n`');
@@ -462,7 +474,7 @@ function A11N():void
 function GetUsers(array|string$keys,?int$id=null,string$table='users'):array|string
 {static$data=[];
 	$id??=CMS::$A->current;
-	$isa=is_array($keys);
+	$isa=\is_array($keys);
 	$data[$id]??=[];
 	$result=[];
 
@@ -471,10 +483,10 @@ function GetUsers(array|string$keys,?int$id=null,string$table='users'):array|str
 
 	$F=fn($item)=>!isset($data[$id][$item]);
 
-	if(array_any($keys,$F))
+	if(\array_any($keys,$F))
 	{
-		$fields=array_filter($keys,$F);
-		$fields=join('`,`',$fields);
+		$fields=\array_filter($keys,$F);
+		$fields=\join('`,`',$fields);
 
 		$data[$id]+=CMS::$Db->Query(<<<SQL
 SELECT `{$fields}` FROM `{$table}` WHERE `id`={$id} LIMIT 1
@@ -484,10 +496,10 @@ SQL )->fetch_assoc();
 	foreach($keys as $k)
 		$result[$k]=$data[$id][$k];
 
-	return $isa ? $result : reset($result);
+	return $isa ? $result : \array_first($result);
 }
 
-/** Alias. Генерация nonce для скриптов. Они могут быть использованы повторно
+/** Alias. Generate nonces for scripts. They can be reused.
  * @return string
  * @throws \Random\RandomException */
 function Nonce():string
@@ -507,8 +519,8 @@ function Link(...$a):void
 	OutPut::Link(...$a);
 }
 
-/** Стандартный вывод
- * @param string $output Содержимое страницы
+/** HTML output
+ * @param string $output Content of the page
  * @never-return */
 function HTML(string$output,...$a):never
 {
@@ -520,8 +532,8 @@ function HTML(string$output,...$a):never
 	die($output);
 }
 
-/** Вывод JSON
- * @param ?array $json Содержимое страницы
+/** JSON output
+ * @param ?array $json output content
  * @never-return */
 function JSON(?array$json,...$a):never
 {
@@ -535,7 +547,7 @@ function JSON(?array$json,...$a):never
 (function(){
 	$a=\is_string($_COOKIE[A11N_COOKIE] ?? 0) ? $_COOKIE[A11N_COOKIE] : '';
 
-	//Ключ сессии состоит из 14 случайных байт и порядкового номера в hex виде
+	//The session key consists of 14 random bytes and a sequence number in hex format.
 	if(!\ctype_xdigit($a) or \strlen($a)<15)
 		return;
 
@@ -553,7 +565,7 @@ SQL );
 	$sess=$R->fetch_assoc();
 	$upd=[];
 
-	//Регенерация ключа
+	//Key regeneration
 	if($sess['regen'])
 	{
 		$upd['generated']=fn()=>'NOW()';
@@ -564,7 +576,7 @@ SQL );
 
 	$id=\hexdec($id);
 
-	//Если сессии больше года - очистим все входы (через внешние ключи)
+	//If the sessions are more than a year old, let's clear all sign-in (via foreign keys)
 	if($sess['obsolete'])
 	{
 		$upd['id']=$id;

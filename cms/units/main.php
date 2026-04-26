@@ -2,7 +2,7 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-return new class extends Abstracts\Dashboard implements Interfaces\UserSpace {
+return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 	readonly string
 		/** @var string $slug URL prefix of the unit */
 		$slug,
@@ -15,7 +15,7 @@ return new class extends Abstracts\Dashboard implements Interfaces\UserSpace {
 		$this->name=basename(__FILE__,'.php');
 	}
 
-	function UserSpace(?string$uri):never
+	function UserArea(?string $uri):never
 	{
 		$cache=CMS::$A->current ? 0 : $this->name;//Page should be cached for guests only
 
@@ -23,7 +23,7 @@ return new class extends Abstracts\Dashboard implements Interfaces\UserSpace {
 			die;
 
 		$code=200;
-		$output=require __DIR__."/{$this->name}/userspace.php";
+		$output=require __DIR__."/{$this->name}/user-area.php";
 
 		CMS::$json ? JSON($output,$code,$cache) : HTML($output,$code,$cache);
 	}

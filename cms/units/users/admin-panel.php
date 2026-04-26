@@ -3,8 +3,8 @@ namespace CMS;
 
 use CMS\Classes\Paginator;
 
-/** Dashboard of unit "users"
- * @var Classes\UriDashboard $Uri
+/** Admin of unit "users"
+ * @var Classes\Uri4AdminPanel $Uri
  * @var object $this This unit
  * @var int &$code Response code
  * @var int|string &$cache Defines cache on client (int specifies the number of seconds for which the result should be cached, string means etag content) */
@@ -29,13 +29,13 @@ SQL ,[$name]);
 }
 
 /** Userlist
- * @param bool $is_admin Only admins have right to edit users, site team can only view the list
+ * @param bool $is_root Only administrators have right to edit users, site team can only view the list
  * @return array|string */
-function Users(Classes\UriDashboard$Uri,bool$is_admin):array|string
+function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 {
 	if(CMS::$json)
 	{
-		if(!$is_admin)
+		if(!$is_root)
 			return[
 				'ok'=>false
 			];
@@ -141,7 +141,7 @@ function Users(Classes\UriDashboard$Uri,bool$is_admin):array|string
 			$id=(int)$_GET['sign-in'];
 
 			try{
-				CMS::$Db->Replace('a11n_userspace',['user_id'=>$id,'a11n_id'=>CMS::$a11n,'way'=>'dashboard']);
+				CMS::$Db->Replace('a11n_userarea',['user_id'=>$id,'a11n_id'=>CMS::$a11n,'way'=>'admin-panel']);
 			}catch(\Throwable){
 				return[
 					'ok'=>false,
@@ -283,13 +283,13 @@ SQL);
 		}
 	})();
 
-	return (CMS::$T)('users',\compact('users','groups','total','sort','pp','is_admin')+['desc'=>(bool)$order]);
+	return (CMS::$T)('users',\compact('users','groups','total','sort','pp','is_root')+['desc'=>(bool)$order]);
 }
 
 /** List of groups of users
- * @param Classes\UriDashboard $Uri
+ * @param Classes\Uri4AdminPanel $Uri
  * @return array|string */
-function Groups(Classes\UriDashboard$Uri):array|string
+function Groups(Classes\Uri4AdminPanel $Uri):array|string
 {
 	if(CMS::$json)
 	{
@@ -320,7 +320,7 @@ function Groups(Classes\UriDashboard$Uri):array|string
 			if(($id<1 or $id>4) and \is_array($_POST['roles'] ?? 0))
 				$data['roles']=join(',',$_POST['roles']);
 
-			#Slow mode (not for admin & team groups)
+			#Slow mode (not for root & team groups)
 			if(($id<1 or $id>2) and isset($_POST['slow_mode']))
 				$data['slow_mode']=(int)$_POST['slow_mode'];
 
@@ -399,7 +399,6 @@ SQL );
 			$a['slow_mode']=(int)$a['slow_mode'];
 			$a['roles']=$a['roles'] ? \explode(',',$a['roles']) : [];
 
-			$a['filter_users']=$Uri(group:$a['id']);
 			$a['deletable']=$a['id']>4;
 
 			if($multi)
@@ -419,12 +418,12 @@ SQL );
 
 #Assigning folder with templates
 if(!CMS::$json)
-	CMS::$T->queue[]=ROOT.'dashboard/'.$this->name;
+	CMS::$T->queue[]=ROOT.'admin-panel/'.$this->name;
 
-$is_admin=\in_array('admin',CMS::$P->roles);
+$is_root=\in_array('root',CMS::$P->roles);
 
 return match($_GET['zone'] ?? ''){
-	'groups'=>$is_admin ? Groups($Uri) : Halt(),
-	''=>Users($Uri,$is_admin),
+	'groups'=>$is_root ? Groups($Uri) : Halt(),
+	''=>Users($Uri,$is_root),
 	default=>Halt()
 };

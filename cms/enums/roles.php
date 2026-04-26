@@ -7,10 +7,10 @@ namespace CMS\Enums;
  * Maximum amount of roles is 64, due to limitation of elements for SET type in MySQL */
 enum Roles:string
 {
-	/** Unlimited (root) privileges */
-	case Admin='admin';
+	/** Unlimited privileges */
+	case Root='root';
 
-	/** Member of site team. Can access to dashboard but with limited rights */
+	/** Member of site team. Can access to admin panel with limited rights */
 	case Team='team';
 }
 

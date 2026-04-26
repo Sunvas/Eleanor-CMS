@@ -4,10 +4,10 @@ namespace CMS\Classes;
 
 use Eleanor\Classes\Uri;
 
-/** URI generator for dashboard */
-class UriDashboard extends \Eleanor\Basic
+/** URI generator for admin panel */
+class Uri4AdminPanel extends \Eleanor\Basic
 {
-	/** @var string Basic prefix of site directory and dashboard file */
+	/** @var string Basic prefix of site directory and admin panel file */
 	static string $base="";
 
 	/** @var bool Flag to use &amp; as param separator */
@@ -63,4 +63,4 @@ class UriDashboard extends \Eleanor\Basic
 }
 
 #Not necessary here, since class name equals filename
-return UriDashboard::class;
+return Uri4AdminPanel::class;

@@ -62,8 +62,8 @@ HTML;
 	<meta name="robots" content="noindex, follow">
 	<title>{$title} :: Eleanor CMS {$version}</title>
 {$head}
-	<link type="image/x-icon" href="../favicon.ico" rel="icon">
-	<link media="screen" href="template/style.css" type="text/css" rel="stylesheet">
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="template/style.css">
 </head>
 <body class="pagebg">
 <main class="wrapper">
@@ -433,7 +433,7 @@ HTML;
 			<div class="information">{$this->l10n['finish_text']}</div>
 			<div class="submitline">
 				<p><a href="{$sitedir}">{$this->l10n['index']}</a></p>
-				<p><a href="{$sitedir}dashboard.php">{$this->l10n['dashboard']}</a></p>
+				<p><a href="{$sitedir}admin.php">{$this->l10n['admin-panel']}</a></p>
 			</div>
 		</div>
 	</div>

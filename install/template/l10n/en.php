@@ -55,8 +55,8 @@ return[
 	'finished'=>'Installation successfully completed',
 	'finish_text'=><<<HTML
 <p>Don't forget to enable <a href="https://en.wikipedia.org/wiki/Clean_URL" target="_blank" rel="nofollow">Clean URL</a> processing on the server (when non-existent URLs are passed to index.php for processing). This can be done from the hosting panel or in the nginx configuration files &ndash; an example configuration is available in the <code>cms/library/classes/uri.php [22-33]</code> file.</p>
-<p>The installer is blocked by the <code>install/install.lock</code> file, so if you need to install the system again, you should remove it. It is recommended to delete the <code>install</code> directory with all its contents and rename the <code>dashboard.php</code> file.</p>
+<p>The installer is blocked by the <code>install/install.lock</code> file, so if you need to install the system again, you should remove it. It is recommended to delete the <code>install</code> directory with all its contents and rename the <code>admin.php</code> file.</p>
 HTML,
-	'index'=>'Go to the main page',
-	'dashboard'=>'Go to the dashboard',
+	'user-area'=>'Go to the user area',
+	'admin-panel'=>'Go to the admin panel',
 ];

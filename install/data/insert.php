@@ -47,7 +47,7 @@ $group=L10n2Db($Db,[
 ]);
 $insert['groups']=<<<SQL
 INSERT INTO `groups` (`id`, `title`, `roles`, `slow_mode`) VALUES
-(1, {$group[1]}, 'admin', 0),
+(1, {$group[1]}, 'root', 0),
 (2, {$group[2]}, 'team', 0),
 (3, {$group[3]}, '', 25),
 (4, {$group[4]}, '', 10);

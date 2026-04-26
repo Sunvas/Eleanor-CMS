@@ -1,18 +1,23 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
-//Universal abstract base for pages of settings.
-export default (template,{config,L10N,L10NS})=>({
+
+/** Universal abstract module for pages of settings
+ * @param template Placeholder element
+ * @param data
+ * @param l10n_keys list of config values with l10n contents (internal var)
+ * @param config_l10n l10n values of config (internal var) */
+export default (template,{config,L10N,L10NS},l10n_keys=[],config_l10n=new Map)=>({
 	template,
 	data:()=>({
-		config:Object.keys(config).reduce((a,key)=>Object.assign(a,{[key]:null}),Object.create(null)),//Copy of config where all keys are NULL
-		config_l10n:Object.create(null),
-
+		//Localization
 		lang:document.documentElement.lang,
 		l10n:Object.seal({
 			save:{ru:"Сохранить",en:"Save"},
 			saved:{ru:"Сохранено",en:"Saved"},
 		}),
-		monolingual:L10NS===null,//Mono language
 		l10ns:[],
+
+		//Copy of config where all keys are NULL (for reactivity purpose)
+		config:Object.keys(config).reduce((a,key)=>Object.assign(a,{[key]:null}),Object.create(null)),
 
 		changed:new Set,
 		saving:false,
@@ -20,8 +25,8 @@ export default (template,{config,L10N,L10NS})=>({
 	}),
 	watch:{
 		lang(lang){
-			for(const[k,v] of Object.entries(this.config_l10n))
-				this.config[k]=v[lang] ?? v[L10N] ?? null;
+			for(const[k,v] of config_l10n)
+				this.config[k]=v[lang] ?? null;
 		}
 	},
 	computed:{
@@ -36,10 +41,10 @@ export default (template,{config,L10N,L10NS})=>({
 		/** Should be called each time form control being changed by user real time */
 		Changed(field,val){
 			//Multilingual values
-			if(field in this.config_l10n)
-				this.config_l10n[field][this.lang]=val;
+			if(l10n_keys.includes(field))
+				config_l10n.getOrInsert(field,{})[this.lang]=val;
 
-			if(JSON.stringify(config[field])===JSON.stringify(this.config_l10n[field] ?? val))
+			if(JSON.stringify(config[field])===JSON.stringify(config_l10n.get(field) ?? val))
 				this.changed.delete(field);
 			else
 				this.changed.add(field);
@@ -50,8 +55,12 @@ export default (template,{config,L10N,L10NS})=>({
 			const store=Object.create(null);
 
 			for(const k of this.changed)
-				if(JSON.stringify(config[k])!==JSON.stringify(this.config_l10n[k] ?? this.config[k]))
-					store[k]=this.config_l10n[k] ?? this.config[k];
+			{
+				const cmp=config_l10n.get(k) ?? this.config[k];
+
+				if(JSON.stringify(config[k])!==JSON.stringify(cmp))
+					store[k]=cmp;
+			}
 
 			if(Object.keys(store).length<1)
 				return;
@@ -64,8 +73,8 @@ export default (template,{config,L10N,L10NS})=>({
 					if(ok){
 						Object.assign(config,store);
 
+						config_l10n.clear();
 						this.changed.clear();
-						this.config_l10n=Object.create(null);
 					}
 					else if(error)
 						alert( this.l10n[error] ?? error );
@@ -82,17 +91,17 @@ export default (template,{config,L10N,L10NS})=>({
 				this.l10n[k]=v[lang];
 
 		//Filling in the set of l10n
-		if(!this.monolingual && L10NS?.length)
-			import("./l10ns.js").then(({default:l10ns})=>{
+		if(L10NS?.length)
+			import("./l10ns.mjs").then(({default:l10ns})=>{
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 			});
 
 		for(const[k,v] of Object.entries(config))
 		{
-			if(!this.monolingual && v?.constructor?.name === "Object")
+			if(l10n_keys.includes(k))
 			{
-				this.config[k]=v[this.lang] ?? v[L10N];
-				this.config_l10n[k]=Object.seal({...v});
+				this.config[k]=v[this.lang] ?? null;
+				config_l10n.set(k,{...v});
 			}
 			else
 				this.config[k]=Array.isArray(v) ? v.slice() : v;

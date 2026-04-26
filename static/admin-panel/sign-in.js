@@ -31,7 +31,9 @@
 			return new Promise(resolve=>{
 				coreui.Modal.getOrCreateInstance(this.$refs.alert).show();
 
-				$(this.$refs.alert).one("hidden.coreui.modal",()=>resolve());
+				$(this.$refs.alert)
+					.one("hide.coreui.modal",()=>$(":focus",this.$refs.alert).blur())//Hidden element should be focused
+					.one("hidden.coreui.modal",()=>resolve());
 			});
 		},
 
@@ -65,7 +67,17 @@
 					else
 						this.CaptchaReset();
 
-					this.Alert(error ?? this.l10n[r.error] ?? r.error,"⛔️");
+					this.Alert(error ?? this.l10n[r.error] ?? r.error,"⛔️").then(()=>{
+						//Input activation based error
+						switch(r.error)
+						{
+							case"NOT_FOUND":
+								this.$refs.username.focus();
+							break;
+							case"WRONG_PASSWORD":
+								this.$refs.password.focus();
+						}
+					});
 				},r=>r.text().then(console.error));
 
 			this.loading=false;

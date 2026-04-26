@@ -2,7 +2,7 @@
 (async({template,container,data})=>{
 	data=JSON.parse($(data).text());
 
-	const app=(await import('./settings.js')).default(template,data);
+	const app=(await import('./settings.mjs')).default(template,data);
 
 	Vue.createApp(app).mount(container);
 })(document.currentScript.dataset);

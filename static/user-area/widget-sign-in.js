@@ -71,6 +71,16 @@
 							this.CaptchaReset();
 
 						alert(error ?? this.l10n[r.error] ?? r.error);
+
+						//Input activation based error
+						switch(r.error)
+						{
+							case"NOT_FOUND":
+								setTimeout(()=>this.$refs.username.focus(),250);
+							break;
+							case"WRONG_PASSWORD":
+								setTimeout(()=>this.$refs.password.focus(),250);
+						}
 					},r=>r.text().then(console.error));
 
 				this.loading=false;

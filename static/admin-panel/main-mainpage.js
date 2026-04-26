@@ -1,18 +1,13 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
-(({template,container,data})=>Vue.createApp({
+(({template,container,data},editor=null,content=new Map)=>Vue.createApp({
 	template,
 	data:()=>({
 		l10n:Object.seal({
 			save:{ru:"Сохранить",en:"Save"},
-			saved:{ru:"Сохранено",en:"Saved"},
-			placeholder: {ru:"Введите содержимое главной страницы",en:"Enter the contents of the main page"}
+			saved:{ru:"Сохранено",en:"Saved"}
 		}),
 		lang:document.documentElement.lang,
-		monolingual:false,
 		l10ns:[],
-
-		editor:null,
-		content:new Map,
 
 		loading:false,
 		saving:false,
@@ -28,12 +23,12 @@
 			this.loading=true;
 
 			if(!this.saved)
-				this.content.set(old,await this.editor.save());
+				content.set(old,await editor.save());
 
-			if(this.content.has(lang))
+			if(content.has(lang))
 			{
 				this.loading=false;
-				return this.editor.render(this.content.get(lang));
+				return editor.render(content.get(lang));
 			}
 
 			const url=new URL(location.href);
@@ -41,8 +36,8 @@
 			await fetch(url.toString(),{headers:{accept:"application/json"}})
 				.then(J)
 				.then(r=>{
-					this.content.set(lang,r);
-					return r ? this.editor.render(r) : this.editor.clear();
+					content.set(lang,r);
+					return r ? editor.render(r) : editor.clear();
 				},r=>r.text().then(console.error));
 
 			this.loading=false;
@@ -50,11 +45,12 @@
 	},
 	methods:{
 		async Submit(){
-			this.content.set(this.lang,await this.editor.save());
+			content.set(this.lang,await editor.save());
 
+			//ToDo! Convert to put
 			const body=new FormData;
 
-			for(const[k,v] of this.content)
+			for(const[k,v] of content)
 			{
 				const b=new Blob( [JSON.stringify(v)] ,{type:"application/json"});
 				body.append(k,b,k+".json");
@@ -79,39 +75,23 @@
 			if(v[lang])
 				this.l10n[k]=v[lang];
 
-		const{L10N,L10NS,content}=JSON.parse($(data).text());
+		const{L10N,L10NS,...extra}=JSON.parse($(data).text());
 
-		this.monolingual=L10NS===null;
-		this.content.set(lang,content);
+		content.set(lang,extra.content);
 
 		//Filling in the set of l10n
-		if(!this.monolingual && L10NS?.length)
-			import("./l10ns.js").then(({default:l10ns})=>{
+		if(L10NS?.length)
+			import("./l10ns.mjs").then(({default:l10ns})=>{
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 			});
 
 		$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 	},
-	mounted(){
-		//https://github.com/codex-team/editor.js/blob/next/types/configs/editor-config.d.ts
-		this.editor=new EditorJS({
-			holder: this.$refs.editor,
-			autofocus:true,
-			placeholder:this.l10n.placeholder,
+	async mounted(){
+		editor=(await import("./editorjs.mjs")).default(this.$refs.editor,{
 			onChange:()=>this.saved=false,
-			...(this.content.has(this.lang) ? {data:this.content.get(this.lang)} : {}),
-			tools: {
-				header: Header,
-				raw: RawTool,
-				List: {
-					class: EditorjsList,
-					inlineToolbar: true,
-					config: {
-						defaultStyle: 'unordered'
-					},
-				},
-			},
+			...(content.has(this.lang) ? {data:content.get(this.lang)} : {}),
 		});
 	}
-}).mount(container)
-)(document.currentScript.dataset);
+}).mount(container))
+(document.currentScript.dataset);

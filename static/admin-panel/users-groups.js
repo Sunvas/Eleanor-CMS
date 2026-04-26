@@ -1,5 +1,5 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
-(({template,container,data,group={}})=>Vue.createApp({
+(({template,container,data},l10n_keys=["title"],group_l10n=new Map,group=Object.create(null),l10ns_enabled=null)=>Vue.createApp({
 	template,
 	data:()=>({
 		//L10n
@@ -12,7 +12,6 @@
 			delete_group:{ru:"Вы действительно хотите удалить группу?",en:"Are you sure you want to delete the group?"},
 		}),
 		lang:document.documentElement.lang,
-		monolingual:false,
 		l10ns:[],
 		L10N:null,
 
@@ -33,9 +32,6 @@
 			roles:[],
 			slow_mode:0,
 		},
-		group_l10n:{
-			title:Object.create(null)
-		},
 
 		saving:false,
 		loading:false,
@@ -43,8 +39,8 @@
 	}),
 	watch:{
 		lang(lang){
-			for(const[k,v] of Object.entries(this.group_l10n))
-				this.group[k]=v[lang] ?? v[this.L10N] ?? null;
+			for(const[k,v] of group_l10n)
+				this.group[k]=v[lang] ?? null;
 		}
 	},
 	computed:{
@@ -71,7 +67,7 @@
 			this.confirmed=true;
 		},
 
-		/** Show confirmation modal */
+		/** Show confirmation modal dialog */
 		async Confirm(message,title){
 			this.confirm=message;
 			this.confirm_title=title;
@@ -81,6 +77,7 @@
 				coreui.Modal.getOrCreateInstance(this.$refs.confirm).show();
 
 				$(this.$refs.confirm)
+					.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())//Hidden element should be focused
 					.one("hidden.coreui.modal",()=>resolve(this.confirmed))
 					.one("shown.coreui.modal",()=>$(this.$refs.confirm_dismiss).focus());
 			});
@@ -88,22 +85,22 @@
 
 		/** Should be called each time form control input being changed by user real time */
 		Changed(field,val){
-			if(field in this.group_l10n)
-				this.group_l10n[field][this.lang]=val;
+			if(l10n_keys.includes(field))
+				group_l10n.getOrInsert(field,{})[this.lang]=val;
 
-			if(JSON.stringify(group[field])===JSON.stringify(this.group_l10n[field] ?? val))
+			if(JSON.stringify(group[field])===JSON.stringify(group_l10n.get(field) ?? val))
 				this.changed.delete(field);
 			else
 				this.changed.add(field);
 		},
 
-		/** Loading values to the local variable */
+		/** Loading values from model object (group) to the local variable */
 		Load(){
 			for(const[k,v] of Object.entries(group))
-				if(k in this.group_l10n)
+				if(l10n_keys.includes(k))
 				{
-					this.group[k]=v[this.lang] ?? v[this.L10N];
-					this.group_l10n[k]=Object.seal({...v});
+					this.group[k]=v[this.lang] ?? null;
+					group_l10n.set(k,{...v});
 				}
 				else
 					this.group[k]=Array.isArray(v) ? v.slice() : v;
@@ -134,7 +131,7 @@
 
 			this.loading=true;
 			Object.assign(group,{
-				title:this.monolingual ? "" : this.l10ns.reduce((a,[code])=>Object.assign(a,{[code]:''}),{}),
+				title:l10ns_enabled ? this.l10ns.reduce((a,[code])=>Object.assign(a,{[code]:''}),{}) : "",
 				roles:[],
 				slow_mode:10,
 			});
@@ -153,9 +150,9 @@
 				if(r.ok)
 				{
 					this.group_id=id;
-					this.group_title=this.monolingual
-						? (r.group.title!="" ? r.group.title : "#"+id)
-						: (r.group.title[this.lang] ?? r.group.title[this.L10N] ?? "#"+id);
+					this.group_title=l10ns_enabled
+						? (r.group.title[this.lang] ?? "#"+id)
+						: (r.group.title!=="" ? r.group.title : "#"+id);
 
 					Object.assign(group,r.group);
 					this.Load();
@@ -172,7 +169,7 @@
 		/** Submitting group modification form */
 		async Submit(){
 			const
-				store=this.group_id ? {} : {...this.group,...this.group_l10n},
+				store=this.group_id ? {} : {...this.group,...Object.fromEntries(group_l10n)},
 				USP=new URLSearchParams(location.search);
 
 			if(this.group_id)
@@ -180,8 +177,12 @@
 				USP.set("group",this.group_id);
 
 				for(const k of this.changed)
-					if(JSON.stringify(group[k])!==JSON.stringify(this.group_l10n[k] ?? this.group[k]))
-						store[k]=this.group_l10n[k] ?? this.group[k];
+				{
+					const cmp=group_l10n.get(k) ?? this.group[k];
+
+					if(JSON.stringify(group[k])!==JSON.stringify(cmp))
+						store[k]=cmp;
+				}
 			}
 
 			if(Object.keys(store).length<1)
@@ -195,7 +196,7 @@
 					if(ok){
 						Object.assign(group,store);
 
-						const title=this.monolingual ? group.title : (group.title[this.lang] ?? group.title[this.L10N]);
+						const title=l10ns_enabled ? (group.title[this.lang] ?? group.title[this.L10N]) : group.title;
 
 						this.group_title=title;
 
@@ -213,8 +214,8 @@
 								Object.assign(group,store,{title});
 						}
 
+						group_l10n.clear();
 						this.changed.clear();
-						this.group_l10n=Object.create(null);
 					}
 					else if(error)
 						alert( this.l10n[error] ?? error );
@@ -236,26 +237,31 @@
 			if(v[lang])
 				this.l10n[k]=v[lang];
 
-		const{L10N,L10NS,items,roles}=JSON.parse($(data).text());
+		const
+			url=new URL(location.href),
+			{L10N,L10NS,items,roles}=JSON.parse($(data).text());
 
-		items.map(function(item){
-			item.filter_users=item.filter_users.replace(/&amp;/g,"&");
+		//Link to users filtered by group
+		url.searchParams.delete("zone");
+		items.forEach(function(item){
+			url.searchParams.set("group",item.id);
+			item.filter_users=url.href;
 		});
 
-		this.monolingual=L10NS===null;
 		this.L10N=L10N;
 		this.items=items;
 		this.roles=roles;
 
+		//Flag defines how values are stored
+		l10ns_enabled=Array.isArray(L10NS);
+
 		//Filling in the set of l10n
-		if(!this.monolingual && L10NS?.length)
-			import("./l10ns.js").then(({default:l10ns})=>{
+		if(L10NS?.length)
+			import("./l10ns.mjs").then(({default:l10ns})=>{
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 			});
-
-		//Switch off multilingual values
-		if(this.monolingual)
-			this.group_l10n=Object.create(null);
+		else if(!l10ns_enabled)
+			l10n_keys.length=0;
 
 		for(const k of Object.keys(this.group))
 			this.$watch("group."+k,val=>this.loading || this.Changed(k,val));
@@ -265,5 +271,5 @@
 	mounted(){
 		$(this.$refs.group).one("hidden.coreui.modal",()=>this.group_title="");
 	}
-}).mount(container)
-)(document.currentScript.dataset);
+}).mount(container))
+(document.currentScript.dataset);

@@ -1,8 +1,8 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
 (async({template,container,data})=>{
 	const
-		{L10N,L10NS,items,groups,is_admin,my_id,...extra}=JSON.parse($(data).text()),
-		items4=(await import('./4items.js')).default(extra),
+		{L10N,L10NS,items,groups,is_root,my_id,...extra}=JSON.parse($(data).text()),
+		items4=(await import('./4items.mjs')).default(extra),
 		user=Object.create(null);
 
 	Vue.createApp({
@@ -33,7 +33,7 @@
 			//Userlist
 			items,
 			my_id,
-			is_admin,
+			is_root,
 			groups:groups.toSorted((a,b)=>a.title-b.title),
 			group2title:groups.reduce((a,v)=>a.set(v.id,v.title),new Map),
 			default_sort:"id",
@@ -100,7 +100,7 @@
 				this.confirmed=true;
 			},
 
-			/** Show confirmation modal */
+			/** Show confirmation modal dialog */
 			async Confirm(message,title){
 				this.confirm=message;
 				this.confirm_title=title;
@@ -110,6 +110,7 @@
 					coreui.Modal.getOrCreateInstance(this.$refs.confirm).show();
 
 					$(this.$refs.confirm)
+						.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())//Hidden element should be focused
 						.one("hidden.coreui.modal",()=>resolve(this.confirmed))
 						.one("shown.coreui.modal",()=>$(this.$refs.confirm_dismiss).focus());
 				});
@@ -124,7 +125,7 @@
 				}
 			},
 
-			/** Singing in into user's account on userspace */
+			/** Singing in into user's account on user area */
 			SignIn({id},index){
 				const USP=this.Filter(this.reset,false);
 				USP.set("sign-in",id);
@@ -338,7 +339,7 @@
 
 			//Filling in the set of l10n
 			if(L10NS?.length)
-				import("./l10ns.js").then(({default:l10ns})=>{
+				import("./l10ns.mjs").then(({default:l10ns})=>{
 					this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 				});
 

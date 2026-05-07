@@ -5,7 +5,7 @@ namespace CMS;
 const
 	/** @const string System version, contains 2 numbers separated by the dot (left and right).
 	 * The number before the dot (left) increases when there were made breaking backwards compatibility changes. */
-	VERSION='1.1',
+	VERSION='2.0',
 
 	/** @const string Path to static files */
 	STATIC_PATH=__DIR__.'/../static/',

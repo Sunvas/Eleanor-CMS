@@ -1,6 +1,6 @@
 /** EditorJS including
  * @url https://github.com/codex-team/editor.js/blob/next/types/configs/editor-config.d.ts */
-export default async function(div,extra=Object.create(null)){
+export default async function(div,extra={},extra_tools={}){
 	const{lang}=document.documentElement;
 
 	if(lang!=="en")
@@ -12,13 +12,6 @@ export default async function(div,extra=Object.create(null)){
 		minHeight:10,
 		placeholder:div.dataset.placeholder,
 		tools: {
-			attaches: {
-				class: AttachesTool,
-				config: {
-					endpoint: location.href,
-					field: "attach"
-				}
-			},
 			code: CodeTool,
 			embed: Embed,
 			header: Header,
@@ -29,17 +22,9 @@ export default async function(div,extra=Object.create(null)){
 					defaultStyle: 'unordered'
 				},
 			},
-			image: {
-				class: ImageTool,
-				config: {
-					endpoints: {
-						byFile: location.href,
-						byUrl: location.href,
-					}
-				}
-			},
 			quote: Quote,
 			raw: RawTool,
+			...extra_tools
 		},
 		...extra,
 	});

@@ -28,6 +28,7 @@ return new class {
 		return CMS::$T->Heading($this->l10n['title'],menu:$menu)
 			->Message($this->l10n[$error] ?? $error,'warning')
 
+			->content->BaseBlock()
 			->content->index([$this->l10n['user-sign-in']]);
 	}
 
@@ -101,11 +102,14 @@ HTML;
 </script>
 HTML )
 
+				->content->BaseBlock()
 				->content->index([$this->l10n['user-sign-in']]);
 		}
 
 		return CMS::$T->Heading($this->l10n['title'])
 			->Message($this->l10n['use-widget'],'info')
+
+			->content->BaseBlock()
 			->content->index([$this->l10n['user-sign-in']]);
 	}
 
@@ -117,6 +121,7 @@ HTML )
 		return CMS::$T->Heading($this->l10n['signing-up'])
 			->Message($this->l10n[$error] ?? $error,$error=='MISSED_TELEGRAM' ? 'warning' : 'info')
 
+			->content->BaseBlock()
 			->content->index([$this->l10n['signing-up']]);
 	}
 
@@ -176,6 +181,7 @@ HTML )
 </script>
 HTML )
 
+		->content->BaseBlock()
 		->content->index([$this->l10n['signing-up']]);
 	}
 
@@ -191,6 +197,7 @@ HTML;
 		return CMS::$T->Heading($this->l10n['signed-out'])
 			->Message($this->l10n['signed-out_'],'info')
 
+			->content->BaseBlock()
 			->content->index(
 				head:[$refresh],
 				title:[$this->l10n['signed-out']],
@@ -276,6 +283,7 @@ HTML;
 </script>
 HTML )
 
+			->content->BaseBlock()
 			->content->index(
 				[$this->l10n['settings'],$this->l10n['title']],
 			);
@@ -330,6 +338,7 @@ HTML )
 </script>
 HTML )
 
+			->content->BaseBlock()
 			->content->index(
 				[$this->l10n['password-changing'],$this->l10n['title']],
 			);
@@ -394,6 +403,7 @@ HTML )
 HTML )
 			->Message(sprintf($this->l10n['sessions-info%'],$mtss),'info')
 
+			->content->BaseBlock()
 			->content->index(
 				[$this->l10n['signed-out']],
 			);

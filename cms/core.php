@@ -2,15 +2,9 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-use Eleanor\Basic,
-	Eleanor\Assign,
-	Eleanor\Library,
-	Eleanor\Classes\E,
-	Eleanor\Classes\Cache,
-	Eleanor\Classes\MySQL,
-	Eleanor\Classes\Template,
-
-	CMS\Interfaces\External;
+use Eleanor\{Basic,Assign,Library};
+use Eleanor\Classes\{E, Cache, MySQL, Template};
+use CMS\Interfaces\External;
 
 use function
 	Eleanor\Autoloader,

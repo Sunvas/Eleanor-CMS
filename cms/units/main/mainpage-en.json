@@ -1,1 +1,8 @@
-null
+{"time":0,"blocks":[
+  {"id":"EwZrolCT_R","type":"header","data":{"text":"Thank you for your interest in Eleanor CMS!","level":1}},
+  {"id":"buHpjsuyLm","type":"paragraph","data":{"text":"Although the current version is a demonstration release and does not yet offer the full range of features, it already allows you to evaluate the system’s key capabilities:"}},
+  {"id":"u7azwiFbOo","type":"paragraph","data":{"text":"✅ Static Pages Unit. Designed for creating informational sections of a website where content is rarely updated. Ideal for pages such as “About Us”, “Contacts”, “Terms of Use”, and similar sections."}},
+  {"id":"Tgm5SYji8w","type":"paragraph","data":{"text":"✅ User Account Unit. Provides user registration and authentication on the site. The system supports logging in to several accounts simultaneously, as well as accessing a single account from different devices — making interaction with the platform flexible and convenient."}},
+  {"id":"YxiXZPsVYX","type":"paragraph","data":{"text":"✅ Admin Panel. Offers advanced website management capabilities for administrators. Users in the “Site Team” group have limited access to the panel, which enables them to perform their tasks while maintaining the required level of security and permission separation."}},
+  {"id":"9QGgxnhrMc","type":"paragraph","data":{"text":"💡 Work on Eleanor CMS continues. Please share your feedback on the system in our Telegram group. Your input will help make the system even more functional and user-friendly!"}}
+],"version":"2.31.6"}

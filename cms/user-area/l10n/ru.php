@@ -7,7 +7,7 @@ return[
 
 	#Menu
 	'demo-blog'=>'Демо blog unit',
-	'demo-static'=>'Демо static page',
+	'demo-static'=>'Демо статической страницы',
 	'demo-direct'=>'Демо direct',
 	'demo-text'=>'Демо text',
 	'demo-json'=>'Демо JSON',

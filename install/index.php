@@ -2,12 +2,8 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-use Eleanor\Library,
-	Eleanor\Classes\EM,
-	Eleanor\Classes\L10n,
-	Eleanor\Classes\MySQL,
-	Eleanor\Classes\Output,
-	Eleanor\Classes\Template;
+use Eleanor\Library;
+use Eleanor\Classes\{EM,L10n,MySQL,Output,Cache,Template};
 
 use const Eleanor\SITEDIR;
 use function Eleanor\AwareInclude;
@@ -31,7 +27,7 @@ function CheckEnv():array
 	if(\file_exists(LOCK))
 		return['LOCKED'];
 
-	if(\version_compare(PHP_VERSION,'8.4','<'))
+	if(\version_compare(PHP_VERSION,'8.5','<'))
 		$errors[]='LOW_PHP_VERSION';
 
 	if(!\function_exists('mysqli_connect'))
@@ -209,7 +205,7 @@ function Step4():string
 		try{
 			$Db->Query($v);
 		}catch(EM$E){
-			$err=(string)$E;
+			$err=$E->getMessage();
 		}
 
 		if(!is_int($k))
@@ -260,7 +256,10 @@ function Step5():string
 		$err=false;
 
 		try{
-			$Db->Query($v);
+			if(\is_string($v))
+				$Db->Query($v);
+			elseif($v instanceof \Closure)
+				$v();
 		}catch(EM$E){
 			$err=(string)$E;
 		}
@@ -350,8 +349,49 @@ TEXT;
 		],JSON);
 		\file_put_contents(BASE.'cms/config/site.json',$mainpage);
 
+		#Deleting unsued l10n files
+		$folders=[
+			'admin-panel/l10n',
+			'admin-panel/main/l10n',
+			'admin-panel/sidebar/l10n',
+			'admin-panel/static/l10n',
+			'admin-panel/users/l10n',
+			'library/l10n',
+			'user-area/l10n',
+			'user-area/unit-account/l10n',
+		];
+
+		$l10ns=$_SESSION['l10ns'] ?? [];
+		$l10ns[]=$_SESSION['l10n'];
+
+		foreach($folders as $folder)
+		{
+			$folder=__DIR__."/../cms/$folder/";
+			$files=\scandir($folder);
+
+			if(!\is_array($files))
+				continue;
+
+			$files=array_filter($files,fn($item)=>\str_ends_with($item,'.php'));
+
+			foreach($files as $file)
+			{
+				$filename=\strrchr($file,'.php',true);
+				$l10n=\explode('-',$filename) |> array_last(...);
+
+				if(!\in_array($l10n,$l10ns))
+					\unlink($folder.$file);
+			}
+		}
+
+		#Deleting other unused files
+		foreach(\array_diff(['en','ru'],$l10ns) as $l10n)
+			\unlink(__DIR__."/../cms/units/main/mainpage-$l10n.json");
+
 		#locking the installer to prevent another installation
 		\file_put_contents(__DIR__.'/install.lock',1);
+
+		new Cache(BASE.'cms/cache')->Put('admin-panel','admin.php',0,true);
 	}
 
 	L10n::$code=$_SESSION['l10n'];

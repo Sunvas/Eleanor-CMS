@@ -7,7 +7,7 @@ namespace CMS;
  * @var array $links List of links */
 
 $l10n=new L10n('settings-site',__DIR__.'/l10n/');
-$data=['L10N'=>L10N,'L10NS'=>L10NS,'config'=>$config];
+$data=['L10N'=>L10N,'L10NS'=>L10NS,'config'=>$config,'l10n_keys'=>['name','title','description']];
 $title=[$l10n['title']];
 $script='static/admin-panel/main-settings.js';
 

@@ -11,7 +11,7 @@
 			//L10n
 			l10n:Object.seal({
 				delete:{ru:"Вы действительно хотите удалить статическую страницу?",en:"Are you sure you want to delete the static page?"},
-				ACTIVE:{ru:"ОК",en:"OK"},
+				ACTIVE:{ru:"Активна",en:"Active"},
 				DRAFT:{ru:"Черновик",en:"Draft"},
 			}),
 			lang:document.documentElement.lang,

@@ -19,6 +19,8 @@ return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 	{
 		Canonical($this->slug);
 
+		Alternate(fn(string$code,Uri$Uri)=>$Uri($this->slug));
+
 		#ToDo! Currently it is just a demo. In future versions full-featured of blog unit will be developed.
 		$output=CMS::$T->Heading('Blog')
 			->Container(<<<HTML
@@ -26,6 +28,7 @@ return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 <p>Contents of this page is located in cms/units/{$this->name}.php</p>
 HTML )
 
+			->content->BaseBlock()
 			->content->index('Demo blog unit');
 
 		#Output: cache is off for users

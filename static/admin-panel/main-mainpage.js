@@ -47,7 +47,6 @@
 		async Submit(){
 			content.set(this.lang,await editor.save());
 
-			//ToDo! Convert to put
 			const body=new FormData;
 
 			for(const[k,v] of content)
@@ -88,7 +87,10 @@
 		$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 	},
 	async mounted(){
-		editor=(await import("./editorjs.mjs")).default(this.$refs.editor,{
+		const
+			ejs=await import("./editorjs.mjs");
+
+		editor=await ejs.default(this.$refs.editor,{
 			onChange:()=>this.saved=false,
 			...(content.has(this.lang) ? {data:content.get(this.lang)} : {}),
 		});

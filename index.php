@@ -79,8 +79,11 @@ function Alternate(\Closure$Gen):void
 	if(!L10NS)
 		return;
 
-	foreach(CMS::$T->default['hreflang'] as $lang=>&$l)
+	foreach([L10N,...L10NS] as $lang)
 	{
+		if(L10n::$code===$lang)
+			continue;
+
 		$Uri=new class($lang) extends Uri {
 			static string $base='';
 
@@ -90,7 +93,11 @@ function Alternate(\Closure$Gen):void
 				parent::__construct('');
 			}
 		};
-		$l=$Gen($lang,$Uri);
+
+		$link=$Gen($lang,$Uri);
+
+		if($link!==null)
+			CMS::$T->default['hreflang'][$lang]=$link;
 	}
 }
 
@@ -154,11 +161,6 @@ SQL );
 		#Next, the unit will decide what to do: to leave everything as is (no duplicate page due to the canonical header) or redirect to the correct address.
 		Redirect(SITEDIR.$preferred.'/'.Uri::Make($loc).'?from=autol10n'.($_SERVER['QUERY_STRING'] ? '&'.$_SERVER['QUERY_STRING'] : ''),307);
 	}
-
-	#Links to other localizations
-	foreach($stack as $k)
-		if($k!=L10n::$code)
-			CMS::$T->default['hreflang'][$k]=$k.'/';
 }
 else
 	L10n::$code=L10N;

@@ -32,7 +32,7 @@ if(CMS::$A->current)
 			</a>
 			<h5 style="padding:4px 0 4px"><?=$display_name ?: $name?></h5>
 			<div>
-				<?=$adminpanel ? "<a href='{$admin}'>{$l10n['admin-panel']}</a> | " : ''?>
+				<?=$adminpanel ? "<a href='$adminpanel'>{$l10n['admin-panel']}</a> | " : ''?>
 				<a href="<?=$Uri('sign-out')?>"><?=$l10n['sign-out']?></a>
 			</div>
 <?php if(CMS::$A->available){

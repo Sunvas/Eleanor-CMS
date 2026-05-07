@@ -59,7 +59,7 @@ Link('//cdn.jsdelivr.net');
 if(isset($hreflang))
 {
 	$base=\Eleanor\PROTOCOL.\Eleanor\PUNYCODE.\Eleanor\SITEDIR;
-	echo \array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."<link rel='alternate' href='{$base}{$hreflang[$code]}' hreflang='{$code}'>","\t<link rel='alternate' href='{$base}' hreflang='x-default'>");
+	echo \array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."<link rel='alternate' href='{$base}{$hreflang[$code]}' hreflang='{$code}'>","\t");
 }
 ?>
 
@@ -97,7 +97,7 @@ if(isset($hreflang))
 			<nav>
 				<ul class="topmenu">
 					<li><a href="<?=$Menu('blog')?>"><?=$l10n['demo-blog']?></a></li>
-					<li><a href="<?=$Menu('demo-static')?>"><?=$l10n['demo-static']?></a></li>
+					<li><a href="<?=$Menu(L10n::$code==='ru' ? 'демо-страница' : 'demo-static')?>"><?=$l10n['demo-static']?></a></li>
 					<li><a href="<?=$Menu('demo-direct')?>"><?=$l10n['demo-direct']?></a></li>
 					<li><a href="<?=$Menu('demo-text')?>"><?=$l10n['demo-text']?></a></li>
 					<li><a href="<?=$Menu('demo-json')?>"><?=$l10n['demo-json']?></a></li>
@@ -108,13 +108,9 @@ if(isset($hreflang))
 
 	<div class="container">
 		<div class="mainbox">
-			<div id="maincol">
-				<div class="baseblock"><div class="dtop"><div class="dbottom">
-					<main class="dcont">
-						<?=$content?>
-					</main>
-				</div></div></div>
-			</div>
+			<main id="maincol">
+				<?=$content?>
+			</main>
 		</div>
 
 		<aside id="leftcol">
@@ -138,7 +134,7 @@ echo CMS::$T->BlockLight(title:'Light widget 1',content:'Light content 1')
 			<a title="<?=$l10n['to_top']?>" href="#" class="top-top" id="top"><img src="static/user-area/images/top-top.png" alt=""></a>
 			<nav class="menu">
 				<a href="<?=Uri::$base?>blog"><?=$l10n['demo-blog']?></a>
-				<a href="<?=Uri::$base?>demo-static"><?=$l10n['demo-static']?></a>
+				<a href="<?=$Menu(L10n::$code==='ru' ? 'демо-страница' : 'demo-static')?>"><?=$l10n['demo-static']?></a>
 				<a href="<?=Uri::$base?>demo-direct"><?=$l10n['demo-direct']?></a>
 				<a href="<?=Uri::$base?>demo-test"><?=$l10n['demo-text']?></a>
 				<a href="<?=Uri::$base?>demo-json"><?=$l10n['demo-json']?></a>

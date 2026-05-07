@@ -432,7 +432,7 @@ HTML;
 			</div>
 			<div class="information">{$this->l10n['finish_text']}</div>
 			<div class="submitline">
-				<p><a href="{$sitedir}">{$this->l10n['index']}</a></p>
+				<p><a href="{$sitedir}">{$this->l10n['user-area']}</a></p>
 				<p><a href="{$sitedir}admin.php">{$this->l10n['admin-panel']}</a></p>
 			</div>
 		</div>

@@ -12,6 +12,8 @@ if(CMS::$json)
 #Main page doesn't have subpages
 Canonical('');
 
+Alternate(fn(string$code,Uri$Uri)=>(string)$Uri);
+
 #Loading the config of the site
 $config=CMS::$config['site'];
 

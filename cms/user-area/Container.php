@@ -1,9 +1,6 @@
 <?php
-namespace CMS;
-
 /** Контейнер раздела
  * @var string $content содержимое */
-
 ?>
 <div class="binner">
 	<?=$content ?? $var_0 ?? ''?>

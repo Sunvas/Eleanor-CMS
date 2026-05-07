@@ -1,18 +1,16 @@
 <?php
 namespace CMS;
 
-/** Main page of the site
- * @var string $title Head title
- * @var string $description Meta description
- * @var string $content JSON content for main page (from editorJS) */
+/** Статическая страница
+ * @var string $title Заголовок
+ * @var string $description Meta описание
+ * @var string $content_source EditorJS json */
 
-#Loading language values
-$l10n=new L10n('main',__DIR__.'/l10n/');
 $jsdelivr=',npm/editorjs-html@4/.build/edjsHTML.browser.js';
 $scripts['editorjs']=<<<SCRIPT
 L.then(()=>{
 	const
-		content={$content},
+		content={$content_source},
 		html=content ? edjsHTML().parse(content) : '';
 
 	if(html instanceof Error)
@@ -25,17 +23,13 @@ SCRIPT;
 #It is possible to echo entire HTML here, but we have "index" template with variables - lets use it
 echo CMS::$T
 
-	//Content with article
-	->Heading($l10n['title'])
+	->Heading($title)
 	->Container('<article></article>')
 	->content->BaseBlock()
 
-	//Info
-	->BaseBlock((CMS::$T)('Container',$l10n['content']))
-
 	->content->index(
-		title:$title,
+		title:[$title],
 		description:$description,
 		jsdelivr:$jsdelivr,
-		scripts:$scripts
+		scripts:$scripts,
 	);

@@ -40,10 +40,7 @@ function Main(object$Unit):array|string
 
 			$file=$Unit->GetMainPageFile($lang);
 
-			if(!\is_file($file) or !\is_uploaded_file($F['tmp_name']))
-				continue;
-
-			if(\move_uploaded_file($F['tmp_name'],$file))
+			if(\is_uploaded_file($F['tmp_name']) and \move_uploaded_file($F['tmp_name'],$file))
 				$success++;
 		}
 

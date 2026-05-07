@@ -1,7 +1,7 @@
 <?php
 return[
+	'title'=>'Демо главной страницы сайта',
 	'content'=><<<'HTML'
-<h1>Демо главной страницы сайта</h1>
-<p>Содержимое этой страницы находится в юните главной страницы &ndash; cms/units/main/user-area.php</p>
+<p>Содержимое этой страницы находится в юните главной страницы &ndash; <code>cms/units/main/user-area.php</code></p>
 HTML,
 ];

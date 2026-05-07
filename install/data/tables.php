@@ -6,6 +6,9 @@ $l10ns=$_SESSION['l10ns'];
 if($l10ns!==null)
 	$l10ns[]=$l10n;
 
+#Order matters: `a11n` cant' be dropped first
+$tables[]='DROP TABLE IF EXISTS `a11n_userarea`';
+$tables[]='DROP TABLE IF EXISTS `a11n_adminpanel`';
 $tables[]='DROP TABLE IF EXISTS `a11n`';
 
 $tables['a11n']=<<<'SQL'
@@ -19,7 +22,6 @@ CREATE TABLE `a11n` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization';
 SQL;
 
-$tables[]='DROP TABLE IF EXISTS `a11n_adminpanel`';
 $tables['a11n_adminpanel']=<<<'SQL'
 CREATE TABLE `a11n_adminpanel` (
 	`a11n_id` smallint UNSIGNED NOT NULL,
@@ -30,7 +32,6 @@ CREATE TABLE `a11n_adminpanel` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization for admin panel';
 SQL;
 
-$tables[]='DROP TABLE IF EXISTS `a11n_userarea`';
 $tables['a11n_userarea']=<<<'SQL'
 CREATE TABLE `a11n_userarea` (
 	`a11n_id` smallint UNSIGNED NOT NULL,
@@ -73,43 +74,75 @@ CREATE TABLE `groups` (
 SQL;
 
 #Static pages
+$tables[]='DROP TABLE IF EXISTS `static_backup`';
 $tables[]='DROP TABLE IF EXISTS `static`';
 
 if($l10ns===null)
-	$tables['static']=<<<SQL
+{
+	$tables['static']=<<<'SQL'
 CREATE TABLE `static` (
 	`id` smallint UNSIGNED NOT NULL,
 	`status` enum('ACTIVE','DRAFT') NOT NULL DEFAULT 'DRAFT',
-	`slug` varchar(100) NULL,
+	`slug` varchar(100) DEFAULT NULL,
 	`title` varchar(100) NOT NULL DEFAULT '',
-	`content` mediumtext NOT NULL,
-	`content_source` json NOT NULL,
-	`description` varchar(250) NOT NULL DEFAULT '',
-	`modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+	`description` varchar(250) NOT NULL DEFAULT '' COMMENT 'Meta description',
+	`content` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT 'HTML parsed from content_source.',
+	`content_source` json DEFAULT NULL COMMENT 'Data saved from EditorJS.save()',
+	`content_files` json DEFAULT NULL COMMENT 'Array of filenames which used in content',
+	`content_state` enum('OK','OK_PARTIAL','STALE','PARSING') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'OK' COMMENT 'Defines content status related to content_source. When it is stale it needs to be reparsed.',
+	`content_parsing_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Shows time when parsing content_source -> content was started (content_state = ''STALE'') or finished (content_state = ''OK'').',
+	`files` json NOT NULL,
+	`modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Time when page was modified'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 SQL;
+
+	$tables['static_backup']=<<<'SQL'
+CREATE TABLE `static_backup` (
+	`id` smallint UNSIGNED NOT NULL COMMENT 'ID of the page',
+	`created_at` timestamp NOT NULL COMMENT 'Rounded to the minute',
+	`content_source` json NOT NULL,
+	`files` json NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Trigger generated backup of page content. No more than once an hour.';
+SQL;
+}
 else
 {
-	$slug=$title=$content=$description='';
+	$slug=$title=$content=$description=$files=$modified='';
 
 	foreach($l10ns as $code)
 	{
 		$slug.="`slug_{$code}` varchar(100) NULL,";
 		$title.="`title_{$code}` varchar(100) NOT NULL DEFAULT '',";
-		$content.="`content_{$code}` mediumtext NULL,`content_source_{$code}` json NULL,";
-		$description.="`description_{$code}` varchar(250) NULL DEFAULT '',";
+		$description.="`description_{$code}` varchar(250) NOT NULL DEFAULT '' COMMENT 'Meta description',";
+		$content.="`content_{$code}` mediumtext NULL COMMENT 'HTML parsed from content_source_{$code}',
+`content_source_{$code}` JSON NULL COMMENT 'Data saved from EditorJS.save()',
+`content_files_{$code}` json DEFAULT NULL COMMENT 'Array of filenames which used in content',
+`content_state_{$code}` enum('OK','OK_PARTIAL','STALE','PARSING') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'OK' COMMENT 'Defines content status related to content_source. When it is stale it needs to be reparsed.',
+`content_parsing_at_{$code}` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Shows time when parsing content_source_{$code} -> content was started (content_state_{$code} = ''STALE'') or finished (content_state_{$code} = ''OK'').',";
+		$files.="`files_{$code}` json DEFAULT NULL,";
+		$modified.="`modified_{$code}` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Time when the page was modified',";
 	}
 
 	$set="'".join("','",$l10ns)."'";
+	$modified=rtrim($modified,',');
 
 	$tables['static']=<<<SQL
 CREATE TABLE `static` (
 	`id` smallint UNSIGNED NOT NULL,
 	`status` enum('ACTIVE','DRAFT') NOT NULL DEFAULT 'DRAFT',
 	`l10ns` set($set) DEFAULT '{$l10n}' COMMENT 'Empty means that the page is monolingual',
-	{$slug}{$title}{$content}{$description}
-	`modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+	{$slug}{$title}{$description}{$content}{$files}{$modified}
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+SQL;
+
+	$tables['static_backup']=<<<SQL
+CREATE TABLE `static_backup` (
+	`id` smallint UNSIGNED NOT NULL COMMENT 'ID of the page',
+	`l10n` enum($set) DEFAULT '{$l10n}',
+	`created_at` timestamp NOT NULL COMMENT 'Rounded to the minute',
+	`content_source` json NOT NULL,
+	`files` json NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Trigger generated backup of page content. No more than once an hour.';
 SQL;
 }
 
@@ -170,6 +203,11 @@ ALTER TABLE `cron`
 	ADD KEY `status` (`status`,`date`);
 SQL;
 
+$tables['events_primary']=<<<'SQL'
+ALTER TABLE `events`
+	ADD PRIMARY KEY (`happened`,`event`);
+SQL;
+
 $tables['groups_primary']=<<<'SQL'
 ALTER TABLE `groups`
 	ADD PRIMARY KEY (`id`);
@@ -177,11 +215,18 @@ SQL;
 
 #Static pages
 if($l10ns===null)
+{
 	$tables['static_primary']=<<<'SQL'
 ALTER TABLE `static`
 	ADD PRIMARY KEY (`id`),
 	ADD UNIQUE KEY `slug` (`slug`);
 SQL;
+
+	$tables['static_backup_primary']=<<<'SQL'
+ALTER TABLE `static_backup`
+	ADD PRIMARY KEY (`id`,`created_at`) USING BTREE;
+SQL;
+}
 else
 {
 	$slug='';
@@ -192,6 +237,11 @@ else
 	$tables['static_primary']=<<<SQL
 ALTER TABLE `static`
 	ADD PRIMARY KEY (`id`){$slug};
+SQL;
+
+	$tables['static_backup_primary']=<<<'SQL'
+ALTER TABLE `static_backup`
+	ADD PRIMARY KEY (`id`,`l10n`,`created_at`) USING BTREE;
 SQL;
 }
 
@@ -243,9 +293,79 @@ ALTER TABLE `a11n_userarea`
 	ADD CONSTRAINT `a11n_userarea_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 SQL;
 
-$tables['events_primary']=<<<'SQL'
-ALTER TABLE `events`
-	ADD PRIMARY KEY (`happened`,`event`);
+$tables['static_backup_constraints']=<<<'SQL'
+ALTER TABLE `static_backup`
+	ADD CONSTRAINT `static_backup_ibfk_1` FOREIGN KEY (`id`) REFERENCES `static` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 SQL;
+
+#Triggers
+$tables[]='DROP TRIGGER IF EXISTS `StaticContentModified`';
+
+if($l10ns===null)
+{
+	$tables['StaticContentModified']=<<<'SQL'
+CREATE TRIGGER `StaticContentModified`
+BEFORE UPDATE ON `static`
+FOR EACH ROW
+BEGIN
+	DECLARE `need_backup` TINYINT DEFAULT 1;
+
+	IF NOT (NEW.`content_source` <=> OLD.`content_source` OR OLD.`content_source` IS NULL) THEN
+		-- Modification of content marks content as stale
+		SET NEW.`content_state` = 'STALE';
+
+		-- Backup is created no more than once per hour
+		SELECT IF(`created_at` < NOW() - INTERVAL 1 HOUR,1,0) INTO `need_backup` FROM `static_backup` WHERE `id`=NEW.`id` ORDER BY `created_at` DESC LIMIT 1;
+
+		IF (`need_backup`=1) THEN
+			INSERT INTO `static_backup` (`id`,`created_at`,`content_source`,`files`) VALUES (OLD.`id`, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00'), OLD.`content_source`, COALESCE(OLD.`files`,'[]'));
+		END IF;
+	END IF;
+
+	-- Set time start for PARSING on OK states
+	IF (NEW.`content_state` <> OLD.`content_state` AND NEW.`content_state` IN ('PARSING','OK')) THEN
+		SET NEW.`content_parsing_at`=NOW();
+	END IF;
+END;
+SQL;
+}
+else
+{
+	$trigger='';
+
+	foreach($l10ns as $code)
+		$trigger.=<<<SQL
+	IF NOT (NEW.`content_source_{$code}` <=> OLD.`content_source_{$code}` OR OLD.`content_source_{$code}` IS NULL) THEN
+		-- Modification of content marks content as stale
+		SET NEW.`content_state_{$code}` = 'STALE';
+
+		-- Backup is created no more than once per hour
+		SELECT IF(`created_at` < NOW() - INTERVAL 1 HOUR,1,0) INTO `need_backup` FROM `static_backup` WHERE `id`=NEW.`id` AND `l10n`='{$code}' ORDER BY `created_at` DESC LIMIT 1;
+
+		IF (`need_backup`=1) THEN
+			INSERT INTO `static_backup` (`id`,`l10n`,`created_at`,`content_source`,`files`) VALUES (OLD.`id`, '{$code}', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00'), OLD.`content_source_{$code}`, COALESCE(OLD.`files_{$code}`,'[]'));
+		END IF;
+	END IF;
+
+	-- Set time start for PARSING on OK states
+	IF (NEW.`content_state_{$code}` <> OLD.`content_state_{$code}` AND NEW.`content_state_{$code}` IN ('PARSING','OK')) THEN
+		SET NEW.`content_parsing_at_{$code}`=NOW();
+	END IF;
+
+
+SQL;
+
+	$trigger=\rtrim($trigger,"\n");
+	$tables['StaticContentModified']=<<<SQL
+CREATE TRIGGER `StaticContentModified`
+BEFORE UPDATE ON `static`
+FOR EACH ROW
+BEGIN
+	DECLARE `need_backup` TINYINT DEFAULT 1;
+
+{$trigger}
+END;
+SQL;
+}
 
 return$tables;

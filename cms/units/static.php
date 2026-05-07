@@ -2,29 +2,58 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-return new class extends Abstracts\Dashboard {
+return new class extends Abstracts\AdminPanel {
 	function __construct()
 	{
 		$this->name=\basename(__FILE__,'.php');
 	}
 
-	/** This special method is called directly from /index.php Should return never is page exists.
+	/** This special method is called directly from /index.php Should return never if page exists.
 	 * @param string $slug page name
-	 * @param ?string $uri subpage name	**/
+	 * @param ?string $uri subpage name **/
 	function Try(string$slug,?string$uri):void
 	{
-		#ToDo! In future versions all static pages will be stored in DB. Currently it is just a demo
-		if($slug==='demo-static')
+		if(!CMS::$A->current and Return304())
+			die;
+
+		if(L10NS===null)
+			$query=<<<SQL
+SELECT `title`, `description`, `content_source`, `modified` FROM `static` WHERE `slug`=? AND `status`='ACTIVE' LIMIT 1
+SQL ;
+		else
 		{
-			Canonical($slug);
+			$def=L10N;
+			$code=L10n::$code;
+			$query=<<<SQL
+SELECT
+	COALESCE(`title_$code`,`title_$def`) `title`,
+	COALESCE(`description_$code`,`description_$def`) `description`,
+	COALESCE(`content_source_$code`,`content_source_$def`) `content_source`,
+	COALESCE(`modified_$code`,`modified_$def`) `modified`,
+	`slug_ru`, `slug_en`
+FROM `static` WHERE `slug_$code`=? AND `status`='ACTIVE' LIMIT 1
+SQL;
+		}
 
-			$output=CMS::$T->Container(<<<'HTML'
-<h1>Demo of static page</h1>
-<p>Contents of this page is located in cms/units/static.php</p>
-HTML)
-			->content->index(title:'Demo static page');
+		if($uri!==null)
+			$slug.='/'.$uri;
 
-			#Output: cache is off for users
+		$R=CMS::$Db->Execute($query,[$slug]);
+
+		if($R->num_rows>0)
+		{
+			$item=$R->fetch_assoc();
+
+			#Links to alternative localizations
+			Alternate(fn(string$code,Uri$Uri)=>isset($item['slug_'.$code]) ? $Uri(explode('/',$item['slug_'.$code])) : null);
+
+			#Canonical link
+			Canonical(new Uri,\explode('/',$slug));
+
+			#Generating HTML of the page
+			$output=(CMS::$T)('StaticPage',$item);
+
+			#Output HTML to browser. Cache is off for users.
 			HTML($output,200,CMS::$A->current ? 0 : 86400);
 		}
 	}

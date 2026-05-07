@@ -1,0 +1,20 @@
+<?php
+return[
+	'updating%'=>'Editing of <q>%s</q>',
+	'content'=>'Page content',
+	'title'=>'Page title',
+	'slug'=>'Page slug',
+	'status'=>'Status',
+	'active'=>'Active',
+	'draft'=>'Draft',
+	'draft_'=>'Available only for administrators',
+	'description'=>'Meta description',
+	'placeholder'=>'Input page content',
+	'l10n'=>'Localization',
+	'mono'=>'Mono',
+	'mono_'=>'The same content is displayed for all languages',
+	'delete'=>'Delete',
+	'delete_'=>'Delete the current language of the page',
+	'yes'=>'Yes',
+	'no'=>'No',
+];

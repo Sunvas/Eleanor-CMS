@@ -8,16 +8,17 @@ if(CMS::$json)
 	JSON(['ok'=>false],404);
 
 Canonical($slug);
+Alternate(fn(string$code,Uri$Uri)=>$Uri($slug));
 
-$output=(CMS::$T)('index',
-	title:'Demo direct page',
-	content:<<<HTML
-<div class="binner">
+$output=CMS::$T
+	->Container(<<<'HTML'
+<article>
 	<h1>Demo of direct page</h1>
 	<p>Contents of this page is located in cms/direct/demo-direct.php</p>
-</div>
-HTML,
-);
+</article>
+HTML )
+	->content->BaseBlock()
+	->content->index(title:'Demo direct page');
 
 #Cache is off for users
 HTML($output,200,CMS::$A->current ? 0 : 86400);

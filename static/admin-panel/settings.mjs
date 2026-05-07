@@ -3,9 +3,8 @@
 /** Universal abstract module for pages of settings
  * @param template Placeholder element
  * @param data
- * @param l10n_keys list of config values with l10n contents (internal var)
  * @param config_l10n l10n values of config (internal var) */
-export default (template,{config,L10N,L10NS},l10n_keys=[],config_l10n=new Map)=>({
+export default (template,{config,L10N,L10NS,l10n_keys=[]},config_l10n=new Map)=>({
 	template,
 	data:()=>({
 		//Localization
@@ -95,6 +94,8 @@ export default (template,{config,L10N,L10NS},l10n_keys=[],config_l10n=new Map)=>
 			import("./l10ns.mjs").then(({default:l10ns})=>{
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 			});
+		else if(!Array.isArray(L10NS))
+			l10n_keys.length=0;
 
 		for(const[k,v] of Object.entries(config))
 		{

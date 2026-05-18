@@ -31,7 +31,7 @@ function Star():array|string
 }
 
 if(!CMS::$json)
-	CMS::$T->queue[]=ROOT.'admin-panel/'.$this->name;
+	CMS::$T[]=ROOT.'admin-panel/'.$this->name;
 
 $is_root=\in_array('root',CMS::$P->roles);
 

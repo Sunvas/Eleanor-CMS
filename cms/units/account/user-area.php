@@ -590,22 +590,22 @@ SQL ,[$current,MONTHS_TO_STALE_SESSION,CMS::$A->current]);
 if(!CMS::$json)
 {
 	#Loading template of the unit
-	CMS::$T->queue[]=require ROOT."user-area/unit-{$this->name}/object.php";
+	CMS::$T[]=require ROOT."user-area/unit-{$this->name}/object.php";
 
 	#Checking URI correctness via canonical urls
 	Canonical($Uri,$slug);
+
+	#Making links to alternative l10n versions of page
+	Alternate(fn($code,$Uri)=>$Uri([$this->slug,$slug]));
 }
 
-#Making links to alternative l10n versions of page
-Alternate(fn($code,$Uri)=>$Uri([$this->slug,$slug]));
-
-#Linkts for user inside unit
+#Links for user inside unit
 if(CMS::$A->current)
 {
-	CMS::$T->default['links']['sign-in']=(string)$Uri;
+	CMS::$T['links']['sign-in']=(string)$Uri;
 
 	foreach(['settings','sessions','change-password'] as $link)
-		CMS::$T->default['links'][$link]=$Uri($link);
+		CMS::$T['links'][$link]=$Uri($link);
 }
 
 return match($slug ?? ''){

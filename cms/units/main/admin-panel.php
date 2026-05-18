@@ -136,8 +136,8 @@ function SettingsSystem():array|string
 
 if(!CMS::$json)
 {
-	CMS::$T->queue[]=ROOT.'admin-panel/'.$this->name;
-	CMS::$T->default['links']+=[
+	CMS::$T[]=ROOT.'admin-panel/'.$this->name;
+	CMS::$T['links']+=[
 		'settings'=>$Uri(zone:'settings'),
 		'settings-system'=>$Uri(zone:'settings-system'),
 	];

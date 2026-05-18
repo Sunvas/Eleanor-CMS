@@ -217,7 +217,7 @@ Assign::For(CMS::$Db,fn()=>new \Eleanor\Classes\MySQL(
 	CMS::$config['db']['db'],
 ));
 Assign::For(CMS::$Cache,fn()=>new Cache(ROOT.'cache'));
-Assign::For(CMS::$T,fn()=>new class extends Template {
+Assign::For(CMS::$T,fn(...$a)=>new class(...$a) extends Template {
 	/** @var bool Flag to run cron.php (background tasks) */
 	private(set) bool $cron {
 		get {

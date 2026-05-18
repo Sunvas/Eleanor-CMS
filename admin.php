@@ -5,7 +5,8 @@ namespace CMS;
 /** Amount of seconds between login attempts */
 const SECONDS=5;
 
-use Eleanor\Classes\Output,
+use Eleanor\Assign,
+	Eleanor\Classes\Output,
 
 	CMS\Enums\Events,
 	CMS\Classes\Uri4AdminPanel,
@@ -50,10 +51,11 @@ CMS::$A=new Authorization('a11n_adminpanel',0,require ROOT.'external.php');
 while(CMS::$A->current and !array_intersect(['root','team'],CMS::$P->roles))
 	CMS::$A->SignOut();
 
-if(!CMS::$json)
-	CMS::$T->queue[]=ROOT.'admin-panel';
+#Arguments for the Template constructor (template source)
+if(!CMS::$json and CMS::$T instanceof Assign)
+	CMS::$T->args[0]=ROOT.'admin-panel';
 
-//Sign in & sign out
+#Sign in & sign out
 elseif(!$_SERVER['QUERY_STRING'])
 {
 	//Sign out
@@ -174,9 +176,9 @@ if(CMS::$A->current)
 
 	Uri4AdminPanel::$base=SITEDIR.$fn;
 
-	CMS::$T->default['links']=[
-		'home'=>Uri4AdminPanel::$base
-	];
+	#Arguments for the Template constructor (default variables)
+	if(!CMS::$json and CMS::$T instanceof Assign)
+		CMS::$T->args[1]['links']['home']=Uri4AdminPanel::$base;
 
 	#Redirect to the main unit
 	if(!\is_string($_GET['u'] ?? 0))

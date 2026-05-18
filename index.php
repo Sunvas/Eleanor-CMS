@@ -67,9 +67,9 @@ function Canonical(Uri|string$Uri,string|array$slug='',...$a):void
 		$orig=$slug==='' ? (string)$Uri : $Uri($slug,...$a);
 
 	if($_SERVER['REQUEST_URI']!==\htmlspecialchars_decode($orig))
-		CMS::$T->default['canonical']=$orig;
+		CMS::$T['canonical']=$orig;
 	else
-		CMS::$T->default['canonical']=null;
+		CMS::$T['canonical']=null;
 }
 
 /** Making URI for alternative l10n of page
@@ -97,7 +97,7 @@ function Alternate(\Closure$Gen):void
 		$link=$Gen($lang,$Uri);
 
 		if($link!==null)
-			CMS::$T->default['hreflang'][$lang]=$link;
+			CMS::$T['hreflang'][$lang]=$link;
 	}
 }
 
@@ -165,18 +165,18 @@ SQL );
 else
 	L10n::$code=L10N;
 
-#Template binding
-if(!CMS::$json)
-{
-	CMS::$T->queue[]=ROOT.'user-area';
-	CMS::$T->default+=[
-		#Link to admin panel
-		'adminpanel'=>CMS::$a11n && CMS::$A->current && array_intersect(['root','team'],CMS::$P->roles) ? CMS::$Cache->Get('admin-panel',true) : null,
+#Arguments for the Template constructor (template source and default variables)
+if(!CMS::$json and CMS::$T instanceof Assign)
+	CMS::$T->args=[
+		ROOT.'user-area',
+		[
+			#Link to admin panel
+			'adminpanel'=>CMS::$a11n && CMS::$A->current && array_intersect(['root','team'],CMS::$P->roles) ? CMS::$Cache->Get('admin-panel',true) : null,
 
-		#hCaptcha key
-		'hcaptcha'=>CMS::$config['system']['captcha'] ? CMS::$config['system']['hcaptcha'] : ''
+			#hCaptcha key
+			'hcaptcha'=>CMS::$config['system']['captcha'] ? CMS::$config['system']['hcaptcha'] : ''
+		]
 	];
-}
 
 #Site is closed (under maintenance), return https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/503
 if(CMS::$config['system']['maintenance'] and !\in_array('maintainer',CMS::$P->roles))

@@ -2,17 +2,17 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS\Enums;
 
-/** Exclusive list of roles of user groups. Feel free to add your own events to this enum, but at the same time
- * as modifying this file, you need to modify the fields in the database: `roles` fiend in `groups`.
- * Maximum amount of roles is 64, due to limitation of elements for SET type in MySQL */
+/** Exclusive list of user group roles. Feel free to add your own roles to this enum, but at the same time
+ * as modifying this file, you need to modify the `roles` field in the `groups` table.
+ * The maximum number of roles is 64 because MySQL SET supports up to 64 elements. */
 enum Roles:string
 {
-	/** Unlimited privileges */
+	/** Unlimited privileges. */
 	case Root='root';
 
-	/** Member of site team. Can access to admin panel with limited rights */
+	/** Member of the site team with limited access to the admin panel. */
 	case Team='team';
 }
 
-#Not necessary here, since enum name equals filename
+# Not required here because the enum name matches filename
 return Roles::class;

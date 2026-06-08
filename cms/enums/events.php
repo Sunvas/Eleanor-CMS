@@ -2,20 +2,20 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS\Enums;
 
-/** Exclusive list of asynchronous system events. Each event is stored in `events` table and can trigger cron task.
+/** Exclusive list of asynchronous system events. Each event is stored in the `events` table and can trigger a cron task.
  * Feel free to add your own events to this enum, but at the same time as modifying this file, you need to modify the
- * fields in the database: `event` fiend in `events` table and `triggers` field in `cron` table.
- * Maximum amount of events is 64, due to limitation of elements for SET type in MySQL */
+ * fields in the database: `event` field in the `events` table and `triggers` field in the `cron` table.
+ * The maximum number of events is 64 because MySQL SET supports up to 64 elements. */
 enum Events:string
 {
-	use \CMS\Traits\Events;#Separate file for methods to keep this file clear
+	use \CMS\Traits\Events;# Separate file for methods to keep this file clear
 
-	/** New user has been added to the system. Expected parameters: id */
+	/** A new user has been added to the system. Expected parameters: id */
 	case UserCreated='user_created';
 
-	/** Users signed in. Expected parameters: id (user id), way (username, telegram), ip (IP of the user), ua (user agent of user's browser), where (user area, admin panel) */
+	/** A user signed in. Expected parameters: id (user id), way (authorization method), ip (IP of the user), ua (user agent of user's browser), where (user area, admin panel) */
 	case UserSignedIn='user_signed_in';
 }
 
-#Not necessary here, since enum name equals filename
+# Not required here because the enum name matches filename
 return Events::class;

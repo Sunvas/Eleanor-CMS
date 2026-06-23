@@ -25,7 +25,8 @@ ul li { margin: 0; padding: 0; }
 ol { list-style-image: none; list-style-position: outside; list-style-type: decimal; margin-bottom: 18px; margin-left: 2.2em; }
 table { border-collapse: collapse; border-spacing: 0; }
 .reset, .reset li { margin: 0; padding: 0; list-style: none; }
-.wrapper { padding: 86px 0 0; width: 555px; text-align: left; margin: 0 auto; }
+.wrapper { padding: 34px 0 0; width: 555px; text-align: left; margin: 0 auto; }
+main { zoom:1.1; }
 code { color: darkred; }
 
 .elh { margin: 0 0 4px 0; height: 125px; background: url("images/elhead.png") repeat-x 0 -250px; }
@@ -39,9 +40,9 @@ code { color: darkred; }
 
 /*version*/
 .version { float: right; overflow: hidden; }
-	.version span span, .version span span span { float: left; height: 22px; background: #4b4d4d url("images/version.png") no-repeat 0 0; }
-	.version span span { margin: 23px 0 0; color: #fff; line-height: 21px; }
-	.version span span span { padding: 0 10px 0 10px; margin: 0; background-color: transparent; background-position: 100% -22px; }
+	.version span, .version span span { float: left; height: 22px; background: #4b4d4d url("images/version.png") no-repeat 0 0; }
+	.version span { margin: 23px 0 0; color: #fff; line-height: 21px; }
+	.version span span { padding: 0 10px 0; margin: 0 0 0 5px; background-color: transparent; background-position: 100% -22px; }
 
 /*process*/
 .process { padding: 11px 0 0; overflow: hidden; text-align: center; }
@@ -105,11 +106,11 @@ code { color: darkred; }
 	padding: 6px;
 	text-align: left;
 	color: #7e7e7e;
-	margin: 0 5px 0;
 	border: 1px solid #d3d3d3;
 	background-color: #fafafa;
 	line-height: normal;
 }
+.wpmid > .warning { margin: 0 5px 0; }
 
 .warning + .warning { margin-top: 5px; }
 

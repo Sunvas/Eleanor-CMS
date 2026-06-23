@@ -11,7 +11,8 @@ use function Eleanor\AwareInclude;
 const
 	JSON = \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE,
 	LOCK = __DIR__.'/install.lock',
-	BASE = __DIR__.'/../';
+	BASE = __DIR__.'/../',
+	REQUIRED_PHP_VERSION = 8.5;
 
 require BASE.'cms/library/core.php';
 require BASE.'cms/constants.php';//Just for VERSION
@@ -27,7 +28,7 @@ function CheckEnv():array
 	if(\file_exists(LOCK))
 		return['LOCKED'];
 
-	if(\version_compare(PHP_VERSION,'8.5','<'))
+	if(\version_compare(\PHP_VERSION,REQUIRED_PHP_VERSION,'<'))
 		$errors[]='LOW_PHP_VERSION';
 
 	if(!\function_exists('mysqli_connect'))
@@ -81,9 +82,10 @@ function Step1():string
 		return Step2();
 	}
 
-	$_SESSION=[
-		'step'=>1
-	];
+	if(!$_POST)
+		$_SESSION=[];
+
+	$_SESSION['step']=1;
 
 	return$T('Step1');
 }
@@ -119,7 +121,7 @@ function Step3($errors=[]):string
 	{
 		$next=true;
 
-		foreach(['host','user','pass','db', 'title','description','hcaptcha','hsecret','bot_name','bot_key', 'username','password','password2'] as $f)
+		foreach(['host','user','pass','db', 'title','description','hcaptcha','hsecret', 'username','password','password2'] as $f)
 			if(\is_string($_POST[$f] ?? 0))
 				$_SESSION[$f]=$_POST[$f];
 			else
@@ -142,7 +144,7 @@ function Step3($errors=[]):string
 	$_SESSION['step']=3;
 
 	return$T('Step3',
-		host:$_SESSION['host'] ?? 'localhost',
+		host:$_SESSION['host'] ?? 'p:localhost',
 		user:$_SESSION['user'] ?? '',
 		pass:$_SESSION['pass'] ?? '',
 		db:$_SESSION['db'] ?? '',
@@ -154,8 +156,6 @@ function Step3($errors=[]):string
 		description:$_SESSION['description'] ?? '',
 		hcaptcha:$_SESSION['hcaptcha'] ?? '',
 		hsecret:$_SESSION['hsecret'] ?? '',
-		bot_key:$_SESSION['bot_key'] ?? '',
-		bot_name:$_SESSION['bot_name'] ?? '',
 
 		username:$_SESSION['username'] ?? '',
 		password:$_SESSION['password'] ?? '',
@@ -196,7 +196,7 @@ function Step4():string
 		return Step3(['MYSQL_LOW']);
 
 	$status=[];
-	$tables=AwareInclude(__DIR__.'/data/tables.php',['Db'=>$Db]);
+	$tables=AwareInclude(__DIR__.'/data/tables.php',compact('Db'));
 
 	foreach($tables as $k=>$v)
 	{
@@ -212,7 +212,7 @@ function Step4():string
 			$status[$k]=$err;
 	}
 
-	#PHP 8.6
+	# PHP 8.6: migrate to pipe operator
 	$ok=!array_any($status,fn($item)=>\is_string($item));
 
 	if($ok)
@@ -249,7 +249,7 @@ function Step5():string
 	}
 
 	$status=[];
-	$insert=AwareInclude(__DIR__.'/data/insert.php',['Db'=>$Db]);
+	$insert=AwareInclude(__DIR__.'/data/insert.php',compact('Db'));
 
 	foreach($insert as $k=>$v)
 	{
@@ -268,7 +268,7 @@ function Step5():string
 			$status[$k]=$err;
 	}
 
-	#PHP 8.6
+	# PHP 8.6: migrate to pipe operator
 	$ok=!array_any($status,fn($item)=>\is_string($item));
 
 	if($ok)
@@ -311,7 +311,7 @@ return[
 	'db'=>{$db},
 ];
 PHP;
-		\file_put_contents(BASE.'cms/config/db.php',$config_db);
+		\file_put_contents(BASE.'cms/config/db.php',$config_db,\LOCK_EX);
 
 		#robots.txt
 		$protocol=\Eleanor\PROTOCOL;
@@ -320,25 +320,23 @@ PHP;
 User-agent: *
 Sitemap: {$protocol}{$domain}{$sitedir}sitemap.xml
 TEXT;
-		\file_put_contents(BASE.'robots.txt',$config_robots);
+		\file_put_contents(BASE.'robots.txt',$config_robots,\LOCK_EX);
 
 		#system constants
 		$l10ns=\is_array($_SESSION['l10ns']) ? \join(',',\array_map(fn($item)=>\var_export($item,true),$_SESSION['l10ns'])) : '';
 		$config=\file_get_contents(BASE.'cms/constants.php');
 		$config=\preg_replace('#L10N=[^,]+#',"L10N='{$_SESSION['l10n']}'",$config);
 		$config=\preg_replace('#L10NS=[^;]+#',$_SESSION['l10ns']===null ? 'L10NS=null' : "L10NS=[{$l10ns}]",$config);
-		\file_put_contents(BASE.'cms/constants.php',$config);
+		\file_put_contents(BASE.'cms/constants.php',$config,\LOCK_EX);
 
 		#system config
 		$system=\json_encode([
 			'maintenance'=>false,
 			'captcha'=>false,
-			'bot_name'=>$_SESSION['bot_name'],
-			'bot_key'=>$_SESSION['bot_key'],
 			'hcaptcha'=>$_SESSION['hcaptcha'],
 			'hcaptcha_secret'=>$_SESSION['hsecret'],
 		],JSON);
-		\file_put_contents(BASE.'cms/config/system.json',$system);
+		\file_put_contents(BASE.'cms/config/system.json',$system,\LOCK_EX);
 
 		#config of main page
 		$mono=$_SESSION['l10ns']===null;
@@ -347,7 +345,7 @@ TEXT;
 			'title'=>$mono ? '' : [$_SESSION['l10n']=>''],
 			'description'=>$mono ? $_SESSION['description'] : [$_SESSION['l10n']=>$_SESSION['description']],
 		],JSON);
-		\file_put_contents(BASE.'cms/config/site.json',$mainpage);
+		\file_put_contents(BASE.'cms/config/site.json',$mainpage,\LOCK_EX);
 
 		#Deleting unsued l10n files
 		$folders=[
@@ -389,7 +387,7 @@ TEXT;
 			\unlink(__DIR__."/../cms/units/main/mainpage-$l10n.json");
 
 		#locking the installer to prevent another installation
-		\file_put_contents(__DIR__.'/install.lock',1);
+		\file_put_contents(__DIR__.'/install.lock',1,\LOCK_EX);
 
 		new Cache(BASE.'cms/cache')->Put('admin-panel','admin.php',0,true);
 	}
@@ -398,7 +396,7 @@ TEXT;
 	$_SESSION['step']=6;
 
 	#Erasing session
-	foreach(['host','user','pass','db', 'title','description','hcaptcha','hsecret','bot_name','bot_key', 'username','password','password2'] as $f)
+	foreach(['host','user','pass','db', 'title','description','hcaptcha','hsecret', 'username','password','password2'] as $f)
 		unset($_SESSION[$f]);
 
 	return$T('Step6',$sitedir);

@@ -1,4 +1,5 @@
 <?php
+
 return[
 	'version'=>'Версия: ',
 	'error'=>'Ошибка',
@@ -7,7 +8,7 @@ return[
 	'installation_impossible'=>'Продолжение установки невозможно',
 	'problems'=>'Выявлены следующие проблемы',
 	'LOCKED'=>'Установка заблокирована файлом <code>install/install.lock</code>.<br>Удалите этот файл и обновите страницу.',
-	'LOW_PHP_VERSION'=>sprintf('Для системы необходим PHP не ниже версии 8.4. У вас %s.',PHP_VERSION),
+	'LOW_PHP_VERSION'=>sprintf('Для системы необходим PHP не ниже версии <span style="color:darkblue">%s</span>. У вас <span style="color:darkred">%s</span>.',\CMS\REQUIRED_PHP_VERSION,\PHP_VERSION),
 	'MYSQLI_MISSED'=>'PHP модуль MySQLi недоступен.',
 	'NOT_WRITABLE'=>'Следующие папки и файлы должны быть доступны для записи:<br>',
 	'NOT_EXIST'=>'Следующих папок и файлов не существует:<br>',
@@ -19,8 +20,9 @@ return[
 
 	'config'=>'Конфигурация',
 	'fill'=>'Пожалуйста, заполните все поля',
-	'db'=>'База данных',
-	'db_host'=>'Сервер базы данных',
+	'db'=>'MySQL База данных',
+	'db_host'=>'Сервер базы данных MySQL',
+	'db_host_'=>'Если добавить префикс <code>p:</code>, будет использоваться постоянное соединение',
 	'db_name'=>'Название базы данных',
 	'db_user'=>'Пользователь',
 	'db_pass'=>'Пароль',
@@ -34,13 +36,10 @@ return[
 	'add-l10n'=>'Добавить английский язык',
 	'hcaptcha'=>'Ключ <a href="https://hCaptcha.com/?r=2b68096cb450" target="_blank" title="Получить" rel="nofollow">hCaptcha 🔗</a>',
 	'hsecret'=>'Секрет hCaptcha',
-	'bot_name'=>'Telegram BOT username',
-	'bot_key'=>'Telegram BOT Api Token',
 	'administrator'=>'Учётная запись администратора',
 	'username'=>'👤 Имя пользователя',
 	'p1'=>'Введите пароль',
 	'p2'=>'Повторите пароль',
-	'PASS_MISMATCH'=>'Пароли не совпадают',
 	'MYSQL_CONNECT'=>'Невозможно подключиться к серверу MySQL',
 	'MYSQL_LOW'=>'👎 Требуется версия сервера MySQL не ниже <b>8.0</b>',
 	'install'=>'📦 Установить',
@@ -54,7 +53,7 @@ return[
 	'finish'=>'Завершение установки',
 	'finished'=>'Установка успешно завершена',
 	'finish_text'=><<<HTML
-<p>Не забудьте включить на сервере обработку <a href="https://ru.wikipedia.org/wiki/Человекопонятный_URL" target="_blank" rel="nofollow">ЧПУ</a> (когда несуществующие URL передаются для обработки в index.php). Делается это либо в панели хостинга, либо в конфигурационных файлах nginx &ndash; пример конфигурации доступен в файле <code>cms/library/classes/uri.php [22-33]</code>.</p>
+<p>Не забудьте включить на сервере обработку <a href="https://ru.wikipedia.org/wiki/Человекопонятный_URL" target="_blank" rel="nofollow">ЧПУ</a> (когда несуществующие URL передаются для обработки в index.php). Делается это либо в панели хостинга, либо в конфигурационных файлах nginx &ndash; пример конфигурации доступен в файле <code>cms/library/classes/uri.php [12-23]</code>.</p>
 <p>Установщик был заблокирован файлом <code>install/install.lock</code>, поэтому, если понадобится установить систему еще раз, следует его удалить. Рекомендуется удалить каталог <code>install</code> со всем его содержимым и переименовать файл <code>admin.php</code>.</p>
 HTML,
 	'user-area'=>'Перейти на главную страницу',

@@ -2,12 +2,8 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-use Eleanor\Classes\Html,
-	Eleanor\Classes\L10n;
-
-use const
-	Eleanor\CHARSET,
-	Eleanor\SITEDIR;
+use Eleanor\Classes\L10n;
+use const Eleanor\{CHARSET,SITEDIR};
 
 return new class extends \Eleanor\Basic {
 	readonly L10n $l10n;
@@ -55,13 +51,13 @@ HTML;
 
 		return<<<HTML
 <!DOCTYPE html>
-<html lang="{$lang}">
+<html lang="$lang">
 <head>
-	<base href="{$sitedir}">
+	<base href="$sitedir">
 	<meta charset="utf-8">
 	<meta name="robots" content="noindex, follow">
-	<title>{$title} :: Eleanor CMS {$version}</title>
-{$head}
+	<title>$title :: Eleanor CMS $version</title>
+$head
 	<link rel="icon" href="../favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="template/style.css">
 </head>
@@ -71,18 +67,18 @@ HTML;
 		<div class="head">
 			<h1>Eleanor CMS</h1>
 			<div class="version">
-				<span><span><span>{$this->l10n['version']}<b>{$version}</b></span></span></span>
+				<span><span>{$this->l10n['version']}<b>$version</b></span></span>
 			</div>
 		</div>
 		<div class="process">
 			<div class="procline" title="{$this->l10n['progress']}"><img style="width:{$percent}%" src="{$this->http}images/spacer.png" alt="{$percent}%" title="{$percent}%"></div>
-			<div class="procinfo"><span>{$navi}</span></div>
+			<div class="procinfo"><span>$navi</span></div>
 		</div>
 	</div></div></div>
 	<div class="wpbox">
 		<div class="wptop"><b>&nbsp;</b></div>
 		<div class="wpmid">
-			<div class="wpcont">{$content}</div>
+			<div class="wpcont">$content</div>
 			<div class="clr"></div>
 		</div>
 		<div class="wpbtm"><b>&nbsp;</b></div>
@@ -158,7 +154,7 @@ HTML;
 				<div class="textarea license">
 <p><strong>TL;DR: Do whatever the fuck you want!</strong></p>
 <h1>MIT License</h1>
-<p>Copyright (c) {$year} <a href="https://sunvas.online" target="_blank" style="color:black">Alexnader Sunvas</a></p>
+<p>Copyright (c) $year <a href="https://sunvas.online" target="_blank" style="color:black">Alexnader Sunvas</a></p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -190,79 +186,59 @@ HTML;
 	}
 
 	/** Шаг 3: Настройки подключения к БД */
-	function Step3(string$host,string$user,string$pass,string$db,string$title,string$description,string$hcaptcha,string$hsecret,string$bot_name,string$bot_key,bool$multilang,array$l10ns,string$username,string$password,string$password2,array$errors,...$d):string
+	function Step3(string$host,string$user,string$pass,string$db,string$title,string$description,string$hcaptcha,string$hsecret,bool$multilang,array$l10ns,string$username,string$password,string$password2,array$errors,...$d):string
 	{
-		$host=Html::Input('host',$host,['class'=>'f_text','tabindex'=>1,'id'=>'host','autofocus','required','autocomplete'=>'off'],0b10);
-		$db=Html::Input('db',$db,['class'=>'f_text','tabindex'=>1,'id'=>'db','required','autocomplete'=>'off'],0b10);
-		$user=Html::Input('user',$user,['class'=>'f_text','tabindex'=>1,'id'=>'user','required','autocomplete'=>'username'],0b10);
-		$pass=Html::Input('pass',$pass,['class'=>'f_text','tabindex'=>1,'id'=>'pass','autocomplete'=>'current-password'],0b10);
-
-		$title=Html::Input('title',$title,['class'=>'f_text','tabindex'=>1,'id'=>'title','required'],0b10);
-		$description=Html::Text('description',$description,['class'=>'f_text','id'=>'description','tabindex'=>1],0b10);
-		$hcaptcha=Html::Input('hcaptcha',$hcaptcha,['class'=>'f_text','tabindex'=>1,'id'=>'hcaptcha','pattern'=>'[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}','autocomplete'=>'off'],0b10);
-		$hsecret=Html::Input('hsecret',$hsecret,['class'=>'f_text','tabindex'=>1,'id'=>'hsecret','autocomplete'=>'off'],0b10);
-		$bot_name=Html::Input('bot_name',$bot_name,['class'=>'f_text','tabindex'=>1,'id'=>'bot_name','pattern'=>'[a-z\d_]+bot','autocomplete'=>'off'],0b10);
-		$bot_key=Html::Input('bot_key',$bot_key,['class'=>'f_text','tabindex'=>1,'id'=>'bot_key','pattern'=>'\d+:[a-z\d]+','autocomplete'=>'off'],0b10);
-
-		$multi=Html::Check('multilang',$multilang,['id'=>'multi']);
-		$l10ns=L10n::$code=='ru'
-			? Html::Check('l10ns[]',in_array('en',$l10ns),['value'=>'en','id'=>'l10ns'])
-			: Html::Check('l10ns[]',in_array('ru',$l10ns),['value'=>'ru','id'=>'l10ns']);
-
-		$username=Html::Input('username',$username,['class'=>'f_text','tabindex'=>1,'id'=>'username','required','maxlength'=>25,'autocomplete'=>'nickname'],0b10);
-		$p1=Html::Input('password',$password,['class'=>'f_text','tabindex'=>1,'required','type'=>'password','id'=>'p1','minlength'=>10,'autocomplete'=>'new-password'],0b10);
-		$p2=Html::Input('password2',$password2,['class'=>'f_text','tabindex'=>1,'required','type'=>'password','id'=>'p2','autocomplete'=>'new-password'],0b10);
-
 		Link('//cdn.jsdelivr.net');
 
+		$data=\compact('host','user','pass','db','title','description','hcaptcha','hsecret','multilang','l10ns','username','password','password2');
+		$data=\json_encode($data,JSON);
 		$nonce=Nonce();
 		$this->head[]=<<<HTML
-<script src="//cdn.jsdelivr.net/npm/jquery@4/dist/jquery.slim.min.js" nonce="{$nonce}" defer></script>
-<script nonce="{$nonce}">addEventListener('DOMContentLoaded',function(){
-	$("#p2").on("change",function(){
-		this.setCustomValidity($(this).val()!==$("#p1").val() ? "{$this->l10n['PASS_MISMATCH']}" : "");
-	}).trigger("change");
-
-	$("#multi").on("change",function(){
-		$("#l10ns").prop("disabled",!$(this).prop("checked"));
-	}).trigger("change");
-
-	$("#back-form").empty();
-	$("#back").on("click",function(){
-		$("form#main [name]").clone().removeAttr("required id minlength pattern").prop("hidden",true).appendTo("#back-form");
-	});
-})</script>
+<script src="//cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.min.js" nonce="$nonce" defer></script>
+<script id="app-data" type="application/json">$data</script>
+<script nonce="$nonce" src="template/step-3.js" defer data-container="#app" data-template="#app-tpl" data-data="#app-data"></script>
 HTML;
 
 		$db_errors='';
 
 		foreach(['MYSQL_CONNECT','MYSQL_LOW'] as $err)
-			if(in_array($err,$errors))
+			if(\in_array($err,$errors))
 				$db_errors.=$this->Message($this->l10n[$err]);
 
 		$content=<<<HTML
 <div class="wpbox wpbwhite">
 	<div class="wptop"><b>&nbsp;</b></div>
 	<div class="wpmid">
-		<div class="wpcont">
-			<form method="post" id="main">
+		<div class="wpcont" id="app"></div>
+		<script id="app-tpl" type="text/x-template">
+			<form method="post">
 				<h2 class="subhead">{$this->l10n['db']}</h2>{$db_errors}
 				<ul class="reset formfield">
 					<li class="ffield">
 						<label for="host">{$this->l10n['db_host']}</label>
-						<div class="ffdd">{$host}</div>
+						<div class="ffdd">
+							<input type="text" name="host" class="f_text" tabindex="1" id="host" v-model.lazy="host" autofocus required autocomplete="off">
+							<br><small>{$this->l10n['db_host_']}</small>
+						</div>
 					</li>
 					<li class="ffield">
 						<label for="db">{$this->l10n['db_name']}</label>
-						<div class="ffdd">{$db}<br><small>{$this->l10n['db-info']}</small></div>
+						<div class="ffdd">
+							<input type="text" name="db" class="f_text" tabindex="1" id="db" v-model.lazy="db" required autocomplete="off">
+							<br><small>{$this->l10n['db-info']}</small>
+						</div>
 					</li>
 					<li class="ffield">
 						<label for="user">{$this->l10n['db_user']}</label>
-						<div class="ffdd">{$user}</div>
+						<div class="ffdd">
+							<input type="text" name="user" class="f_text" tabindex="1" id="user" v-model.lazy="user" required autocomplete="username">
+						</div>
 					</li>
 					<li class="ffield">
 						<label for="pass">{$this->l10n['db_pass']}</label>
-						<div class="ffdd">{$pass}</div>
+						<div class="ffdd">
+							<input type="text" name="pass" class="f_text" tabindex="1" id="pass" v-model.lazy="pass" autocomplete="current-password">
+						</div>
 					</li>
 				</ul>
 				<br>
@@ -270,35 +246,41 @@ HTML;
 				<ul class="reset formfield">
 					<li class="ffield">
 						<label for="title">{$this->l10n['site-name']}</label>
-						<div class="ffdd">{$title}</div>
+						<div class="ffdd">
+							<input type="text" name="title" class="f_text" tabindex="1" id="title" v-model.lazy="title" required>
+						</div>
 					</li>
 					<li class="ffield">
 						<label for="description">{$this->l10n['description']}</label>
-						<div class="ffdd">{$description}</div>
+						<div class="ffdd">
+							<textarea name="description" class="f_text" tabindex="1" id="description" v-model.lazy="description"></textarea>
+						</div>
 					</li>
 					<li class="ffield">
-						<label>{$this->l10n['multilang']}</label>
+						<label for="multi">{$this->l10n['multilang']}</label>
 						<div class="ffdd">
-							<label>{$multi} <span>{$this->l10n['multi']}</span></label>
+							<label>
+								<input type="checkbox" name="multilang" tabindex="1" id="multi" v-model="multilang">
+								<span>{$this->l10n['multi']}</span>
+							</label>
 							<br>
-							<label>{$l10ns} <span>{$this->l10n['add-l10n']}</span></label>
+							<label>
+								<input type="checkbox" name="l10ns[]" tabindex="1" id="l10ns" v-model="l10ns" :disabled="!multilang" v-for="value of translations" :value>
+								<span>{$this->l10n['add-l10n']}</span>
+							</label>
 						</div>
 					</li>
 					<li class="ffield">
 						<label for="hcaptcha">{$this->l10n['hcaptcha']}</label>
-						<div class="ffdd">{$hcaptcha}</div>
+						<div class="ffdd">
+							<input type="text" name="hcaptcha" class="f_text" tabindex="1" id="hcaptcha" v-model.lazy="hcaptcha" pattern="[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}" autocomplete="off">
+						</div>
 					</li>
 					<li class="ffield">
 						<label for="hsecret">{$this->l10n['hsecret']}</label>
-						<div class="ffdd">{$hsecret}</div>
-					</li>
-					<li class="ffield">
-						<label for="bot_name">{$this->l10n['bot_name']}</label>
-						<div class="ffdd">{$bot_name}</div>
-					</li>
-					<li class="ffield">
-						<label for="bot_key">{$this->l10n['bot_key']}</label>
-						<div class="ffdd">{$bot_key}</div>
+						<div class="ffdd">
+							<input type="text" name="hsecret" class="f_text" tabindex="1" id="hsecret" v-model.lazy="hsecret" autocomplete="off">
+						</div>
 					</li>
 				</ul>
 				<br>
@@ -306,24 +288,33 @@ HTML;
 				<ul class="reset formfield">
 					<li class="ffield">
 						<label for="username">{$this->l10n['username']}</label>
-						<div class="ffdd">{$username}</div>
+						<div class="ffdd">
+							<input type="text" name="username" class="f_text" tabindex="1" id="username" v-model.lazy="username" required autocomplete="nickname" maxlength="25">
+						</div>
 					</li>
 					<li class="ffield">
 						<label for="p1">{$this->l10n['p1']}</label>
-						<div class="ffdd">{$p1}</div>
+						<div class="ffdd">
+							<input type="password" name="password" class="f_text" tabindex="1" id="p1" v-model.lazy="password" required autocomplete="new-password" minlength="10">
+						</div>
 					</li>
 					<li class="ffield">
 						<label for="p2">{$this->l10n['p2']}</label>
-						<div class="ffdd">{$p2}</div>
+						<div class="ffdd">
+							<input type="password" name="password2" class="f_text" tabindex="1" id="p2" ref="p2" v-model.lazy="password2" required autocomplete="new-password" minlength="10">
+						</div>
 					</li>
 				</ul>
 				<div class="submitline">
-					<input type="submit" value="{$this->l10n['back']}" name="back" class="button" tabindex="1" id="back" form="back-form">
+					<input type="submit" value="{$this->l10n['back']}" name="back" class="button" tabindex="1" form="back-form">
 					<input type="submit" value="{$this->l10n['install']}" name="next" class="button" tabindex="1">
 				</div>
 			</form>
-			<form method="post" id="back-form"></form>
-		</div>
+			<form method="post" id="back-form" @submit="Back">
+				<input type="hidden" v-for="[name,value] in back" :name :value>
+				<input type="hidden" name="l10ns[]" v-if="multilang" v-for="value in l10ns" :value>
+			</form>
+		</script>
 	</div>
 	<div class="wpbtm"><b>&nbsp;</b></div>
 </div>
@@ -349,12 +340,18 @@ HTML;
 
 			$nonce=Nonce();
 			$this->head[]=<<<HTML
-<script src="//cdn.jsdelivr.net/npm/jquery@4/dist/jquery.slim.min.js" nonce="{$nonce}" defer></script>
-<script nonce="{$nonce}">addEventListener('DOMContentLoaded',function(){
-	$("span.red").on("click",function(){ alert($(this).attr("title")); });
+<script src="//cdn.jsdelivr.net/npm/jquery@4/dist/jquery.slim.min.js" nonce="$nonce" defer></script>
+<script nonce="$nonce">addEventListener('DOMContentLoaded',function(){
+	$(document).on("click","span.red",function(){ alert($(this).attr("title")); });
 })</script>
 HTML;
-			$result=$this->Message($this->l10n['queries_error']);
+			$result=$this->Message($this->l10n['queries_error']).<<<HTML
+<form method="post">
+	<div class="submitline">
+		<input type="submit" value="{$this->l10n['back']}" name="back" class="button" tabindex="1">
+	</div>
+</form>
+HTML;
 		}
 
 		foreach($status as $k=>&$v)
@@ -363,7 +360,7 @@ HTML;
 			$title=$v ? htmlspecialchars(strip_tags($v),self::ENT,CHARSET,false) : 'OK';
 
 			$v=<<<HTML
-<span class="{$color}" title="{$title}">{$k}</span>
+<span class="$color" title="$title">$k</span>
 HTML;
 		}
 		$status=join(', ',$status);
@@ -383,9 +380,9 @@ HTML;
 		<div class="wpcont">
 			<div class="information">
 				<h4>{$this->l10n['creating']}</h4>
-				{$status}
+				$status
 			</div>
-			{$result}
+			$result
 		</div>
 	</div>
 	<div class="wpbtm"><b>&nbsp;</b></div>
@@ -407,9 +404,9 @@ HTML;
 		<div class="wpcont">
 			<div class="information">
 				<h4>{$this->l10n['inserting']}</h4>
-				{$status}
+				$status
 			</div>
-			{$result}
+			$result
 		</div>
 	</div>
 	<div class="wpbtm"><b>&nbsp;</b></div>
@@ -432,7 +429,7 @@ HTML;
 			</div>
 			<div class="information">{$this->l10n['finish_text']}</div>
 			<div class="submitline">
-				<p><a href="{$sitedir}">{$this->l10n['user-area']}</a></p>
+				<p><a href="$sitedir">{$this->l10n['user-area']}</a></p>
 				<p><a href="{$sitedir}admin.php">{$this->l10n['admin-panel']}</a></p>
 			</div>
 		</div>

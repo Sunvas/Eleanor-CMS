@@ -40,7 +40,7 @@ if($l10ns!==null)
 	$l10ns[]=$l10n;
 
 $insert['cron']=<<<SQL
-INSERT INTO `cron` (`unit`, `triggers`) VALUES ('account', 'user_signed_in'), ('daily-cleanup', NULL);
+INSERT INTO `cron` (`unit`, `triggers`) VALUES ('account', 'user_signed_in'), ('daily-cleanup', '');
 SQL;
 
 $group=L10n2JSONDbFields($Db,[

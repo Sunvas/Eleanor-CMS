@@ -2,12 +2,17 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS\Abstracts;
 
+/** Base implementation for units available from the admin panel */
 abstract class AdminPanel implements \CMS\Interfaces\AdminPanel
 {
-	/** @var string $name name of the unit */
+	/** @var string Unit name */
 	readonly string $name;
 
-	function AdminPanel(\CMS\Classes\Uri4AdminPanel $Uri):never
+	/** Admin panel entry point.
+	 * Loads units/{name}/admin-panel.php and sends HTML or JSON response.
+	 * @param \CMS\Classes\Uri4AdminPanel $Uri Current admin panel URI context.
+	 * @return never */
+	function AdminPanel(\CMS\Classes\Uri4AdminPanel$Uri):never
 	{
 		$code=200;
 		$cache=0;

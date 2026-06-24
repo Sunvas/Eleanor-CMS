@@ -1,25 +1,22 @@
 <?php
-/**
-	Eleanor CMS © 2025
-	https://eleanor-cms.ru
-	info@eleanor-cms.ru
-*/
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS\Traits;
 
-/** Используя это трейт, шаблон на объекте сможет через $this-> получить доступ к шаблонам системы */
+/** Allows embedded template objects to access system templates through $this-> */
 trait EmbeddedTemplate
 {
 	function __call(string$n,array$a):mixed
 	{
-		return (\CMS::$T)($n,$a);
+		return (\CMS::$T)($n,...$a);
 	}
 
-	/** Easy way to append any string storage of Template */
-	function Append(string$s,...$d):string
+	/** Return string as-is for appending to template storage.
+	 * Extra parameters are ignored and accepted only for compatibility with the default variables mechanism. */
+	function Append(string$s,...$_):string
 	{
-		return$s;
+		return $s;
 	}
 }
 
-#Not necessary here, since trait name equals filename
+# Not necessary here, since trait name equals filename
 return EmbeddedTemplate::class;

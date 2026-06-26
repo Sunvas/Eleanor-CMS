@@ -2,17 +2,19 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS\Interfaces;
 
-/** Фоновая задача, запускаемая в системе через сервис cron.php */
+/** Interface for units that can be executed as background tasks. */
 interface Cron
 {
-	/** Запуск задачи. Если задача настолько тяжёлая, что не может быть выполнена до конца за один запуск, она должна быть
-	 * разбита на "этапы". При запуске каждого следующего этапа, в метод передаётся результат в виде массива из предыдущего.
-	 * Хранение данных между запусками до конца выполненных задачи не предусмотрено.
-	 * @param ?array $remnant Возвращенные в прошлый раз данные для продолжения выполнения не выполненной до конца задачи.
-	 * @return array|int При возврате array задача считается не выполненной до конца и будет выполнена повторно в
-	 * ближайшее время, возврат целого числа определяет количество секунд до следующего запуска. */
+	/** Execute the task.
+	 * If a task is too heavy to finish in a single run, it should be split into stages.
+	 * The result returned from the previous stage is passed to the next run as an array.
+	 * This array must be JSON-serializable because it is stored in the database between runs.
+	 * @param ?array $remnant Data returned by the previous run to continue an unfinished task.
+	 * @return array|int Returning an array indicates that the task is not finished yet and should be resumed
+	 * shortly. Returning an integer specifies the number of seconds until the next execution.
+	 * @throws \Throwable Marks the task as failed. */
 	function Cron(?array$remnant):array|int;
 }
 
-#Not necessary here, since interface name equals filename
+# Not required here because interface name matches filename.
 return Cron::class;

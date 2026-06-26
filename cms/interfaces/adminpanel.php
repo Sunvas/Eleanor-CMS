@@ -2,11 +2,14 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS\Interfaces;
 
-/** Unit, available for admin panel */
+/** Interface for units available from the admin panel. */
 interface AdminPanel
 {
-	function AdminPanel(\CMS\Classes\Uri4AdminPanel $Uri):never;
+	/** Admin panel entry point.
+	 * @param \CMS\Classes\Uri4AdminPanel $Uri Current admin panel URI context.
+	 * @return never */
+	function AdminPanel(\CMS\Classes\Uri4AdminPanel$Uri):never;
 }
 
-#Not necessary here, since interface name equals filename
+# Not required here because interface name matches filename.
 return AdminPanel::class;

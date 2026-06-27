@@ -2,13 +2,13 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS\Classes;
 
-/** Pagination helper */
+/** Pagination utilities */
 class Paginator extends \Eleanor\Basic
 {
 	/** Get the number of items per page
 	 * @param int $def Default number of items per page
-	 * @param int $min Minimum amount of items per page
-	 * @param int $max Maximum amountof items per page
+	 * @param int $min Minimum number of items per page
+	 * @param int $max Maximum number of items per page
 	 * @return int */
 	static function PerPage(int$def=25,int$min=5,int$max=500):int
 	{
@@ -26,9 +26,9 @@ class Paginator extends \Eleanor\Basic
 		return ($cpp>=$min && $cpp<=$max) ? $cpp : $def;
 	}
 
-	/** Get the [sort field, mysql ORDER direction (DESC or empty), mysql LIMIT, offset] for ascending (!) pagination
-	 * @param int $total Total items
-	 * @param array $sorting list of possible order fields (first value is the default)
+	/** Get sorting and pagination values for forward pagination: [sort field, SQL ORDER direction (DESC or empty), SQL LIMIT, offset]
+	 * @param int $total Total number of items
+	 * @param string[] $sorting Non-empty list of allowed sort fields; the first value is used by default
 	 * @param bool $desc Default order direction: true for descending, false for ascending (F goes before T)
 	 * @param ?int $page Page number
 	 * @param ?int $pp Items per page
@@ -51,7 +51,7 @@ class Paginator extends \Eleanor\Basic
 				throw new \OutOfBoundsException('Sort values must be one of '.join(', ',$sorting));
 
 			$sort=$_GET['sort'];
-			$desc=false;//When user clicks on column, he expects that column to be sorted by asc
+			$desc=false;# When a user clicks a column, ascending order is expected first
 		}
 		else
 			$sort=\array_first($sorting);
@@ -66,5 +66,5 @@ class Paginator extends \Eleanor\Basic
 	}
 }
 
-#Not necessary here, since class name equals filename
+# Not required here because class name matches filename
 return Paginator::class;

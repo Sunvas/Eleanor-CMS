@@ -6,7 +6,11 @@ use CMS\CMS;
 
 class hCaptcha extends \Eleanor\Basic
 {
-	/** Проверка решения hCaptcha
+	/** If hCaptcha is unavailable, accept only non-trivial tokens to avoid blocking all users */
+	const bool SOFT_FAIL=true;
+
+	/** Verify hCaptcha challenge response
+	 * @param string $k POST field containing hCaptcha response
 	 * @return bool */
 	static function Check(string$k='h-captcha-response'):bool
 	{
@@ -20,7 +24,7 @@ class hCaptcha extends \Eleanor\Basic
 		\curl_setopt_array($curl,[
 			\CURLOPT_TIMEOUT=>10,
 			\CURLOPT_RETURNTRANSFER=>true,
-			\CURLOPT_ENCODING=>'',//https://php.watch/articles/curl-php-accept-encoding-compression
+			\CURLOPT_ENCODING=>'',# https://php.watch/articles/curl-php-accept-encoding-compression
 			\CURLOPT_HEADER=>false,
 			\CURLOPT_POST=>true,
 			\CURLOPT_POSTFIELDS=>[
@@ -34,12 +38,12 @@ class hCaptcha extends \Eleanor\Basic
 		$errn=\curl_errno($curl);
 
 		if($errn>0)
-			return \strlen($resp)>100;
+			return static::SOFT_FAIL && \strlen($resp)>100;
 
 		$json=\json_decode($json,true);
-		return $json && isset($json['success']) && $json['success'];
+		return $json['success'] ?? false;
 	}
 }
 
-#Not necessary here, since class name equals filename
+# Not required here because class name matches filename
 return hCaptcha::class;

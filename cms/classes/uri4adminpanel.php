@@ -7,24 +7,23 @@ use Eleanor\Classes\Uri;
 /** URI generator for admin panel */
 class Uri4AdminPanel extends \Eleanor\Basic
 {
-	/** @var string Basic prefix of site directory and admin panel file */
+	/** @var string Base prefix containing site directory and admin panel file */
 	static string $base="";
 
-	/** @var bool Flag to use &amp; as param separator */
+	/** @var bool Use &amp; as parameter separator */
 	public bool $amp=true;
 
-	/** @var array Mandatory query params */
+	/** @var array Mandatory query parameters */
 	readonly array $query;
 
-	/** Params to $query are passed as named params */
+	/** Query parameters are passed as named parameters */
 	function __construct(...$query)
 	{
 		$this->query=$query;
 	}
 
-	/** Generator of URI
-	 * Params are passed as named params
-	 * @throws \InvalidArgumentException when params has an intersecting key with the internal query property
+	/** Generate URI. Parameters are passed as named parameters.
+	 * @throws \InvalidArgumentException when parameters intersect with mandatory query parameters
 	 * @return string */
 	function __invoke(...$query):string
 	{
@@ -33,15 +32,15 @@ class Uri4AdminPanel extends \Eleanor\Basic
 		return static::$base.Uri::Query($this->query+$query,d:$this->amp ? '&amp;' : '&');
 	}
 
-	/** Generating URI of current query */
+	/** Generate URI from mandatory query parameters */
 	function __toString():string
 	{
-		return static::$base.Uri::Query($this->query);
+		return static::$base.Uri::Query($this->query,d:$this->amp ? '&amp;' : '&');
 	}
 
-	/** Checking keys intersection with internal query
+	/** Check for key intersection with mandatory query parameters
 	 * @param array $query Query parameters
-	 * @throws \InvalidArgumentException when $query has an intersecting key with the internal query property */
+	 * @throws \InvalidArgumentException when parameters intersect with mandatory query parameters */
 	protected function CheckIntersection(array$query):void
 	{
 		$invalid=\array_intersect_key($query,$this->query);
@@ -50,17 +49,17 @@ class Uri4AdminPanel extends \Eleanor\Basic
 			throw new \InvalidArgumentException('These query params are already in use: '.\join(', ',\array_keys($invalid)));
 	}
 
-	/** Making nested generator
-	 * @param array $query Sub-mandatory query params
-	 * @throws \InvalidArgumentException when $query has an intersecting key with the internal query property
+	/** Create a nested URI generator
+	 * @param array $query Additional mandatory query parameters
+	 * @throws \InvalidArgumentException when parameters intersect with mandatory query parameters
 	 * @return static */
 	function Nested(array$query):static
 	{
 		$this->CheckIntersection($query);
 
-		return new static($this->query+$query);
+		return new static(...($this->query+$query));
 	}
 }
 
-#Not necessary here, since class name equals filename
+# Not required here because class name matches filename
 return Uri4AdminPanel::class;

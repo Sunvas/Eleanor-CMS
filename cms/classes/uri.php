@@ -5,52 +5,52 @@ namespace CMS\Classes;
 use CMS\CMS;
 use const Eleanor\SITEDIR;
 
-/** Генератор ссылок */
+/** URI generator */
 class Uri extends \Eleanor\Classes\Uri
 {
-	/** @var string Базовый префикс, содержит идентификатор языка */
+	/** @var string Base prefix containing the language identifier */
 	static string $base=SITEDIR;
 
-	/** @var array query суффикс для всех генерируемых URI */
+	/** @var array Query suffix added to all generated URIs */
 	public array $query=[];
 
-	/** @var string Префикс для всех генерируемых URI */
+	/** @var string Prefix added to all generated URIs */
 	readonly string $prefix;
 
-	/** @param string|array $slug Значение, которое будет использовано для префикса
-	 * @param string $prefix Родительский префикс. Либо пустой, либо должен оканчиваться на / */
+	/** @param string|string[] $slug Value used to build the prefix
+	 * @param string $prefix Parent prefix. Must be empty or end with / */
 	function __construct(string|array$slug=[],string$prefix='')
 	{
 		$this->prefix=$prefix.static::Make((array)$slug,'/');
 	}
 
-	/** Конструктор URL-ов
-	 * @param array|string $slugs ЧПУшная часть ссылки
-	 * @param string $ending Окончание ссылки
-	 * @param array $query request часть ссылки
+	/** Build URI
+	 * @param string|string[] $slugs Human-readable URI path parts
+	 * @param string $ending URI ending
+	 * @param array $query Query parameters
 	 * @return string */
-	function __invoke(array|string$slugs=[],string$ending='',array$query=[]):string
+	function __invoke(string|array$slugs=[],string$ending='',array$query=[]):string
 	{
 		return static::$base.$this->prefix.static::Make((array)$slugs,$ending,\array_merge($this->query,$query));
 	}
 
-	/** Возврат префикса */
+	/** Return base URI with prefix and default query */
 	function __toString():string
 	{
 		return static::$base.$this->prefix.($this->query ? static::Query($this->query) : '');
 	}
 
-	/** Создание вложенного (дочернего) объекта
-	 * @param string|array $slug Значение, которое будет использовано для префикса
+	/** Create a nested URI generator
+	 * @param string|string[] $slug Value used to extend the prefix
 	 * @return static */
 	function Nested(string|array$slug):static
 	{
 		return new static($slug,$this->prefix);
 	}
 
-	/** Adding iam parameter into generated links (identifies user when multilogin is used)
-	 * @param string $q query key */
-	function IAM(string$q='iam'):self
+	/** Add iam parameter to generated URIs to identify the current user in multi-login mode
+	 * @param string $q Query key */
+	function IAM(string$q='iam'):static
 	{
 		$id=CMS::$A->current;
 
@@ -61,5 +61,5 @@ class Uri extends \Eleanor\Classes\Uri
 	}
 }
 
-#Not necessary here, since class name equals filename
+# Not required here because class name matches filename
 return Uri::class;

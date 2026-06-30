@@ -8,10 +8,8 @@ namespace CMS;
  * @var array $links List of links */
 
 $l10n=new L10n('settings',__DIR__.'/l10n/');
-$data=[
-	'config'=>$config,
-	'groups'=>\iterator_to_array($groups),
-];
+$data=\compact('config')
+	+['groups'=>\iterator_to_array($groups)];
 $title=[$l10n['title']];
 $script='static/admin-panel/static-settings.js';
 $head['style']=(CMS::$T)('coloring-of-groups');

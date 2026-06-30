@@ -1,5 +1,7 @@
-﻿### English
-Access to contents of this folder from browser should be restricted! It should be done via nginx or apache!
+[Русский язык](README.ru.md)
 
-### Русский язык
-Доступ к содержимому этого каталога из браузера должен быть закрыт! Делается это на уровне nginx или apache.
+This directory contains the internal files of Eleanor CMS.
+
+It includes CMS core code, configuration, cache, logs, units, templates, widgets, localization files, Composer workspace, and other files required for CMS operation.
+
+The contents of this directory must not be served directly by the web server. Browser access to this directory should be blocked at the web server level. Public static files must be placed in the `static/` directory instead.

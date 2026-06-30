@@ -1,4 +1,5 @@
-/** EditorJS Russian l10n.
+/** EditorJS Russian l10n copied from upstream example and adjusted for Eleanor CMS.
+ * Keep the structure close to EditorJS i18n example to simplify future updates.
  * @url https://github.com/codex-team/editor.js/blob/next/example/example-i18n.html */
 export const i18n={messages:{
 /**
@@ -66,7 +67,7 @@ export const i18n={messages:{
 	 * The "stub" is an internal block tool, used to fit blocks that does not have the corresponded plugin
 	 */
 	"stub": {
-		'The block can not be displayed correctly.': 'Блок не может быть отображен'
+		'The block can not be displayed correctly.': 'Блок не может быть отображён'
 	},
 	"image": {
 		"Caption": "Подпись",

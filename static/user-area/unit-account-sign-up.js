@@ -1,42 +1,54 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
-
-(({template,container,display_name,name,avatar})=>{
+/** User account sign-up form. */
+(({template,container})=>{
 	const app=Vue.createApp({
 		template,
 		data:()=>({
-			l10n:{
-				NAME_EXISTS:{ru:"Такой пользователь уже существует",en:"Such username is already exists"},
+			l10n:Object.seal({
+				NAME_EXISTS:{ru:"Такой пользователь уже существует",en:"This username already exists"},
 				PASS_MISMATCH:{ru:"Пароли не совпадают",en:"Passwords don't match"}
-			},
+			}),
 
-			name,
-			display_name,
+			name:"",
+			display_name:"",
 			password:"",
 
-			avatar,
 			name_error:false,
 			password2:"",
 			loading:false
 		}),
 		watch:{
 			name:"CheckName",
-			password2(n){
-				this.$refs.password2.setCustomValidity(this.password!==n ? this.l10n.PASS_MISMATCH : "");
+			password:"ValidatePasswords",
+			password2:"ValidatePasswords"
+		},
+		computed:{
+			saved(){
+				return !this.name && !this.display_name && !this.password && !this.password2;
 			}
 		},
 		methods:{
-			CheckName(n){
+			ValidatePasswords(){
+				this.$refs.password2.setCustomValidity(this.password===this.password2 ? "" : this.l10n.PASS_MISMATCH);
+			},
+
+			async CheckName(n){
 				if(this.name==="")
 				{
 					this.name_error=false;
 					return this.$refs.name.setCustomValidity("");
 				}
 
-				fetch(location.pathname+"?"+new URLSearchParams({check_name:n ?? this.name}).toString(),{headers:{accept:"application/json"}})
+				const name=n ?? this.name;
+
+				return fetch(location.pathname+"?"+new URLSearchParams({check_name:name}).toString(),{headers:{accept:"application/json"}})
 					.then(J).then(({ok})=>{
-					this.name_error=!ok;
-					this.$refs.name.setCustomValidity(ok ? "" : this.l10n.NAME_EXISTS);
-				});
+						if(this.name!==name)
+							return;
+
+						this.name_error=!ok;
+						this.$refs.name.setCustomValidity(ok ? "" : this.l10n.NAME_EXISTS);
+					});
 			},
 			async Submit(){
 				if(this.loading)
@@ -50,16 +62,17 @@
 
 				this.loading=true;
 
-				await fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
+				return fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
 					.then(J)
 					.then(({ok,error})=>{
 						if(ok)
 							location.reload();
 						else
 							alert(this.l10n[error] ?? error);
-					},r=>r.text().then(console.error));
-
-				this.loading=false;
+					},r=>r.text().then(console.error))
+					.finally(()=>{
+						this.loading=false;
+					});
 			},
 		},
 		created(){

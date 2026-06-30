@@ -2,8 +2,8 @@
 namespace CMS;
 
 /** Userlist
- * @var \Generator $users
- * @var \Generator $groups
+ * @var \Generator $items List of users
+ * @var \Generator $groups List of groups
  * @var int $total Total users
  * @var int $pp Amount users per page
  * @var string $sort Sorting field
@@ -14,9 +14,7 @@ namespace CMS;
 
 $l10n=new L10n('users',__DIR__.'/l10n/');
 
-$items=[];
-foreach($users as $item)
-{
+$items=Iterator2Array($items,function($item){
 	$item['created']=L10n::Date($item['created']);
 
 	if((int)$item['activity']>2000)
@@ -27,12 +25,13 @@ foreach($users as $item)
 	else
 		$item['activity_ts']=$item['activity']=null;
 
-	$items[]=$item;
-}
+	return $item;
+});
+$groups=\iterator_to_array($groups);
 
 $my_id=CMS::$A->current;
-$data=['L10N'=>L10N,'L10NS'=>L10NS,'groups'=>\iterator_to_array($groups)]
-	+\compact('items','is_root','my_id','total','pp','sort','desc');
+$data=\compact('items','groups','is_root','my_id','total','pp','sort','desc')
+	+['L10N'=>L10N,'L10NS'=>L10NS];
 
 $title=[$l10n['title']];
 $script='static/admin-panel/users.js';

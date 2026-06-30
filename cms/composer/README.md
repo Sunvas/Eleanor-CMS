@@ -1,5 +1,20 @@
-### English
-This directory is intended for [Composer](https://getcomposer.org)-related files. Place the `composer.phar` executable here or run [installation commands](https://getcomposer.org/download/) from this location.
+[Русский язык](README.ru.md)
 
-### Русский язык
-Специальный каталог для файлов [Composer](https://getcomposer.org). Именно в этом каталоге рекомендуется выполнять [команды для его установки](https://getcomposer.org/download/), или размещать файл `composer.phar`.
+This directory is the local [Composer](https://getcomposer.org) workspace for Eleanor CMS. Composer [installation commands](https://getcomposer.org/download/) should be run from this directory, and the downloaded `composer.phar` file should be placed here.
+
+Composer will store its configuration files, lock file, downloaded packages, and generated autoloader here.
+
+Example package installation:
+
+```bash
+cd cms/composer
+php composer.phar require vendor/package
+```
+
+After that, Composer may create files and directories such as `composer.json`, `composer.lock`, and `vendor/` in this directory.
+
+Installed packages can be loaded from CMS code through Composer autoloader:
+
+```php
+require CMS.'composer/vendor/autoload.php';
+```

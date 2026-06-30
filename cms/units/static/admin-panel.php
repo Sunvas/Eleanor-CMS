@@ -21,7 +21,7 @@ const
 	ATTACH='attach';
 
 /** Obtaining rights of site team member
- * @returns array [] */
+ * @return array */
 function Rights():array
 {
 	$config=Config(CONFIG,__DIR__.DIRECTORY_SEPARATOR);
@@ -50,7 +50,7 @@ function Settings(Classes\Uri4AdminPanel$Uri):array|string
 				$storage[$f]=$_POST[$f];
 
 		$dir=__DIR__.DIRECTORY_SEPARATOR;
-		$ok=$storage && \file_put_contents($dir.CONFIG.'.json',\json_encode($storage + Config(CONFIG,$dir),JSON));
+		$ok=$storage && \file_put_contents($dir.CONFIG.'.json',\json_encode($storage + Config(CONFIG,$dir),JSON),\LOCK_EX);
 
 		if($ok)
 			return[
@@ -65,14 +65,14 @@ function Settings(Classes\Uri4AdminPanel$Uri):array|string
 
 	$config=Config(CONFIG,__DIR__.DIRECTORY_SEPARATOR);
 
-	#Groups with access to admin panel
+	# Groups with access to admin panel
 	$groups=(function(){
 		$multi=L10NS!==null;
-
 		$R=CMS::$Db->Query(<<<SQL
 SELECT `id`, `title` FROM `groups` WHERE FIND_IN_SET('team', `roles`)>0
 SQL);
-		while($a=$R->fetch_assoc())
+
+		foreach($R as $a)
 		{
 			$a['id']=(int)$a['id'];
 
@@ -84,6 +84,8 @@ SQL);
 
 			yield $a;
 		}
+
+		$R->free();
 	})();
 
 	return(CMS::$T)('settings',\compact('config','groups'));
@@ -171,16 +173,18 @@ ORDER BY `{$sort}`{$order}
 {$limit}
 SQL);
 
-	$items=(function()use($R,$Uri,$l10n){
-		$USU=new Classes\Uri($l10n);//Userspace uri
+	$items=(function()use($R,$l10n){
+		$USU=new Classes\Uri($l10n);# Userspace uri
 
-		while($a=$R->fetch_assoc())
+		foreach($R as $a)
 		{
 			$a['id']=(int)$a['id'];
-			$a['user-area']=$USU(explode('/',$a['slug']));
+			$a['user-area']=$USU(\explode('/',$a['slug']));
 
 			yield $a;
 		}
+
+		$R->free();
 	})();
 
 	[$can_create,$can_delete]=$is_root ? [true,true] : Rights();
@@ -205,7 +209,7 @@ SQL ,[$slug]);
 	return $R->num_rows>0;
 }
 
-/** Remove unused attached files from the folder of static page
+/** Remove unused attached files from the folder of the static page
  * @param Abstracts\AdminPanel $Unit
  * @param int $id of edited static page
  * @param string $l10n
@@ -472,7 +476,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 
 			$id=CMS::$Db->Insert('static',$data);
 
-			return$id>0 ? ['ok'=>true,'id'=>$id] : ['ok'=>false,'error'=>'DB'];
+			return $id>0 ? ['ok'=>true,'id'=>$id] : ['ok'=>false,'error'=>'DB'];
 		}
 
 		if(\is_string($_GET['check_slug'] ?? 0))
@@ -499,9 +503,9 @@ FROM `static`
 WHERE `id`={$id}
 LIMIT 1
 SQL );
-			if($R->num_rows>0)
+
+			if($item=SingleFetch($R))
 			{
-				$item=$R->fetch_assoc();
 				$item['content_source']=\json_validate($item['content_source'] ?? '') ? \json_decode($item['content_source'],true) : [];
 
 				return[
@@ -552,10 +556,10 @@ FROM `static`
 WHERE `id`={$id}
 LIMIT 1
 SQL );
-	if($R->num_rows<1)
+
+	if(!$item=SingleFetch($R))
 		Halt();
 
-	$item=$R->fetch_assoc();
 	$item['content_source']=\json_validate($item['content_source'] ?? '') ? \json_decode($item['content_source'],true) : [];
 
 	return (CMS::$T)('item',\compact('item','can_delete'));
@@ -563,7 +567,7 @@ SQL );
 
 #Assigning folder with templates
 if(!CMS::$json)
-	CMS::$T[]=ROOT.'admin-panel/'.$this->name;
+	CMS::$T[]=CMS.'admin-panel/'.$this->name;
 
 $is_root=\in_array('root',CMS::$P->roles);
 

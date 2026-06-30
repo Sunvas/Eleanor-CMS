@@ -16,4 +16,4 @@ $data=\is_array($data ?? 0) ? \json_encode($data,JSON) : ($data ?? '');
 </section>
 <script id="app-tpl" type="text/x-template"><?=$template?></script>
 <script id="app-data" type="application/json"><?=$data?></script>
-<script src="<?=$script?>" nonce="<?=$nonce?>" defer data-container="#app" data-template="#app-tpl" data-data="#app-data"></script>
+<script src="<?=$script?>" nonce="<?=$nonce?>" defer data-container="#app" data-template="#app-tpl" data-data="#app-data" data-ready="app-ready"></script>

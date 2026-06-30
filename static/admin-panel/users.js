@@ -2,19 +2,19 @@
 (async({template,container,data})=>{
 	const
 		{L10N,L10NS,items,groups,is_root,my_id,...extra}=JSON.parse($(data).text()),
-		items4=(await import('./4items.mjs')).default(extra),
+		items4=(await import("./4items.mjs")).default(extra),
 		user=Object.create(null);
 
 	Vue.createApp({
 		extends:items4,
 		template,
 		data:()=>({
-			//L10n
+			// L10n
 			l10n:Object.seal({
-				recently:{ru:"Менее часа назад",en:"Less then hour ago"},
+				recently:{ru:"Менее часа назад",en:"Less than an hour ago"},
 				today:{ru:"Менее суток назад",en:"Less than a day ago"},
 				long_ago:{ru:"Более суток назад",en:"More than a day ago"},
-				never:{ru:"Не заходил",en:"Has not ever signed id"},
+				never:{ru:"Не заходил",en:"Has never signed in"},
 				empty_password:{ru:"У пользователя пустой пароль",en:"User has empty password"},
 				create:{ru:"Создать",en:"Create"},
 
@@ -30,26 +30,26 @@
 			lang:document.documentElement.lang,
 			l10ns:[],
 
-			//Userlist
+			// Userlist
 			items,
 			my_id,
 			is_root,
-			groups:groups.toSorted((a,b)=>a.title-b.title),
+			groups:groups.toSorted((a,b)=>a.title.localeCompare(b.title)),
 			group2title:groups.reduce((a,v)=>a.set(v.id,v.title),new Map),
 			default_sort:"id",
 
-			//Filters
+			// Filters
 			id:"",
 			name:"",
 			group:"",
-			reset:['sort','order','id','name','group'],//const for clearing purpose
+			reset:["sort","order","id","name","group"],// Query keys to clear
 
-			//Confirmation modal
+			// Confirmation modal
 			confirm:"",
 			confirm_title:"",
 			confirmed:false,
 
-			//User creation & modification modal
+			// User creation & modification modal
 			user_id:0,
 			user_title:"",
 			user_name_error:null,
@@ -69,14 +69,14 @@
 			changed:new Set,
 		}),
 		computed:{
-			/** It shows that there are some filters applied to the userlist */
+			/** Whether userlist filters are applied */
 			is_filtered(){
 				return !!(this.id || this.name || this.group);
 			},
 
-			/** It shows that there are no unsaved fields in modal of modifying user */
+			/** Whether user modal has no unsaved fields */
 			saved(){
-				//When modal is not shown
+				// When modal is not shown
 				if(this.user_title==="")
 					return true;
 
@@ -110,7 +110,7 @@
 					coreui.Modal.getOrCreateInstance(this.$refs.confirm).show();
 
 					$(this.$refs.confirm)
-						.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())//Hidden element should be focused
+						.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())// Blur focused element before hiding
 						.one("hidden.coreui.modal",()=>resolve(this.confirmed))
 						.one("shown.coreui.modal",()=>$(this.$refs.confirm_dismiss).focus());
 				});
@@ -118,14 +118,14 @@
 
 			/** Copying user's id to the clipboard */
 			async Copy({id},index){
-				try {
+				try{
 					await navigator.clipboard.writeText(id.toString());
-				} catch (error) {
-					console.error(error.message);
+				}catch(e){
+					console.error(e.message);
 				}
 			},
 
-			/** Singing in into user's account on user area */
+			/** Sign in to user area as selected user */
 			SignIn({id},index){
 				const USP=this.Filter(this.reset,false);
 				USP.set("sign-in",id);
@@ -184,8 +184,8 @@
 			async Modify({id},index){
 				this.loading=true;
 
-				await fetch(this.UserURL(id),{headers:{accept:"application/json"}})
-				.then(J).then(r=>{
+				return fetch(this.UserURL(id),{headers:{accept:"application/json"}}).then(J)
+				.then(r=>{
 					if(r.ok)
 					{
 						this.user_id=id;
@@ -198,9 +198,10 @@
 					}
 					else if(r.error)
 						alert( this.l10n[r.error] ?? r.error );
+				})
+				.finally(()=>{
+					this.loading=false;
 				});
-
-				this.loading=false;
 			},
 
 			/** Loading values to the local variable */
@@ -209,10 +210,13 @@
 					this.user[k]=Array.isArray(v) ? v.slice() : v;
 			},
 
-			/** Should be called each time form control being changed by user real time */
-			Changed(field,val){
-				//Array values
-				if(Array.isArray(user[field]) && JSON.stringify(user[field])===JSON.stringify(val))
+			/** Track real-time user changes in form controls */
+			Changed(field,val,old){
+				// Don't apply changes while loading values
+				if(this.loading)
+					return;
+
+				if(JSON.stringify(user[field])===JSON.stringify(val))
 					this.changed.delete(field);
 				else
 					this.changed.add(field);
@@ -231,8 +235,11 @@
 
 				fetch(location.pathname+"?"+USP.toString(),{headers:{accept:"application/json"}})
 					.then(J).then(({ok})=>{
-					this.user_name_error=ok ? "" : this.l10n.NAME_EXISTS;
-					this.$refs.user_name.setCustomValidity(this.user_name_error);
+						if(this.user.name!==USP.get("check_name"))
+							return;
+
+						this.user_name_error=ok ? "" : this.l10n.NAME_EXISTS;
+						this.$refs.user_name.setCustomValidity(this.user_name_error);
 				});
 			},
 
@@ -256,7 +263,7 @@
 
 				this.saving=true;
 
-				await fetch(location.pathname+"?"+USP.toString(),{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
+				return fetch(location.pathname+"?"+USP.toString(),{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
 					.then(J)
 					.then(({ok,error,id})=>{
 						if(ok){
@@ -264,14 +271,17 @@
 
 							this.user_title=user.name;
 
-							//Adding user
+							// Adding user
 							if(id)
 							{
-								this.NormalizeItem(store);
-								store.created=this.l10n.just_now;
+								const item={id,...store};
+								delete item.password;
+
+								this.NormalizeItem(item);
+								item.created=this.l10n.just_now;
 
 								this.user_id=id;
-								this.items.unshift({id,...store});
+								this.items.unshift(item);
 							}
 							else
 							{
@@ -286,9 +296,10 @@
 						}
 						else if(error)
 							alert( this.l10n[error] ?? error );
-					},r=>r.text().then(console.error));
-
-				this.saving=false;
+					},r=>r.text().then(console.error))
+					.finally(()=>{
+						this.saving=false;
+					});
 			},
 
 			UserURL(id){
@@ -301,31 +312,31 @@
 			NormalizeItem(item){
 				if(!item.activity_ts)
 				{
-					item.status_class='bg-secondary';
+					item.status_class="bg-secondary";
 					item.status_hint="never";
 					return;
 				}
 
 				const ts=Date.now()-item.activity_ts*1e3;
 
-				//Less than hour ago
+				// Less than hour ago
 				if(ts<=36e5)
 				{
-					item.status_class='bg-success';
+					item.status_class="bg-success";
 					item.status_hint="recently";
 				}
 
-				//Less than day ago
+				// Less than day ago
 				else if(ts>36e5 && ts<=864e5)
 				{
-					item.status_class='bg-warning';
+					item.status_class="bg-warning";
 					item.status_hint="today";
 				}
 
-				//Long time ago
+				// Long time ago
 				else
 				{
-					item.status_class='bg-danger';
+					item.status_class="bg-danger";
 					item.status_hint="long_ago";
 				}
 			}
@@ -337,16 +348,16 @@
 				if(v[lang])
 					this.l10n[k]=v[lang];
 
-			//Filling in the set of l10n
+			// Filling in the set of l10n
 			if(L10NS?.length)
 				import("./l10ns.mjs").then(({default:l10ns})=>{
 					this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 				});
 
 			for(const k of Object.keys(this.user))
-				this.$watch("user."+k,val=>this.loading || this.Changed(k,val));
+				this.$watch("user."+k,(val,old)=>this.Changed(k,val,old));
 
-			this.items.map(this.NormalizeItem);
+			this.items.forEach(this.NormalizeItem);
 
 			for(const f of ["id","name","group"])
 				if(this.USP.has(f))
@@ -355,7 +366,7 @@
 			$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 		},
 		mounted(){
-			$(this.$refs.user).one("hidden.coreui.modal",()=>this.user_title="");
+			$(this.$refs.user).on("hidden.coreui.modal",()=>this.user_title="");
 		}
 	}).mount(container);
 })(document.currentScript.dataset);

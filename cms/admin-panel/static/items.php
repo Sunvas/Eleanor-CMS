@@ -17,15 +17,13 @@ $l10n=new L10n('items',__DIR__.'/l10n/');
 $title=[$l10n['title']];
 $script='static/admin-panel/static-items.js';
 
-$data=['L10N'=>L10N,'L10NS'=>L10NS,'items'=>[]]
-	+\compact('items','can_create','can_delete','total','pp','sort','desc');
-
-foreach($items as $item)
-{
+$items=Iterator2Array($items,function($item){
 	$item['modified']=L10n::Date($item['modified']);
+	return $item;
+});
 
-	$data['items'][]=$item;
-}
+$data=\compact('items','can_create','can_delete','total','pp','sort','desc')
+	+['L10N'=>L10N,'L10NS'=>L10NS];
 
 $confirm=require __DIR__.'/../includes/dialog-confirm.php';
 $say_total=$l10n['say-total']($total);

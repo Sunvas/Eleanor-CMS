@@ -2,7 +2,7 @@
 (async({template,container,data})=>{
 	const
 		{groups,...extra}=JSON.parse($(data).text()),
-		app=(await import('./settings.mjs')).default(template,{...extra});
+		app=(await import("./settings.mjs")).default(template,extra);
 
 	Vue.createApp({
 		template,

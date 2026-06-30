@@ -1,16 +1,16 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
-
+/** User account settings form with avatar upload. */
 (({template,container,data})=>{
-	const{settings,timezones}=JSON.parse($(data).text());
+	const{settings,timezones}=JSON.parse(document.querySelector(data).textContent);
 
 	const app=Vue.createApp({
 		template,
 		data:()=>({
 			l10n:Object.seal({
-				save:{ru:'Сохранить',en:"Save"},
-				saved:{ru:'Сохранено',en:"Saved"},
-				change:{ru:'Сменить...',en:"Change..."},
-				upload:{ru:'Загрузить...',en:"Upload..."},
+				save:{ru:"Сохранить",en:"Save"},
+				saved:{ru:"Сохранено",en:"Saved"},
+				change:{ru:"Сменить...",en:"Change..."},
+				upload:{ru:"Загрузить...",en:"Upload..."},
 			}),
 
 			asia:timezones.filter(item=>item.startsWith("Asia")),
@@ -59,24 +59,29 @@
 					if(this.files.length<1)
 						return;
 
-					const img=new Image();
+					const img=new Image;
 
-					//Converting any image to webp
+					// Converting any image to webp
 					$(img).on("load",function() {
-						const
-							canvas = document.createElement('canvas'),
-							wr=app.max_width / img.width,
-							hr=app.max_height / img.height,
-							[width,height]=wr > hr ? [app.max_width,wr * img.height] : [hr * img.width,app.max_height];
+						URL.revokeObjectURL(img.src);
 
-						canvas.width = width;
-						canvas.height = height;
-						canvas.getContext("2d").drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+						const
+							r=Math.min(app.max_width/img.width,app.max_height/img.height),
+							width=Math.round(img.width*r),
+							height=Math.round(img.height*r),
+							canvas=document.createElement("canvas");
+
+						canvas.width=width;
+						canvas.height=height;
+						canvas.getContext("2d").drawImage(img,0,0,img.width,img.height,0,0,width,height);
 
 						canvas.toBlob(function(blob){
+							if(app.avatar.startsWith("blob:"))
+								URL.revokeObjectURL(app.avatar);
+
 							app.blob=blob;
 							app.avatar=URL.createObjectURL(blob);
-						}, "image/webp");
+						},"image/webp");
 					});
 
 					img.src=URL.createObjectURL(this.files[0]);
@@ -94,7 +99,7 @@
 
 				let body;
 
-				//Uploading avatar
+				// Uploading avatar
 				if(this.blob)
 				{
 					const fd=new FormData;
@@ -110,7 +115,7 @@
 
 				this.saving=true;
 
-				await fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
+				return fetch(location.href,{body,method:"post",headers:{accept:"application/json"}})
 					.then(J)
 					.then(({ok,error})=>{
 						if(ok)
@@ -121,9 +126,10 @@
 						}
 						else
 							alert(this.l10n[error] ?? error);
-					},r=>r.text().then(console.error));
-
-				this.saving=false;
+					},r=>r.text().then(console.error))
+					.finally(()=>{
+						this.saving=false;
+					});
 			},
 		},
 		created(){

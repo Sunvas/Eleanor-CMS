@@ -2,7 +2,7 @@
 (({template,container,data},l10n_keys=["title"],group_l10n=new Map,group=Object.create(null),l10ns_enabled=null)=>Vue.createApp({
 	template,
 	data:()=>({
-		//L10n
+		// L10n
 		l10n:Object.seal({
 			save:{ru:"Сохранить",en:"Save"},
 			saved:{ru:"Сохранено",en:"Saved"},
@@ -15,15 +15,15 @@
 		l10ns:[],
 		L10N:null,
 
-		//Groups list
+		// Groups list
 		items:[],
 
-		//Confirmation modal
+		// Confirmation modal
 		confirm:"",
 		confirm_title:"",
 		confirmed:false,
 
-		//Group creation & modification modal
+		// Group creation & modification modal
 		roles:[],
 		group_id:0,
 		group_title:"",
@@ -41,19 +41,22 @@
 		lang(lang){
 			for(const[k,v] of group_l10n)
 				this.group[k]=v[lang] ?? null;
+
+			if(this.group_id && group_l10n.has("title"))
+				this.group_title=group_l10n.get("title")[lang] ?? "#"+this.group_id;
 		}
 	},
 	computed:{
-		/** It shows that there are no unsaved fields in modal of modifying group */
+		/** Whether group modal has no unsaved fields */
 		saved(){
-			//When modal is not shown
+			// When modal is not shown
 			if(this.group_title==="")
 				return true;
 
 			return this.changed.size<1;
 		},
 
-		/** Text on submit button in modal of modifying group */
+		/** Text on submit button in group modal */
 		submit_text(){
 			if(this.group_id)
 				return this.saved ? this.l10n.saved : this.l10n.save;
@@ -77,14 +80,18 @@
 				coreui.Modal.getOrCreateInstance(this.$refs.confirm).show();
 
 				$(this.$refs.confirm)
-					.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())//Hidden element should be focused
+					.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())// Blur focused element before hiding
 					.one("hidden.coreui.modal",()=>resolve(this.confirmed))
 					.one("shown.coreui.modal",()=>$(this.$refs.confirm_dismiss).focus());
 			});
 		},
 
-		/** Should be called each time form control input being changed by user real time */
-		Changed(field,val){
+		/** Track real-time group changes in form controls */
+		Changed(field,val,old){
+			// Don't apply changes while loading values
+			if(this.loading)
+				return;
+
 			if(l10n_keys.includes(field))
 				group_l10n.getOrInsert(field,{})[this.lang]=val;
 
@@ -131,7 +138,7 @@
 
 			this.loading=true;
 			Object.assign(group,{
-				title:l10ns_enabled ? this.l10ns.reduce((a,[code])=>Object.assign(a,{[code]:''}),{}) : "",
+				title:l10ns_enabled ? this.l10ns.reduce((a,[code])=>Object.assign(a,{[code]:""}),{}) : "",
 				roles:[],
 				slow_mode:10,
 			});
@@ -145,8 +152,8 @@
 		async Modify({id},index){
 			this.loading=true;
 
-			await fetch(this.URL(id),{headers:{accept:"application/json"}})
-			.then(J).then(r=>{
+			return fetch(this.URL(id),{headers:{accept:"application/json"}}).then(J)
+			.then(r=>{
 				if(r.ok)
 				{
 					this.group_id=id;
@@ -161,9 +168,10 @@
 				}
 				else if(r.error)
 					alert( this.l10n[r.error] ?? r.error );
+			})
+			.finally(()=>{
+				this.loading=false;
 			});
-
-			this.loading=false;
 		},
 
 		/** Submitting group modification form */
@@ -190,7 +198,7 @@
 
 			this.saving=true;
 
-			await fetch(location.pathname+"?"+USP.toString(),{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
+			return fetch(location.pathname+"?"+USP.toString(),{method:"post",body:JSON.stringify(store),headers:{accept:"application/json"}})
 				.then(J)
 				.then(({ok,error,id})=>{
 					if(ok){
@@ -200,11 +208,13 @@
 
 						this.group_title=title;
 
-						//Adding group
+						// Adding group
 						if(id)
 						{
+							const item={id,...store,title,deletable:true};
+
 							this.group_id=id;
-							this.items.unshift({id,...store,...{title,deletable:true}});
+							this.items.unshift(item);
 						}
 						else
 						{
@@ -219,9 +229,11 @@
 					}
 					else if(error)
 						alert( this.l10n[error] ?? error );
-				},r=>r.text().then(console.error));
-
-			this.saving=false;
+				},
+				r=>r.text().then(console.error))
+				.finally(()=>{
+					this.saving=false;
+				});
 		},
 
 		URL(id){
@@ -239,9 +251,9 @@
 
 		const
 			url=new URL(location.href),
-			{L10N,L10NS,items,roles}=JSON.parse($(data).text());
+			{L10N,L10NS,items,roles}=JSON.parse(document.querySelector(data).textContent);
 
-		//Link to users filtered by group
+		// Link to users filtered by group
 		url.searchParams.delete("zone");
 		items.forEach(function(item){
 			url.searchParams.set("group",item.id);
@@ -252,10 +264,10 @@
 		this.items=items;
 		this.roles=roles;
 
-		//Flag defines how values are stored
+		// Flag defines how values are stored
 		l10ns_enabled=Array.isArray(L10NS);
 
-		//Filling in the set of l10n
+		// Filling in the set of l10n
 		if(L10NS?.length)
 			import("./l10ns.mjs").then(({default:l10ns})=>{
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
@@ -264,12 +276,12 @@
 			l10n_keys.length=0;
 
 		for(const k of Object.keys(this.group))
-			this.$watch("group."+k,val=>this.loading || this.Changed(k,val));
+			this.$watch("group."+k,(val,old)=>this.Changed(k,val,old));
 
 		$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 	},
 	mounted(){
-		$(this.$refs.group).one("hidden.coreui.modal",()=>this.group_title="");
+		$(this.$refs.group).on("hidden.coreui.modal",()=>this.group_title="");
 	}
 }).mount(container))
 (document.currentScript.dataset);

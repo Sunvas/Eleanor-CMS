@@ -1,13 +1,13 @@
-### English
-This directory stores template files for userspace of the site (HTML markup with variables). Description of template formats with examples is available [here](https://github.com/Sunvas/eleanor-php-library-examples/tree/main/2-templates-engine).
-Files located directly inside this directory are file templates. Subdirectories:
-* `includes` - files included directly by templates;
-* `l10n` - localization files. Format is described in the constructor of class `./cms/library/classes/l10n.php`;
-* `unit-*` - directories with unit templates;
+[Русский язык](README.ru.md)
 
-### Русский язык
-В этом каталоге хранится шаблонизатор пользовательской части сайта (HTML разметка с переменными). Описание форматов шаблонизатора с примерами доступно [здесь](https://github.com/Sunvas/eleanor-php-library-examples/tree/main/2-templates-engine).
-Файлы расположенные непосредственно внутри этого каталога реализуют шаблонизатор на файлах. Подкаталоги:
-* `includes` - файлы, подключаемые напрямую шаблонами;
-* `l10n` - языковые файлы. Формат описан в конструкторе класса `./cms/library/classes/l10n.php`;
-* `unit-*` - каталоги с шаблонами юнитов;
+This directory contains templates for the public user area.
+
+The public user area contains only a few common system templates. The `maintenance.php` file is used when the site is closed for maintenance, and `error.php` is used to render error pages. Requested content pages are rendered by units, and each unit decides which templates to use and where to store them.
+
+Recommended layout:
+
+* `index.php` — main page skeleton used by public user area templates.
+* `includes/` — reusable template fragments included by other templates.
+* `l10n/` — localization files used by common user area templates.
+* `Widget*.php` — widget templates for places where site owners may insert custom content, such as ads, banners, notices, or other dynamic blocks.
+* `unit_name/` — recommended location for templates used by a specific unit.

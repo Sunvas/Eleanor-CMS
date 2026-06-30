@@ -9,8 +9,8 @@ return new class extends Abstracts\AdminPanel {
 	}
 
 	/** This special method is called directly from /index.php Should return never if page exists.
-	 * @param string $slug page name
-	 * @param ?string $uri subpage name **/
+	 * @param string $slug Page name
+	 * @param ?string $uri URI tail **/
 	function Try(string$slug,?string$uri):void
 	{
 		if(!CMS::$A->current and Return304())
@@ -39,11 +39,10 @@ SQL;
 			$slug.='/'.$uri;
 
 		$R=CMS::$Db->Execute($query,[$slug]);
+		$item=SingleFetch($R);
 
-		if($R->num_rows>0)
+		if($item)
 		{
-			$item=$R->fetch_assoc();
-
 			#Links to alternative localizations
 			Alternate(fn(string$code,Uri$Uri)=>isset($item['slug_'.$code]) ? $Uri(explode('/',$item['slug_'.$code])) : null);
 
@@ -53,7 +52,7 @@ SQL;
 			#Generating HTML of the page
 			$output=(CMS::$T)('StaticPage',$item);
 
-			#Output HTML to browser. Cache is off for users.
+			#Output HTML to browser. Cache is disabled for signed-in users.
 			HTML($output,200,CMS::$A->current ? 0 : 86400);
 		}
 	}

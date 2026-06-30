@@ -1,7 +1,13 @@
-﻿### English
-This folder is designed to contain all static files of site: js, css, images, icons, fonts etc.
-Interpretation of PHP scripts in this directory should be disabled.
+﻿[Русский язык](README.ru.md)
 
-### Русский язык
-Этот каталог содержит все статические файлы сайта: js, css, картинки, иконки, шрифты и прочее.
-Интерпретация PHP скриптов в этом каталога должна быть отключена. 
+This directory contains public static files served directly by the web server: CSS, JavaScript, images, icons, fonts, uploaded files, and similar assets.
+
+PHP script execution must be disabled in this directory.
+
+Recommended layout:
+
+- `admin-panel/` — static files used by the admin panel.
+- `user-area/` — static files used by the public user area.
+- `unit_name/` — static files used by a specific unit.
+- `uploads/` — files uploaded through the CMS.
+- `avatars/` — user avatars.

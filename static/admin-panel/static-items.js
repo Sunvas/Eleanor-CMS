@@ -8,7 +8,7 @@
 		extends:items4,
 		template,
 		data:()=>({
-			//L10n
+			// L10n
 			l10n:Object.seal({
 				delete:{ru:"Вы действительно хотите удалить статическую страницу?",en:"Are you sure you want to delete the static page?"},
 				ACTIVE:{ru:"Активна",en:"Active"},
@@ -17,24 +17,24 @@
 			lang:document.documentElement.lang,
 			l10ns:[],
 
-			//List of static pages
+			// List of static pages
 			items,
 			can_create,
 			can_delete,
 			default_sort:"id",
 
-			//Filters
+			// Filters
 			id:"",
 			slug:"",
 			title:"",
-			reset:['sort','order','id','slug','title'],//const for clearing purpose
+			reset:['sort','order','id','slug','title'],// const for clearing purpose
 
-			//Confirmation modal
+			// Confirmation modal
 			confirm:"",
 			confirm_title:"",
 			confirmed:false,
 
-			//Creating
+			// Creating
 			creating_title:"",
 			saving:false,
 		}),
@@ -65,7 +65,7 @@
 					coreui.Modal.getOrCreateInstance(this.$refs.confirm).show();
 
 					$(this.$refs.confirm)
-						.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())//Hidden element should be focused
+						.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())// Blur focused element before hiding
 						.one("hidden.coreui.modal",()=>resolve(this.confirmed))
 						.one("shown.coreui.modal",()=>$(this.$refs.confirm_dismiss).focus());
 				});
@@ -136,10 +136,10 @@
 				if(v[lang])
 					this.l10n[k]=v[lang];
 
-			//Flag defines how values are stored
+			// Flag defines how values are stored
 			l10ns_enabled=Array.isArray(L10NS);
 
-			//Filling in the set of l10n
+			// Filling in the set of l10n
 			if(L10NS?.length)
 				import("./l10ns.mjs").then(({default:l10ns})=>{
 					this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);

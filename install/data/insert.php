@@ -5,21 +5,21 @@ use Eleanor\Classes\{L10n,MySQL};
 
 /** @var MySQL $Db */
 
-/** Converting l10n values to JSON db fields
+/** Convert l10n values to database fields
  * @param MySQL $Db
- * @param array $values Языковые значения
+ * @param array $values Language values
  * @return array */
 function L10n2JSONDbFields(MySQL$Db,array$values):array
 {
-	$l10n=L10n::$code;#Выбранный язык
-	$l10ns=$_SESSION['l10ns'];#Доступные языки
+	$l10n=L10n::$code;
+	$l10ns=$_SESSION['l10ns'];
 
 	if($l10ns)
 	{
 		$l10ns[]=$l10n;
 
 		foreach($values as &$v)
-			$v=$Db->Escape(\json_encode(\array_filter($v,fn($k)=>\in_array($k,$l10ns),\ARRAY_FILTER_USE_KEY),JSON));
+			$v=$Db->Escape(\json_encode(\array_filter($v,fn($k)=>\in_array($k,$l10ns,true),\ARRAY_FILTER_USE_KEY),JSON));
 	}
 	elseif($l10ns!==null)
 		foreach($values as &$v)
@@ -68,7 +68,7 @@ $data=[
 		'slug'=>'demo-static',
 		'title'=>'Demo static page',
 		'description'=>'Meta description of static page',
-		'content_source'=>'{"time": 0, "blocks": [{"id": "1zMHBVUVsb", "data": {"text": "Content of the static page. It can be edited id admin panel."}, "type": "paragraph"}], "version": "2.31.6"}',
+		'content_source'=>'{"time": 0, "blocks": [{"id": "1zMHBVUVsb", "data": {"text": "Content of the static page. It can be edited in the admin panel."}, "type": "paragraph"}], "version": "2.31.6"}',
 	]
 ];
 $values=['status'=>'ACTIVE'];
@@ -77,10 +77,10 @@ if($l10ns===null)
 	$values+=$data[$l10n] ?? $data['en'];
 else
 	foreach($l10ns as $lk)
-		if($data[$lk])
+		if(isset($data[$lk]))
 			foreach($data[$lk] as $k=>$v)
 				$values[$k.'_'.$lk]=$v;
 
 $insert['static']=fn()=>$Db->Insert('static',$values);
 
-return$insert;
+return $insert;

@@ -17,7 +17,7 @@ $nonce=Nonce();
 $scripts??=[];
 
 if(\is_array($title))
-	\array_push($title,$l10n['admin-panel'],\is_array(CMS::$config['site']['name']) ? L10n::Item(CMS::$config['site']['name']) : CMS::$config['site']['name']);
+	\array_push($title,$l10n['admin-panel'],\is_array(CMS::$config['site']['title']) ? L10n::Item(CMS::$config['site']['title']) : CMS::$config['site']['title']);
 
 if($formfuse ?? false)
 	$scripts['confirm']=<<<'SCRIPT'
@@ -54,10 +54,10 @@ else
 foreach($scripts as $k=>&$script)
 	$script=\is_int($k)
 		? <<<HTML
-<script src="{$script}" nonce="{$nonce}" defer></script>
+<script src="{$script}" nonce="$nonce" defer></script>
 HTML
 		: <<<HTML
-<script nonce="{$nonce}">L.then(async()=>{{$script}})</script>
+<script nonce="$nonce">L.then(async()=>{{$script}})</script>
 HTML;
 
 Link('//cdn.jsdelivr.net');
@@ -153,9 +153,10 @@ Link('//cdn.jsdelivr.net');
 	<main class="body flex-grow-1"><?=$content?></main>
 	<footer class="footer px-4 text-muted">
 		<div>&copy; <?=idate('Y')?></div>
-		<?php /* Feel free to get rid off this shit! */ ?>
+		<?php /* Feel free to remove it */ ?>
 		<div class="ms-auto">Powered by <a href="https://eleanor-cms.com" target="_blank">Eleanor CMS</a></div>
 	</footer>
 </div>
 </body>
 </html>
+<!-- Page generated in <?=\sprintf('%.3f',(\hrtime(true)-STARTED)/1e+9)?> sec; Memory peak usage is <?=\sprintf('%.3f',\memory_get_peak_usage()/1e+6)?> Mb -->

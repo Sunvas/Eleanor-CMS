@@ -15,18 +15,18 @@ const
 	REQUIRED_PHP_VERSION = 8.5;
 
 require BASE.'cms/library/core.php';
-require BASE.'cms/constants.php';//Just for VERSION
+require BASE.'cms/constants.php';# Site constants
 
 Library::$logs=BASE.'cms/logs/';
 
-/** Проверка среды для возможности установки
+/** Check whether the environment is ready for installation
  * @return array of errors */
 function CheckEnv():array
 {
 	$errors=[];
 
 	if(\file_exists(LOCK))
-		return['LOCKED'];
+		return ['LOCKED'];
 
 	if(\version_compare(\PHP_VERSION,REQUIRED_PHP_VERSION,'<'))
 		$errors[]='LOW_PHP_VERSION';
@@ -34,7 +34,7 @@ function CheckEnv():array
 	if(!\function_exists('mysqli_connect'))
 		$errors[]='MYSQLI_MISSED';
 
-	#Каталог с логами
+	# Logs directory
 	if(!\is_dir(Library::$logs))
 		$errors['NOT_EXIST'][]=Library::$logs;
 	elseif(!\is_writeable(Library::$logs))
@@ -42,38 +42,38 @@ function CheckEnv():array
 
 	$base=\realpath(BASE);
 
-	#Проверка на запись robots.txt, конфига главной страницы, конфига для доступа к БД и константы
+	# Check write access to robots.txt, database config, and constants
 	foreach([$base.'/robots.txt',$base.'/cms/config/db.php',$base.'/cms/constants.php'] as $f)
 		if(!\is_file($f))
 			$errors['NOT_EXIST'][]=$f;
 		elseif(!\is_writeable($f))
 			$errors['NOT_WRITABLE'][]=$f;
 
-	#Uploads, config
+	# Writable directories
 	foreach([$base.'/static/uploads/',$base.'/cms/config/',$base.'/cms/cache/'] as $d)
 		if(!\is_dir($d))
 			$errors['NOT_EXIST'][]=$d;
 		elseif(!\is_writeable($d))
 			$errors['NOT_WRITABLE'][]=$d;
 
-	return$errors;
+	return $errors;
 }
 
-/** Alias. Генерация nonce для скриптов. Они могут быть использованы повторно
+/** Alias. Generate script nonce. It can be reused
  * @return string
  * @throws \Random\RandomException */
 function Nonce():string
 {
-	return OutPut::Nonce();
+	return Output::Nonce();
 }
 
 /** Alias */
 function Link(...$a):void
 {
-	OutPut::Link(...$a);
+	Output::Link(...$a);
 }
 
-/** Шаг 1: выбор языка системы */
+/** Step 1: select system language */
 function Step1():string
 {global$T;
 	if(($_SESSION['step'] ?? 0)===1 and \in_array($_POST['l10n'] ?? 0,['ru','en'],true))
@@ -87,15 +87,15 @@ function Step1():string
 
 	$_SESSION['step']=1;
 
-	return$T('Step1');
+	return $T('Step1');
 }
 
-/** Шаг 2: формальное лицензионное соглашение или ошибки окружения */
+/** Step 2: license agreement or environment errors */
 function Step2(?array$errors=null):string
 {global$T;
 	$errors??=CheckEnv();
 
-	#Переход к следующему шагу
+	# Continue to the next step
 	if(($_SESSION['step'] ?? 0)===2 and !$errors and $_POST)
 	{
 		if(isset($_POST['agree']))
@@ -105,18 +105,18 @@ function Step2(?array$errors=null):string
 			return Step1();
 	}
 
-	#Установка значений
+	# Set values
 	L10n::$code=$_SESSION['l10n'];
 	$_SESSION['step']=2;
 
-	return$errors ? $T('Problems',$errors) : $T('Step2');
+	return $errors ? $T('Problems',$errors) : $T('Step2');
 }
 
-/** Шаг 3: Настройки подключения к БД */
+/** Step 3: database connection settings */
 function Step3($errors=[]):string
 {global$T;
 
-	#Переход к следующему шагу
+	# Continue to the next step
 	if(($_SESSION['step'] ?? 0)===3 and $_POST)
 	{
 		$next=true;
@@ -129,8 +129,14 @@ function Step3($errors=[]):string
 
 		$_SESSION['multilang']=isset($_POST['multilang']);
 		$_SESSION['l10ns']=\is_array($_POST['l10ns'] ?? 0) && $_SESSION['multilang']
-			? \array_filter($_POST['l10ns'],fn($item)=>\in_array($item,['ru','en']))
+			? \array_filter($_POST['l10ns'],fn($item)=>\in_array($item,['ru','en'],true))
 			: null;
+
+		if($_SESSION['password']!==$_SESSION['password2'])
+		{
+			$next=false;
+			$errors[]='PASS_MISMATCH';
+		}
 
 		if($next and isset($_POST['next']))
 			return Step4();
@@ -139,11 +145,11 @@ function Step3($errors=[]):string
 			return Step2();
 	}
 
-	#Установка значений
+	# Set values
 	L10n::$code=$_SESSION['l10n'];
 	$_SESSION['step']=3;
 
-	return$T('Step3',
+	return $T('Step3',
 		host:$_SESSION['host'] ?? 'p:localhost',
 		user:$_SESSION['user'] ?? '',
 		pass:$_SESSION['pass'] ?? '',
@@ -165,11 +171,11 @@ function Step3($errors=[]):string
 	);
 }
 
-/** Шаг 4: Создание таблиц */
+/** Step 4: create tables */
 function Step4():string
 {global$T;
 
-	#Переход к следующему шагу
+	# Continue to the next step
 	if(($_SESSION['step'] ?? 0)===4)
 	{
 		if(isset($_POST['back']))
@@ -182,7 +188,7 @@ function Step4():string
 			return Step5();
 	}
 
-	#Установка значений
+	# Set values
 	L10n::$code=$_SESSION['l10n'];
 	$_SESSION['step']=4;
 
@@ -208,24 +214,24 @@ function Step4():string
 			$err=$E->getMessage();
 		}
 
-		if(!is_int($k))
+		if(!\is_int($k))
 			$status[$k]=$err;
 	}
 
 	# PHP 8.6: migrate to pipe operator
-	$ok=!array_any($status,fn($item)=>\is_string($item));
+	$ok=!\array_any($status,fn($item)=>\is_string($item));
 
 	if($ok)
 		$_SESSION['step4-done']=true;
 
-	return$T('Step4',$status,$ok);
+	return $T('Step4',$status,$ok);
 }
 
-/** Шаг 5: Запись значений */
+/** Step 5: insert initial data */
 function Step5():string
 {global$T;
 
-	#Переход к следующему шагу
+	# Continue to the next step
 	if(($_SESSION['step'] ?? 0)===5)
 	{
 		if(isset($_POST['back']))
@@ -238,7 +244,7 @@ function Step5():string
 			return Step6();
 	}
 
-	#Установка значений
+	# Set values
 	L10n::$code=$_SESSION['l10n'];
 	$_SESSION['step']=5;
 
@@ -264,39 +270,43 @@ function Step5():string
 			$err=(string)$E;
 		}
 
-		if(!is_int($k))
+		if(!\is_int($k))
 			$status[$k]=$err;
 	}
 
 	# PHP 8.6: migrate to pipe operator
-	$ok=!array_any($status,fn($item)=>\is_string($item));
+	$ok=!\array_any($status,fn($item)=>\is_string($item));
 
 	if($ok)
 	{
-		$Db->Insert('users',[
-			'id'=>1,
-			'name'=>$_SESSION['username'],
-			'groups'=>'[1]',
-			'password_hash'=>\password_hash($_SESSION['password'],\PASSWORD_DEFAULT),
-			'avatar'=>'a'
-		]);
+		try{
+			$Db->Insert('users',[
+				'id'=>1,
+				'name'=>$_SESSION['username'],
+				'groups'=>'[1]',
+				'password_hash'=>\password_hash($_SESSION['password'],\PASSWORD_DEFAULT),
+				'avatar'=>'a'
+			]);
 
-		$status['users']=false;
-		$_SESSION['step5-done']=true;
+			$status['users']=false;
+			$_SESSION['step5-done']=true;
+		}catch(EM$E){
+			$status['users']=(string)$E;
+			$ok=false;
+		}
 	}
 
-	return$T('Step5',$status,$ok);
+	return $T('Step5',$status,$ok);
 }
 
-/** Шаг 7: Запись значений */
+/** Step 6: write configuration files and finish installation */
 function Step6():string
 {global$T;
-	$_SESSION['finished']??=true;
 	$sitedir=\dirname(SITEDIR).'/';
 
-	if($_SESSION['finished'])
+	if(($_SESSION['step'] ?? 0)===5)
 	{
-		#config of connection to database
+		# Database connection configuration
 		$db=\var_export($_SESSION['db'],true);
 		$host=\var_export($_SESSION['host'],true);
 		$user=\var_export($_SESSION['user'],true);
@@ -313,7 +323,7 @@ return[
 PHP;
 		\file_put_contents(BASE.'cms/config/db.php',$config_db,\LOCK_EX);
 
-		#robots.txt
+		# robots.txt
 		$protocol=\Eleanor\PROTOCOL;
 		$domain=\Eleanor\DOMAIN;
 		$config_robots=<<<TEXT
@@ -322,14 +332,14 @@ Sitemap: {$protocol}{$domain}{$sitedir}sitemap.xml
 TEXT;
 		\file_put_contents(BASE.'robots.txt',$config_robots,\LOCK_EX);
 
-		#system constants
+		# System constants
 		$l10ns=\is_array($_SESSION['l10ns']) ? \join(',',\array_map(fn($item)=>\var_export($item,true),$_SESSION['l10ns'])) : '';
 		$config=\file_get_contents(BASE.'cms/constants.php');
 		$config=\preg_replace('#L10N=[^,]+#',"L10N='{$_SESSION['l10n']}'",$config);
 		$config=\preg_replace('#L10NS=[^;]+#',$_SESSION['l10ns']===null ? 'L10NS=null' : "L10NS=[{$l10ns}]",$config);
 		\file_put_contents(BASE.'cms/constants.php',$config,\LOCK_EX);
 
-		#system config
+		# System config
 		$system=\json_encode([
 			'maintenance'=>false,
 			'captcha'=>false,
@@ -338,16 +348,15 @@ TEXT;
 		],JSON);
 		\file_put_contents(BASE.'cms/config/system.json',$system,\LOCK_EX);
 
-		#config of main page
+		# Main page config
 		$mono=$_SESSION['l10ns']===null;
 		$mainpage=\json_encode([
-			'name'=>$mono ? $_SESSION['title'] : [$_SESSION['l10n']=>$_SESSION['title']],
-			'title'=>$mono ? '' : [$_SESSION['l10n']=>''],
+			'title'=>$mono ? $_SESSION['title'] : [$_SESSION['l10n']=>$_SESSION['title']],
 			'description'=>$mono ? $_SESSION['description'] : [$_SESSION['l10n']=>$_SESSION['description']],
 		],JSON);
 		\file_put_contents(BASE.'cms/config/site.json',$mainpage,\LOCK_EX);
 
-		#Deleting unsued l10n files
+		# Deleting unused l10n files
 		$folders=[
 			'admin-panel/l10n',
 			'admin-panel/main/l10n',
@@ -382,11 +391,11 @@ TEXT;
 			}
 		}
 
-		#Deleting other unused files
+		# Deleting other unused files
 		foreach(\array_diff(['en','ru'],$l10ns) as $l10n)
 			\unlink(__DIR__."/../cms/units/main/mainpage-$l10n.json");
 
-		#locking the installer to prevent another installation
+		# Lock the installer to prevent another installation
 		\file_put_contents(__DIR__.'/install.lock',1,\LOCK_EX);
 
 		new Cache(BASE.'cms/cache')->Put('admin-panel','admin.php',0,true);
@@ -395,11 +404,11 @@ TEXT;
 	L10n::$code=$_SESSION['l10n'];
 	$_SESSION['step']=6;
 
-	#Erasing session
+	# Clear sensitive session values
 	foreach(['host','user','pass','db', 'title','description','hcaptcha','hsecret', 'username','password','password2'] as $f)
 		unset($_SESSION[$f]);
 
-	return$T('Step6',$sitedir);
+	return $T('Step6',$sitedir);
 }
 
 \session_start([
@@ -411,7 +420,7 @@ TEXT;
 	'cookie_secure'=>($_SERVER['HTTPS'] ?? '')=='on'
 ]);
 
-#Reset installation if lock file not found
+# Reset installation if lock file not found
 if(isset($_SESSION['step']) and $_SESSION['step']===6 and !\is_file(LOCK))
 	$_SESSION=[];
 

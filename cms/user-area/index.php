@@ -19,16 +19,16 @@ $script=$inline='';
 $nonce=Nonce();
 
 foreach($scripts as $k=>$s)
-	if(is_int($k))
+	if(\is_int($k))
 		$script.=<<<HTML
-<script src="{$s}" nonce="{$nonce}" defer></script>
+<script src="{$s}" nonce="$nonce" defer></script>
 HTML;
 	else
 		$inline.=$s;
 
 if(isset($canonical))
 {
-	$pref=\Eleanor\PROTOCOL.\Eleanor\PUNYCODE;
+	$pref=\Eleanor\PROTOCOL.\Eleanor\DOMAIN;
 	$head['canonical']=<<<HTML
 <link rel="canonical" href="{$pref}{$canonical}">
 HTML;
@@ -38,8 +38,8 @@ HTML;
 }
 
 #Appending site title to the title of pages
-if(is_array($title))
-	$title[]=is_array(CMS::$config['site']['name']) ? L10n::Item(CMS::$config['site']['name']) : CMS::$config['site']['name'];
+if(\is_array($title))
+	$title[]=\is_array(CMS::$config['site']['title']) ? L10n::Item(CMS::$config['site']['title']) : CMS::$config['site']['title'];
 
 $l10n=new L10n('',__DIR__.'/l10n/');
 $Menu=new Uri()->IAM();
@@ -51,14 +51,14 @@ Link('//cdn.jsdelivr.net');
 <head>
 	<base href="<?=\Eleanor\SITEDIR?>">
 	<meta charset="utf-8">
-	<title><?=strip_tags(is_array($title) ? join(' :: ',$title) : $title)?></title>
+	<title><?=\strip_tags(\is_array($title) ? \join(' :: ',$title) : $title)?></title>
 
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="static/user-area/styles/main.css">
 <?php
 if(isset($hreflang))
 {
-	$base=\Eleanor\PROTOCOL.\Eleanor\PUNYCODE.\Eleanor\SITEDIR;
+	$base=\Eleanor\PROTOCOL.\Eleanor\DOMAIN.\Eleanor\SITEDIR;
 	echo \array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."<link rel='alternate' href='{$base}{$hreflang[$code]}' hreflang='{$code}'>","\t");
 }
 ?>
@@ -68,7 +68,7 @@ if(isset($hreflang))
 		const L=new Promise(F=>document.readyState==="loading"?addEventListener('DOMContentLoaded',F):F()),J=async r=>r.ok ? r.json() : Promise.reject(r);
 		L.then(()=>$(`nav a[href='${location.pathname+location.search}']`).addClass("active"));
 		<?=$inline,require __DIR__.'/includes/cron.php' /* Cron is being run here */?>
-	</script><?=$script,join("\n",$head)?>
+	</script><?=$script,\join("\n",$head)?>
 </head>
 <body class="page_bg">
 
@@ -147,17 +147,17 @@ echo CMS::$T->BlockLight(title:'Light widget 1',content:'Light content 1')
 				<span style="width: 88px;"><!-- кнопка, счетчик --></span>
 				<span style="width: 60px;">  <a href="https://validator.w3.org/check?uri=referer" rel="nofollow"><img src="static/user-area/images/html5_valid.png" alt="Valid HTML 5" title="Valid HTML 5" width="60" height="31"></a></span>
 			</div>
-			<span class="copyright">Copyright &copy; <?=idate('Y')?></span>
+			<span class="copyright">Copyright &copy; <?=\idate('Y')?></span>
 			<div class="clr"></div>
 		</div></div></div>
 
 		<div id="syscopyright">
 			<span class="centroarts"><a href="//centroarts.com" title="Шаблон разработан студией CENTROARTS.com">Designed by CENTROARTS.com</a></span>
-			<?php /* Feel free to get rid off this shit! */ ?>
+			<?php /* Feel free to remove it */ ?>
 			<div>Powered by <a href="https://eleanor-cms.com" target="_blank">Eleanor CMS</a></div>
 		</div>
 	</footer>
 </div>
 </body>
 </html>
-<!-- Page generated in <?=sprintf('%.3f',(\hrtime(true)-STARTED)/1e+9)?> sec; Memory peak usage is <?=sprintf('%.3f',memory_get_peak_usage()/1e+6)?> Mb -->
+<!-- Page generated in <?=\sprintf('%.3f',(\hrtime(true)-STARTED)/1e+9)?> sec; Memory peak usage is <?=\sprintf('%.3f',\memory_get_peak_usage()/1e+6)?> Mb -->

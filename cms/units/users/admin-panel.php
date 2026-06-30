@@ -174,7 +174,8 @@ function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 		$R=CMS::$Db->Query(<<<SQL
 SELECT `name`, `groups`, `l10n`, `display_name`, `avatar`, `info`, `comment` FROM `users` WHERE `id`={$id}
 SQL );
-		if(!$user=$R->fetch_assoc())
+
+		if(!$user=SingleFetch($R))
 			return[
 				'ok'=>false
 			];
@@ -200,7 +201,7 @@ SQL );
 	if($name!='')
 	{
 		$where[]='`name` LIKE ?';
-		$params[]="%{$name}%";
+		$params[]="%$name%";
 	}
 
 	#Filter by group
@@ -252,24 +253,26 @@ ORDER BY `{$sort}`{$order}
 {$limit}
 SQL);
 
-	$users=(function()use($R){
-		while($a=$R->fetch_assoc())
+	$items=(function()use($R){
+		foreach($R as $a)
 		{
 			$a['id']=(int)$a['id'];
 			$a['groups']=\json_decode($a['groups'],true) ?? [];
 			$a['empty_password']=(bool)$a['empty_password'];
 
-			yield$a;
+			yield $a;
 		}
+
+		$R->free();
 	})();
 
 	$groups=(function(){
 		$multi=L10NS!==null;
-
 		$R=CMS::$Db->Query(<<<SQL
 SELECT `id`, `title` FROM `groups`
 SQL);
-		while($a=$R->fetch_assoc())
+
+		foreach($R as $a)
 		{
 			$a['id']=(int)$a['id'];
 
@@ -281,9 +284,11 @@ SQL);
 
 			yield $a;
 		}
+
+		$R->free();
 	})();
 
-	return (CMS::$T)('users',\compact('users','groups','total','sort','pp','is_root')+['desc'=>(bool)$order]);
+	return (CMS::$T)('users',\compact('items','groups','total','sort','pp','is_root')+['desc'=>(bool)$order]);
 }
 
 /** List of groups of users
@@ -372,7 +377,8 @@ function Groups(Classes\Uri4AdminPanel $Uri):array|string
 		$R=CMS::$Db->Query(<<<SQL
 SELECT `roles`, `title`, `slow_mode` FROM `groups` WHERE `id`={$id}
 SQL );
-		if(!$group=$R->fetch_assoc())
+
+		if(!$group=SingleFetch($R))
 			return[
 				'ok'=>false
 			];
@@ -389,11 +395,11 @@ SQL );
 		];
 	}
 
-	$items=(function()use($Uri){
+	$items=(function(){
 		$multi=L10NS!==null;
-
 		$R=CMS::$Db->Query('SELECT * FROM `groups` ORDER BY `id` ASC');
-		while($a=$R->fetch_assoc())
+
+		foreach($R as $a)
 		{
 			$a['id']=(int)$a['id'];
 			$a['slow_mode']=(int)$a['slow_mode'];
@@ -409,6 +415,8 @@ SQL );
 
 			yield $a;
 		}
+
+		$R->free();
 	})();
 
 	$roles=\array_map(fn($item)=>$item->value,Enums\Roles::cases());
@@ -418,7 +426,7 @@ SQL );
 
 #Assigning folder with templates
 if(!CMS::$json)
-	CMS::$T[]=ROOT.'admin-panel/'.$this->name;
+	CMS::$T[]=CMS.'admin-panel/'.$this->name;
 
 $is_root=\in_array('root',CMS::$P->roles);
 

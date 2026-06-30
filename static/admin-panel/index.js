@@ -3,7 +3,7 @@ async function J(r)
 	return r.ok ? r.json() : Promise.reject(r);
 }
 
-//Sidebar toggler
+// Sidebar toggler
 L.then(()=>{
 	const
 		narrow="sidebar-narrow-unfoldable",
@@ -15,8 +15,9 @@ L.then(()=>{
 		SB=a=>coreui.Sidebar.getInstance(sidebar[0])[a]();
 
 	$(document)
-		.on('swiped-left',()=>SB("hide"))
-		.on("click","nav.sidebar-narrow-unfoldable",e=>$(e.target).is(":hover") || e.preventDefault());//For landscape click on tablet
+		.on("swiped-left",()=>SB("hide"))
+		// Prevent accidental sidebar opening on landscape tablets
+		.on("click","nav.sidebar-narrow-unfoldable",e=>$(e.target).is(":hover") || e.preventDefault());
 
 	$(".sidebar button.btn-close").on("click",()=>SB("hide"));
 	$("button.header-toggler").on("click",()=>SB("toggle"));
@@ -27,38 +28,58 @@ L.then(()=>{
 	});
 });
 
-//Theme selector
+// Theme selector
 L.then(()=>{
 	const
-		a="data-coreui-theme",
-		d=localStorage.getItem("dark"),
-		h=$("html");
+		attr="data-coreui-theme",
+		dark=localStorage.getItem("dark"),
+		html=$(document.documentElement),
+		theme=dark ? "dark" : "light";
 
-	//Restore previously saved
-	h.attr(a,d ? "dark" : "light");
-	$(`#theme-selector button[name=${d ? 'dark' : 'light'}]`).addClass("active");
+	// Restore previously saved
+	html.attr(attr,theme);
+	$(`#theme-selector button[name=${theme}]`).addClass("active");
 
-	//Switch
+	// Switch
 	$(document).on("click","#theme-selector button:not(.active)",function(){
 		$("#theme-selector button").removeClass("active");
 
 		const dark=$(this).addClass("active").attr("name")=="dark";
 
-		h.attr(a,dark ? "dark" : "light");
+		html.attr(attr,dark ? "dark" : "light");
 		dark ? localStorage.setItem("dark",1) : localStorage.removeItem("dark");
 	});
 });
 
-//Make ToolTip workable
+// Initialize CoreUI Tooltip
 L.then(()=>$('[data-coreui-toggle="tooltip"]').each((i,el)=>new coreui.Tooltip(el)));
 
-//Make nav links active
-L.then(()=>$("nav a.nav-link").toArray().filter(item=>location.href.startsWith($(item).prop("href"))).toSorted((a,b)=>$(a).attr("href").length-$(b).attr("href").length).pop())
- .then(item=>item ? $(item).addClass("active").closest(".nav-group").addClass("show") : 0);
+// Make nav links active
+L.then(function(){
+	const item=$("nav a.nav-link")
+		.toArray()
+		.filter(item=>location.href.startsWith($(item).prop("href")))
+		.toSorted((a,b)=>$(a).attr("href").length-$(b).attr("href").length)
+		.pop();
 
-//Sign out
-L.then(()=>$("#sign-out").on("click",()=>fetch(location.pathname,{method:"delete",headers:{accept:"application/json"}}).then(J).then(r=>r.ok ? location.reload() : alert(r.error))));
+	if(item)
+		$(item).addClass("active").closest(".nav-group").addClass("show");
+});
 
-//Cron run
-if(document.currentScript.dataset.cron)
-	(function F(){ fetch("cron.php").then(async r=>r.status==200 ? setTimeout(F,1000*(await r.text())) : 0); })();
+// Sign out
+L.then(()=>$("#sign-out").on("click",()=>fetch(location.pathname,{
+		method:"delete",
+		headers:{accept:"application/json"}
+	})
+	.then(J)
+	.then(r=>r.ok ? location.reload() : alert(r.error))
+));
+
+// Cron run
+if(document.currentScript?.dataset.cron)
+	(function Cron(){
+		fetch("cron.php").then(async r=>{
+			if(r.status==200)
+				setTimeout(Cron,1000*(await r.text()));
+		});
+	})();

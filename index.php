@@ -13,7 +13,7 @@ use const Eleanor\SITEDIR;
 /** @const Script start time, used to display service information at the bottom of the page. */
 \define('CMS\STARTED',\hrtime(true));
 
-#If system is not install - redirect to installation setup. You can remove this block after installation
+# If the system is not installed, redirect to installation setup. You can remove this block after installation
 if(!\file_exists(__DIR__.'/cms/config/system.json'))
 {
 	\header('Location: install/',false,302);
@@ -22,11 +22,11 @@ if(!\file_exists(__DIR__.'/cms/config/system.json'))
 
 require __DIR__.'/cms/core.php';
 
-#Killing /index.php requests
-if(\str_starts_with(Uri::$current,'index.php'))
-	Redirect(\substr(Uri::$current,0,9));
+# Redirect /index.php requests to canonical URI
+if(\str_starts_with(Uri::$raw,'index.php'))
+	Redirect(\substr(Uri::$raw,9));
 
-#Import Uri class to CMS namespace
+# Expose Uri class to CMS namespace
 class_alias(Uri::class,__NAMESPACE__.'\Uri');
 
 /** Error page
@@ -55,9 +55,9 @@ function Halt(int$code=404,string$allow405='DELETE'):never
 	die($output);
 }
 
-/** Canonical link
+/** Set canonical link
  * @param Uri|string $Uri
- * @param string|array $slug
+ * @param string|string[] $slug
  * @return void */
 function Canonical(Uri|string$Uri,string|array$slug='',...$a):void
 {
@@ -72,8 +72,8 @@ function Canonical(Uri|string$Uri,string|array$slug='',...$a):void
 		CMS::$T['canonical']=null;
 }
 
-/** Making URI for alternative l10n of page
- * @param \Closure $Gen Function which receives l10n code as first param and Uri object for the second one */
+/** Generate alternative localization links
+ * @param \Closure $Gen Function receiving l10n code and Uri object */
 function Alternate(\Closure$Gen):void
 {
 	if(!L10NS)
@@ -101,31 +101,31 @@ function Alternate(\Closure$Gen):void
 	}
 }
 
-/** Split URI to SLUG and URI
+/** Split URI into slug and URI tail
  * @param ?string $uri
- * @return array [slug, uri] */
-function SlugUri(?string$uri):array
+ * @return array [slug, URI tail] */
+function SlugTail(?string $uri):array
 {
 	return $uri && \str_contains($uri,'/') ? \explode('/',$uri,2) : [$uri ?? '',null];
 }
 
-Assign::For(CMS::$A,fn()=>new Authorization('a11n_userarea',(int)($_GET['iam'] ?? 0),require ROOT.'external.php'));
+Assign::Bind(CMS::$A,fn()=>new Authorization('a11n_userarea',(int)($_GET['iam'] ?? 0),require CMS.'external.php'));
 
-$uri=Uri::GetURI();
+$uri=Uri::Clean();
 
-#Redirecting user to the appropriate language version
+# Redirecting user to the appropriate language version
 if(L10NS!==null)
 {
 	$stack=[L10N,...L10NS];
 
-	#Requests like /ru or /en are redirected to /ru/ or /en/ (added slash at the end)
+	# Requests like /ru or /en are redirected to /ru/ or /en/ with a trailing slash
 	if(\in_array($uri,$stack))
 		Redirect(SITEDIR.$uri.'/'.($_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''),307);
 
-	#Localization prefix
-	[$l10n,$uri]=SlugUri($uri);
+	# Localization prefix
+	[$l10n,$uri]=SlugTail($uri);
 
-	#Prefix verification
+	# Prefix verification
 	if(\in_array($l10n,$stack,true))
 	{
 		L10n::$code=$l10n;
@@ -137,7 +137,7 @@ if(L10NS!==null)
 		{
 			$id=CMS::$A->current;
 			$R=CMS::$Db->Query(<<<SQL
-SELECT `l10n` FROM `users` WHERE `id`={$id} LIMIT 1
+SELECT `l10n` FROM `users` WHERE `id`=$id LIMIT 1
 SQL );
 			$preferred=$R->fetch_column();
 
@@ -147,7 +147,7 @@ SQL );
 		else
 		{
 			HAL:
-			//https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Accept-Language - HAL is already sorted
+			# https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Accept-Language - HAL is already sorted
 			$hal=isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? \explode(',',$_SERVER['HTTP_ACCEPT_LANGUAGE']) : [];
 			$hal=\array_map(fn($item)=>\substr(\trim($item),0,2),$hal);
 
@@ -157,28 +157,28 @@ SQL );
 		$loc=[$l10n];
 		\array_push($loc,...($uri!==null ? \explode('/',$uri) : []));
 
-		#If a monolingual link is followed while multilingualism is enabled, we redirect the user to a new address with the from=autol10n flag.
-		#Next, the unit will decide what to do: to leave everything as is (no duplicate page due to the canonical header) or redirect to the correct address.
+		# If a monolingual link is followed while multilingual mode is enabled, redirect the user to a new address with the from=autol10n flag.
+		# Then the unit decides what to do: keep the page as is (using a canonical link) or redirect to the correct address.
 		Redirect(SITEDIR.$preferred.'/'.Uri::Make($loc).'?from=autol10n'.($_SERVER['QUERY_STRING'] ? '&'.$_SERVER['QUERY_STRING'] : ''),307);
 	}
 }
 else
 	L10n::$code=L10N;
 
-#Arguments for the Template constructor (template source and default variables)
+# Arguments for the Template constructor (template source and default variables)
 if(!CMS::$json and CMS::$T instanceof Assign)
 	CMS::$T->args=[
-		ROOT.'user-area',
+		CMS.'user-area',
 		[
-			#Link to admin panel
-			'adminpanel'=>CMS::$a11n && CMS::$A->current && array_intersect(['root','team'],CMS::$P->roles) ? CMS::$Cache->Get('admin-panel',true) : null,
+			# Link to admin panel
+			'adminpanel'=>CMS::$a11n && CMS::$A->current && array_intersect(['root','team'],CMS::$P->roles) ? CMS::$Cache->Get('admin-panel',0) : null,
 
-			#hCaptcha key
+			# hCaptcha key
 			'hcaptcha'=>CMS::$config['system']['captcha'] ? CMS::$config['system']['hcaptcha'] : ''
 		]
 	];
 
-#Site is closed (under maintenance), return https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/503
+# Site is closed (under maintenance), return https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/503
 if(CMS::$config['system']['maintenance'] and !\in_array('maintainer',CMS::$P->roles))
 {
 	if(CMS::$json)
@@ -188,19 +188,19 @@ if(CMS::$config['system']['maintenance'] and !\in_array('maintainer',CMS::$P->ro
 	HTML($content,503);
 }
 
-#Global object to carry shared data inside cms
+# Global object to carry shared data inside cms
 $CMS=new CMS;
 
-[$slug,$uri]=SlugUri($uri);
+[$slug,$uri]=SlugTail($uri);
 
-#Nothing found... Let's look for unit
-$units=\scandir(ROOT.'units');
+# Nothing found... Let's look for a unit
+$units=\scandir(CMS.'units');# PHP 8.6 - pipe operator
 $units=\array_filter($units,fn($item)=>\str_ends_with($item,'.php'));
 
 foreach($units as $unit)
 {
 	$u=\strrchr($unit,'.',true);
-	$U=require (ROOT.'units/'.$unit);
+	$U=require (CMS.'units/'.$unit);
 
 	if(!\is_object($U))
 		continue;
@@ -211,12 +211,12 @@ foreach($units as $unit)
 		$U->UserArea($uri);
 }
 
-#Try static page
+# Try static page
 if(isset($CMS->static))
 	$CMS->static?->Try($slug,$uri);
 
-#Still nothing found... Let's look for direct folder
-if($slug and \preg_match('#[^a-z\d\-_.]#i',$slug)==0 and \is_file($f=ROOT."direct/{$slug}.php"))
+# Still nothing found, try direct endpoint
+if($slug and \preg_match('#[^a-z\d\-_.]#i',$slug)==0 and \is_file($f=CMS."direct/$slug.php"))
 	require$f;
 elseif(CMS::$json)
 	JSON(['ok'=>false],404);

@@ -57,7 +57,7 @@ class Uri extends \Eleanor\Classes\Uri
 		if($id and CMS::$A->available)
 			$this->query[$q]=$id;
 
-		return$this;
+		return $this;
 	}
 }
 

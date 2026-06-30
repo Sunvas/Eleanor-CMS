@@ -3,9 +3,9 @@
 namespace CMS;
 
 const
-	/** @const string System version, contains 2 numbers separated by the dot (left and right).
-	 * The number before the dot (left) increases when there were made breaking backwards compatibility changes. */
-	VERSION='2.0',
+	/** @const string System version containing 2 numbers separated by a dot.
+	 * The number before the dot increases when backward-incompatible changes are made. */
+	VERSION='3.0',
 
 	/** @const string Path to static files */
 	STATIC_PATH=__DIR__.'/../static/',
@@ -23,11 +23,11 @@ const
 	 * @url https://ru.wikipedia.org/wiki/Коды_языков */
 	L10N='ru',
 
-	/** @const ?array List of available language localizations of the site. If the constant is empty ([] or null) - site
-	 * will be monolingual as defined in L10N constant: if null is used, enabling multilingualism is impossible (data in
-	 * DB is stored directly), but if [] is used, enabling multilingualism is possible (data is stored as JSON objects).
-	 * The type (null or array) is set at the installation stage and determines the format of data storage in the
-	 * database, so it cannot be simply changed manually null <-> array without reworking the database. It is possible
-	 * to shorten the list, but before adding a new language, it is necessary to add the congruent translation files and
-	 * fields to DB tables. */
+	/** @const ?array List of available site localization codes. If the constant is empty ([] or null), the site is
+	 * monolingual and uses the language defined by L10N. When null is used, multilingual mode cannot be enabled later
+	 * without database migration because localized data is stored directly. When [] is used, multilingual mode can be
+	 * enabled later because localized data is stored as JSON objects. The type (null or array) is selected during
+	 * installation and defines the database storage format, so it must not be changed manually between null and array
+	 * without updating the database. The list may be shortened, but before adding a new language, the corresponding
+	 * translation files and database fields must be added. */
 	L10NS=[];

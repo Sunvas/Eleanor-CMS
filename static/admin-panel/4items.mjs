@@ -2,7 +2,7 @@
 
 function Url(USP)
 {
-	//Filter empty values
+	// Filter empty values
 	USP.forEach((v,k,o)=>v==="" && o.delete(k,v));
 
 	return location.pathname+(USP.size>0 ? "?"+USP.toString() : "");
@@ -10,7 +10,7 @@ function Url(USP)
 
 export default ({total,pp,sort,desc})=>({
 	data:()=>({
-		USP:new URLSearchParams(location.search),//For reading purposes only
+		USP:new URLSearchParams(location.search),
 		pps:[25,50,100,200],
 		page:1,
 		default_sort:"",
@@ -27,16 +27,17 @@ export default ({total,pp,sort,desc})=>({
 		},
 	},
 	methods:{
-		/** For links of paginator */
+		/** For per-page selector links */
 		PP(pp){
 			const USP=new URLSearchParams(location.search);
 
 			USP.set("pp",pp);
+			USP.delete("page");
 
 			return Url(USP);
 		},
 
-		/** For links of paginator */
+		/** For paginator links */
 		Page(page){
 			const USP=new URLSearchParams(location.search);
 
@@ -48,6 +49,7 @@ export default ({total,pp,sort,desc})=>({
 			else
 			{
 				USP.set("page",page);
+				// Cache total items count
 				USP.set("total",this.total);
 			}
 
@@ -61,7 +63,7 @@ export default ({total,pp,sort,desc})=>({
 			let page=prompt(document.documentElement.lang=="ru" ? "Введите номер страницы" : "Input page number","");
 			page=parseInt(page,10);
 
-			if(Number.isInteger(page) && page<=this.pages)
+			if(Number.isInteger(page) && page>0 && page<=this.pages)
 				location.href=this.Page(page);
 		},
 
@@ -75,7 +77,7 @@ export default ({total,pp,sort,desc})=>({
 			{
 				USP.delete("sort");
 
-				if(desc ^ this.default_order)
+				if(desc!=this.default_order)
 					USP.delete("order");
 				else
 					USP.set("order",this.desc ? "asc" : "desc");
@@ -105,6 +107,7 @@ export default ({total,pp,sort,desc})=>({
 			USP.delete("pp");
 			USP.delete("page");
 			USP.delete("sort");
+			USP.delete("total");
 
 			return url ? Url(USP) : USP;
 		}
@@ -112,7 +115,7 @@ export default ({total,pp,sort,desc})=>({
 	created(){
 		this.USP.forEach((v,k,o)=>v==="" && o.delete(k,v));
 
-		const page=this.USP.has("page") ? parseInt(this.USP.get("page")) || 0 : 0;
+		const page=this.USP.has("page") ? parseInt(this.USP.get("page"),10) || 0 : 0;
 
 		if(page>0)
 			this.page=page;

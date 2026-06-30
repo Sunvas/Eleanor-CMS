@@ -1,5 +1,5 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
-
+/** User account sessions list with termination action. */
 (({template,container,current,data})=>{
 	const app=Vue.createApp({
 		template,
@@ -15,14 +15,15 @@
 			sessions:JSON.parse($(data).text()).toSorted((a,b)=>b.sort-a.sort),
 		}),
 		methods:{
-			Terminate(index,id){
-				if(!confirm(this.l10n.ays))
+			/** Terminate selected session */
+			async Terminate(index,id){
+				if(id===this.current || !confirm(this.l10n.ays))
 					return;
 
 				const url=new URL(location.href);
 				url.searchParams.set("id",id);
 
-				fetch(url.href,{method:"delete",headers:{accept:"application/json"}})
+				return fetch(url.href,{method:"delete",headers:{accept:"application/json"}})
 					.then(J)
 					.then(({ok,error})=>{
 						if(ok)

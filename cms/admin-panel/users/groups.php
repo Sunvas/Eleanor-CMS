@@ -2,13 +2,14 @@
 namespace CMS;
 
 /** List of groups of users
- * @var \Generator $items Groups
+ * @var \Generator $items List of groups
  * @var array $roles List of roles
  * Default:
  * @var array $links List of links */
 
 $l10n=new L10n('groups',__DIR__.'/l10n/');
-$data=['L10N'=>L10N,'L10NS'=>L10NS,'roles'=>$roles,'items'=>\iterator_to_array($items)];
+$data=\compact('roles')
+	+['items'=>\iterator_to_array($items),'L10N'=>L10N,'L10NS'=>L10NS];
 
 $title=[$l10n['title']];
 $script='static/admin-panel/users-groups.js';

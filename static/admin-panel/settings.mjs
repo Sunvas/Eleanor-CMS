@@ -1,13 +1,13 @@
 // Eleanor CMS © 2025 --> https://eleanor-cms.com
 
-/** Universal abstract module for pages of settings
+/** Universal abstract module for settings pages
  * @param template Placeholder element
- * @param data
- * @param config_l10n l10n values of config (internal var) */
+ * @param data Initial settings data
+ * @param config_l10n Internal storage for localized config values */
 export default (template,{config,L10N,L10NS,l10n_keys=[]},config_l10n=new Map)=>({
 	template,
 	data:()=>({
-		//Localization
+		// Localization
 		lang:document.documentElement.lang,
 		l10n:Object.seal({
 			save:{ru:"Сохранить",en:"Save"},
@@ -15,7 +15,7 @@ export default (template,{config,L10N,L10NS,l10n_keys=[]},config_l10n=new Map)=>
 		}),
 		l10ns:[],
 
-		//Copy of config where all keys are NULL (for reactivity purpose)
+		// Copy of config where all keys are null for reactivity
 		config:Object.keys(config).reduce((a,key)=>Object.assign(a,{[key]:null}),Object.create(null)),
 
 		changed:new Set,
@@ -37,9 +37,9 @@ export default (template,{config,L10N,L10NS,l10n_keys=[]},config_l10n=new Map)=>
 		}
 	},
 	methods:{
-		/** Should be called each time form control being changed by user real time */
+		/** Track real-time user changes in form controls */
 		Changed(field,val){
-			//Multilingual values
+			// Multilingual values
 			if(l10n_keys.includes(field))
 				config_l10n.getOrInsert(field,{})[this.lang]=val;
 
@@ -77,9 +77,10 @@ export default (template,{config,L10N,L10NS,l10n_keys=[]},config_l10n=new Map)=>
 					}
 					else if(error)
 						alert( this.l10n[error] ?? error );
-				},r=>r.text().then(console.error));
-
-			this.saving=false;
+				},r=>r.text().then(console.error))
+				.finally(()=>{
+					this.saving=false;
+				});
 		}
 	},
 	created(){
@@ -89,7 +90,7 @@ export default (template,{config,L10N,L10NS,l10n_keys=[]},config_l10n=new Map)=>
 			if(v[lang])
 				this.l10n[k]=v[lang];
 
-		//Filling in the set of l10n
+		// Filling in the set of l10n
 		if(L10NS?.length)
 			import("./l10ns.mjs").then(({default:l10ns})=>{
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);

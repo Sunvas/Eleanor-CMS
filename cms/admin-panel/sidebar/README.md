@@ -1,5 +1,5 @@
-### English
-This folder contains files which are used for making sidebar menu in admin panel. Files are included in alphabetical order and must return HTML markup of elements for the sidebar.
+[Русский язык](README.ru.md)
 
-### Русский язык
-В этом каталоге хранятся файлы, которые отвечают за боковое меню в панели администратора. Файлы вызываются в алфавитном порядке и должны возвращать HTML разметку элементов для бокового меню.
+This directory contains sidebar menu templates for the admin panel.
+
+Files are included in alphabetical order and must return HTML markup for sidebar menu items. A file may check current user permissions and return different markup depending on available roles or rights.

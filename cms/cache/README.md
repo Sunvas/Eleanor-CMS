@@ -1,5 +1,3 @@
-﻿### English
-This directory is where the CMS data cache is located. `.json` files store backup cache, `.s` files store serialized cache, `.shm` files are auxiliary zero-length files for the cache on shared memory functions.
+﻿[Русский язык](README.ru.md)
 
-### Русский язык
-В этом каталоге размещается кэш системных данных. В `.json` файлах хранится резервная копия кэша, в `.s` файлах хранится сериализованный кэш, файлы типа `.shm` - это вспомогательные файлы нулевой длины для кэша на основе разделяемой (shared) памяти.  
+This directory stores CMS data cache files. `.json` files contain JSON cache copies, `.s` files contain serialized cache data, and `.shm` files are zero-length auxiliary files used by the shared memory cache engine.

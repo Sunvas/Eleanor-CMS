@@ -35,7 +35,7 @@ a { text-decoration:none; }
 	<a href=""><?=$l10n['main']?></a>
 </main>
 <footer>
-	<?php /* Feel free to get rid off this shit! */ ?>
+	<?php /* Feel free to remove it */ ?>
 	Powered by <a href="https://eleanor-cms.com">Eleanor CMS</a>
 </footer>
 </body>

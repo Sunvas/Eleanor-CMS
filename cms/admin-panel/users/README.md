@@ -1,5 +1,5 @@
-### English
-Template files of unit `users` for the admin panel. Each file contains HTML markup of page with variables.
+[Русский язык](README.ru.md)
 
-### Русский язык
-Шаблоны панели администратора для юнита `users` (пользователи). Каждый файл содержит HTML разметку страницы с переменными. 
+This directory contains admin panel templates for the `users` unit.
+
+Template files prepare and render pages used to manage users and groups in the admin panel.

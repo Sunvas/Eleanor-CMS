@@ -1,4 +1,4 @@
-/** EditorJS including
+/** Create EditorJS instance
  * @url https://github.com/codex-team/editor.js/blob/next/types/configs/editor-config.d.ts */
 export default async function(div,extra={},extra_tools={}){
 	const{lang}=document.documentElement;
@@ -19,7 +19,7 @@ export default async function(div,extra={},extra_tools={}){
 				class: EditorjsList,
 				inlineToolbar: true,
 				config: {
-					defaultStyle: 'unordered'
+					defaultStyle: "unordered"
 				},
 			},
 			quote: Quote,

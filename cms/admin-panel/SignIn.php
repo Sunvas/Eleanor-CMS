@@ -9,7 +9,7 @@ use const Eleanor\SITEDIR;
 Link('//cdn.jsdelivr.net');
 
 $nonce=Nonce();
-$site=is_array(CMS::$config['site']['name']) ? L10n::Item(CMS::$config['site']['name']) : CMS::$config['site']['name'];
+$site=is_array(CMS::$config['site']['title']) ? L10n::Item(CMS::$config['site']['title']) : CMS::$config['site']['title'];
 $l10n=new L10n('sign-in',__DIR__.'/l10n/');
 ?>
 <!DOCTYPE html>
@@ -33,7 +33,7 @@ $l10n=new L10n('sign-in',__DIR__.'/l10n/');
 		$hl=L10n::$code;
 
 		echo<<<HTML
-	<script src="//js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&hl={$hl}" nonce="{$nonce}" defer></script>
+	<script src="//js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&hl={$hl}" nonce="$nonce" defer></script>
 HTML;
 	}
 ?>

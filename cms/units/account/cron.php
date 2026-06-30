@@ -44,10 +44,11 @@ SQL );
 if(!$last_event)
 	return 86400;
 
+$limit=10;
 $R=CMS::$Db->Execute(<<<SQL
-SELECT `happened`, `data` FROM `events` WHERE `happened`>? AND `event`='user_signed_in' ORDER BY `happened` ASC LIMIT 10
+SELECT `happened`, `data` FROM `events` WHERE `happened`>? AND `event`='user_signed_in' ORDER BY `happened` ASC LIMIT $limit
 SQL ,[$last_event]);
-while($a=$R->fetch_assoc())
+foreach($R as $a)
 {
 	$last_event=$a['happened'];
 	$data=\json_decode($a['data'],true);
@@ -60,17 +61,19 @@ while($a=$R->fetch_assoc())
 	$R2=CMS::$Db->Execute(<<<SQL
 SELECT `name`, `l10n`, `telegram_id` FROM `users` WHERE `id`=? AND `telegram_id` IS NOT NULL LIMIT 1
 SQL ,[$data['id']]);
-	if($user=$R2->fetch_assoc())
+
+	if($user=SingleFetch($R))
 	{
 		$notification=Notification($user['l10n']);
 
 		if(!\is_callable($notification['telegram'] ?? 0))
 			continue;
 
-		$name=htmlspecialchars($user['name'],ENT,\Eleanor\CHARSET,false);
+		$ent=\ENT_QUOTES | \ENT_HTML5 | \ENT_SUBSTITUTE | \ENT_DISALLOWED;
+		$name=htmlspecialchars($user['name'],$ent,\Eleanor\CHARSET,false);
 		$message=$notification['telegram']($name,$data['way'],$data['ip'],$data['ua']);
 
-		$T=new \Eleanor\Classes\Telegram(CMS::$config['system']['bot_key']);
+		$T=new Telegram(CMS::$config['system']['bot_key']);
 
 		try{
 			$T->SendMessage((int)$user['telegram_id'],$message,[
@@ -83,7 +86,10 @@ SQL ,[$data['id']]);
 	}
 }
 
-if($R->num_rows==10)
+$done=$R->num_rows<$limit;
+$R->free();
+
+if(!$done)
 	return['last'=>$last_event];
 
 CMS::$Cache->Put(CACHE_NAME,$last_event,86400*2);

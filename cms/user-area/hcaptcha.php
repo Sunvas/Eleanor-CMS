@@ -12,6 +12,6 @@ if($hcaptcha)
 	$nonce??=Nonce();
 
 	echo<<<HTML
-<script src="//js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&hl={$hl}" nonce="{$nonce}" defer></script>
+<script src="//js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&hl={$hl}" nonce="$nonce" defer></script>
 HTML;
 }

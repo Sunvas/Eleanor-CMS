@@ -11,7 +11,6 @@ use const Eleanor\CHARSET;
  * @var ?string $adminpanel Link to admin panel */
 
 $account=$GLOBALS['CMS']->account->slug;
-$bot=CMS::$config['system']['bot_name'];
 
 if(CMS::$A->current)
 {
@@ -19,11 +18,12 @@ if(CMS::$A->current)
 	$Uri=new Uri($account)->IAM();
 
 	#User data
-	extract(GetUsers(['name','display_name','avatar']));
+	extract(GetUserData(['name','display_name','avatar']));
 
 	$id=CMS::$A->current;
-	$name=htmlspecialchars($name,ENT,CHARSET,false);
-	$display_name=htmlspecialchars($display_name,ENT,CHARSET,false);
+	$ent=\ENT_QUOTES | \ENT_HTML5 | \ENT_SUBSTITUTE | \ENT_DISALLOWED;
+	$name=htmlspecialchars($name,$ent,CHARSET,false);
+	$display_name=htmlspecialchars($display_name,$ent,CHARSET,false);
 	?>
 	<div class="blocklogin"><div class="dbottom"><div class="dtop">
 		<div class="dcont">
@@ -42,8 +42,8 @@ if(CMS::$A->current)
 	#List of available users to switch to
 	foreach(CMS::$A->available as $id)
 	{
-		$name=GetUsers('name',$id);
-		$name=htmlspecialchars($name,ENT,CHARSET,false);
+		$name=GetUserData('name',$id);
+		$name=htmlspecialchars($name,$ent,CHARSET,false);
 
 		$users.=<<<HTML
 <a href="{$base}?iam={$id}">{$name}</a>, 
@@ -62,12 +62,6 @@ HTML;
 	?>
 	<div class="blocklogin"><div class="dbottom"><div class="dtop">
 		<div class="dcont" id="widget-sign-in"></div>
-	<?php if($bot){?>
-		<hr>
-		<div class="dcont">
-			<script async nonce="<?=$nonce?>" src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="<?=$bot?>" data-size="medium" data-onauth="TelegramAuth(user)" data-request-access="write"></script>
-		</div>
-	<?php }?>
 	</div></div></div>
 	<script src="static/user-area/widget-sign-in.js" nonce="<?=$nonce?>" defer data-account="<?=Uri::$base.Uri::Make([$account],'/')?>" data-container="#widget-sign-in" data-template="#widget-sign-in-tpl" data-hcaptcha="<?=$hcaptcha?>"></script>
 	<script id="widget-sign-in-tpl" type="text/x-template">

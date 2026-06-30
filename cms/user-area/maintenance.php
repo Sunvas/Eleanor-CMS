@@ -30,7 +30,7 @@ a { text-decoration:none; }
 	<h1><?=$l10n['title']?></h1>
 </main>
 <footer>
-	<?php /* Feel free to get rid off this shit! */ ?>
+	<?php /* Feel free to remove it */ ?>
 	Powered by <a href="https://eleanor-cms.com" target="_blank">Eleanor CMS</a>
 </footer>
 </body>

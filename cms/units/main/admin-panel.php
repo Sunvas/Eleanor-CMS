@@ -74,13 +74,13 @@ function SettingsSite():array|string
 		$mono=L10NS===null;
 		$storage=[];
 
-		#PHP 8.6
+		# PHP 8.6: migrate to pipe operator
 		#Multilingual values
 		foreach(['name','title','description'] as $f)
 			if($mono ? \is_string($_POST[$f] ?? 0) : \is_array($_POST[$f] ?? 0) && \array_all($_POST[$f],fn($t)=>\is_string($t)))
 				$storage[$f]=$_POST[$f];
 
-		$ok=$storage && \file_put_contents(ROOT.'config/site.json',\json_encode($storage + CMS::$config['site'],JSON));
+		$ok=$storage && \file_put_contents(CMS.'config/site.json',\json_encode($storage + CMS::$config['site'],JSON),\LOCK_EX);
 
 		if($ok)
 			return[
@@ -118,7 +118,7 @@ function SettingsSystem():array|string
 			if(\is_bool($_POST[$f] ?? 0))
 				$storage[$f]=$_POST[$f];
 
-		$ok=$storage && \file_put_contents(ROOT.'config/system.json',\json_encode($storage + CMS::$config['system'],JSON));
+		$ok=$storage && \file_put_contents(CMS.'config/system.json',\json_encode($storage + CMS::$config['system'],JSON),\LOCK_EX);
 
 		if($ok)
 			return[
@@ -136,7 +136,7 @@ function SettingsSystem():array|string
 
 if(!CMS::$json)
 {
-	CMS::$T[]=ROOT.'admin-panel/'.$this->name;
+	CMS::$T[]=CMS.'admin-panel/'.$this->name;
 	CMS::$T['links']+=[
 		'settings'=>$Uri(zone:'settings'),
 		'settings-system'=>$Uri(zone:'settings-system'),

@@ -6,30 +6,25 @@ use Eleanor\{Basic,Assign,Library};
 use Eleanor\Classes\{E, Cache, MySQL, Template};
 use CMS\Interfaces\External;
 
-use function
-	Eleanor\Autoloader,
-	Eleanor\BugFileLine;
+use function Eleanor\{Autoloader, BugFileLine};
 
 const
-	/** @const Квинтэссенция ENT_* констант  */
-	ENT = \ENT_QUOTES | \ENT_HTML5 | \ENT_SUBSTITUTE | \ENT_DISALLOWED,
+	/** Absolute path to the CMS directory with trailing directory separator */
+	CMS = __DIR__.\DIRECTORY_SEPARATOR,
 
-	/** @const Квинтэссенция полезных опций JSON */
-	JSON = \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE,
+	/** Default json_encode() flags preserving Unicode characters and slashes */
+	JSON = \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE;
 
-	/** @const Полный путь к корню каталога */
-	ROOT = __DIR__.\DIRECTORY_SEPARATOR;
+require CMS.'constants.php';
+require CMS.'library/core.php';
 
-require ROOT.'constants.php';
-require ROOT.'library/core.php';
+Library::$logs=CMS.'logs/';
 
-Library::$logs=ROOT.'logs/';
-
-/** Загрузка конфигураций
- * @param string $file Имя файла с конфигурациями
- * @param string $dir Каталог с файлами
- * @returns array */
-function Config(string$file,string$dir=ROOT.'config/'):?array
+/** Load configuration from file.
+ * @param string $file Filename without extension
+ * @param string $dir Path to directory containing configuration files
+ * @return ?array Configuration data or null when no config file exists */
+function Config(string$file,string$dir=CMS.'config/'):?array
 {
 	$php=$dir.$file.'.php';
 	$json=$dir.$file.'.json';
@@ -37,32 +32,41 @@ function Config(string$file,string$dir=ROOT.'config/'):?array
 	if(!\is_file($json) and !\is_file($php))
 		return null;
 
-	//PHP через переменную $config будет иметь доступ к содержимому JSON конфига
+	# PHP config file can access JSON values through the $config variable
 	$config=\is_file($json) ? \json_decode(\file_get_contents($json),true) : [];
 	$config2=\is_file($php) ? (array)require$php : [];
 
-	return$config2+$config;
+	return $config2+$config;
 }
 
-/** Установка куки
- * @param string $n Имя
- * @param string $v Значение
- * @param int $ttl Срок жизни, при 0 устанавливается сессионная куки (автоматически удаляемая после завершения сеанса)
- * @return bool */
-function SetCookie(string$n,string$v='',int$ttl=31536000):bool#1 год по умолчанию
+/** Set HTTP cookie
+ * @param string $name Cookie name
+ * @param string $value Cookie value
+ * @param int $ttl Cookie lifetime in seconds. If set to 0, a session cookie will be created and automatically removed
+ *     when the browser session ends.
+ * @param bool $strict Whether to use Strict SameSite policy instead of Lax
+ * @return bool True on success or false on failure */
+function SetCookie(string$name,string$value='',int$ttl=31536000,bool$strict=true):bool
 {
-	if($v=='')
+	if($value=='')
 		$ttl=0;
 	elseif($ttl)
 		$ttl+=\time();
 
-	return \setcookie($n,$v,$ttl,\Eleanor\SITEDIR,\Eleanor\DOMAIN,\Eleanor\PROTOCOL=='https://',true);
+	return \setcookie($name,$value,$ttl,[
+		'expires'=>$ttl,
+		'path'=>\Eleanor\SITEDIR,
+		'domain'=>\Eleanor\DOMAIN,
+		'secure'=>\Eleanor\PROTOCOL=='https://',
+		'httponly'=>true,
+		'samesite'=>$strict ? 'Strict' : 'Lax',
+	]);
 }
 
-/** Перенаправление на другую страницу
- * @param string $to
- * @param int $code Код редиректа 30*
- * @param string $hash Содержимое якоря (без #)
+/** Send HTTP redirect and terminate script execution
+ * @param string $to Root-relative path or path relative to site directory
+ * @param int $code HTTP redirect status code (3xx)
+ * @param string $hash URL fragment without leading '#'
  * @return never */
 function Redirect(string$to,int$code=301,string$hash=''):never
 {
@@ -70,85 +74,126 @@ function Redirect(string$to,int$code=301,string$hash=''):never
 		$to=\Eleanor\SITEDIR.$to;
 
 	if($hash)
-		$to.='#'.\ltrim($hash,'#');
+		$to.='#'.$hash;
 
 	\header('Cache-Control: no-store');
 	\header('Location: '.\rtrim(\html_entity_decode($to),'&?'),true,$code);
 	die;
 }
 
-/** Основной "верблюд" системы: объект служит для хранения общих данных. Динамические свойства по умолчанию содержат
- * либо одноимённые юниты, либо объекты классов */
+/** Convert traversable items to array after applying callback to each item
+ * @param \Traversable $items Source items
+ * @param \Closure $callback Item transformation callback
+ * @param bool $keys Whether to preserve original keys
+ * @return array */
+function Iterator2Array(\Traversable$items,\Closure$callback,bool$keys=false):array
+{
+	$F=function()use($items,$callback){
+		foreach($items as $k=>$item)
+			yield $k=>$callback($item);
+	};
+
+	return \iterator_to_array($F(),$keys);
+}
+
+/** Fetch a single value or row from the MySQL result and free the result set.
+ * @param \mysqli_result $R MySQL result set
+ * @param bool $column Whether to fetch only the first column instead of the full row
+ * @return mixed */
+function SingleFetch(\mysqli_result$R,bool$column=false):mixed
+{
+	return $column
+		? [
+			$R->fetch_column(),
+			$R->free()
+		][0]
+		: [
+			$R->fetch_assoc() ?: null,
+			$R->free()
+		][0];
+}
+
+/** Core CMS runtime class.
+ * Stores shared runtime data and provides access to system components.
+ * Dynamic properties usually contain either loaded units or objects of classes with matching names. */
 #[\AllowDynamicProperties]
 class CMS extends Library
 {
 	static bool
-		/** @var bool $json Flag when JSON is expected in response */
+		/** @var bool $json Whether request expects JSON response */
 		$json=false,
 
-		/** @var bool $put Flag of PUT request method */
+		/** @var bool $put Whether request method is PUT */
 		$put=false,
 
-		/** @var bool $post Flag of POST request method */
+		/** @var bool $post Whether request method is POST */
 		$post=false,
 
-		/** @var bool $delete Flag of DELETE request method */
+		/** @var bool $delete Whether request method is DELETE */
 		$delete=false;
 
-	/** @var ?int Authorization (a11n) ID */
+	/** @var ?int Current authorization (a11n) ID */
 	static ?int $a11n=null;
 
-	/** @var Authorization|Assign|null $A This property should be set exclusively in file where system starts from (index.php, admin.php) */
+	/** @var Authorization|Assign|null $A Authorization object.
+	 * Must be initialized only by system entrypoints: index.php or admin.php */
 	static Authorization|Assign|null $A;
 
-	/** @var Permissions|Assign|null $P Basic user permissions on the site are pulled from the groups table. */
+	/** @var Permissions|Assign|null $P Permissions object.
+	 * User permissions loaded from the `groups` table */
 	static Permissions|Assign|null $P;
 
-	/** @var MySQL|Assign|null $Db DataBase object */
+	/** @var MySQL|Assign|null $Db Database connection object */
 	static MySQL|Assign|null $Db;
 
-	/** @var ?\ArrayObject Object for accessing configs */
+	/** @var ?\ArrayObject Configuration storage object with automatic lazy loading and caching */
 	static ?\ArrayObject $config;
 
-	/** @var Cache|Assign|null $Cache */
+	/** @var Cache|Assign|null $Cache Cache handler object */
 	static Cache|Assign|null $Cache;
 
 	/** @var Template|Assign|null $T Template engine object */
 	static Template|Assign|null $T;
 
-	/** @var string IP in binary inet_pton() */
+	/** @var string Client IP address in binary \inet_pton() format, or "\0" when unavailable */
 	static string $ip;
 
-	/** Obtaining unit or object of class
+	/** Lazily load and return a unit or class object by property name.
 	 * @throws E */
 	function __get(string$n):mixed
 	{
 		$unit=__DIR__."/units/{$n}.php";
 
 		if(\is_file($unit))
-			return$this->$n=include$unit;
+			return $this->$n=include$unit;
 
 		return parent::__get($n);
 	}
 
-	function __invoke(string$n,string$dir=__DIR__):mixed
+	/** Create and return an object instance by class name.
+	 * Uses registered factory if available; otherwise attempts to load the class file from the classes' directory.
+	 * @param string $n Class name
+	 * @param string $dir Base directory for class lookup
+	 * @param array $params Factory arguments
+	 * @throws E */
+	function __invoke(string$n,string$dir=__DIR__,array$params=[]):mixed
 	{
-		return parent::__invoke($n,$dir);
+		return parent::__invoke($n,$dir,$params);
 	}
 }
 
 class Output extends \Eleanor\Classes\Output
 {
-	/** @const Powered by header. Feel free to get rid of this shit */
+	/** @const X-Powered-CMS header. Feel free to remove it. */
 	protected const string POWERED='X-Powered-CMS: Eleanor CMS https://eleanor-cms.com';
 }
 
 class L10n extends \Eleanor\Classes\L10n
 {
-	/** Static obtaining value from existed l10n pool
-	 * @param array $l10n Pool of values
-	 * @param mixed $d Default value
-	 * @param string $f Fallback value
+	/** Get localized value from existing l10n data
+	 * @param array $l10n Localization values indexed by language code
+	 * @param mixed $d Default value returned when localization is not found
+	 * @param string $f Fallback language code
 	 * @return mixed */
 	static function Item(array$l10n,mixed$d=null,string$f=L10N):mixed
 	{
@@ -156,12 +201,13 @@ class L10n extends \Eleanor\Classes\L10n
 	}
 }
 
+/** Configuration storage with automatic lazy loading and caching */
 CMS::$config=new class extends \ArrayObject
 {
-	/** Obtaining values by key
-	 * @param mixed $key
-	 * @return mixed
-	 * @throws E */
+	/** Return configuration by key, loading it automatically if needed
+	 * @param mixed $key Configuration name
+	 * @throws E
+	 * @return mixed */
 	function offsetGet(mixed$key):mixed
 	{
 		if($this->offsetExists($key))
@@ -169,7 +215,7 @@ CMS::$config=new class extends \ArrayObject
 
 		$config=Config($key);
 
-		if($config)
+		if($config!==null)
 		{
 			$this->offsetSet($key,$config);
 			return $config;
@@ -179,10 +225,10 @@ CMS::$config=new class extends \ArrayObject
 	}
 };
 
-CMS::$ip=\filter_var($_SERVER['REMOTE_ADDR'] ?? 0,FILTER_VALIDATE_IP) ? \inet_pton($_SERVER['REMOTE_ADDR']) : 0;
+CMS::$ip=\filter_var($_SERVER['REMOTE_ADDR'] ?? 0,\FILTER_VALIDATE_IP) ? \inet_pton($_SERVER['REMOTE_ADDR']) : "\0";
 CMS::$json=\getenv('HTTP_ACCEPT')==='application/json';
 
-switch($_SERVER['REQUEST_METHOD'])
+switch($_SERVER['REQUEST_METHOD'] ?? '')
 {
 	case'PUT':
 		CMS::$put=true;
@@ -194,7 +240,7 @@ switch($_SERVER['REQUEST_METHOD'])
 		CMS::$delete=true;
 }
 
-//Comparison via header like $_SERVER['HTTP_CONTENT_TYPE']===Output::JSON causes CORS conflict (Access-Control-Allow-Headers)
+# Avoid Content-Type checks here: requiring this header may conflict with CORS Access-Control-Allow-Headers.
 if(!$_POST && !$_FILES && CMS::$post)
 {
 	$json=\json_decode(\file_get_contents('php://input'),true);
@@ -206,76 +252,83 @@ if(!$_POST && !$_FILES && CMS::$post)
 	}
 }
 
-#All errors will be shown in JSON mode
+# All errors will be returned in JSON mode
 if(CMS::$json)
 	CMS::$bsodtype=Output::JSON;
 
-Assign::For(CMS::$Db,fn()=>new \Eleanor\Classes\MySQL(
+Assign::Bind(CMS::$Db,fn()=>new MySQL(
 	CMS::$config['db']['host'],
 	CMS::$config['db']['user'],
 	CMS::$config['db']['pass'],
 	CMS::$config['db']['db'],
 ));
-Assign::For(CMS::$Cache,fn()=>new Cache(ROOT.'cache'));
-Assign::For(CMS::$T,fn(...$a)=>new class(...$a) extends Template {
-	/** @var bool Flag to run cron.php (background tasks) */
-	private(set) bool $cron {
-		get {
-			if(!isset($this->cron))
-			{
-				$task=CMS::$Cache->Get('cron');//Contains timestamp to next run
-				$this->cron=$task===null || $task<=\time();
+Assign::Bind(CMS::$Cache,fn()=>new Cache(CMS.'cache'));
+
+if(!CMS::$cli)
+{
+	Assign::Bind(CMS::$T,fn(...$a)=>new class(...$a) extends Template {
+		/** @var bool Whether cron.php (background tasks) should be run */
+		private(set) bool $cron {
+			get {
+				if(!isset($this->cron))
+				{
+					$task=CMS::$Cache->Get('cron');# Timestamp of the next scheduled run
+					$this->cron=$task===null || $task<=\time();
+				}
+
+				return $this->cron;
 			}
-
-			return $this->cron;
 		}
-	}
-});
-Assign::For(CMS::$P,fn()=>Permissions());
+	});
+	Assign::Bind(CMS::$P,fn()=>Permissions());
+}
 
-/** Checking user authorization and logout on the site. No authentication is performed here. */
+/** Manages user authorization (a11n), logout, and user switching. User authentication is not performed here. */
 class Authorization extends Basic
 {
-	/** @var int ID of the current user (0 - no user) */
+	/** @var int Current user ID (0 means guest user) */
 	protected(set) int$current;
 
 	/** @var array User IDs available for quick switching */
 	protected(set) array$available;
 
-	/** @param string $table A table linking users to a11n
-	 * @param int $current ID of the current user (if unavailable, the first available one will be used)
-	 * @param ?External $Ext Object of external user authorization. See cms/external.php
+	/** @param string $table Table linking users with a11n records
+	 * @param int $current Preferred current user ID. If unavailable, the first available user will be selected.
+	 * @param ?External $Ext External authorization provider object. See cms/external.php
 	 * @throws \Throwable */
 	function __construct(readonly string$table,int$current=0,readonly ?External$Ext=null)
 	{
 		$available=$Ext?->Get() ?? [];
-		$hidden=[];
+		$hidden=[];# User IDs whose public activity timestamp should not be updated
 
 		if(CMS::$a11n)
 		{
 			$failed=[];
 
 			$R=CMS::$Db->Execute(<<<SQL
-SELECT `user_id`, `salt`, `way` FROM `{$table}` WHERE `a11n_id`=?
+SELECT `user_id`, `marker`, `way` FROM `{$table}` WHERE `a11n_id`=?
 SQL ,[CMS::$a11n]);
-			while($a=$R->fetch_assoc())
+			foreach($R as $a)
 			{
 				$id=(int)$a['user_id'];
 
 				if(\in_array($id,$available))
 					continue;
 
+				# Do not update public activity for admin-panel sign-ins
 				if($a['way']=='admin-panel')
 					$hidden[]=$id;
 
-				$salt=$this->Salt($id);
-				$salt=\is_string($_COOKIE[$salt] ?? 0) ? $_COOKIE[$salt] : '';
+				$marker=$this->Marker($id);
+				$marker=\is_string($_COOKIE[$marker] ?? 0) ? $_COOKIE[$marker] : '';
 
-				if(\trim($a['salt']) and \bin2hex($a['salt'])!==$salt)
+				# Temporary sign-ins require an additional per-user marker cookie
+				if($a['marker']!=="\0" and \bin2hex($a['marker'])!==$marker)
 					$failed[]=$id;
 				else
 					$available[]=$id;
 			}
+			$R->free();
 
 			foreach($failed as $id)
 			{
@@ -294,7 +347,7 @@ SQL ,[CMS::$a11n]);
 
 		$this->available=$available;
 
-		#Updating information about last user's activity
+		# Update user's last activity
 		if($this->current)
 		{
 			if(!\in_array($this->current,$hidden))
@@ -308,17 +361,17 @@ SQL ,[CMS::$a11n]);
 		}
 	}
 
-	/** Obtaining name of salt cookie for the user
+	/** Get the marker cookie name for the user
 	 * @param int $id User ID
 	 * @return string */
-	protected function Salt(int$id):string
+	protected function Marker(int$id):string
 	{
 		return A11N_COOKIE."-{$this->table}-".$id;
 	}
 
-	/** Logout
-	 * @param ?int $id User ID
-	 * @param int $next ID of next current user (when $id is current user)
+	/** Log out a user and optionally switch to another authorized user.
+	 * @param ?int $id User ID to log out. If null, the current user is logged out.
+	 * @param int $next User ID to switch to after logout. Only applies when logging out the current user.
 	 * @throws \Throwable */
 	function SignOut(?int$id=null,int$next=0):void
 	{
@@ -327,59 +380,72 @@ SQL ,[CMS::$a11n]);
 		CMS::$Db->Delete($this->table,"`user_id`={$id} AND `a11n_id`=".CMS::$a11n);
 		$this->Ext?->SignOut($id);
 
-		if($id===$this->current)
+		if($id==$this->current)
 			$this->current=\in_array($next,$this->available)
 				? \array_splice($this->available,\array_search($next,$this->available),1)[0]
 				: (\array_shift($this->available) ?? 0);
 
 		elseif(\in_array($id,$this->available))
-			\array_splice($this->available,\array_search($id,$this->available));
+			\array_splice($this->available,\array_search($id,$this->available),1);
 	}
 
-	/** Setting cookie of the successful authorization
+	/** Register successful sign-in and set related cookies
 	 * @param int $id User ID
-	 * @param bool $temp Temporary session flag (cookies are deleted after the browser window/tab is closed)
-	 * @param array $extra Extra DB parameters of session
+	 * @param bool $temp Whether to create a temporary sign-in bound to a session cookie
+	 * @param array $extra Additional session fields stored in the database. Array keys represent table fields and
+	 *     values represent their contents.
 	 * @throws \Throwable */
 	function SignIn(int$id,bool$temp=false,array$extra=[]):void
 	{
 		A11N();
 
-		$salt=$temp ? \random_bytes(5) : 0;
+		$marker=$temp ? \random_bytes(5) : "\0";
 
-		CMS::$Db->Replace($this->table,['user_id'=>$id,'a11n_id'=>CMS::$a11n,'salt'=>$salt]+$extra);
+		CMS::$Db->Replace($this->table,['user_id'=>$id,'a11n_id'=>CMS::$a11n,'marker'=>$marker]+$extra);
 
 		if($temp)
-			SetCookie($this->Salt($id),\bin2hex($salt),0);
+			SetCookie($this->Marker($id),\bin2hex($marker),0);
 
 		$this->Ext?->SignIn($id);
 
-		if($this->current and $this->current!=$id and !in_array($id,$this->available))
+		if($this->current and $this->current!=$id and !\in_array($id,$this->available))
 			$this->available[]=$id;
 		elseif(!$this->current)
 			$this->current=$id;
 	}
 }
 
-/** Checking user rights on the site based on their membership in groups. */
+/** Group-based user permission system. */
 class Permissions extends Basic
 {
-	/** @param array $groups of user groups, first one is user's main group
-	 * @param array $rights right name => group id => value OR right name => [IDS of groups] (array should be list)
-	 * @param array $roles list of roles */
+	/** @param array $groups User groups where the first element is the primary group
+	 * @param array $rights Permission definitions in one of the following formats:
+	 *     - right name => group ID => permission value
+	 *     - right name => [group IDs]
+	 *       The array must be a valid list array (array_is_list() === true).
+	 *       This format means the right is granted to the specified groups.
+	 * @param array $roles List of assigned roles */
 	function __construct(readonly array$groups,readonly array$rights,readonly array$roles=[]){}
 
+	/** Get permission value for current user groups.
+	 * Depending on permission definition format, returns:
+	 *     - bool when permission is defined as a list of allowed group IDs
+	 *     - array when permission contains group-specific values
+	 * Guests always receive an empty array.
+	 * @param string $n Permission name
+	 * @throws E
+	 * @return array|bool */
 	function __get(string$n):array|bool
 	{
-		//If guest, all fields will be empty
+		# Guests have no permissions
 		if(!$this->rights)
 			return[];
 
 		if(!\is_array($this->rights[$n] ?? 0))
-			new E('Reading incorrect right: '.$n,E::PHP,...BugFileLine($this))->Log();
+			throw new E('Reading invalid right: '.$n,E::PHP,...BugFileLine($this));
 
 		if(\array_is_list($this->rights[$n]))
-			return \boolval(\array_intersect($this->rights[$n],$this->groups));
+			return (bool)\array_intersect($this->rights[$n],$this->groups);
 
 		$result=[];
 
@@ -391,8 +457,9 @@ class Permissions extends Basic
 	}
 }
 
-/** Get permissions of the user
- * @param ?int $id UserID
+/** Get user permissions.
+ * @param ?int $id User ID.
+ *     If null, permissions of the current user are returned.
  * @return Permissions
  * @throws \Throwable */
 function Permissions(?int$id=null):Permissions
@@ -403,10 +470,11 @@ function Permissions(?int$id=null):Permissions
 	if($id)
 	{
 		$R=CMS::$Db->Query(<<<SQL
-SELECT `groups` FROM `users` WHERE `id`={$id} LIMIT 1
+SELECT `groups` FROM `users` WHERE `id`=$id LIMIT 1
 SQL );
 		if($R->num_rows>0)
 			$groups=\json_decode($R->fetch_column(),true) ?? [];
+		$R->free();
 	}
 
 	if($groups)
@@ -414,9 +482,9 @@ SQL );
 		$multi=L10NS!==null;
 
 		$R=CMS::$Db->Query('SELECT * FROM `groups` WHERE `id`'.CMS::$Db->In($groups));
-		while($a=$R->fetch_assoc())
+		foreach($R as $a)
 		{
-			$id=(int)$a['id'];
+			$gid=(int)$a['id'];
 
 			if($a['roles'])
 				\array_push($roles,...\explode(',',$a['roles']));
@@ -427,15 +495,16 @@ SQL );
 				$a['title']=L10n::Item($tmp,'#'.$a['id']);
 			}
 
-			foreach(array_slice($a,2) as $right=>$v)//Skip id and roles
-				$rights[$right][$id]=\ctype_digit($v) ? (int)$v : $v;
+			foreach(\array_slice($a,2) as $right=>$v)# Skip id and roles
+				$rights[$right][$gid]=\is_string($v) && \ctype_digit($v) ? (int)$v : $v;
 		}
+		$R->free();
 	}
 
 	return new Permissions($groups,$rights,\array_unique($roles));
 }
 
-/** Setting $a11n
+/** Initialize current authorization ID.
  * @throws \Throwable */
 function A11N():void
 {
@@ -445,7 +514,8 @@ function A11N():void
 	$bytes=\random_bytes(7);
 	$id=CMS::$Db->Insert('a11n',\compact('bytes'));
 
-	//If we'd run out of IDs... Let's clear the table. This creates an inconvenience for recently logged in users, but it doesn't happen often.
+	# If the session ID counter approaches the column limit, clear the session table.
+	# This logs out all users and may be especially inconvenient for recent sign-ins, but should happen very rarely.
 	if($id>A11N_TRUNCATE_AFTER)
 	{
 		CMS::$Db->Query('DELETE FROM `a11n`');
@@ -459,13 +529,16 @@ function A11N():void
 	SetCookie(A11N_COOKIE,\bin2hex($bytes).\dechex($id));
 }
 
-/** Get user's data from table
- * @param array|string $keys fields from users table
- * @param ?int $id User ID
- * @param string $table Table name
- * @return string|array depends on type of $keys param
+/** Get user data from database table.
+ * @param array|string $keys Field name or list of fields to retrieve
+ * @param ?int $id User ID.
+ *     If null, the current user ID is used.
+ * @param string $table User table name
+ * @return string|array|null
+ *     Returns a field value when $keys is a string,
+ *     otherwise returns an associative array of field values.
  * @throws \Throwable */
-function GetUsers(array|string$keys,?int$id=null,string$table='users'):array|string
+function GetUserData(array|string$keys,?int$id=null,string$table='users'):array|string|null
 {static$data=[];
 	$id??=CMS::$A->current;
 	$isa=\is_array($keys);
@@ -482,9 +555,16 @@ function GetUsers(array|string$keys,?int$id=null,string$table='users'):array|str
 		$fields=\array_filter($keys,$F);
 		$fields=\join('`,`',$fields);
 
-		$data[$id]+=CMS::$Db->Query(<<<SQL
+		$R=CMS::$Db->Query(<<<SQL
 SELECT `{$fields}` FROM `{$table}` WHERE `id`={$id} LIMIT 1
-SQL )->fetch_assoc();
+SQL );
+		if($R->num_rows<1)
+		{
+			$R->free();
+			throw new E('User not found: '.$id,E::SYSTEM,input:$id);
+		}
+
+		$data[$id]+=SingleFetch($R);
 	}
 
 	foreach($keys as $k)
@@ -493,42 +573,54 @@ SQL )->fetch_assoc();
 	return $isa ? $result : \array_first($result);
 }
 
-/** Alias. Generate nonces for scripts. They can be reused.
+/** Alias for Output::Nonce().
+ * Generate CSP nonce for scripts. The same nonce may be reused for multiple script tags.
  * @return string
  * @throws \Random\RandomException */
 function Nonce():string
 {
-	return OutPut::Nonce();
+	return Output::Nonce();
 }
 
-/** Alias. Attempt to return 304 http code (Not Modified) when browser's cache is up to date */
+/** Alias for Output::Return304().
+ * Attempt to send HTTP 304 Not Modified response when the client cache is still valid. */
 function Return304(...$a):bool
 {
-	return OutPut::Return304(...$a);
+	return Output::Return304(...$a);
 }
 
-/** Alias */
+/** Alias for Output::Link(). Add resource hint to the HTTP Link header.
+ * @param string $url Resource URL
+ * @param string $rel Link relation type. Usually "preconnect" or "preload". */
 function Link(...$a):void
 {
-	OutPut::Link(...$a);
+	Output::Link(...$a);
 }
 
-/** HTML output
- * @param string $output Content of the page
- * @never-return */
+/** Send HTML response and terminate script execution.
+ * @param string $output HTML page content
+ * @param int $code HTTP status code
+ * @param string|int $cache Cache control parameter:
+ *     - int: cache lifetime in seconds
+ *     - string: ETag content
+ * @return never */
 function HTML(string$output,...$a):never
 {
 	if($output=='')
-		header('Cache-Control: no-store',true,204);
+		\header('Cache-Control: no-store',true,204);
 	else
 		Output::SendHeaders(Output::HTML,...$a);
 
 	die($output);
 }
 
-/** JSON output
- * @param ?array $json output content
- * @never-return */
+/** Send JSON response and terminate script execution.
+ * @param ?array $json Response data
+ * @param int $code HTTP status code
+ * @param string|int $cache Cache control parameter:
+ *     - int: cache lifetime in seconds
+ *     - string: ETag content
+ * @return never */
 function JSON(?array$json,...$a):never
 {
 	Output::SendHeaders(Output::JSON,...$a);
@@ -539,27 +631,32 @@ function JSON(?array$json,...$a):never
 \spl_autoload_register(fn(string$c)=>Autoloader($c,__DIR__,__NAMESPACE__));
 
 (function(){
-	$a=\is_string($_COOKIE[A11N_COOKIE] ?? 0) ? $_COOKIE[A11N_COOKIE] : '';
-
-	//The session key consists of 14 random bytes and a sequence number in hex format.
-	if(!\ctype_xdigit($a) or \strlen($a)<15)
+	if(CMS::$cli)
 		return;
 
-	[$bytes,$id]=\str_split($a,14);
+	$a11n=\is_string($_COOKIE[A11N_COOKIE] ?? 0) ? $_COOKIE[A11N_COOKIE] : '';
+
+	# The session key consists of 7 random bytes and a sequence number in hex format
+	if(!\ctype_xdigit($a11n) or \strlen($a11n)<15)
+		return;
+
+	[$bytes,$id]=\str_split($a11n,14);
 
 	$R=CMS::$Db->Query(<<<SQL
-SELECT IF(`generated`<NOW() - INTERVAL 1 WEEK,1,0) `regen`, IF(`generated`<NOW() - INTERVAL 1 YEAR ,1,0) `obsolete` 
+SELECT IF(`generated`<NOW() - INTERVAL 1 WEEK,1,0) `regen`, IF(`generated`<NOW() - INTERVAL 1 YEAR,1,0) `obsolete`
 FROM `a11n`
 WHERE `id`=0x{$id} AND `bytes`=0x{$bytes}
 LIMIT 1
 SQL );
-	if($R->num_rows<1)
+
+	$sess=SingleFetch($R);
+
+	if($sess===null)
 		return;
 
-	$sess=$R->fetch_assoc();
 	$upd=[];
 
-	//Key regeneration
+	# Regenerate old session key
 	if($sess['regen'])
 	{
 		$upd['generated']=fn()=>'NOW()';
@@ -570,7 +667,7 @@ SQL );
 
 	$id=\hexdec($id);
 
-	//If the sessions are more than a year old, let's clear all sign-in (via foreign keys)
+	# If the session is older than one year, clear all sign-ins (via foreign keys)
 	if($sess['obsolete'])
 	{
 		$upd['id']=$id;

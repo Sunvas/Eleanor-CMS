@@ -1,8 +1,9 @@
 // Eleanor CMS © 2026 --> https://eleanor-cms.com
+/** Static page editor with l10n switching, EditorJS integration, file uploads, and autosave. */
 (({template,container,data},l10n_keys=["slug","title","description","content_source"],form_l10ns=new Map,editor=null,l10ns_enabled=null,save_to=null)=>Vue.createApp({
 	template,
 	data:()=>({
-		//L10n
+		// L10n
 		l10n:Object.seal({
 			save:{ru:"Сохранить",en:"Save"},
 			saved:{ru:"Сохранено",en:"Saved"},
@@ -26,21 +27,22 @@
 			l10ns:new Set,
 		},
 
-		//Confirmation modal
+		// Form state
+		saving:false,
+		changed:new Set,
+		watchers:new Set,
+
+		// Confirmation modal
 		confirm:"",
 		confirm_title:"",
-		confirmed:false,
-
-		changed:new Set,
-		saving:false,
-		watchers:[]
+		confirmed:false
 	}),
 	watch:{
 		lang(code,old){
-			if(!l10ns_enabled || old==='delete')
+			if(!l10ns_enabled || old==="delete")
 				return;
 
-			//Loading another localization
+			// Loading another localization
 			if(this.l10ns.some(item=>item[0]===code))
 				return this.form.l10ns.has(code)
 					? this.LoadL10N(code,old)
@@ -49,24 +51,25 @@
 
 			if(code==="delete")
 			{
-				//Removing the last l10n means removing the whole static page
+				// Removing the last l10n means removing the whole static page
 				if(this.form.l10ns.size<2)
 					return this.Confirm(this.l10n.delete_page,this.l10n.delete_page_title)
-						.then(c=>c ? fetch(location.href,{method:"DELETE"}).then(J) : null)
+						.then(c=>c ? fetch(location.href,{method:"DELETE",headers:{accept:"application/json"}}).then(J) : null)
 						.then(r=>{
-							if(!r?.ok)
+							if(r?.ok)
 							{
-								this.lang=old;
-
-								return alert(this.l10n[r.error] ?? r.error);
+								const url=new URL(location.href);
+								url.searchParams.delete("item");
+								return location.replace(url.href);
 							}
 
-							const url=new URL(location.href);
-							url.searchParams.delete("item");
-							location.href=url.href;
+							this.lang=old;
+
+							if(r?.error)
+								alert(this.l10n[r.error] ?? r.error);
 						});
 
-				//Removing only one selected localization
+				// Removing only one selected localization
 				return this.Confirm(this.l10n.delete_l10n,this.LangTitle(old)).then(c=>{
 					if(!c)
 						return this.lang=old;
@@ -77,7 +80,7 @@
 				});
 			}
 
-			//Removing all other localizations
+			// Removing all other localizations
 			if(this.form.l10ns.size>1)
 				this.Confirm(this.l10n.mono,this.LangTitle(old)).then(c=>{
 					if(!c)
@@ -90,14 +93,14 @@
 		}
 	},
 	computed:{
-		/** Flag that some data is loading */
+		/** Whether form data is being loaded with watchers temporarily disabled */
 		loading(){
-			return this.watchers.length<1;
+			return this.watchers.size<1;
 		},
 
-		/** Flag that data in from is saved */
+		/** Flag that form data is saved */
 		saved(){
-			return this.changed.size<1;
+			return !this.saving && this.changed.size<1;
 		},
 
 		/** Text on submit button */
@@ -121,13 +124,13 @@
 				coreui.Modal.getOrCreateInstance(this.$refs.confirm).show();
 
 				$(this.$refs.confirm)
-					.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())//Hidden element should be focused
+					.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())// Blur focused element before hiding
 					.one("hidden.coreui.modal",()=>resolve(this.confirmed))
 					.one("shown.coreui.modal",()=>$(this.$refs.confirm_dismiss).focus());
 			});
 		},
 
-		/** Is called by clicking on "Yes" button of confirmation modal */
+		/** Confirm modal action. Shift+click sets strong confirmation marker. */
 		Confirmed(e){
 			this.confirmed=e.shiftKey ? 1 : true;
 		},
@@ -135,7 +138,7 @@
 		/** Watchers monitor changing of fields in form object */
 		SetWatchers(){
 			for(const k of Object.keys(this.form))
-				this.watchers.push( this.$watch("form."+k,(val,old)=>this.Changed(k,val,old)) );
+				this.watchers.add( this.$watch("form."+k,(val,old)=>this.Changed(k,val,old)) );
 
 			editor[Symbol.for("skip-onchange")]=1;
 		},
@@ -143,19 +146,17 @@
 		/** Stop watchers while data is loading into the form */
 		UnSetWatchers(){
 			this.watchers.forEach(unwatch=>unwatch());
-			this.watchers.length=0;
+			this.watchers.clear();
 		},
 
 		/** Load l10n data into the form
 		 * @param lang desired language code
 		 * @param prev previous language code */
 		async LoadL10N(lang,prev=null){
-			this.UnSetWatchers();
-
-			//Storing previous values
+			// Storing previous values
 			if(prev!==null)
 			{
-				//Switching from monolingual
+				// Switching from monolingual
 				if(prev==='')
 				{
 					prev=[...this.form.l10ns].pop();
@@ -164,13 +165,22 @@
 						return;
 				}
 
-				this.form.content_source=await editor.save();
+				this.UnSetWatchers();
+
+				try{
+					this.form.content_source=await editor.save();
+				}catch(e){
+					console.error(e);
+					return this.SetWatchers();
+				}
 
 				for(const k of l10n_keys)
 					form_l10ns.getOrInsert(k,new Map).set(prev,this.form[k]);
 			}
+			else
+				this.UnSetWatchers();
 
-			//Loading values from remote
+			// Loading values from remote
 			if(!form_l10ns.getOrInsert("title",new Map).get(lang))
 			{
 				const url=new URL(location.href);
@@ -182,7 +192,7 @@
 				if(!r?.ok)
 				{
 					this.SetWatchers();
-					return alert(this.l10ns[e.error] ?? e.error);
+					return alert(this.l10n[r.error] ?? r.error);
 				}
 
 				for(const k of l10n_keys)
@@ -191,7 +201,7 @@
 				this.form.l10ns.add(lang);
 			}
 
-			//Applying l10n values
+			// Applying l10n values
 			for(const[k,v] of form_l10ns)
 			{
 				this.form[k]=v.get(lang);
@@ -209,16 +219,21 @@
 
 		/** Trigger saving process */
 		Changed(field,val,old){
-			//Don't apply changes while loading values
-			if(!this.loading)
-				this.changed.add(field);
+			// Don't apply changes while loading values
+			if(this.loading)
+				return;
 
-			//Auto submit feature
-			if(!this.saving && !this.saved)
-			{
-				clearTimeout(save_to);
-				save_to=setTimeout(()=>this.Submit(),2e4);
-			}
+			this.changed.add(field);
+
+			// Auto submit feature
+			if(!this.saving && this.changed.size>0)
+				this.ScheduleSubmit();
+		},
+
+		/** Schedule autosave and replace any pending autosave timer */
+		ScheduleSubmit(to=2e4){
+			clearTimeout(save_to);
+			save_to=setTimeout(()=>this.Submit(),to);
 		},
 
 		/** Send changes to the server */
@@ -230,19 +245,24 @@
 
 			const
 				body=new FormData,
-				suffix=l10ns_enabled && this.lang ? "_"+this.lang : "";
+				suffix=l10ns_enabled && this.lang ? "_"+this.lang : "",
+				backup=new Set(this.changed),// Backup changed fields before clearing them; restore on failed save.
+				changed=new Set(this.changed);
 
 			this.saving=true;
+			this.changed.clear();
 
 			if(l10ns_enabled)
 			{
 				body.set("l10ns",[...this.form.l10ns].join(","));
-				this.changed.delete("l10ns");
+				changed.delete("l10ns");
 			}
 
-			//Storing content
-			if(this.changed.has("content_source"))
-			{
+			return Promise.resolve().then(async()=>{
+				// Storing content
+				if(!changed.has("content_source"))
+					return;
+
 				const
 					content=JSON.stringify(await editor.save()),
 					regex=l10ns_enabled ? /[\da-f]{64}-[a-z]{2,3}-\d+\.[a-z\d]{3,4}/g : /[\da-f]{64}-\d+\.[a-z\d]{3,4}/g,
@@ -251,21 +271,30 @@
 				body.set("content_source"+suffix,content);
 				body.set("files"+suffix,files);
 
-				this.changed.delete("content_source");
-			}
+				changed.delete("content_source");
+			})
+			.then(async()=>{
+				for(const k of changed)
+					body.set(l10n_keys.includes(k) ? k+suffix : k,this.form[k]);
 
-			for(const k of this.changed)
-				body.set(l10n_keys.includes(k) ? k+suffix : k,this.form[k]);
-
-			return fetch(location.href,{method:"post",body,headers:{accept:"application/json"}})
-				.then(J).then(r=>{
+				return fetch(location.href,{method:"post",body,headers:{accept:"application/json"}}).then(J);
+			},e=>({ok:false,error:e}))
+			.then(
+				r=>{
 					if(r.ok)
-						this.changed.clear();
+						backup.clear();
 					else if(r.error)
 						alert(this.l10n[r.error] ?? r.error);
-				}).finally(()=>{
-					this.saving=false;
-				});
+				},
+				r=>r.text().then(console.error)
+			)
+			.finally(()=>{
+				this.saving=false;
+				backup.forEach(item=>this.changed.add(item));
+
+				if(this.changed.size>0)
+					this.ScheduleSubmit();
+			});
 		},
 	},
 	created(){
@@ -275,9 +304,9 @@
 			if(v[lang])
 				this.l10n[k]=v[lang];
 
-		const{L10N,L10NS,item}=JSON.parse($(data).text());
+		const{L10N,L10NS,item}=JSON.parse(document.querySelector(data).textContent);
 
-		//Flag defines how values are stored
+		// Flag defines how values are stored
 		l10ns_enabled=Array.isArray(L10NS);
 
 		if(L10NS?.length)
@@ -293,12 +322,12 @@
 			}
 			else
 			{
-				//When page is monolingual
+				// When page is monolingual
 				this.lang="";
 				item.l10ns=new Set([L10N]);
 			}
 
-			//Filling in the set of l10n
+			// Filling in the set of l10n
 			import("./l10ns.mjs").then(({default:l10ns})=>{
 				this.l10ns=[L10N,...L10NS].map(item=>[item,l10ns[item] ?? item]);
 			});
@@ -313,7 +342,7 @@
 	async mounted(){
 		const
 			ejs=await import("./editorjs.mjs"),
-			skip=Symbol.for("skip-onchange"),//Suppress OnChange event of EditorJS for several times
+			skip=Symbol.for("skip-onchange"),// Suppress several EditorJS onChange events
 			uploadByFile=async(file)=>{
 				const body=new FormData;
 

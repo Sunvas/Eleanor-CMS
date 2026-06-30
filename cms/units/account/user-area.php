@@ -44,7 +44,7 @@ function AvatarSalt():string
 function StoreAvatar(int$id,string$url):string
 {
 	if(!\function_exists('curl_init') or \preg_match('#\.(png|jpg)$#',$url,$m)==0)
-		return'';
+		return '';
 
 	$curl=\curl_init($url);
 	$tmp=\tempnam(\sys_get_temp_dir(),'avatar-');
@@ -52,7 +52,7 @@ function StoreAvatar(int$id,string$url):string
 
 	\curl_setopt_array($curl,[
 		\CURLOPT_TIMEOUT=>10,
-		\CURLOPT_WRITEFUNCTION=>fn($ch,$bytes)=>fwrite($fh,$bytes),
+		\CURLOPT_WRITEFUNCTION=>fn($ch,$bytes)=>\fwrite($fh,$bytes),
 	]);
 
 	\curl_exec($curl);
@@ -60,21 +60,22 @@ function StoreAvatar(int$id,string$url):string
 	$info=\curl_getinfo($curl);
 	$errno=\curl_errno($curl);
 
+	\fflush($fh);
 	\fclose($fh);
 
 	if($errno>0 or $info['http_code']!=200 or $info['size_download']<5120)
-		return'';
+		return '';
 
 	$im=$m[1]=='png' ? imagecreatefrompng($tmp) : imagecreatefromjpeg($tmp);
 
 	#If no image or image size less than 25px
 	if($im===false or imagesy($im)<25 or imagesx($im)<25)
-		return'';
+		return '';
 
 	$salt=AvatarSalt();
 	\imagewebp($im,STATIC_PATH."avatars/{$id}-{$salt}.webp");
 
-	return$salt;
+	return $salt;
 }
 
 /** Session start */
@@ -124,7 +125,7 @@ function SignIn(Uri$Uri,int&$code):array|string
 					'ok'=>false
 				];
 
-			$ok=\Eleanor\Classes\Telegram::CheckAuth($_POST['telegram'],CMS::$config['system']['bot_key']);
+			$ok=\Eleanor\Classes\Telegram::LegacyCheckAuth($_POST['telegram'],CMS::$config['system']['bot_key']);
 
 			if(!$ok)
 				return[
@@ -140,7 +141,8 @@ FROM `users`
 WHERE `telegram_id`={$telegram['id']}
 LIMIT 1
 SQL );
-			if($user=$R->fetch_assoc())
+
+			if($user=SingleFetch($R))
 			{
 				$id=(int)$user['id'];
 				$upd=[];
@@ -191,7 +193,7 @@ SQL );
 			];
 		}
 
-		#PHP 8.6
+		# PHP 8.6: migrate to pipe operator
 		#Sign in by username and password
 		if(!\array_all([$_POST['username'] ?? 0,$_POST['password'] ?? 0,$_POST['captcha'] ?? 0],fn($t)=>\is_string($t)) or !isset($_POST['temp']))
 			return[
@@ -205,7 +207,8 @@ FROM `users`
 WHERE `name`=?
 LIMIT 1
 SQL ,[$_POST['username']]);
-		if(!$user=$R->fetch_assoc())
+
+		if(!$user=SingleFetch($R))
 			return[
 				'ok'=>false,
 				'error'=>'NOT_FOUND'
@@ -221,7 +224,7 @@ SQL ,[$_POST['username']]);
 
 		CMS::$Db->Update('users',['last_login_attempt'=>fn()=>'NOW()'],'`id`='.$user['id']);
 
-		#Too ofter and no captcha
+		# Too often and no captcha
 		if($user['seconds']<SECONDS and !\CMS\Classes\hCaptcha::Check('captcha'))
 			return[
 				'ok'=>false,
@@ -234,11 +237,11 @@ SQL ,[$_POST['username']]);
 
 		if($empty or \password_verify($_POST['password'],$user['password_hash']))
 		{
-			#Поддержим актуальность пароля
+			# Keep password hash up to date
 			if($empty or \password_needs_rehash($user['password_hash'],\PASSWORD_DEFAULT))
 				CMS::$Db->Update('users',['password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT)],'`id`='.$user['id']);
 
-			//2FA should be injected somewhere here
+			# FA should be injected somewhere here
 			CMS::$A->SignIn($id,(bool)$_POST['temp'],['way'=>'username']);
 
 			Events::UserSignedIn->Trigger([
@@ -320,7 +323,7 @@ function SignUp(Uri$Uri,int&$code):array|string
 	#AJAX request
 	if(CMS::$json)
 	{
-		#PHP 8.6
+		# PHP 8.6: migrate to pipe operator
 		if(!\array_all([$_POST['name'] ?? 0,$_POST['display_name'] ?? 0,$_POST['password'] ?? 0],fn($t)=>\is_string($t)))
 			return[
 				'ok'=>false,
@@ -370,7 +373,7 @@ function SignUp(Uri$Uri,int&$code):array|string
 		];
 	}
 
-	#Resistration finished
+	#Registration finished
 	$R=CMS::$Db->Query(<<<SQL
 SELECT `telegram_id` FROM `users` WHERE `telegram_id`={$telegram['id']}
 LIMIT 1
@@ -429,7 +432,7 @@ function Settings(Uri$Uri,int&$code):array|string
 		#Saving avatar
 		if(\is_uploaded_file($_FILES['avatar']['tmp_name'] ?? '') and $_FILES['avatar']['size']<=MAX_AVATAR_SIZE)
 		{
-			$old=GetUsers('avatar');
+			$old=GetUserData('avatar');
 			$img=\imagecreatefromwebp($_FILES['avatar']['tmp_name']);
 
 			if($img!==false)
@@ -449,7 +452,7 @@ function Settings(Uri$Uri,int&$code):array|string
 		];
 	}
 
-	$settings=GetUsers(['display_name','avatar','info','timezone',...(L10NS ? ['l10n'] : [])]);
+	$settings=GetUserData(['display_name','avatar','info','timezone',...(L10NS ? ['l10n'] : [])]);
 	$timezones=array_merge(
 		timezone_identifiers_list(\DateTimeZone::ASIA),
 		timezone_identifiers_list(\DateTimeZone::EUROPE),
@@ -471,7 +474,7 @@ function ChangePassword(Uri$Uri,int&$code):array|string
 SELECT `way` FROM `a11n_userarea` WHERE `a11n_id`=? AND `user_id`=? LIMIT 1
 SQL ,[CMS::$a11n,CMS::$A->current]);
 	$way=$R->fetch_column();
-	$old_required=$way!='telegram' or GetUsers('password_hash')==='';
+	$old_required=$way!='telegram' or GetUserData('password_hash')==='';
 
 	#AJAX request
 	if(CMS::$json)
@@ -481,7 +484,7 @@ SQL ,[CMS::$a11n,CMS::$A->current]);
 				'ok'=>false
 			];
 
-		#PHP 8.6
+		# PHP 8.6: migrate to pipe operator
 		if(!\array_all([$_POST['new'] ?? 0,$_POST['old'] ?? ($old_required ? 0 : '')],fn($t)=>\is_string($t)))
 			return[
 				'ok'=>false,
@@ -572,7 +575,7 @@ FROM `a11n_userarea` `u`
 INNER JOIN `a11n` `a` ON `a`.`id`=`u`.`a11n_id`
 WHERE `u`.`user_id`=? AND `u`.`way`!='admin-panel'
 SQL ,[$current,MONTHS_TO_STALE_SESSION,CMS::$A->current]);
-	while($a=$R->fetch_assoc())
+	foreach($R as $a)
 	{
 		$a['ip']=$a['ip'] ? \inet_ntop($a['ip']) : '';
 		$a['a11n_id']=(int)$a['a11n_id'];
@@ -580,17 +583,18 @@ SQL ,[$current,MONTHS_TO_STALE_SESSION,CMS::$A->current]);
 
 		$items[]=$a;
 	}
+	$R->free();
 
 	return(CMS::$T)('Sessions',$items,MONTHS_TO_STALE_SESSION);
 }
 
 #Parsing uri
-[$slug]=SlugUri($uri);
+[$slug]=SlugTail($uri);
 
 if(!CMS::$json)
 {
 	#Loading template of the unit
-	CMS::$T[]=require ROOT."user-area/unit-{$this->name}/object.php";
+	CMS::$T[]=require CMS."user-area/unit-{$this->name}/object.php";
 
 	#Checking URI correctness via canonical urls
 	Canonical($Uri,$slug);

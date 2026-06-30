@@ -1,15 +1,15 @@
 <?php
-/** Making sequence of HTML form template files in specified directory
+/** Making a sequence of HTML form template files in the specified directory
  * @var string $dir to template files */
 
-$files=scandir($dir);
-$Seq=clone new \Eleanor\Classes\Template($dir);#Clone is used to turn on lazy fluent interface on 10th line
+use \Eleanor\Classes\Template;
 
-foreach($files as $item)
-	if(str_ends_with($item,'.php'))
-	{
-		$name=strrchr($item,'.',true);
-		$Seq->{$name}();
-	}
+# PHP 8.6: migrate to pipe operator
+$files=array_filter(scandir($dir),fn($item)=>str_ends_with($item,'.php'));
+$files=array_map(fn($item)=>strrchr($item,'.',true),$files);
 
-return $Seq;
+return array_reduce(
+	$files,
+	fn(Template$T,string$item)=>$T->$item(),
+	new Template($dir)
+);

@@ -32,7 +32,8 @@ if($task=SingleFetch($R))
 		goto Skip;
 	}
 
-	CMS::$Db->Update('cron',['status'=>'RUN','run_at'=>fn()=>'NOW()'],'`unit`=?',[$task['unit']]);
+	if(CMS::$Db->Update('cron',['status'=>'RUN','run_at'=>fn()=>'NOW()'],"`unit`=? AND `status`='OK'",[$task['unit']])<1)
+		goto Skip;
 
 	try {
 		$remnant=$U->Cron($task['remnant'] ? \json_decode($task['remnant'], true) : null);
@@ -42,6 +43,7 @@ if($task=SingleFetch($R))
 			'error'=>$E->getMessage(),
 			'run_at'=>fn()=>'NOW()'
 		],'`unit`=?',[$task['unit']]);
+		goto Skip;
 	}
 
 	if(\is_array($remnant))

@@ -7,7 +7,7 @@ namespace CMS;
  * @var string|array|null $data that will be passed as base64 to data-data param to script */
 
 $nonce=Nonce();
-$data=\is_array($data ?? 0) ? \json_encode($data,JSON) : ($data ?? '');
+$data=\is_array($data ?? 0) ? \json_encode($data,JSON | \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT) : ($data ?? '');
 ?>
 <section class="container-xl" id="app">
 	<div class="d-flex align-items-center justify-content-center mt-5">

@@ -53,7 +53,7 @@ function SetCookie(string$name,string$value='',int$ttl=31536000,bool$strict=true
 	elseif($ttl)
 		$ttl+=\time();
 
-	return \setcookie($name,$value,$ttl,[
+	return \setcookie($name,$value,[
 		'expires'=>$ttl,
 		'path'=>\Eleanor\SITEDIR,
 		'domain'=>\Eleanor\DOMAIN,
@@ -261,6 +261,7 @@ Assign::Bind(CMS::$Db,fn()=>new MySQL(
 	CMS::$config['db']['user'],
 	CMS::$config['db']['pass'],
 	CMS::$config['db']['db'],
+	port:CMS::$config['db']['port'],
 ));
 Assign::Bind(CMS::$Cache,fn()=>new Cache(CMS.'cache'));
 

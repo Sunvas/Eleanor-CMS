@@ -1,7 +1,8 @@
 <?php
 return[
-	'host'=>'',
-	'user'=>'',
-	'pass'=>'',
 	'db'=>'',
+	'host'=>null,
+	'user'=>null,
+	'pass'=>null,
+	'port'=>null,
 ];

@@ -139,7 +139,7 @@ if(L10NS!==null)
 			$R=CMS::$Db->Query(<<<SQL
 SELECT `l10n` FROM `users` WHERE `id`=$id LIMIT 1
 SQL );
-			$preferred=$R->fetch_column();
+			$preferred=SingleFetch($R,true);
 
 			if(!$preferred)
 				goto HAL;

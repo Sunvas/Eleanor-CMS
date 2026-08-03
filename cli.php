@@ -26,22 +26,23 @@ if(!\file_exists(__DIR__.'/cms/config/system.json'))
 # If no command line argument is specified, display the basic information about the CLI interface
 if(!isset($argv[1]))
 {
-	# PHP 8.6 - pipe operator
+	# PHP 8.6: migrate to pipe operator
 	$units=\scandir(CMS.'units');
 	$units=\array_filter($units,fn($item)=>\str_ends_with($item,'.php'));
 	$units=\array_filter($units,fn($item)=>(require (CMS.'units/'.$item)) instanceof Interfaces\CLI);
 	$units=\array_map(fn($item)=>\strrchr($item,'.',true),$units);
 
 	$site=\is_array(CMS::$config['site']['title']) ? L10n::Item(CMS::$config['site']['title']) : CMS::$config['site']['title'];
-	$info=new CLI($site,'CYAN');
+	$info=new CLI($site,'CYAN')
+		->reset("\nCLI interface\n\nUsage: ");
 
 	if($units)
-		$info->reset("\nCLI interface\n\nUsage:   ")->green("php $argv[0] <unit> [<action> [arguments]]")
+		$info->green("  php $argv[0] <unit> [<action> [arguments]]")
 			->reset("\nExample: ")->yellow("php $argv[0] users add Alice")
-			->reset("\n\nAvailable CLI units: ")->GREEN(join(', ',$units))
+			->reset("\n\nAvailable CLI units: ")->PURPLE(join(', ',$units))
 			->reset("\nUse \"<unit> help\" to display unit-specific help.");
 	else
-		$info->reset("\nCLI interface\n\nUsage: ")->green("php $argv[0] <unit> [<action> [arguments]]")
+		$info->green("php $argv[0] <unit> [<action> [arguments]]")
 			->reset("\n\nAvailable CLI units: (none)");
 
 	$info->write();

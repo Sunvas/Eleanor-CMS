@@ -226,7 +226,7 @@ SELECT COUNT(`id`) FROM `users`
 {$where}
 SQL);
 
-		$total=(int)$R->fetch_column();
+		$total=(int)SingleFetch($R,true);
 	}
 
 	try{

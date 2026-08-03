@@ -141,18 +141,18 @@ SELECT COUNT(`id`) FROM `static`
 {$where}
 SQL);
 
-		$total=(int)$R->fetch_column();
+		$total=(int)SingleFetch($R,true);
 	}
 
 	try{
 		[$sort,$order,$limit]=Paginator::SortOrderLimit($total,['id','slug','title','modified'],false,$page,$pp);
-
-		if($multi and $order==='slug')
-			$order='slug_'.$l10n;
 	}catch(\OutOfBoundsException){
 		$Uri->amp=false;
 		Redirect($Uri);
 	}
+
+	if($multi and \in_array($sort,['slug','title']))
+		$sort=$sort.'_'.$l10n;
 
 	$fields=$multi ? "`slug_{$l10n}` `slug`, `title_{$l10n}` `title`, `modified_{$l10n}` `modified`" : '`slug`, `title`, `modified`';
 
@@ -270,7 +270,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 					'error'=>'INSUFFICIENT',
 				];
 
-			Files::Delete(STATIC_PATH."uploads/static/{$Unit->name}/{$id}/");
+			Files::Delete(STATIC_PATH."uploads/{$Unit->name}/{$id}/");
 			$num=CMS::$Db->Delete('static','`id`='.$id);
 
 			return[
@@ -346,7 +346,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 				];
 			}
 
-			//Uploading image by URL
+			# Uploading image by URL
 			if(count($_POST)===1 and isset($_POST[ATTACH]))
 			{
 				//ToDo!
@@ -367,7 +367,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 					if(\is_string($_POST[$f] ?? 0))
 						$data[$f]=$_POST[$f];
 
-				//Check availability of slug
+				# Check availability of slug
 				if(isset($data['slug']))
 					if($data['slug']==='')
 						$data['slug']=null;
@@ -377,7 +377,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 							'error'=>'SLUG_EXISTS'
 						];
 
-				//Check content source
+				# Check content source
 				if(isset($data['content_source']) and !\json_validate($data['content_source']))
 					return[
 						'ok'=>false,
@@ -392,10 +392,10 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 				$mono=$_POST['l10ns']==='';
 				$l10ns=$mono ? [] : \explode(',',$_POST['l10ns']);
 
-				//Stack of system languages
+				# Stack of system languages
 				$stack=$mono ? [L10N] : [L10N,...L10NS];
 
-				if(!$mono and !array_intersect($l10ns,$stack))
+				if(!$mono and \array_diff($l10ns,$stack))
 					return[
 						'ok'=>false,
 						'error'=>'WEIRD_L10NS'
@@ -425,7 +425,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 					}
 				}
 
-				//Validation of content
+				# Validation of content
 				foreach($stack as $l10n)
 				{
 					$k='slug_'.$l10n;
@@ -453,7 +453,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 					}
 				}
 
-				//Set l10ns value
+				# Set l10ns value
 				if($data)
 					$data['l10ns']=join(',',$l10ns);
 			}
@@ -483,16 +483,16 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 		{
 			if(CheckSlug($_GET['check_slug'],$id,\in_array($_GET['l10n'] ?? 0,L10NS ?? []) ? $_GET['l10n'] : L10N))
 				return[
-					'ok'=>true
+					'ok'=>false,
+					'error'=>'SLUG_EXISTS'
 				];
 
 			return[
-				'ok'=>false,
-				'error'=>'SLUG_EXISTS'
+				'ok'=>true
 			];
 		}
 
-		//Loading L10N version of content
+		# Loading L10N version of content
 		if($id and \is_string($_GET['lang'] ?? 0) and L10NS!==null)
 		{
 			$l10n=\in_array($_GET['lang'],L10NS) ? $_GET['lang'] : L10N;
@@ -535,11 +535,11 @@ SQL );
 		if($R->num_rows<1)
 			Halt();
 
-		$l10ns=$R->fetch_column();
+		$l10ns=SingleFetch($R,true);
 
 		if($l10ns)
 		{
-			//Page is multilingual
+			# Page is multilingual
 			$l10ns=\explode(',',$l10ns);
 			$stack=\array_intersect([L10N,...L10NS],$l10ns);
 			$l10n=\in_array($_GET['lang'] ?? 0,$stack) ? $_GET['lang'] : \array_first($l10ns);

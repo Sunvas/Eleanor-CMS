@@ -17,10 +17,20 @@ return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 
 	function UserArea(?string $uri):never
 	{
-		$cache=CMS::$A->current ? 0 : $this->name;//Page should be cached for guests only
+		$cache=0;
 
-		if($cache and Return304($cache))
-			die;
+		# Page should be cached for guests only
+		if(!CMS::$A->current)
+		{
+			$mtime=\filemtime($this->GetMainPageFile());
+
+			if($mtime)
+			{
+				$cache=$this->name.($mtime-\Eleanor\BASE_TIME);
+
+				Return304($cache) && die;
+			}
+		}
 
 		$code=200;
 		$output=require __DIR__."/{$this->name}/user-area.php";

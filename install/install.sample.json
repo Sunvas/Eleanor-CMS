@@ -1,0 +1,24 @@
+{
+  "mysql": {
+    "host": "p:localhost",
+    "port": null,
+    "username": null,
+    "password": null,
+    "database": null
+  },
+  "admin": {
+    "username": "admin",
+    "password": "password"
+  },
+  "site": {
+    "dir": "/",
+    "title": "",
+    "description": "",
+    "l10n": "ru",
+    "l10ns": null
+  },
+  "hcaptcha": {
+    "sitekey": "",
+    "secret": ""
+  }
+}

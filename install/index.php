@@ -2,62 +2,11 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-use Eleanor\Library;
-use Eleanor\Classes\{EM,L10n,MySQL,Output,Cache,Template};
-
+use Eleanor\Classes\{EM,L10n,MySQL,Output,Template};
 use const Eleanor\SITEDIR;
 use function Eleanor\AwareInclude;
 
-const
-	JSON = \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE,
-	LOCK = __DIR__.'/install.lock',
-	BASE = __DIR__.'/../',
-	REQUIRED_PHP_VERSION = 8.5;
-
-require BASE.'cms/library/core.php';
-require BASE.'cms/constants.php';# Site constants
-
-Library::$logs=BASE.'cms/logs/';
-
-/** Check whether the environment is ready for installation
- * @return array of errors */
-function CheckEnv():array
-{
-	$errors=[];
-
-	if(\file_exists(LOCK))
-		return ['LOCKED'];
-
-	if(\version_compare(\PHP_VERSION,REQUIRED_PHP_VERSION,'<'))
-		$errors[]='LOW_PHP_VERSION';
-
-	if(!\function_exists('mysqli_connect'))
-		$errors[]='MYSQLI_MISSED';
-
-	# Logs directory
-	if(!\is_dir(Library::$logs))
-		$errors['NOT_EXIST'][]=Library::$logs;
-	elseif(!\is_writeable(Library::$logs))
-		$errors['NOT_WRITABLE'][]=Library::$logs;
-
-	$base=\realpath(BASE);
-
-	# Check write access to robots.txt, database config, and constants
-	foreach([$base.'/robots.txt',$base.'/cms/config/db.php',$base.'/cms/constants.php'] as $f)
-		if(!\is_file($f))
-			$errors['NOT_EXIST'][]=$f;
-		elseif(!\is_writeable($f))
-			$errors['NOT_WRITABLE'][]=$f;
-
-	# Writable directories
-	foreach([$base.'/static/uploads/',$base.'/cms/config/',$base.'/cms/cache/'] as $d)
-		if(!\is_dir($d))
-			$errors['NOT_EXIST'][]=$d;
-		elseif(!\is_writeable($d))
-			$errors['NOT_WRITABLE'][]=$d;
-
-	return $errors;
-}
+require __DIR__.'/includes/common.php';
 
 /** Alias. Generate script nonce. It can be reused
  * @return string
@@ -76,7 +25,7 @@ function Link(...$a):void
 /** Step 1: select system language */
 function Step1():string
 {global$T;
-	if(($_SESSION['step'] ?? 0)===1 and \in_array($_POST['l10n'] ?? 0,['ru','en'],true))
+	if($_SESSION['step']===1 and \in_array($_POST['l10n'] ?? 0,['ru','en'],true))
 	{
 		$_SESSION['l10n']=$_POST['l10n'];
 		return Step2();
@@ -96,7 +45,7 @@ function Step2(?array$errors=null):string
 	$errors??=CheckEnv();
 
 	# Continue to the next step
-	if(($_SESSION['step'] ?? 0)===2 and !$errors and $_POST)
+	if($_SESSION['step']===2 and !$errors and $_POST)
 	{
 		if(isset($_POST['agree']))
 			return Step3();
@@ -113,11 +62,10 @@ function Step2(?array$errors=null):string
 }
 
 /** Step 3: database connection settings */
-function Step3($errors=[]):string
+function Step3(array$errors=[]):string
 {global$T;
-
 	# Continue to the next step
-	if(($_SESSION['step'] ?? 0)===3 and $_POST)
+	if($_SESSION['step']===3 and $_POST)
 	{
 		$next=true;
 
@@ -127,9 +75,10 @@ function Step3($errors=[]):string
 			else
 				$next=false;
 
+		# PHP 8.6: migrate to pipe operator
 		$_SESSION['multilang']=isset($_POST['multilang']);
 		$_SESSION['l10ns']=\is_array($_POST['l10ns'] ?? 0) && $_SESSION['multilang']
-			? \array_filter($_POST['l10ns'],fn($item)=>\in_array($item,['ru','en'],true))
+			? \array_unique(\array_intersect(\array_diff($_POST['l10ns'],[$_SESSION['l10n']]),SUPPORTED_L10NS))
 			: null;
 
 		if($_SESSION['password']!==$_SESSION['password2'])
@@ -150,9 +99,9 @@ function Step3($errors=[]):string
 	$_SESSION['step']=3;
 
 	return $T('Step3',
-		host:$_SESSION['host'] ?? 'p:localhost',
-		user:$_SESSION['user'] ?? '',
-		pass:$_SESSION['pass'] ?? '',
+		host:$_SESSION['host'] ?? (\ini_get('mysqli.default_host') ?: 'p:localhost'),
+		user:$_SESSION['user'] ?? \ini_get('mysqli.default_user'),
+		pass:$_SESSION['pass'] ?? \ini_get('mysqli.default_pw'),
 		db:$_SESSION['db'] ?? '',
 
 		multilang:$_SESSION['multilang'] ?? false,
@@ -174,17 +123,13 @@ function Step3($errors=[]):string
 /** Step 4: create tables */
 function Step4():string
 {global$T;
-
 	# Continue to the next step
-	if(($_SESSION['step'] ?? 0)===4)
+	if($_SESSION['step']===4)
 	{
 		if(isset($_POST['back']))
-		{
-			unset($_SESSION['step4-done']);
 			return Step3();
-		}
 
-		if(isset($_SESSION['step4-done']))
+		if($_SESSION['step4'])
 			return Step5();
 	}
 
@@ -201,30 +146,32 @@ function Step4():string
 	if($Db->server_version<80000)
 		return Step3(['MYSQL_LOW']);
 
-	$status=[];
-	$tables=AwareInclude(__DIR__.'/data/tables.php',compact('Db'));
+	$queries=[];
+	$tables=AwareInclude(__DIR__.'/includes/tables.php',[
+		'Db'=>$Db,
+		'l10n'=>$_SESSION['l10n'],
+		'l10ns'=>$_SESSION['l10ns'],
+	]);
 
-	foreach($tables as $k=>$v)
+	foreach($tables as $table=>$query)
 	{
 		$err=false;
 
 		try{
-			$Db->Query($v);
+			$Db->Query($query);
 		}catch(EM$E){
 			$err=$E->getMessage();
 		}
 
-		if(!\is_int($k))
-			$status[$k]=$err;
+		if(!\is_int($table))
+			$queries[$table]=$err;
 	}
 
 	# PHP 8.6: migrate to pipe operator
-	$ok=!\array_any($status,fn($item)=>\is_string($item));
+	$ok=!\array_any($queries,fn($item)=>\is_string($item));
+	$_SESSION['step4']=$ok;
 
-	if($ok)
-		$_SESSION['step4-done']=true;
-
-	return $T('Step4',$status,$ok);
+	return $T('Step4',$queries,$ok);
 }
 
 /** Step 5: insert initial data */
@@ -232,16 +179,15 @@ function Step5():string
 {global$T;
 
 	# Continue to the next step
-	if(($_SESSION['step'] ?? 0)===5)
+	if($_SESSION['step']===5)
 	{
 		if(isset($_POST['back']))
-		{
-			unset($_SESSION['step4-done'],$_SESSION['step5-done']);
 			return Step3();
-		}
 
-		if(isset($_SESSION['step5-done']))
+		if($_SESSION['step5'])
 			return Step6();
+
+		return Step4();
 	}
 
 	# Set values
@@ -254,28 +200,32 @@ function Step5():string
 		return Step3(['MYSQL_CONNECT']);
 	}
 
-	$status=[];
-	$insert=AwareInclude(__DIR__.'/data/insert.php',compact('Db'));
+	$queries=[];
+	$insert=AwareInclude(__DIR__.'/includes/insert.php',[
+		'Db'=>$Db,
+		'l10n'=>$_SESSION['l10n'],
+		'l10ns'=>$_SESSION['l10ns'],
+	]);
 
-	foreach($insert as $k=>$v)
+	foreach($insert as $key=>$query)
 	{
 		$err=false;
 
 		try{
-			if(\is_string($v))
-				$Db->Query($v);
-			elseif($v instanceof \Closure)
-				$v();
+			if(\is_string($query))
+				$Db->Query($query);
+			elseif($query instanceof \Closure)
+				$query();
 		}catch(EM$E){
 			$err=(string)$E;
 		}
 
-		if(!\is_int($k))
-			$status[$k]=$err;
+		if(!\is_int($key))
+			$queries[$key]=$err;
 	}
 
 	# PHP 8.6: migrate to pipe operator
-	$ok=!\array_any($status,fn($item)=>\is_string($item));
+	$ok=!\array_any($queries,fn($item)=>\is_string($item));
 
 	if($ok)
 	{
@@ -288,127 +238,104 @@ function Step5():string
 				'avatar'=>'a'
 			]);
 
-			$status['users']=false;
-			$_SESSION['step5-done']=true;
+			$queries['users']=false;
 		}catch(EM$E){
-			$status['users']=(string)$E;
+			$queries['users']=(string)$E;
 			$ok=false;
 		}
 	}
 
-	return $T('Step5',$status,$ok);
+	$_SESSION['step5']=$ok;
+
+	return $T('Step5',$queries,$ok);
 }
 
-/** Step 6: write configuration files and finish installation */
+/** Step 6: write configuration files */
 function Step6():string
 {global$T;
-	$sitedir=\dirname(SITEDIR).'/';
 
-	if(($_SESSION['step'] ?? 0)===5)
+	# Continue to the next step
+	if($_SESSION['step']===6)
 	{
-		# Database connection configuration
-		$db=\var_export($_SESSION['db'],true);
-		$host=\var_export($_SESSION['host'],true);
-		$user=\var_export($_SESSION['user'],true);
-		$pass=\var_export($_SESSION['pass'],true);
+		if(isset($_POST['back']))
+			return Step3();
 
-		$config_db=<<<PHP
-<?php
-return[
-	'host'=>{$host},
-	'user'=>{$user},
-	'pass'=>{$pass},
-	'db'=>{$db},
-];
-PHP;
-		\file_put_contents(BASE.'cms/config/db.php',$config_db,\LOCK_EX);
-
-		# robots.txt
-		$protocol=\Eleanor\PROTOCOL;
-		$domain=\Eleanor\DOMAIN;
-		$config_robots=<<<TEXT
-User-agent: *
-Sitemap: {$protocol}{$domain}{$sitedir}sitemap.xml
-TEXT;
-		\file_put_contents(BASE.'robots.txt',$config_robots,\LOCK_EX);
-
-		# System constants
-		$l10ns=\is_array($_SESSION['l10ns']) ? \join(',',\array_map(fn($item)=>\var_export($item,true),$_SESSION['l10ns'])) : '';
-		$config=\file_get_contents(BASE.'cms/constants.php');
-		$config=\preg_replace('#L10N=[^,]+#',"L10N='{$_SESSION['l10n']}'",$config);
-		$config=\preg_replace('#L10NS=[^;]+#',$_SESSION['l10ns']===null ? 'L10NS=null' : "L10NS=[{$l10ns}]",$config);
-		\file_put_contents(BASE.'cms/constants.php',$config,\LOCK_EX);
-
-		# System config
-		$system=\json_encode([
-			'maintenance'=>false,
-			'captcha'=>false,
-			'hcaptcha'=>$_SESSION['hcaptcha'],
-			'hcaptcha_secret'=>$_SESSION['hsecret'],
-		],JSON);
-		\file_put_contents(BASE.'cms/config/system.json',$system,\LOCK_EX);
-
-		# Main page config
-		$mono=$_SESSION['l10ns']===null;
-		$mainpage=\json_encode([
-			'title'=>$mono ? $_SESSION['title'] : [$_SESSION['l10n']=>$_SESSION['title']],
-			'description'=>$mono ? $_SESSION['description'] : [$_SESSION['l10n']=>$_SESSION['description']],
-		],JSON);
-		\file_put_contents(BASE.'cms/config/site.json',$mainpage,\LOCK_EX);
-
-		# Deleting unused l10n files
-		$folders=[
-			'admin-panel/l10n',
-			'admin-panel/main/l10n',
-			'admin-panel/sidebar/l10n',
-			'admin-panel/static/l10n',
-			'admin-panel/users/l10n',
-			'library/l10n',
-			'user-area/l10n',
-			'user-area/unit-account/l10n',
-		];
-
-		$l10ns=$_SESSION['l10ns'] ?? [];
-		$l10ns[]=$_SESSION['l10n'];
-
-		foreach($folders as $folder)
-		{
-			$folder=__DIR__."/../cms/$folder/";
-			$files=\scandir($folder);
-
-			if(!\is_array($files))
-				continue;
-
-			$files=array_filter($files,fn($item)=>\str_ends_with($item,'.php'));
-
-			foreach($files as $file)
-			{
-				$filename=\strrchr($file,'.php',true);
-				$l10n=\explode('-',$filename) |> array_last(...);
-
-				if(!\in_array($l10n,$l10ns))
-					\unlink($folder.$file);
-			}
-		}
-
-		# Deleting other unused files
-		foreach(\array_diff(['en','ru'],$l10ns) as $l10n)
-			\unlink(__DIR__."/../cms/units/main/mainpage-$l10n.json");
-
-		# Lock the installer to prevent another installation
-		\file_put_contents(__DIR__.'/install.lock',1,\LOCK_EX);
-
-		new Cache(BASE.'cms/cache')->Put('admin-panel','admin.php',0,true);
+		if($_SESSION['step6'])
+			return Step7();
 	}
 
+	# Set values
 	L10n::$code=$_SESSION['l10n'];
 	$_SESSION['step']=6;
 
-	# Clear sensitive session values
-	foreach(['host','user','pass','db', 'title','description','hcaptcha','hsecret', 'username','password','password2'] as $f)
-		unset($_SESSION[$f]);
+	$sitedir=\rtrim(\dirname(SITEDIR),'/').'/';
+	$files=[];
+	$mono=$_SESSION['l10ns']===null;
+	$stack=[$_SESSION['l10n'],...($_SESSION['l10ns'] ?? [])];
+	$items=[
+		# Database connection configuration
+		fn()=>[PutDbConfig(...),PutDbConfig($_SESSION['db'],$_SESSION['host'],$_SESSION['user'],$_SESSION['pass'])],
 
-	return $T('Step6',$sitedir);
+		# robots.txt
+		fn()=>[PutRobotsTxt(...),PutRobotsTxt($sitedir)],
+
+		# Constants
+		fn()=>[PutConstants(...),PutConstants($_SESSION['l10n'],$_SESSION['l10ns'])],
+
+		# System config
+		fn()=>[PutSystemConfig(...),PutSystemConfig($_SESSION['hcaptcha'],$_SESSION['hsecret'])],
+
+		# Main page config
+		fn()=>[PutSiteConfig(...),PutSiteConfig(
+			$mono ? $_SESSION['title'] : \array_fill_keys($stack,$_SESSION['title']),
+			$mono ? $_SESSION['description'] : \array_fill_keys($stack,$_SESSION['description'])
+		)],
+	];
+
+	foreach($items as $item)
+	{
+		[$F,$ok]=$item();
+
+		$file=ModifiedFile::Get($F);
+		$files[$file]=!$ok;
+	}
+
+	# PHP 8.6: migrate to pipe operator
+	$ok=\array_all($files,fn($item)=>!$item);
+
+	if($ok)
+	{
+		PutCache();
+
+		# Deleting unused l10n files
+		DeleteUnusedL10n([$_SESSION['l10n'],...($_SESSION['l10ns'] ?? [])]);
+
+		# Lock the installer to prevent another installation
+		$ok=LockInstaller();
+		$file=ModifiedFile::Get(LockInstaller(...));
+		$files[$file]=!$ok;
+
+		# Clear sensitive session values
+		if($ok)
+			foreach(['host','user','pass','db', 'title','description','hcaptcha','hsecret', 'username','password','password2', 'step4','step5'] as $f)
+				unset($_SESSION[$f]);
+	}
+
+	$_SESSION['step6']=$ok;
+
+	return $T('Step6',$files,$ok);
+}
+
+/** Step 7: installation is completed */
+function Step7():string
+{global$T;
+	# Set values
+	L10n::$code=$_SESSION['l10n'];
+	$_SESSION['step']=7;
+
+	$sitedir=\rtrim(\dirname(SITEDIR),'/').'/';
+
+	return $T('Step7',$sitedir);
 }
 
 \session_start([
@@ -421,11 +348,14 @@ TEXT;
 ]);
 
 # Reset installation if lock file not found
-if(isset($_SESSION['step']) and $_SESSION['step']===6 and !\is_file(LOCK))
+if(isset($_SESSION['step']) and $_SESSION['step']===7 and !\is_file(LOCK))
 	$_SESSION=[];
 
 $T=new Template(__DIR__.'/template/install.php');
-$out=match($_SESSION['step'] ?? 1){
+$_SESSION['step']??=1;
+
+$out=match($_SESSION['step']){
+	7=>Step7(),
 	6=>Step6(),
 	5=>Step5(),
 	4=>Step4(),

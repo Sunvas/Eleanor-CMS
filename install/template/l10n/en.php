@@ -46,14 +46,16 @@ return[
 	'installing'=>'Installing&hellip;',
 	'creating'=>'Creating tables&hellip;',
 	'inserting'=>'Writing rows&hellip;',
+	'config_files'=>'Writing config files&hellip;',
 	'update'=>'Refresh the page in case it hasn\'t happened automatically',
 	'queries_error'=>'Errors occurred during the execution of the queries. It is not possible to continue the installation. Click on the errors for details.',
 
 	'finish'=>'Finishing the installation',
 	'finished'=>'Installation successfully completed',
 	'finish_text'=><<<HTML
-<p>Don't forget to enable <a href="https://en.wikipedia.org/wiki/Clean_URL" target="_blank" rel="nofollow">Clean URL</a> processing on the server (when non-existent URLs are passed to index.php for processing). This can be done from the hosting panel or in the nginx configuration files &ndash; an example configuration is available in the <code>cms/library/classes/uri.php [12-23]</code> file.</p>
-<p>The installer is blocked by the <code>install/install.lock</code> file, so if you need to install the system again, you should remove it. It is recommended to delete the <code>install</code> directory with all its contents and rename the <code>admin.php</code> file.</p>
+<p>Enable <a href="https://en.wikipedia.org/wiki/Clean_URL" target="_blank" rel="nofollow">Clean URLs</a> by routing non-existent requests to <code>index.php</code>. This can usually be configured in the hosting control panel or web server configuration. An nginx example is available in <code>cms/library/classes/uri.php</code>, lines 12&ndash;23.</p>
+<p>The installer is now locked by <code>install/install.lock</code>. Delete this file only before reinstalling the system.</p>
+<p>Delete the <code>install</code> directory together with all its contents. For additional protection, rename <code>admin.php</code> to a non-obvious filename.</p>
 HTML,
 	'user-area'=>'Go to the user area',
 	'admin-panel'=>'Go to the admin panel',

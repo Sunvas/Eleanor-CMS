@@ -5,6 +5,8 @@ namespace CMS;
 use Eleanor\Classes\L10n;
 use const Eleanor\{CHARSET,SITEDIR};
 
+require_once BASE.'cms/constants.php';# For version only
+
 return new class extends \Eleanor\Basic {
 	readonly L10n $l10n;
 	readonly string $http;
@@ -19,9 +21,9 @@ return new class extends \Eleanor\Basic {
 		$this->http=\basename(__DIR__).'/';
 	}
 
-	/** Элемент шаблона. Отображает информацию в рамке с иконкой "ошибка"
-	 * @param string $message Текст
-	 * @param array $d */
+	/** Template element that displays an error message in a framed box
+	 * @param string $message Message text
+	 * @param array $d Default parameters */
 	function Message(string$message,...$d):string
 	{
 		return<<<HTML
@@ -36,12 +38,12 @@ return new class extends \Eleanor\Basic {
 HTML;
 	}
 
-	/** Общий шаблон установщика
-	 * @param string $title Заголовк
-	 * @param int $percent Процент выполнения установки
-	 * @param string $navi Навигационная строка
-	 * @param string $content Содержимое страницы
-	 * @param array ...$d Параметры по умолчанию */
+	/** Main installer template
+	 * @param string $title Page title
+	 * @param int $percent Installation progress percentage
+	 * @param string $navi Navigation text
+	 * @param string $content Page content
+	 * @param array $d Default parameters */
 	function index(string$title,int$percent,string$navi,string$content,...$d):string
 	{
 		$lang=L10n::$code;
@@ -93,8 +95,8 @@ $head
 HTML;
 	}
 
-	/** Шаг 1: выбор языка системы
-	 * @param array ...$d Параметры по умолчанию */
+	/** Step 1: select the system language
+	 * @param array $d Default parameters */
 	function Step1(...$d):string
 	{
 		$content=<<<HTML
@@ -113,7 +115,7 @@ HTML;
 		return $this->index('Добро пожаловать! / Welcome!',0,'Выберите язык / Choose language',$content,...$d);
 	}
 
-	/** Проверка системных требований не пройдена */
+	/** Display environment check errors */
 	function Problems(array$errors,...$d):string
 	{
 		$content=<<<'HTML'
@@ -124,15 +126,13 @@ HTML;
 
 		foreach($errors as $k=>$v)
 		{
-			if(in_array($k,['NOT_WRITABLE','NOT_EXIST'],true))
-				$content.=$this->Message($this->l10n[$k].join('<br>',$v));
+			if(\in_array($k,['NOT_WRITABLE','NOT_EXIST'],true))
+				$content.=$this->Message($this->l10n[$k].\join('<br>',$v));
 			else
 				$content.=$this->Message($this->l10n[$v] ?? $v);
 		}
 
 		$content.=<<<'HTML'
-			</table>
-		</form>
 	</div>
 	<div class="wpbtm"><b>&nbsp;</b></div>
 </div>
@@ -141,7 +141,7 @@ HTML;
 		return $this->index($this->l10n['installation_impossible'],0,$this->l10n['problems'],$content,...$d);
 	}
 
-	/** Шаг 2: формальное лицензионное соглашение */
+	/** Step 2: accept the license agreement */
 	function Step2(...$d):string
 	{
 		$year=\idate('Y');
@@ -154,7 +154,7 @@ HTML;
 				<div class="textarea license">
 <p><strong>TL;DR: Do whatever the fuck you want!</strong></p>
 <h1>MIT License</h1>
-<p>Copyright (c) $year <a href="https://sunvas.online" target="_blank" style="color:black">Alexnader Sunvas</a></p>
+<p>Copyright (c) $year <a href="https://sunvas.online" target="_blank" style="color:black">Alexander Sunvas</a></p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -185,13 +185,13 @@ HTML;
 		return $this->index($this->l10n['license'],20,$this->l10n['read_careful'],$content,...$d);
 	}
 
-	/** Шаг 3: Настройки подключения к БД */
+	/** Step 3: configure the database and site */
 	function Step3(string$host,string$user,string$pass,string$db,string$title,string$description,string$hcaptcha,string$hsecret,bool$multilang,array$l10ns,string$username,string$password,string$password2,array$errors,...$d):string
 	{
 		Link('//cdn.jsdelivr.net');
 
 		$data=\compact('host','user','pass','db','title','description','hcaptcha','hsecret','multilang','l10ns','username','password','password2');
-		$data=\json_encode($data,JSON);
+		$data=\json_encode($data,JSON | \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT);
 		$nonce=Nonce();
 		$this->head[]=<<<HTML
 <script src="//cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.min.js" nonce="$nonce" defer></script>
@@ -205,6 +205,7 @@ HTML;
 			if(\in_array($err,$errors))
 				$db_errors.=$this->Message($this->l10n[$err]);
 
+		$name_len=USERNAME_LENGTH;
 		$content=<<<HTML
 <div class="wpbox wpbwhite">
 	<div class="wptop"><b>&nbsp;</b></div>
@@ -237,7 +238,7 @@ HTML;
 					<li class="ffield">
 						<label for="pass">{$this->l10n['db_pass']}</label>
 						<div class="ffdd">
-							<input type="text" name="pass" class="f_text" tabindex="1" id="pass" v-model.lazy="pass" autocomplete="current-password">
+							<input type="password" name="pass" class="f_text" tabindex="1" id="pass" v-model.lazy="pass" autocomplete="current-password">
 						</div>
 					</li>
 				</ul>
@@ -289,7 +290,7 @@ HTML;
 					<li class="ffield">
 						<label for="username">{$this->l10n['username']}</label>
 						<div class="ffdd">
-							<input type="text" name="username" class="f_text" tabindex="1" id="username" v-model.lazy="username" required autocomplete="nickname" maxlength="25">
+							<input type="text" name="username" class="f_text" tabindex="1" id="username" v-model.lazy="username" required autocomplete="nickname" maxlength="$name_len">
 						</div>
 					</li>
 					<li class="ffield">
@@ -323,7 +324,7 @@ HTML;
 		return $this->index($this->l10n['config'],40,$this->l10n['fill'],$content,...$d);
 	}
 
-	protected function StatusResult(array$status,bool$ok):array
+	protected function StatusResult(array$statuses,bool$ok):array
 	{
 		if($ok)
 		{
@@ -354,24 +355,24 @@ HTML;
 HTML;
 		}
 
-		foreach($status as $k=>&$v)
+		foreach($statuses as $key=>&$status)
 		{
-			$color=$v ? 'red' : 'green';
-			$title=$v ? htmlspecialchars(strip_tags($v),self::ENT,CHARSET,false) : 'OK';
+			$color=$status ? 'red' : 'green';
+			$title=$status ? \htmlspecialchars(\strip_tags($status),self::ENT,CHARSET,false) : 'OK';
 
-			$v=<<<HTML
-<span class="$color" title="$title">$k</span>
+			$status=<<<HTML
+<span class="$color" title="$title">$key</span>
 HTML;
 		}
-		$status=join(', ',$status);
+		$statuses=join(', ',$statuses);
 
-		return[$status,$result];
+		return[$statuses,$result];
 	}
 
-	/** Шаг 4: Создание таблиц */
-	function Step4(array$status,bool$ok,...$d):string
+	/** Step 4: create database structure */
+	function Step4(array$statuses,bool$ok, ...$d):string
 	{
-		[$status,$result]=$this->StatusResult($status,$ok);
+		[$statuses,$result]=$this->StatusResult($statuses,$ok);
 
 		$content=<<<HTML
 <div class="wpbox wpbwhite">
@@ -380,7 +381,7 @@ HTML;
 		<div class="wpcont">
 			<div class="information">
 				<h4>{$this->l10n['creating']}</h4>
-				$status
+				$statuses
 			</div>
 			$result
 		</div>
@@ -392,8 +393,32 @@ HTML;
 		return $this->index($this->l10n['creating'],60,$this->l10n['installing'],$content,...$d);
 	}
 
-	/** Шаг 5: Запись значений */
-	function Step5(array$status,bool$ok,...$d):string
+	/** Step 5: insert initial data */
+	function Step5(array$statuses,bool$ok,...$d):string
+	{
+		[$statuses,$result]=$this->StatusResult($statuses,$ok);
+
+		$content=<<<HTML
+<div class="wpbox wpbwhite">
+	<div class="wptop"><b>&nbsp;</b></div>
+	<div class="wpmid">
+		<div class="wpcont">
+			<div class="information">
+				<h4>{$this->l10n['inserting']}</h4>
+				$statuses
+			</div>
+			$result
+		</div>
+	</div>
+	<div class="wpbtm"><b>&nbsp;</b></div>
+</div>
+HTML;
+
+		return $this->index($this->l10n['inserting'],75,$this->l10n['installing'],$content,...$d);
+	}
+
+	/** Step 6: write configuration files */
+	function Step6(array$status,bool$ok,...$d):string
 	{
 		[$status,$result]=$this->StatusResult($status,$ok);
 
@@ -403,7 +428,7 @@ HTML;
 	<div class="wpmid">
 		<div class="wpcont">
 			<div class="information">
-				<h4>{$this->l10n['inserting']}</h4>
+				<h4>{$this->l10n['config_files']}</h4>
 				$status
 			</div>
 			$result
@@ -413,11 +438,11 @@ HTML;
 </div>
 HTML;
 
-		return $this->index($this->l10n['inserting'],80,$this->l10n['installing'],$content,...$d);
+		return $this->index($this->l10n['config_files'],90,$this->l10n['installing'],$content,...$d);
 	}
 
-	/** Шаг 6: Запись конфигов и финиш */
-	function Step6(string$sitedir,...$d):string
+	/** Step 7: installation is completed */
+	function Step7(string$sitedir,...$d):string
 	{
 		$content=<<<HTML
 <div class="wpbox wpbwhite">

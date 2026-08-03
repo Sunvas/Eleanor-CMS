@@ -1,19 +1,18 @@
 <?php
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
-use Eleanor\Classes\{L10n,MySQL};
+use Eleanor\Classes\MySQL;
 
-/** @var MySQL $Db */
+/** @var MySQL $Db
+ * @var string $l10n
+ * @var ?array $l10ns */
 
 /** Convert l10n values to database fields
  * @param MySQL $Db
  * @param array $values Language values
  * @return array */
-function L10n2JSONDbFields(MySQL$Db,array$values):array
+function L10n2JSONDbFields(MySQL$Db,string$l10n,?array$l10ns,array$values):array
 {
-	$l10n=L10n::$code;
-	$l10ns=$_SESSION['l10ns'];
-
 	if($l10ns)
 	{
 		$l10ns[]=$l10n;
@@ -32,8 +31,6 @@ function L10n2JSONDbFields(MySQL$Db,array$values):array
 	return $values;
 }
 
-$l10n=$_SESSION['l10n'];
-$l10ns=$_SESSION['l10ns'];
 $insert=['SET FOREIGN_KEY_CHECKS=0;'];
 
 if($l10ns!==null)
@@ -43,7 +40,7 @@ $insert['cron']=<<<SQL
 INSERT INTO `cron` (`unit`, `triggers`) VALUES ('account', 'user_signed_in'), ('daily-cleanup', '');
 SQL;
 
-$group=L10n2JSONDbFields($Db,[
+$group=L10n2JSONDbFields($Db,$l10n,$l10ns,[
 	1=>['en'=>'Administrators','ru'=>'Администраторы'],
 	['en'=>'Site team','ru'=>'Команда сайта'],
 	['en'=>'Users','ru'=>'Пользователи'],

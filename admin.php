@@ -2,8 +2,8 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-/** Number of seconds between login attempts */
-const SECONDS=5;
+/** Minimum interval between login attempts, in seconds. */
+const AUTH_RETRY_INTERVAL=5;
 
 use Eleanor\Assign,
 	Eleanor\Classes\Output,
@@ -79,7 +79,6 @@ elseif(!$_SERVER['QUERY_STRING'])
 SELECT `id`, `name`, `password_hash`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
 FROM `users`
 WHERE `name`=?
-LIMIT 1
 SQL ,[$_POST['username']]);
 
 	if(!$user=SingleFetch($R))
@@ -99,12 +98,12 @@ SQL ,[$_POST['username']]);
 	CMS::$Db->Update('users',['last_login_attempt'=>fn()=>'NOW()'],'`id`='.$user['id']);
 
 	# Too often and no captcha
-	if($user['seconds']<SECONDS and !\CMS\Classes\hCaptcha::Check('captcha'))
+	if($user['seconds']!==null and $user['seconds']<AUTH_RETRY_INTERVAL)
 		JSON([
 			'ok'=>false,
 			'error'=>'W8',
-			'seconds'=>SECONDS,
-			'remain'=>SECONDS-$user['seconds']
+			'seconds'=>AUTH_RETRY_INTERVAL,
+			'remain'=>AUTH_RETRY_INTERVAL-$user['seconds']
 		]);
 
 	$empty=$user['password_hash']==='';
@@ -128,9 +127,9 @@ SQL ,[$_POST['username']]);
 
 		Events::UserSignedIn->Trigger([
 			'id'=>$id,
-			'way'=>'username',
+			'way'=>'sign-in',
 			'where'=>'admin-panel',
-			'ip'=>CMS::$ip,
+			'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
 			'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
 		]);
 

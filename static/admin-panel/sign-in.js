@@ -8,7 +8,7 @@
 			NOT_FOUND:{ru:"Пользователь не найден",en:"User not found"},
 			WRONG_PASSWORD:{ru:"Неверный пароль",en:"Wrong password"},
 			W8:{ru:n=>`Пожалуйста, подождите ${n} секунд(ы). Вы входите слишком часто.`,en:n=>`Please wait for ${n} seconds. You have been signing in too often.`},
-			W8C:{ru:"Пожалуйста, решите капчу",en:"Please solve the captcha"},
+			CAPTCHA:{ru:"Пожалуйста, решите капчу",en:"Please solve the captcha"},
 			ACCESS_DENIED:{ru:"Доступ запрещён",en:"Access denied"},
 			restore_password:{ru:"Перейдите в базу данных, откройте таблицу <code>users</code>, найдите своего пользователя и очистите у него поле <code>password_hash</code>.\nПосле этого сможете войти под любым паролем, который будет сохранён.",en:"Go to the database, open the <code>users</code> table, find your user and clear the <code>password_hash</code> field.\nAfter that, you will be able to sign in with any password that will be saved."},
 		}),
@@ -40,9 +40,9 @@
 
 		async Submit(){
 			if(this.hcaptcha && !this.captcha)
-				return this.Alert(this.l10n.W8C,"🫵");
+				return this.Alert(this.l10n.CAPTCHA,"🫵");
 
-			const body=JSON.stringify({
+			const body=new URLSearchParams({
 				username:this.username,
 				password:this.password,
 				captcha:this.captcha
@@ -60,7 +60,7 @@
 					if(r.error==="W8")
 						if(hcaptcha)
 						{
-							r.error="W8C";
+							r.error="CAPTCHA";
 							this.ShowCaptcha();
 						}
 						else

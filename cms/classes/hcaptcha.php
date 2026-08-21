@@ -14,6 +14,9 @@ class hCaptcha extends \Eleanor\Basic
 	 * @return bool */
 	static function Check(string$k='h-captcha-response'):bool
 	{
+		if(!CMS::$config['system']['hcaptcha_secret'])
+			return true;
+
 		$resp=\is_string($_POST[$k] ?? 0) ? $_POST[$k] : '';
 
 		if(\strlen($resp)<25)

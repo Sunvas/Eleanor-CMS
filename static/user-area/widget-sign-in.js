@@ -9,19 +9,23 @@
 				NOT_FOUND:{ru:"Пользователь не найден",en:"User not found"},
 				WRONG_PASSWORD:{ru:"Неверный пароль",en:"Wrong password"},
 				W8:{ru:n=>`Пожалуйста, подождите ${n} секунд(ы). Вы входите слишком часто.`,en:n=>`Please wait for ${n} seconds. You have been signing in too often.`},
-				W8C:{ru:"Пожалуйста, решите капчу",en:"Please solve the captcha"},
-				restore_password:{ru:"Для входа в учётную запись без пароля используйте Телеграм.",en:"Use Telegram to log into your account without a password."},
+				CAPTCHA:{ru:"Пожалуйста, решите капчу",en:"Please solve the captcha"},
+				restore_password:{ru:"Для восстановления пароля, пожалуйста, обратитесь к администратору.",en:"To reset your password, please contact site administrator."},
 			}),
 
+			//Form fields sent to the backend
 			username:"",
 			password:"",
 			captcha:"",
 			allow_cookie:!!localStorage.getItem("allow_cookie"),
 			remember_me:!!localStorage.getItem("remember_me"),
 
+			//hCaptcha stuff
 			hwid:null,
+			hcaptcha:false,
+
+			//Other
 			loading:false,
-			hcaptcha:false
 		}),
 		watch:{
 			// It is allowed to store and restore user's own checkbox choices locally
@@ -33,16 +37,17 @@
 			}
 		},
 		methods:{
-			Iam(id){
-				const url=new URL(location.pathname.endsWith("sign-out") ? document.baseURI : location.href);
-				url.searchParams.set("iam",id);
+			Actor(id){
+				const url=new URL(location.pathname.match(/(sign-out|sign-in)$/) ? document.baseURI : location.href);
+				url.searchParams.set("@",id);
 				location.href=url.href;
 			},
+
 			async Submit(){
 				if(this.hcaptcha && !this.captcha)
-					return alert(this.l10n.W8C);
+					return alert(this.l10n.CAPTCHA);
 
-				const body=JSON.stringify({
+				const body=new URLSearchParams({
 					username:this.username,
 					password:this.password,
 					captcha:this.captcha,
@@ -55,14 +60,14 @@
 					.then(J)
 					.then(r=>{
 						if(r.ok)
-							return this.Iam(r.id);
+							return this.Actor(r.id);
 
 						let error=null;
 
 						if(r.error==="W8")
 							if(hcaptcha)
 							{
-								r.error="W8C";
+								r.error="CAPTCHA";
 								this.ShowCaptcha();
 							}
 							else

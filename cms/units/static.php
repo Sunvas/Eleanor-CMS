@@ -18,7 +18,7 @@ return new class extends Abstracts\AdminPanel {
 
 		if(L10NS===null)
 			$query=<<<SQL
-SELECT `title`, `description`, `content_source`, `modified` FROM `static` WHERE `slug`=? AND `status`='ACTIVE' LIMIT 1
+SELECT `title`, `description`, `content_source`, `modified` FROM `static` WHERE `slug`=? AND `status`='ACTIVE'
 SQL ;
 		else
 		{

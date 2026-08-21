@@ -162,7 +162,7 @@ class CMS extends Library
 	 * @throws E */
 	function __get(string$n):mixed
 	{
-		$unit=__DIR__."/units/{$n}.php";
+		$unit=__DIR__."/units/$n.php";
 
 		if(\is_file($unit))
 			return $this->$n=include$unit;
@@ -221,7 +221,7 @@ CMS::$config=new class extends \ArrayObject
 			return $config;
 		}
 
-		throw new E("Unable to load config '{$key}'",E::PHP,...BugFileLine($this));
+		throw new E("Unable to load config '$key'",E::PHP,...BugFileLine($this));
 	}
 };
 
@@ -307,7 +307,7 @@ class Authorization extends Basic
 			$failed=[];
 
 			$R=CMS::$Db->Execute(<<<SQL
-SELECT `user_id`, `marker`, `way` FROM `{$table}` WHERE `a11n_id`=?
+SELECT `user_id`, `marker`, `way` FROM `$table` WHERE `a11n_id`=?
 SQL ,[CMS::$a11n]);
 			foreach($R as $a)
 			{
@@ -333,7 +333,7 @@ SQL ,[CMS::$a11n]);
 
 			foreach($failed as $id)
 			{
-				CMS::$Db->Delete($this->table,"`user_id`={$id} AND `a11n_id`=".CMS::$a11n);
+				CMS::$Db->Delete($this->table,"`user_id`=$id AND `a11n_id`=".CMS::$a11n);
 				$Ext?->SignOut($id);
 			}
 		}
@@ -356,7 +356,7 @@ SQL ,[CMS::$a11n]);
 
 			CMS::$Db->Update('a11n',[
 				'used'=>fn()=>'NOW()',
-				'ip'=>CMS::$ip,
+				'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
 				'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? '',
 			],'`id`='.CMS::$a11n);
 		}
@@ -367,7 +367,7 @@ SQL ,[CMS::$a11n]);
 	 * @return string */
 	protected function Marker(int$id):string
 	{
-		return A11N_COOKIE."-{$this->table}-".$id;
+		return A11N_COOKIE."-$this->table-$id";
 	}
 
 	/** Log out a user and optionally switch to another authorized user.
@@ -378,7 +378,7 @@ SQL ,[CMS::$a11n]);
 	{
 		$id??=$this->current;
 
-		CMS::$Db->Delete($this->table,"`user_id`={$id} AND `a11n_id`=".CMS::$a11n);
+		CMS::$Db->Delete($this->table,"`user_id`=$id AND `a11n_id`=".CMS::$a11n);
 		$this->Ext?->SignOut($id);
 
 		if($id==$this->current)
@@ -471,7 +471,7 @@ function Permissions(?int$id=null):Permissions
 	if($id)
 	{
 		$R=CMS::$Db->Query(<<<SQL
-SELECT `groups` FROM `users` WHERE `id`=$id LIMIT 1
+SELECT `groups` FROM `users` WHERE `id`=$id
 SQL );
 		if($R->num_rows>0)
 			$groups=\json_decode($R->fetch_column(),true) ?? [];
@@ -557,7 +557,7 @@ function GetUserData(array|string$keys,?int$id=null,string$table='users'):array|
 		$fields=\join('`,`',$fields);
 
 		$R=CMS::$Db->Query(<<<SQL
-SELECT `{$fields}` FROM `{$table}` WHERE `id`={$id} LIMIT 1
+SELECT `$fields` FROM `$table` WHERE `id`=$id
 SQL );
 		if($R->num_rows<1)
 		{
@@ -646,8 +646,7 @@ function JSON(?array$json,...$a):never
 	$R=CMS::$Db->Query(<<<SQL
 SELECT IF(`generated`<NOW() - INTERVAL 1 WEEK,1,0) `regen`, IF(`generated`<NOW() - INTERVAL 1 YEAR,1,0) `obsolete`
 FROM `a11n`
-WHERE `id`=0x{$id} AND `bytes`=0x{$bytes}
-LIMIT 1
+WHERE `id`=0x$id AND `bytes`=0x$bytes
 SQL );
 
 	$sess=SingleFetch($R);

@@ -112,18 +112,18 @@ function ListOfItems(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 
 	if($slug!='')
 	{
-		$where[]=$multi ? "`slug_{$l10n}` LIKE ?" : '`slug` LIKE ?';
-		$params[]="%{$slug}%";
+		$where[]=$multi ? "`slug_$l10n` LIKE ?" : '`slug` LIKE ?';
+		$params[]="%$slug%";
 	}
 
 	if($title!='')
 	{
-		$where[]=$multi ? "`title_{$l10n}` LIKE ?" : '`title` LIKE ?';
-		$params[]="%{$title}%";
+		$where[]=$multi ? "`title_$l10n` LIKE ?" : '`title` LIKE ?';
+		$params[]="%$title%";
 	}
 
 	if($multi)
-		$where[]="FIND_IN_SET('{$l10n}',`l10ns`)>0";
+		$where[]="FIND_IN_SET('$l10n',`l10ns`)>0";
 
 	$where=$where ? 'WHERE '.join(' AND ',$where) : '';
 
@@ -133,12 +133,12 @@ function ListOfItems(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 	{
 		if($params)
 			$R=CMS::$Db->Execute(<<<SQL
-SELECT COUNT(`id`) FROM `static` {$where}
+SELECT COUNT(`id`) FROM `static` $where
 SQL, $params);
 		else
 			$R=CMS::$Db->Query(<<<SQL
 SELECT COUNT(`id`) FROM `static`
-{$where}
+$where
 SQL);
 
 		$total=(int)SingleFetch($R,true);
@@ -154,23 +154,23 @@ SQL);
 	if($multi and \in_array($sort,['slug','title']))
 		$sort=$sort.'_'.$l10n;
 
-	$fields=$multi ? "`slug_{$l10n}` `slug`, `title_{$l10n}` `title`, `modified_{$l10n}` `modified`" : '`slug`, `title`, `modified`';
+	$fields=$multi ? "`slug_$l10n` `slug`, `title_$l10n` `title`, `modified_$l10n` `modified`" : '`slug`, `title`, `modified`';
 
 	if($params)
 		$R=CMS::$Db->Execute(<<<SQL
-SELECT `id`, `status`, {$fields}
+SELECT `id`, `status`, $fields
 FROM `static`
-{$where}
-ORDER BY `{$sort}`{$order}
-{$limit}
+$where
+ORDER BY `$sort`$order
+$limit
 SQL, $params);
 	else
 		$R=CMS::$Db->Query(<<<SQL
-SELECT `id`, `status`, {$fields}
+SELECT `id`, `status`, $fields
 FROM `static`
-{$where}
-ORDER BY `{$sort}`{$order}
-{$limit}
+$where
+ORDER BY `$sort`$order
+$limit
 SQL);
 
 	$items=(function()use($R,$l10n){
@@ -203,7 +203,7 @@ function CheckSlug(string$slug,int$id,string$l10n=''):bool
 	$field=L10NS===null ? 'slug' : 'slug_'.$l10n;
 
 	$R=CMS::$Db->Execute(<<<SQL
-SELECT `{$field}` FROM `static` WHERE `{$field}`=? AND `id`!={$id} LIMIT 1
+SELECT `$field` FROM `static` WHERE `$field`=? AND `id`!=$id LIMIT 1
 SQL ,[$slug]);
 
 	return $R->num_rows>0;
@@ -221,7 +221,7 @@ function StoreItemFiles(Abstracts\AdminPanel$Unit,int$id,string$l10n=''):array
 	$in_use=\is_string($_POST[$key] ?? 0) && \json_validate($_POST[$key]) ? (array)\json_decode($_POST[$key],true) : [];
 
 	#Folder of the static page and trash folder
-	$dir=STATIC_PATH."uploads/{$Unit->name}/{$id}/";
+	$dir=STATIC_PATH."uploads/$Unit->name/$id/";
 	$trash=$GLOBALS['CMS']->{'daily-cleanup'}::UPLOADS_TRASH;
 	$trash_exists=\is_dir($trash);
 
@@ -270,7 +270,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 					'error'=>'INSUFFICIENT',
 				];
 
-			Files::Delete(STATIC_PATH."uploads/{$Unit->name}/{$id}/");
+			Files::Delete(STATIC_PATH."uploads/$Unit->name/$id/");
 			$num=CMS::$Db->Delete('static','`id`='.$id);
 
 			return[
@@ -289,7 +289,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 			#Uploading files
 			if($id>0 and isset($_FILES[ATTACH]) and \is_uploaded_file($_FILES[ATTACH]['tmp_name']))
 			{
-				$dir=STATIC_PATH."uploads/{$Unit->name}/{$id}/";
+				$dir=STATIC_PATH."uploads/$Unit->name/$id/";
 				$ext=\strrchr($_FILES[ATTACH]['name'],'.');
 				$hash=\hash_file('sha3-256',$_FILES[ATTACH]['tmp_name']);
 
@@ -311,7 +311,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 
 					return[
 						'ok'=>true,
-						'path'=>"static/uploads/{$Unit->name}/{$id}/",
+						'path'=>"static/uploads/$Unit->name/$id/",
 						'filename'=>$name,
 					];
 				}
@@ -335,7 +335,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 
 					return[
 						'ok'=>true,
-						'path'=>"static/uploads/{$Unit->name}/{$id}/",
+						'path'=>"static/uploads/$Unit->name/$id/",
 						'filename'=>$name,
 					];
 				}
@@ -498,10 +498,9 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 			$l10n=\in_array($_GET['lang'],L10NS) ? $_GET['lang'] : L10N;
 
 			$R=CMS::$Db->Query(<<<SQL
-SELECT `slug_{$l10n}` `slug`, `title_{$l10n}` `title`, `description_{$l10n}` `description`, `content_source_{$l10n}` `content_source`
+SELECT `slug_$l10n` `slug`, `title_$l10n` `title`, `description_$l10n` `description`, `content_source_$l10n` `content_source`
 FROM `static`
-WHERE `id`={$id}
-LIMIT 1
+WHERE `id`=$id
 SQL );
 
 			if($item=SingleFetch($R))
@@ -530,7 +529,7 @@ SQL );
 	else
 	{
 		$R=CMS::$Db->Query(<<<SQL
-SELECT `l10ns` FROM `static` WHERE `id`={$id} LIMIT 1
+SELECT `l10ns` FROM `static` WHERE `id`=$id
 SQL );
 		if($R->num_rows<1)
 			Halt();
@@ -547,14 +546,13 @@ SQL );
 		else
 			$l10n=L10N;
 
-		$fields="`l10ns`, `slug_{$l10n}` `slug`, `title_{$l10n}` `title`, `content_source_{$l10n}` `content_source`, `description_{$l10n}` `description`";
+		$fields="`l10ns`, `slug_$l10n` `slug`, `title_$l10n` `title`, `content_source_$l10n` `content_source`, `description_$l10n` `description`";
 	}
 
 	$R=CMS::$Db->Query(<<<SQL
-SELECT `status`, {$fields}
+SELECT `status`, $fields
 FROM `static`
-WHERE `id`={$id}
-LIMIT 1
+WHERE `id`=$id
 SQL );
 
 	if(!$item=SingleFetch($R))

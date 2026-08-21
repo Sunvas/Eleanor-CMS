@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 use CMS\Classes\Paginator;
@@ -22,7 +23,7 @@ function CheckName(string$name,int$id=0):bool
 		return false;
 
 	$R=CMS::$Db->Execute(<<<SQL
-SELECT `name` FROM `users` WHERE `name`=? AND `id`!={$id} LIMIT 1
+SELECT `name` FROM `users` WHERE `name`=? AND `id`!=$id
 SQL ,[$name]);
 
 	return $R->num_rows==0;
@@ -54,7 +55,7 @@ function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 			CMS::$Db->Delete('users','`id`='.$id);
 
 			#Removing avatar
-			$avatars=\glob(STATIC_PATH."avatars/{$id}-*.webp",\GLOB_NOSORT);
+			$avatars=\glob(STATIC_PATH."avatars/$id-*.webp",\GLOB_NOSORT);
 
 			if($avatars)
 				array_walk($avatars,fn($avatar)=>\Eleanor\Classes\Files::Delete($avatar));
@@ -172,7 +173,7 @@ function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 
 		#Load data for modification
 		$R=CMS::$Db->Query(<<<SQL
-SELECT `name`, `groups`, `l10n`, `display_name`, `avatar`, `info`, `comment` FROM `users` WHERE `id`={$id}
+SELECT `name`, `groups`, `l10n`, `display_name`, `avatar`, `info`, `comment` FROM `users` WHERE `id`=$id
 SQL );
 
 		if(!$user=SingleFetch($R))
@@ -208,7 +209,7 @@ SQL );
 	$group=(int)($_GET['group'] ?? 0);
 
 	if($group)
-		$where[]="JSON_CONTAINS(`groups`,'{$group}','$')";
+		$where[]="JSON_CONTAINS(`groups`,'$group','$')";
 
 	$where=$where ? 'WHERE '.join(' AND ',$where) : '';
 
@@ -218,12 +219,12 @@ SQL );
 	{
 		if($params)
 			$R=CMS::$Db->Execute(<<<SQL
-SELECT COUNT(`name`) FROM `users` {$where}
+SELECT COUNT(`name`) FROM `users` $where
 SQL, $params);
 		else
 			$R=CMS::$Db->Query(<<<SQL
 SELECT COUNT(`id`) FROM `users`
-{$where}
+$where
 SQL);
 
 		$total=(int)SingleFetch($R,true);
@@ -238,19 +239,19 @@ SQL);
 
 	if($params)
 		$R=CMS::$Db->Execute(<<<SQL
-SELECT `id`, `name`, `groups`, IF(`password_hash`='',1,0) `empty_password`, `created`, `activity`, `display_name`, `avatar`, `comment`, `telegram_username`
+SELECT `id`, `name`, `groups`, IF(`password_hash`='',1,0) `empty_password`, `created`, `activity`, `display_name`, `avatar`, `comment`
 FROM `users`
-{$where}
-ORDER BY `{$sort}`{$order}
-{$limit}
+$where
+ORDER BY `$sort`$order
+$limit
 SQL, $params);
 	else
 		$R=CMS::$Db->Query(<<<SQL
-SELECT `id`, `name`, `groups`, IF(`password_hash`='',1,0) `empty_password`, `created`, `activity`, `display_name`, `avatar`, `comment`, `telegram_username`
+SELECT `id`, `name`, `groups`, IF(`password_hash`='',1,0) `empty_password`, `created`, `activity`, `display_name`, `avatar`, `comment`
 FROM `users`
-{$where}
-ORDER BY `{$sort}`{$order}
-{$limit}
+$where
+ORDER BY `$sort`$order
+$limit
 SQL);
 
 	$items=(function()use($R){
@@ -375,7 +376,7 @@ function Groups(Classes\Uri4AdminPanel $Uri):array|string
 		$id=(int)($_GET['group'] ?? 0);
 
 		$R=CMS::$Db->Query(<<<SQL
-SELECT `roles`, `title`, `slow_mode` FROM `groups` WHERE `id`={$id}
+SELECT `roles`, `title`, `slow_mode` FROM `groups` WHERE `id`=$id
 SQL );
 
 		if(!$group=SingleFetch($R))

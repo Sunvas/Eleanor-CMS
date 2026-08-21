@@ -18,10 +18,15 @@ class Uri extends \Eleanor\Classes\Uri
 	readonly string $prefix;
 
 	/** @param string|string[] $slug Value used to build the prefix
-	 * @param string $prefix Parent prefix. Must be empty or end with / */
-	function __construct(string|array$slug=[],string$prefix='')
+	 * @param string $prefix Parent prefix. Must be empty or end with /
+	 * @param bool $actor Add current user ID as actor @ parameter to the query (for multi-login mode) */
+	function __construct(string|array$slug=[],string$prefix='',bool$actor=true)
 	{
 		$this->prefix=$prefix.static::Make((array)$slug,'/');
+
+		if($actor and CMS::$A->available)
+			$this->query[]='@='.CMS::$A->current;
+
 	}
 
 	/** Build URI
@@ -34,7 +39,7 @@ class Uri extends \Eleanor\Classes\Uri
 		return static::$base.$this->prefix.static::Make((array)$slugs,$ending,\array_merge($this->query,$query));
 	}
 
-	/** Return base URI with prefix and default query */
+	/** Return base URI with the prefix and default query */
 	function __toString():string
 	{
 		return static::$base.$this->prefix.($this->query ? static::Query($this->query) : '');
@@ -46,18 +51,6 @@ class Uri extends \Eleanor\Classes\Uri
 	function Nested(string|array$slug):static
 	{
 		return new static($slug,$this->prefix);
-	}
-
-	/** Add iam parameter to generated URIs to identify the current user in multi-login mode
-	 * @param string $q Query key */
-	function IAM(string$q='iam'):static
-	{
-		$id=CMS::$A->current;
-
-		if($id and CMS::$A->available)
-			$this->query[$q]=$id;
-
-		return $this;
 	}
 }
 

@@ -111,7 +111,7 @@
 					body=fd;
 				}
 				else
-					body=JSON.stringify(store);
+					body=new URLSearchParams(store);
 
 				this.saving=true;
 

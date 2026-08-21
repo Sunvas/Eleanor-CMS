@@ -33,7 +33,7 @@ return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 		}
 
 		$code=200;
-		$output=require __DIR__."/{$this->name}/user-area.php";
+		$output=require __DIR__."/$this->name/user-area.php";
 
 		CMS::$json ? JSON($output,$code,$cache) : HTML($output,$code,$cache);
 	}
@@ -44,6 +44,6 @@ return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 	function GetMainPageFile(?string$code=null):string
 	{
 		$code??=L10n::$code;
-		return __DIR__."/{$this->name}/mainpage-{$code}.json";
+		return __DIR__."/$this->name/mainpage-$code.json";
 	}
 };

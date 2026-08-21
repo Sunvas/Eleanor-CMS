@@ -25,7 +25,7 @@ return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 		$output=CMS::$T->Heading('Blog')
 			->Container(<<<HTML
 <h1>Demo of blog unit</h1>
-<p>Contents of this page is located in cms/units/{$this->name}.php</p>
+<p>Contents of this page is located in cms/units/$this->name.php</p>
 HTML )
 
 			->content->BaseBlock()

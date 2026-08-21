@@ -18,6 +18,7 @@ return[
 	'username'=>'Username',
 	'password'=>'Password',
 	'sign-in'=>'Sign in',
+	'sign-up'=>'Sign up',
 	'forgotten'=>'Forgotten?',
 	'allow-cookie'=>'Allow authorization cookies',
 	'cookie-explain'=>'This checkbox only exists here because of stupid cookie regulation.',

@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 use const Eleanor\CHARSET;
@@ -15,22 +16,22 @@ $account=$GLOBALS['CMS']->account->slug;
 if(CMS::$A->current)
 {
 	#For links to settings and sign out
-	$Uri=new Uri($account)->IAM();
+	$Uri=new Uri($account);
 
 	#User data
-	extract(GetUserData(['name','display_name','avatar']));
+	\extract(GetUserData(['name','display_name','avatar']));
 
 	$id=CMS::$A->current;
 	$ent=\ENT_QUOTES | \ENT_HTML5 | \ENT_SUBSTITUTE | \ENT_DISALLOWED;
-	$name=htmlspecialchars($name,$ent,CHARSET,false);
-	$display_name=htmlspecialchars($display_name,$ent,CHARSET,false);
+	$name=\htmlspecialchars($name,$ent,CHARSET,false);
+	$display_name=\htmlspecialchars($display_name,$ent,CHARSET,false);
 	?>
 	<div class="blocklogin"><div class="dbottom"><div class="dtop">
 		<div class="dcont">
-			<a href="<?=$Uri('settings')?>">
-				<img style="float:left;margin-right:10px;width:40px;" src="<?=$avatar ? "static/avatars/{$id}-{$avatar}.webp" : 'static/user-area/images/noavatar.png'?>" alt="<?=$name?>">
+			<a href="<?=$Uri?>">
+				<img style="float:left;margin-right:10px;width:40px;" src="<?=$avatar ? "static/avatars/$id-$avatar.webp" : 'static/user-area/images/noavatar.png'?>" alt="<?=$name?>">
 			</a>
-			<h5 style="padding:4px 0 4px"><?=$display_name ?: $name?></h5>
+			<strong><?=$display_name ?: $name?></strong>
 			<div>
 				<?=$adminpanel ? "<a href='$adminpanel'>{$l10n['admin-panel']}</a> | " : ''?>
 				<a href="<?=$Uri('sign-out')?>"><?=$l10n['sign-out']?></a>
@@ -43,10 +44,10 @@ if(CMS::$A->current)
 	foreach(CMS::$A->available as $id)
 	{
 		$name=GetUserData('name',$id);
-		$name=htmlspecialchars($name,$ent,CHARSET,false);
+		$name=\htmlspecialchars($name,$ent,CHARSET,false);
 
 		$users.=<<<HTML
-<a href="{$base}?iam={$id}">{$name}</a>, 
+<a href="$base?@=$id">$name</a>, 
 HTML;
 	}
 	?>
@@ -63,7 +64,7 @@ HTML;
 	<div class="blocklogin"><div class="dbottom"><div class="dtop">
 		<div class="dcont" id="widget-sign-in"></div>
 	</div></div></div>
-	<script src="static/user-area/widget-sign-in.js" nonce="<?=$nonce?>" defer data-account="<?=Uri::$base.Uri::Make([$account],'/')?>" data-container="#widget-sign-in" data-template="#widget-sign-in-tpl" data-hcaptcha="<?=$hcaptcha?>"></script>
+	<script src="static/user-area/widget-sign-in.js" nonce="<?=$nonce?>" defer data-account="<?=Uri::$base.Uri::Make([$account],'/sign-in')?>" data-container="#widget-sign-in" data-template="#widget-sign-in-tpl" data-hcaptcha="<?=$hcaptcha?>"></script>
 	<script id="widget-sign-in-tpl" type="text/x-template">
 		<form @submit.prevent="Submit">
 			<div class="logintext">
@@ -79,6 +80,7 @@ HTML;
 			<div v-if="hcaptcha" ref="hcaptcha" class="h-captcha" data-size="compact" data-tabindex="1"></div>
 			<div class="submit">
 				<input tabindex="1" value="<?=$l10n['sign-in']?>" class="enterbtn" type="submit" :disabled="loading">
+				<div style="margin-top: .75em"><a href="<?=Uri::$base.Uri::Make([$account,'sign-up'])?>"><?=$l10n['sign-up']?></a></div>
 			</div>
 		</form>
 	</script>

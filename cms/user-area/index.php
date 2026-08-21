@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 $title??=$var_0 ?? '';
@@ -21,7 +22,7 @@ $nonce=Nonce();
 foreach($scripts as $k=>$s)
 	if(\is_int($k))
 		$script.=<<<HTML
-<script src="{$s}" nonce="$nonce" defer></script>
+<script src="$s" nonce="$nonce" defer></script>
 HTML;
 	else
 		$inline.=$s;
@@ -30,7 +31,7 @@ if(isset($canonical))
 {
 	$pref=\Eleanor\PROTOCOL.\Eleanor\DOMAIN;
 	$head['canonical']=<<<HTML
-<link rel="canonical" href="{$pref}{$canonical}">
+<link rel="canonical" href="$pref$canonical">
 HTML;
 	$head['robots']=<<<'HTML'
 <meta name="robots" content="noindex, follow">
@@ -42,7 +43,7 @@ if(\is_array($title))
 	$title[]=\is_array(CMS::$config['site']['title']) ? L10n::Item(CMS::$config['site']['title']) : CMS::$config['site']['title'];
 
 $l10n=new L10n('',__DIR__.'/l10n/');
-$Menu=new Uri()->IAM();
+$Menu=new Uri;
 
 Link('//cdn.jsdelivr.net');
 ?>
@@ -59,7 +60,7 @@ Link('//cdn.jsdelivr.net');
 if(isset($hreflang))
 {
 	$base=\Eleanor\PROTOCOL.\Eleanor\DOMAIN.\Eleanor\SITEDIR;
-	echo \array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."<link rel='alternate' href='{$base}{$hreflang[$code]}' hreflang='{$code}'>","\t");
+	echo \array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."<link rel='alternate' href='$base$hreflang[$code]' hreflang='$code'>","\t");
 }
 ?>
 
@@ -91,7 +92,7 @@ if(isset($hreflang))
 		<div id="menuhead"><div class="dleft"><div class="dright">
 <?php if(isset($hreflang)){ ?>
 			<div class="language">
-				<?=\array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."<a href='{$hreflang[$code]}' hreflang='{$code}' rel='alternate'><b>{$l10n[$code]}</b></a>",'')?>
+				<?=\array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."<a href='$hreflang[$code]' hreflang='$code' rel='alternate'><b>$l10n[$code]</b></a>",'')?>
 			</div>
 <?php } ?>
 			<nav>

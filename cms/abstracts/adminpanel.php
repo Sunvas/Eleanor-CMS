@@ -16,7 +16,7 @@ abstract class AdminPanel implements \CMS\Interfaces\AdminPanel
 	{
 		$code=200;
 		$cache=0;
-		$output=require __DIR__."/../units/{$this->name}/admin-panel.php";
+		$output=require __DIR__."/../units/$this->name/admin-panel.php";
 
 		\CMS\CMS::$json ? \CMS\JSON($output,$code,$cache) : \CMS\HTML($output,$code,$cache);
 	}

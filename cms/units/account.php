@@ -12,20 +12,20 @@ return new class implements Interfaces\UserArea, Interfaces\Cron {
 	function __construct()
 	{
 		$this->slug='account';
-		$this->name=basename(__FILE__,'.php');
+		$this->name=\basename(__FILE__,'.php');
 	}
 
 	/** Userspace entry point */
 	function UserArea(?string $uri):never
 	{
-		$cache=CMS::$A->current ? 0 : $this->name;//Page should be cached for guests only
+		$cache=CMS::$A->current ? 0 : $this->name;# Page should be cached for guests only
 
 		if($cache and Return304($cache))
 			die;
 
-		$Uri=new Uri($this->slug)->IAM();
+		$Uri=new Uri($this->slug);
 		$code=200;
-		$output=require __DIR__."/{$this->name}/user-area.php";
+		$output=require __DIR__."/$this->name/user-area.php";
 
 		CMS::$json ? JSON($output,$code,$cache) : HTML($output,$code,$cache);
 	}
@@ -33,6 +33,6 @@ return new class implements Interfaces\UserArea, Interfaces\Cron {
 	/** Cron task entry point. Is used to send notification via Telegram asynchronously. */
 	function Cron(?array$remnant):array|int
 	{
-		return require __DIR__."/{$this->name}/cron.php";
+		return require __DIR__."/$this->name/cron.php";
 	}
 };

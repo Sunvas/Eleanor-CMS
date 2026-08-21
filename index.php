@@ -109,7 +109,7 @@ function SlugTail(?string $uri):array
 	return $uri && \str_contains($uri,'/') ? \explode('/',$uri,2) : [$uri ?? '',null];
 }
 
-Assign::Bind(CMS::$A,fn()=>new Authorization('a11n_userarea',(int)($_GET['iam'] ?? 0),require CMS.'external.php'));
+Assign::Bind(CMS::$A,fn()=>new Authorization('a11n_userarea',(int)($_GET['@'] ?? 0),require CMS.'external.php'));
 
 $uri=Uri::Clean();
 
@@ -137,7 +137,7 @@ if(L10NS!==null)
 		{
 			$id=CMS::$A->current;
 			$R=CMS::$Db->Query(<<<SQL
-SELECT `l10n` FROM `users` WHERE `id`=$id LIMIT 1
+SELECT `l10n` FROM `users` WHERE `id`=$id
 SQL );
 			$preferred=SingleFetch($R,true);
 
@@ -170,11 +170,15 @@ if(!CMS::$json and CMS::$T instanceof Assign)
 	CMS::$T->args=[
 		CMS.'user-area',
 		[
-			# Link to admin panel
-			'adminpanel'=>CMS::$a11n && CMS::$A->current && array_intersect(['root','team'],CMS::$P->roles) ? CMS::$Cache->Get('admin-panel',0) : null,
-
 			# hCaptcha key
-			'hcaptcha'=>CMS::$config['system']['captcha'] ? CMS::$config['system']['hcaptcha'] : ''
+			'hcaptcha'=>CMS::$config['system']['captcha'] ? CMS::$config['system']['hcaptcha'] : '',
+
+			# For scripts
+			'nonce'=>Nonce()
+		],
+		[
+			# Link to admin panel
+			'adminpanel'=>static fn()=>CMS::$a11n && CMS::$A->current && \array_intersect(['root','team'],CMS::$P->roles) ? CMS::$Cache->Get('admin-panel',0) : null,
 		]
 	];
 

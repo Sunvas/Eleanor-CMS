@@ -1,6 +1,6 @@
 <?php
-/** Контейнер раздела
- * @var string $content содержимое */
+/** Section container
+ * @var string $content */
 ?>
 <div class="binner">
 	<?=$content ?? $var_0 ?? ''?>

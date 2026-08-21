@@ -1,10 +1,11 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-/** Сообщение: информацию в рамке с иконкой "внимание", "информация" или "ошибка"
- * @var array|string $text Текст
- * @var ?string $type error|warning|info Тип иконки. По умолчанию тип warning
- * @var ?string $title Заголовок */
+/** Message: information in the frame with an icon for "attention", "information" or "error"
+ * @var array|string $text
+ * @var ?string $type Icon type: error|warning|info ; warning - default
+ * @var ?string $title */
 
 $text??=$var_0 ?? '';
 $type??=$var_1 ?? 'warning';

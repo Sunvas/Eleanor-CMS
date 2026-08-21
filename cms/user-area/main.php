@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** Main page of the site
@@ -12,7 +13,7 @@ $jsdelivr=',npm/editorjs-html@4/.build/edjsHTML.browser.js';
 $scripts['editorjs']=<<<SCRIPT
 L.then(()=>{
 	const
-		content={$content},
+		content=$content,
 		html=content ? edjsHTML().parse(content) : '';
 
 	if(html instanceof Error)

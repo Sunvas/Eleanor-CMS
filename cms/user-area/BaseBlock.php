@@ -1,6 +1,6 @@
 <?php
-/** Базовый блок
- * @var string $content содержимое */
+/** Base html block
+ * @var string $content */
 ?>
 <div class="baseblock"><div class="dtop"><div class="dbottom">
 	<div class="dcont">

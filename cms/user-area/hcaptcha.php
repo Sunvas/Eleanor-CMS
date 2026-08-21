@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** Script of hcaptcha
@@ -12,6 +13,6 @@ if($hcaptcha)
 	$nonce??=Nonce();
 
 	echo<<<HTML
-<script src="//js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&hl={$hl}" nonce="$nonce" defer></script>
+<script src="//js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&hl=$hl" nonce="$nonce" defer></script>
 HTML;
 }

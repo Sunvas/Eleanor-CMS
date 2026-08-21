@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** Contents of the main page of the site
@@ -15,7 +16,7 @@ $script='static/admin-panel/main-mainpage.js';
 
 $data=\json_encode(['L10N'=>L10N,'L10NS'=>L10NS],JSON);
 $data=\substr($data,1,-1);
-$data="{{$data},\"content\":{$content}}";
+$data="{{$data},\"content\":$content}";
 
 $template=<<<HTML
 <h1 class="h3"><i class="nav-icon fa-solid fa-chalkboard d-none d-sm-inline"></i> {$l10n['title']}</h1>

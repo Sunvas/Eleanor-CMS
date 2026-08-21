@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 $Uri=new Classes\Uri4AdminPanel(u:'users');

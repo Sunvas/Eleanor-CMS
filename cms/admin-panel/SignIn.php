@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 use const Eleanor\SITEDIR;
@@ -33,7 +34,7 @@ $l10n=new L10n('sign-in',__DIR__.'/l10n/');
 		$hl=L10n::$code;
 
 		echo<<<HTML
-	<script src="//js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&hl={$hl}" nonce="$nonce" defer></script>
+	<script src="//js.hcaptcha.com/1/api.js?recaptchacompat=off&render=explicit&hl=$hl" nonce="$nonce" defer></script>
 HTML;
 	}
 ?>

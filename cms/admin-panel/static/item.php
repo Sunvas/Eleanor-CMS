@@ -18,7 +18,7 @@ require __DIR__.'/../includes/editorjs.php';
 $confirm=require __DIR__.'/../includes/dialog-confirm.php';
 
 $template=<<<HTML
-<h1 class="h3"><i class="nav-icon fa-solid fa-file"></i> {$title}</h1>
+<h1 class="h3"><i class="nav-icon fa-solid fa-file"></i> $title</h1>
 
 <form @submit.prevent="Submit">
 	<div class="card border-primary-subtle">
@@ -72,7 +72,7 @@ $template=<<<HTML
 		</div>
 	</div>
 </form>
-{$confirm}
+$confirm
 HTML;
 
 return CMS::$T->app(\compact('data','script','template'))->content->index(\compact('head','title','scripts'));

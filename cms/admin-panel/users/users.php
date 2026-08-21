@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** Userlist
@@ -17,7 +18,7 @@ $l10n=new L10n('users',__DIR__.'/l10n/');
 $items=Iterator2Array($items,function($item){
 	$item['created']=L10n::Date($item['created']);
 
-	if((int)$item['activity']>2000)
+	if($item['activity'])
 	{
 		$item['activity_ts']=\strtotime($item['activity']);
 		$item['activity']=L10n::Date($item['activity_ts']);
@@ -89,7 +90,6 @@ $template=<<<HTML
 				</th>
 				<th class="bg-body-secondary">{$l10n['comment']}</th>
 				<th class="bg-body-secondary">{$l10n['display_name']}</th>
-				<th class="bg-body-secondary">Telegram</th>
 				<th class="bg-body-secondary text-end">{$l10n['activity']}</th>
 			</tr>
 		</thead>
@@ -114,10 +114,6 @@ $template=<<<HTML
 				</td>
 				<td v-text="item.comment || '&mdash;'"></td>
 				<td v-text="item.display_name || '&mdash;'"></td>
-				<td>
-					<a :href="'//t.me/'+item.telegram_username" v-if="item.telegram_username" target="_blank" class="text-decoration-none">@{{item.telegram_username}}</a>
-					<span v-else>&mdash;</span>
-				</td>
 				<td v-text="item.activity || '&mdash;'" class="text-end"></td>
 			</tr>
 		</tbody>
@@ -125,8 +121,8 @@ $template=<<<HTML
 </div>
 
 <div class="row mb-1 gap-1 gap-md-0">
-	<div class="col-12 col-md order-1 order-md-2 mt-2 mt-md-0"><div class="mx-auto" style="width: fit-content">{$paginator}</div></div>
-	<div class="col order-2 order-md-1 pt-1">{$say_total}</div>
+	<div class="col-12 col-md order-1 order-md-2 mt-2 mt-md-0"><div class="mx-auto" style="width: fit-content">$paginator</div></div>
+	<div class="col order-2 order-md-1 pt-1">$say_total</div>
 	<ul class="col order-3 nav justify-content-end">
 		<li class="nav-item" v-for="item in pps">
 			<b v-if="item==pp" class="nav-link ps-3 pe-0 py-1 disabled" v-text="item"></b>
@@ -138,7 +134,7 @@ $template=<<<HTML
 
 <div v-else class="alert alert-info"><i class="fa-solid fa-info"></i> {$l10n['nobody-found']}</div>
 
-{$confirm}
+$confirm
 <dialog class="modal fade bg-transparent" ref="user" tabindex="-1" data-coreui-backdrop="static">
 	<div class="modal-dialog">
 		<form class="modal-content" @submit.prevent="Submit">
@@ -155,7 +151,7 @@ $template=<<<HTML
 					</div>
 					<div class="col">
 						<label for="user-password" class="form-label mb-0">{$l10n['password']}</label>
-						<input type="password" class="form-control" id="user-password" v-model.lazy="user.password" minlength="{$mpl}" :required="!user_id" autocomplete="new-password">
+						<input type="password" class="form-control" id="user-password" v-model.lazy="user.password" minlength="$mpl" :required="!user_id" autocomplete="new-password">
 					</div>
 				</div>
 				<div class="mb-1">

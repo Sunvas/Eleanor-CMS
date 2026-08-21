@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** Index template for all pages
@@ -31,10 +32,10 @@ if(is_array($breadcrumb ?? 0))
 	array_walk($breadcrumb,function(&$item,$link){
 		$item=is_string($link)
 			? <<<HTML
-<li class="breadcrumb-item"><a href="{$link}">{$item}</a></li>
+<li class="breadcrumb-item"><a href="$link">$item</a></li>
 HTML
 			: <<<HTML
-<li class="breadcrumb-item active">{$item}</li>
+<li class="breadcrumb-item active">$item</li>
 HTML;
 	});
 	$breadcrumb=join('',$breadcrumb);
@@ -43,7 +44,7 @@ HTML;
 		$breadcrumb=<<<HTML
 <div class="container-fluid px-4">
 	<nav>
-		<ol class="breadcrumb my-0">{$breadcrumb}</ol>
+		<ol class="breadcrumb my-0">$breadcrumb</ol>
 	</nav>
 </div>
 HTML;
@@ -54,7 +55,7 @@ else
 foreach($scripts as $k=>&$script)
 	$script=\is_int($k)
 		? <<<HTML
-<script src="{$script}" nonce="$nonce" defer></script>
+<script src="$script" nonce="$nonce" defer></script>
 HTML
 		: <<<HTML
 <script nonce="$nonce">L.then(async()=>{{$script}})</script>

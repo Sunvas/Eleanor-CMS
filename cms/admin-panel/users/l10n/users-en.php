@@ -27,5 +27,5 @@ return[
 	'info'=>'Info about user',
 	'4anybody'=>'Visible for anybody',
 
-	'say-total'=>fn($n)=>"<b>{$n}</b> ".($n==1 ? 'user' : 'users').' total',
+	'say-total'=>fn($n)=>"<b>$n</b> ".($n==1 ? 'user' : 'users').' total',
 ];

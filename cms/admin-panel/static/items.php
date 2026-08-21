@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** List of static pages. Logic is located in cms/units/static/admin-panel.php
@@ -109,8 +110,8 @@ $template=<<<HTML
 </div>
 
 <div class="row mb-1 gap-1 gap-md-0">
-	<div class="col-12 col-md order-1 order-md-2 mt-2 mt-md-0"><div class="mx-auto" style="width: fit-content">{$paginator}</div></div>
-	<div class="col order-2 order-md-1 pt-1">{$say_total}</div>
+	<div class="col-12 col-md order-1 order-md-2 mt-2 mt-md-0"><div class="mx-auto" style="width: fit-content">$paginator</div></div>
+	<div class="col order-2 order-md-1 pt-1">$say_total</div>
 	<ul class="col order-3 nav justify-content-end">
 		<li class="nav-item" v-for="item in pps">
 			<b v-if="item==pp" class="nav-link ps-3 pe-0 py-1 disabled" v-text="item"></b>
@@ -122,7 +123,7 @@ $template=<<<HTML
 
 <div v-else class="alert alert-info"><i class="fa-solid fa-info"></i> {$l10n['nothing-found']}</div>
 
-{$confirm}
+$confirm
 <dialog class="modal modal-lg fade bg-transparent" ref="creating" tabindex="-1" data-coreui-backdrop="static">
 	<div class="modal-dialog">
 		<form class="modal-content" @submit.prevent="CreateSubmit">

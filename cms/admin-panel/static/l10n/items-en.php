@@ -18,5 +18,5 @@ return[
 	'no'=>'No',
 	'creating'=>'Provide the title of the page you want to create',
 
-	'say-total'=>fn($n)=>"<b>{$n}</b> static ".($n==1 ? 'page' : 'pages').' total',
+	'say-total'=>fn($n)=>"<b>$n</b> static ".($n==1 ? 'page' : 'pages').' total',
 ];

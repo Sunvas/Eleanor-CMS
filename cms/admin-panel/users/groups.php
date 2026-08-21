@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** List of groups of users
@@ -54,7 +55,7 @@ $template=<<<HTML
 	</table>
 </div>
 
-{$confirm}
+$confirm
 <dialog class="modal fade bg-transparent" ref="group" tabindex="-1" data-coreui-backdrop="static">
 	<div class="modal-dialog">
 		<form class="modal-content" @submit.prevent="Submit">

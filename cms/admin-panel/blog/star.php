@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** Demo blogs star page. Available variables form cms/units/blog/admin-panel.php :
@@ -11,7 +12,7 @@ $content=<<<HTML
 	<div class="card">
 		<div class="card-body">
 			<p>Hello! This is demo of the blog admin panel. This page is visible for administrators only.</p>
-			<p>Server current date is <code title="Timestamp: {$demo_time}">{$demo_date}</code></p>
+			<p>Server current date is <code title="Timestamp: $demo_time">$demo_date</code></p>
 		</div>
 	</div>
 </section>

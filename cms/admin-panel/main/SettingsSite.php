@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** Page with settings of the site: options here matter mainly for users (for HTML templates). Values are reachable via CMS::$config['site']

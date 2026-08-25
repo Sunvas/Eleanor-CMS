@@ -1,26 +1,35 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 use CMS\Enums\Events;
+use Eleanor\Classes\TOTP;
 
 const
-	/** Amount of seconds between login attempts */
-	SECONDS=5,
+	/** Minimum interval between login attempts when CAPTCHA is unavailable, in seconds. */
+	AUTH_RETRY_INTERVAL=7,
+
+	/** Maximum avatar size in bytes, 1 MiB currently */
+	MAX_AVATAR_SIZE=1048576,
+
+	/** Maximum number of users per 1 authorization */
+	MAX_USERS=25,
 
 	/** Minimum password length */
 	MIN_PASSWORD_LENGTH=10,
 
-	/** Default group for newly created users */
-	USER_GROUP=3,
-
-	/** Maximum amount of users per 1 authorization */
-	MAX_USERS=25,
-
 	/** The number of months after which a session is considered stale and can be terminated */
 	MONTHS_TO_STALE_SESSION=3,
 
-	/** Maximum avatar size in bytes, 1 MiB currently */
-	MAX_AVATAR_SIZE=1048576;
+	/** Number of recovery codes generated for a user. */
+	RECOVERY_CODE_COUNT=10,
+
+	/** Period after successful account recovery during which sensitive account data can be changed without additional
+	 * verification, in seconds. */
+	RECOVERY_GRACE_PERIOD=3600,
+
+	/** Default group for newly created users */
+	USER_GROUP=3;
 
 /** Main page of the site
  * @var Classes\Uri $Uri CMS uri
@@ -36,62 +45,20 @@ function AvatarSalt():string
 	return \base_convert(\random_int(1,60466175),10,36);
 }
 
-/** Storing avatar from Telegram to server with convertation to WEBP
- * @param int $id ID of user
- * @param string $url contents of photo_url parameter from Telegram
- * @return string salt on success, empty string on error
- * @throws \Throwable */
-function StoreAvatar(int$id,string$url):string
+/** Generate a 60-bit recovery code.
+ * @throws \Random\RandomException */
+function RecoveryCode():string
 {
-	if(!\function_exists('curl_init') or \preg_match('#\.(png|jpg)$#',$url,$m)==0)
-		return '';
+	$alphabet='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+	$code='';
 
-	$curl=\curl_init($url);
-	$tmp=\tempnam(\sys_get_temp_dir(),'avatar-');
-	$fh=\fopen($tmp,'w');
+	for($i=0;$i<12;$i++)
+		$code.=$alphabet[\random_int(0,31)];
 
-	\curl_setopt_array($curl,[
-		\CURLOPT_TIMEOUT=>10,
-		\CURLOPT_WRITEFUNCTION=>fn($ch,$bytes)=>\fwrite($fh,$bytes),
-	]);
-
-	\curl_exec($curl);
-
-	$info=\curl_getinfo($curl);
-	$errno=\curl_errno($curl);
-
-	\fflush($fh);
-	\fclose($fh);
-
-	if($errno>0 or $info['http_code']!=200 or $info['size_download']<5120)
-		return '';
-
-	$im=$m[1]=='png' ? imagecreatefrompng($tmp) : imagecreatefromjpeg($tmp);
-
-	#If no image or image size less than 25px
-	if($im===false or imagesy($im)<25 or imagesx($im)<25)
-		return '';
-
-	$salt=AvatarSalt();
-	\imagewebp($im,STATIC_PATH."avatars/{$id}-{$salt}.webp");
-
-	return $salt;
+	return $code;
 }
 
-/** Session start */
-function Session(string$name='sign-up'):void
-{
-	\session_start([
-		'name'=>$name,
-		'use_cookies'=>true,
-		'use_only_cookies'=>true,
-		'cookie_path'=>\Eleanor\SITEDIR,
-		'cookie_httponly'=>true,
-		'cookie_secure'=>($_SERVER['HTTPS'] ?? '')=='on'
-	]);
-}
-
-/** Signing in (register, enroll)
+/** Signing in
  * @param Classes\Uri $Uri
  * @return string|array */
 function SignIn(Uri$Uri,int&$code):array|string
@@ -99,14 +66,14 @@ function SignIn(Uri$Uri,int&$code):array|string
 	if(CMS::$a11n)
 	{
 		$R=CMS::$Db->Execute(<<<SQL
-	SELECT COUNT(`a11n_id`) `total` FROM `a11n_userarea` WHERE `a11n_id`=? 
-	SQL ,[CMS::$a11n]);
-		$total=(int)$R->fetch_column();
+SELECT COUNT(`a11n_id`) `total` FROM `a11n_userarea` WHERE `a11n_id`=? 
+SQL ,[CMS::$a11n]);
+		$total=(int)SingleFetch($R,true);
 	}
 	else
 		$total=0;
 
-	#AJAX request
+	# AJAX request
 	if(CMS::$json)
 	{
 		if($total>=MAX_USERS)
@@ -116,85 +83,8 @@ function SignIn(Uri$Uri,int&$code):array|string
 				'max'=>MAX_USERS
 			];
 
-		#Via telegram
-		if(\is_array($_POST['telegram'] ?? 0))
-		{
-			#Bot's key is missed
-			if(!CMS::$config['system']['bot_key'])
-				return[
-					'ok'=>false
-				];
-
-			$ok=\Eleanor\Classes\Telegram::LegacyCheckAuth($_POST['telegram'],CMS::$config['system']['bot_key']);
-
-			if(!$ok)
-				return[
-					'ok'=>false,
-					'error'=>'INCORRECT'
-				];
-
-			$telegram=$_POST['telegram'];
-
-			$R=CMS::$Db->Query(<<<SQL
-SELECT `id`, `avatar`, `telegram_username`
-FROM `users`
-WHERE `telegram_id`={$telegram['id']}
-LIMIT 1
-SQL );
-
-			if($user=SingleFetch($R))
-			{
-				$id=(int)$user['id'];
-				$upd=[];
-
-				if(CMS::$A->current==$id)
-					return[
-						'ok'=>false,
-						'error'=>'ALREADY'
-					];
-
-				if($telegram['username'] and $user['telegram_username']!=$telegram['username'])
-					$upd['telegram_username']=$telegram['username'];
-
-				if(!$user['avatar'] and $telegram['photo_url'])
-				{
-					$salt=StoreAvatar($id,$telegram['photo_url']);
-
-					if($salt)
-						$upd['avatar']=$salt;
-				}
-
-				if($upd)
-					CMS::$Db->Update('users',$upd,'`id`='.$user['id']);
-
-				//2FA should be injected somewhere here
-				CMS::$A->SignIn($id,extra:['way'=>'telegram']);
-
-				Events::UserSignedIn->Trigger([
-					'id'=>$id,
-					'way'=>'telegram',
-					'where'=>'user-area',
-					'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
-					'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
-				]);
-
-				return[
-					'ok'=>true,
-					'id'=>$id
-				];
-			}
-
-			Session();
-			$_SESSION=['telegram'=>$telegram];
-
-			return[
-				'ok'=>true,
-				'sign_up'=>$Uri('sign-up')
-			];
-		}
-
 		# PHP 8.6: migrate to pipe operator
-		#Sign in by username and password
+		# Sign in by username and password
 		if(!\array_all([$_POST['username'] ?? 0,$_POST['password'] ?? 0,$_POST['captcha'] ?? 0],fn($t)=>\is_string($t)) or !isset($_POST['temp']))
 			return[
 				'ok'=>false,
@@ -205,7 +95,6 @@ SQL );
 SELECT `id`, `name`, `password_hash`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
 FROM `users`
 WHERE `name`=?
-LIMIT 1
 SQL ,[$_POST['username']]);
 
 		if(!$user=SingleFetch($R))
@@ -225,12 +114,12 @@ SQL ,[$_POST['username']]);
 		CMS::$Db->Update('users',['last_login_attempt'=>fn()=>'NOW()'],'`id`='.$user['id']);
 
 		# Too often and no captcha
-		if($user['seconds']<SECONDS and !\CMS\Classes\hCaptcha::Check('captcha'))
+		if($user['seconds']!==null and $user['seconds']<AUTH_RETRY_INTERVAL and !\CMS\Classes\hCaptcha::Check('captcha'))
 			return[
 				'ok'=>false,
-				'error'=>'W8',
-				'seconds'=>SECONDS,
-				'remain'=>SECONDS-$user['seconds']
+				'error'=>CMS::$config['system']['hcaptcha_secret'] ? 'CAPTCHA' : 'W8',
+				'seconds'=>AUTH_RETRY_INTERVAL,
+				'remain'=>AUTH_RETRY_INTERVAL-$user['seconds']
 			];
 
 		$empty=$user['password_hash']==='';
@@ -242,11 +131,11 @@ SQL ,[$_POST['username']]);
 				CMS::$Db->Update('users',['password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT)],'`id`='.$user['id']);
 
 			# FA should be injected somewhere here
-			CMS::$A->SignIn($id,(bool)$_POST['temp'],['way'=>'username']);
+			CMS::$A->SignIn($id,(bool)$_POST['temp'],['way'=>'sign-in']);
 
 			Events::UserSignedIn->Trigger([
 				'id'=>$id,
-				'way'=>'username',
+				'way'=>'sign-in',
 				'where'=>'user-area',
 				'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
 				'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
@@ -282,7 +171,7 @@ function CheckName(string$name):bool
 		return false;
 
 	$R=CMS::$Db->Execute(<<<SQL
-SELECT `name` FROM `users` WHERE `name`=? LIMIT 1
+SELECT `name` FROM `users` WHERE `name`=?
 SQL ,[$name]);
 
 	return $R->num_rows==0;
@@ -294,33 +183,12 @@ SQL ,[$name]);
  * @return string|array */
 function SignUp(Uri$Uri,int&$code):array|string
 {
-	Session();
-
-	#Check availability of username
+	# Check availability of username
 	if(CMS::$json and \is_string($_GET['check_name'] ?? 0))
 		return[
 			'ok'=>CheckName($_GET['check_name']),
 		];
 
-	#No Telegram credentials have been provided
-	if(!isset($_SESSION['telegram']))
-	{
-		$code=400;
-		$error=CMS::$config['system']['bot_key'] ? 'MISSED_TELEGRAM' : 'NO_TELEGRAM';
-
-		#AJAX request
-		if(CMS::$json)
-			return[
-				'ok'=>false,
-				'error'=>$error
-			];
-
-		return(CMS::$T)('SignUpError',$error);
-	}
-
-	$telegram=$_SESSION['telegram'];
-
-	#AJAX request
 	if(CMS::$json)
 	{
 		# PHP 8.6: migrate to pipe operator
@@ -336,19 +204,23 @@ function SignUp(Uri$Uri,int&$code):array|string
 				'error'=>'NAME_EXISTS'
 			];
 
-		if(strlen($_POST['password'])<MIN_PASSWORD_LENGTH)
+		if(\strlen($_POST['password'])<MIN_PASSWORD_LENGTH)
 			return[
 				'ok'=>false,
 				'error'=>'LOW_PASSWORD_LENGTH'
+			];
+
+		if(!\CMS\Classes\hCaptcha::Check('captcha'))
+			return[
+				'ok'=>false,
+				'error'=>'CAPTCHA',
 			];
 
 		$group=USER_GROUP;
 		$id=CMS::$Db->Insert('users',[
 			'name'=>$_POST['name'],
 			'display_name'=>$_POST['display_name'],
-			'groups'=>"[{$group}]",
-			'telegram_id'=>$telegram['id'],
-			'telegram_username'=>$telegram['username'],
+			'groups'=>"[$group]",
 			'password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT),
 		]);
 
@@ -358,30 +230,18 @@ function SignUp(Uri$Uri,int&$code):array|string
 				'error'=>'SOMETHING_WENT_WRONG'
 			];
 
-		$avatar=StoreAvatar($id,$telegram['photo_url']);
-
-		if($avatar)
-			CMS::$Db->Update('users',['avatar'=>$avatar],'`id`='.$id);
-
-		#Signing in to the site
+		# Signing in to the site
 		CMS::$A->SignIn($id,true,['way'=>'sign-up']);
 
 		Events::UserCreated->Trigger(['id'=>$id]);
 
 		return[
 			'ok'=>true,
+			'redirect'=>(string)$Uri
 		];
 	}
 
-	#Registration finished
-	$R=CMS::$Db->Query(<<<SQL
-SELECT `telegram_id` FROM `users` WHERE `telegram_id`={$telegram['id']}
-LIMIT 1
-SQL );
-	if($R->num_rows>0)
-		return(CMS::$T)('SignUpError','EXISTS');
-
-	return(CMS::$T)('SignUp',MIN_PASSWORD_LENGTH,$telegram);
+	return(CMS::$T)('SignUp',MIN_PASSWORD_LENGTH);
 }
 
 /** User's sign out
@@ -391,17 +251,366 @@ SQL );
 function SignOut(Uri$Uri,int&$code):array|string
 {
 	if(CMS::$A->current)
-		CMS::$A->SignOut();
+		CMS::$A->SignOut(isset($_GET['@']) ? (int)$_GET['@'] : null);
 	else
 		$code=401;
 
-	#AJAX request
+	# AJAX request
 	if(CMS::$json)
 		return[
 			'ok'=>true,
 		];
 
 	return(CMS::$T)('SignOut');
+}
+
+function Overview(Uri$Uri,int&$code):array|string
+{
+	if(!CMS::$A->current)
+		Redirect($Uri('sign-in'),302);
+
+	# AJAX request
+	if(CMS::$json)
+		return match($_GET['zone'] ?? ''){
+			'totp'=>Totp(),
+			'recovery-codes'=>RecoveryCodes(),
+			'change-password'=>ChangePassword(),
+			default=>['ok'=>false],
+		};
+
+	# Fetching user data
+	$id=CMS::$A->current;
+	$R=CMS::$Db->Query(<<<SQL
+SELECT `name`, `groups`, `password_changed_at`, `totp_secret` IS NOT NULL `totp_enabled`, `totp_changed_at`, IFNULL(JSON_LENGTH(`recovery_codes`),0) `available_recovery_codes`, `recovery_codes_created_at`, `recovery_codes_last_used_at`, `created`, `last_login_attempt`
+FROM `users`
+WHERE `id`=$id
+SQL);
+	$me=SingleFetch($R);
+
+	# Data normalization
+	$me['groups']=\json_decode($me['groups'],true);
+	$me['totp_enabled']=(bool)$me['totp_enabled'];
+	$me['available_recovery_codes']=(int)$me['available_recovery_codes'];
+
+	# Fetching user groups
+	if($me['groups'])
+	{
+		$R=CMS::$Db->Execute(<<<SQL
+SELECT `id`, `title` FROM `groups` WHERE `id` IN (?)
+SQL ,[join(',',$me['groups'])]);
+		$me['groups']=$R->fetch_all(\MYSQLI_ASSOC);
+		$R->free();
+	}
+
+	return(CMS::$T)('Overview',$me,MIN_PASSWORD_LENGTH,RecoveryGraceRemaining());
+}
+
+/** Get the remaining account recovery grace period, in seconds.
+ * @return int Remaining time, or 0 if the grace period has expired.
+ * @throws \Throwable */
+function RecoveryGraceRemaining():int
+{
+	$R=CMS::$Db->Execute(<<<'SQL'
+SELECT TIMESTAMPDIFF(SECOND, `created`, NOW())
+FROM `a11n_userarea`
+WHERE `a11n_id`=? AND `user_id`=? AND `way`='recovery-code' AND `created`>NOW() - INTERVAL ? SECOND
+SQL ,[CMS::$a11n,CMS::$A->current,RECOVERY_GRACE_PERIOD]);
+	$grace=SingleFetch($R,true);
+
+	return $grace===false ? 0 : RECOVERY_GRACE_PERIOD-$grace;
+}
+
+/** Verify and consume a recovery code.
+ * @param string $code Recovery code to verify.
+ * @param string $json_hashes JSON array of hashed recovery codes.
+ * @return bool True if the code was valid and consumed successfully.
+ * @throws \Throwable */
+function VerifyRecoveryCode(string$code,string$json_hashes):bool
+{
+	$hashes=\json_decode($json_hashes,true);
+	$code=\preg_replace('#[^\da-z]+#i','',$code)
+			|> \strtoupper(...);
+
+	if(\is_array($hashes))
+		foreach($hashes as $hash)
+			if(\password_verify($code,$hash))
+				return CMS::$Db->Update('users',[
+					'recovery_codes'=>fn()=>'JSON_REMOVE(`recovery_codes`,JSON_UNQUOTE(JSON_SEARCH(`recovery_codes`, "one", ?)))',
+				],'`id`=? AND ? MEMBER OF(`recovery_codes`)',[$hash,CMS::$A->current,$hash])>0;
+
+	return false;
+}
+
+/** Change the current user's password.
+ * @return array Operation result.
+ * @throws \Throwable */
+function ChangePassword():array
+{
+	if(!CMS::$post)
+		return[
+			'ok'=>false
+		];
+
+	# PHP 8.6: migrate to pipe operator
+	if(!\array_all([$_POST['password'] ?? 0,$_POST['verification'] ?? 0],fn($t)=>\is_string($t)))
+		return[
+			'ok'=>false,
+			'error'=>'INSUFFICIENT'
+		];
+
+	if(\strlen($_POST['password'])<MIN_PASSWORD_LENGTH)
+		return[
+			'ok'=>false,
+			'error'=>'LOW_PASSWORD_LENGTH'
+		];
+
+	$R=CMS::$Db->Execute(<<<SQL
+SELECT `password_hash`, `totp_secret`, `totp_digits`, `recovery_codes`
+FROM `users`
+WHERE `id`=?
+SQL ,[CMS::$A->current]);
+	$data=SingleFetch($R);
+
+	if(\password_verify($_POST['password'],$data['password_hash']))
+		return[
+			'ok'=>false,
+			'error'=>'CURRENT_PASSWORD_USED'
+		];
+
+	if(RecoveryGraceRemaining())
+		$way='';
+	elseif($data['password_hash']==='' or \password_verify($_POST['verification'],$data['password_hash']))
+		$way='password';
+	elseif($data['totp_secret']!==null and TOTP::Verify($data['totp_secret'],$_POST['verification'],(int)$data['totp_digits']))
+		$way='totp';
+	elseif($data['recovery_codes'] and VerifyRecoveryCode($_POST['verification'],$data['recovery_codes']))
+		$way='recovery-code';
+	else
+		return[
+			'ok'=>false,
+			'error'=>'UNVERIFIED'
+		];
+
+	$amount=CMS::$Db->Update('users',[
+		'password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT)
+	],'`id`='.CMS::$A->current);
+
+	return[
+		'ok'=>$amount>0,
+		'way'=>$way,
+	];
+}
+
+/** Manage TOTP configuration for the current user.
+ * @return array Operation result.
+ * @throws \Throwable */
+function Totp():array
+{
+	# Deleting TOTP
+	if(CMS::$patch)
+	{
+		$test=\file_get_contents('php://input');
+		$way=Verification($test);
+
+		if(\is_array($way))
+			return $way;
+
+		$amount=CMS::$Db->Update('users',['totp_secret'=>null],'`id`='.CMS::$A->current);
+
+		return[
+			'ok'=>$amount>0,
+			'way'=>$way,
+		];
+	}
+
+	if(!CMS::$post)
+		return[
+			'ok'=>false
+		];
+
+	# Request otpauth:// URI
+	# PHP 8.6: migrate to pipe operator
+	if(\array_all([$_POST['issuer'] ?? 0,$_POST['digits'] ?? 0],fn($t)=>\is_string($t)))
+	{
+		$secret=\random_bytes(32);
+		$digits=(int)$_POST['digits'];
+		$name=GetUserData('name');
+
+		# PHP 8.6: migrate to clamp function
+		if($digits<6 or $digits>8)
+			$digits=6;
+
+		return[
+			'ok'=>true,
+			'uri'=>Totp::Uri($_POST['issuer'],$name,$secret,$digits),
+			'secret'=>\bin2hex($secret),
+		];
+	}
+
+	# PHP 8.6: migrate to pipe operator
+	if(!\array_all([$_POST['secret'] ?? 0,$_POST['digits'] ?? 0,$_POST['code'] ?? 0,$_POST['verification'] ?? 0],fn($t)=>\is_string($t))
+	or !ctype_xdigit($_POST['secret']) or \strlen($_POST['secret'])!=64 or !\is_numeric($_POST['digits']))
+		return[
+			'ok'=>false,
+			'error'=>'INSUFFICIENT'
+		];
+
+	$secret=\hex2bin($_POST['secret']);
+	$digits=(int)$_POST['digits'];
+
+	# PHP 8.6: migrate to clamp function
+	if($digits<6 or $digits>8)
+		$digits=6;
+
+	if(!Totp::Verify($secret,$_POST['code'],$digits))
+		return[
+			'ok'=>false,
+			'error'=>'INCORRECT_CODE'
+		];
+
+	$way=Verification($_POST['verification']);
+
+	if(\is_array($way))
+		return $way;
+
+	$amount=CMS::$Db->Update('users',[
+		'totp_secret'=>$secret,
+		'totp_digits'=>$digits,
+	],'`id`='.CMS::$A->current);
+
+	return[
+		'ok'=>$amount>0,
+		'way'=>$way,
+	];
+}
+
+/** Manage recovery codes for the current user.
+ * @return array Operation result.
+ * @throws \Throwable */
+function RecoveryCodes():array
+{
+	# Checking if recovery code is valid
+	if(CMS::$put)
+	{
+		$R=CMS::$Db->Execute(<<<SQL
+SELECT `recovery_codes` FROM `users` WHERE `id`=?
+SQL ,[CMS::$A->current]);
+
+		$hashes=SingleFetch($R,true);
+
+		if($hashes)
+			$hashes=\json_decode($hashes,true);
+
+		# PHP 8.6: migrate to pipe operator
+		$code=\file_get_contents('php://input');
+		$code=\preg_replace('#[^\da-z]+#i','',$code)
+				|> \strtoupper(...);
+
+		return[
+			'ok'=>\is_array($hashes) && \array_any($hashes,fn($hash)=>\password_verify($code,$hash)),
+		];
+	}
+
+	# Storing new recovery codes
+	if(CMS::$post)
+	{
+		if(!\array_all([$_POST['hash'] ?? 0,$_POST['session_id'] ?? 0,$_POST['verification'] ?? 0],fn($t)=>\is_string($t)))
+			return[
+				'ok'=>false,
+				'error'=>'INSUFFICIENT'
+			];
+
+		\session_id($_POST['session_id']);
+		\session_start([
+			'use_cookies'=>false,
+		]);
+
+		if(!\is_array($_SESSION['recovery_codes'] ?? 0))
+			return[
+				'ok'=>false,
+				'error'=>'BROKEN'
+			];
+
+		$hash=\hash('sha3-256',\join('',$_SESSION['recovery_codes']));
+
+		if(!\hash_equals($hash,$_POST['hash']))
+			return[
+				'ok'=>false,
+				'error'=>'BROKEN'
+			];
+
+		$way=Verification($_POST['verification']);
+
+		if(\is_array($way))
+			return $way;
+
+		$amount=CMS::$Db->Update('users',[
+			'recovery_codes'=>\json_encode($_SESSION['recovery_codes'],JSON),
+		],'`id`='.CMS::$A->current);
+
+		unset($_SESSION['recovery_codes']);
+
+		return[
+			'ok'=>$amount>0,
+			'way'=>$way,
+		];
+	}
+
+	$codes=$hashes=[];
+
+	for($i=0;$i<RECOVERY_CODE_COUNT;$i++)
+	{
+		$code=RecoveryCode();
+
+		$codes[]=$code;
+		$hashes[]=\password_hash($code,\PASSWORD_DEFAULT);
+	}
+
+	\session_start([
+		'use_cookies'=>false,
+	]);
+
+	$hash=\hash('sha3-256',join('',$hashes));
+
+	$_SESSION['recovery_codes']=$hashes;
+
+	return[
+		'ok'=>true,
+		'codes'=>$codes,
+		'hash'=>$hash,
+		'session_id'=>\session_id(),
+	];
+}
+
+/** Verify the current user's credential.
+ * @param string $test Password, TOTP, or recovery code.
+ * @return array|string Verification method, or error result.
+ * @throws \Throwable */
+function Verification(string$test):array|string
+{
+	if(RecoveryGraceRemaining())
+		return '';
+
+	$R=CMS::$Db->Execute(<<<SQL
+SELECT `password_hash`, `totp_secret`, `totp_digits`, `recovery_codes`
+FROM `users`
+WHERE `id`=?
+SQL ,[CMS::$A->current]);
+	$data=SingleFetch($R);
+
+	if($data['password_hash']==='' or \password_verify($test,$data['password_hash']))
+		return 'password';
+
+	if($data['totp_secret']!==null and TOTP::Verify($data['totp_secret'],$test,(int)$data['totp_digits']))
+		return 'totp';
+
+	if($data['recovery_codes'] and VerifyRecoveryCode($test,$data['recovery_codes']))
+		return 'recovery-code';
+
+	return[
+		'ok'=>false,
+		'error'=>'UNVERIFIED'
+	];
 }
 
 /** Settings of the user
@@ -413,7 +622,7 @@ function Settings(Uri$Uri,int&$code):array|string
 	if(!CMS::$A->current)
 		Halt(401);
 
-	#AJAX request
+	# AJAX request
 	if(CMS::$json)
 	{
 		if(!CMS::$post)
@@ -424,12 +633,12 @@ function Settings(Uri$Uri,int&$code):array|string
 		$id=CMS::$A->current;
 		$update=[];
 
-		#Storing string data
+		# Storing string data
 		foreach(['display_name','info','timezone',...(L10NS ? ['l10n'] : [])] as $k)
 			if(\is_string($_POST[$k] ?? 0))
 				$update[$k]=$_POST[$k];
 
-		#Saving avatar
+		# Saving avatar
 		if(\is_uploaded_file($_FILES['avatar']['tmp_name'] ?? '') and $_FILES['avatar']['size']<=MAX_AVATAR_SIZE)
 		{
 			$old=GetUserData('avatar');
@@ -438,11 +647,11 @@ function Settings(Uri$Uri,int&$code):array|string
 			if($img!==false)
 			{
 				if($old)
-					\Eleanor\Classes\Files::Delete(STATIC_PATH."avatars/{$id}-{$old}.webp");
+					\Eleanor\Classes\Files::Delete(STATIC_PATH."avatars/$id-$old.webp");
 
 				$salt=AvatarSalt();
 
-				if(\imagewebp($img,STATIC_PATH."avatars/{$id}-{$salt}.webp"))
+				if(\imagewebp($img,STATIC_PATH."avatars/$id-$salt.webp"))
 					$update['avatar']=$salt;
 			}
 		}
@@ -461,69 +670,6 @@ function Settings(Uri$Uri,int&$code):array|string
 	return(CMS::$T)('Settings',$settings,$timezones);
 }
 
-/** Change password of user's account
- * @param Uri $Uri
- * @param int $code
- * @return string|array */
-function ChangePassword(Uri$Uri,int&$code):array|string
-{
-	if(!CMS::$A->current)
-		Halt(401);
-
-	$R=CMS::$Db->Execute(<<<SQL
-SELECT `way` FROM `a11n_userarea` WHERE `a11n_id`=? AND `user_id`=? LIMIT 1
-SQL ,[CMS::$a11n,CMS::$A->current]);
-	$way=$R->fetch_column();
-	$old_required=$way!='telegram' or GetUserData('password_hash')==='';
-
-	#AJAX request
-	if(CMS::$json)
-	{
-		if(!CMS::$post)
-			return[
-				'ok'=>false
-			];
-
-		# PHP 8.6: migrate to pipe operator
-		if(!\array_all([$_POST['new'] ?? 0,$_POST['old'] ?? ($old_required ? 0 : '')],fn($t)=>\is_string($t)))
-			return[
-				'ok'=>false,
-				'error'=>'INSUFFICIENT'
-			];
-
-		#Checking the old password when it needed
-		if($old_required)
-		{
-			$R=CMS::$Db->Execute(<<<SQL
-SELECT `password_hash` FROM `users` WHERE `id`=? LIMIT 1
-SQL ,[CMS::$A->current]);
-			$hash=$R->fetch_column();
-
-			if($hash!=='' and !\password_verify($_POST['old'],$hash))
-				return[
-					'ok'=>false,
-					'error'=>'INCORRECT'
-				];
-		}
-
-		if(strlen($_POST['new'])<MIN_PASSWORD_LENGTH)
-			return[
-				'ok'=>false,
-				'error'=>'LOW_PASSWORD_LENGTH'
-			];
-
-		$amount=CMS::$Db->Update('users',[
-			'password_hash'=>\password_hash($_POST['new'],\PASSWORD_DEFAULT)
-		],'`id`='.CMS::$A->current);
-
-		return[
-			'ok'=>$amount>0
-		];
-	}
-
-	return(CMS::$T)('ChangePassword',MIN_PASSWORD_LENGTH,$old_required);
-}
-
 /** List of user sessions
  * @param Uri $Uri
  * @param int $code
@@ -534,11 +680,13 @@ function Sessions(Uri$Uri,int&$code):array|string
 		Halt(401);
 
 	$R=CMS::$Db->Execute(<<<SQL
-SELECT `created` FROM `a11n_userarea` WHERE `a11n_id`=? AND `user_id`=? LIMIT 1
+SELECT `created`
+FROM `a11n_userarea`
+WHERE `a11n_id`=? AND `user_id`=?
 SQL ,[CMS::$a11n,CMS::$A->current]);
-	$current=$R->fetch_column();
+	$current=SingleFetch($R,true);
 
-	#AJAX request
+	# AJAX request
 	if(CMS::$json)
 	{
 		if(CMS::$delete and isset($_GET['id']))
@@ -550,7 +698,6 @@ SELECT `a`.`id`
 FROM `a11n_userarea` `u`
 INNER JOIN `a11n` `a` ON `a`.`id`=`u`.`a11n_id`
 WHERE `a11n_id`=? AND `u`.`user_id`=? AND (`u`.`created`>? OR `a`.`used`<NOW() - INTERVAL ? MONTH)
-LIMIT 1
 SQL ,[$a11n,CMS::$A->current,$current,MONTHS_TO_STALE_SESSION]);
 
 			$amount=$R->num_rows>0
@@ -588,36 +735,58 @@ SQL ,[$current,MONTHS_TO_STALE_SESSION,CMS::$A->current]);
 	return(CMS::$T)('Sessions',$items,MONTHS_TO_STALE_SESSION);
 }
 
-#Parsing uri
-[$slug]=SlugTail($uri);
+/** List of user login attempts
+ * @param Uri $Uri
+ * @param int $code
+ * @return string|array */
+function SignInHistory(Uri$Uri,int&$code):array|string
+{
+	if(!CMS::$A->current)
+		Halt(401);
+
+	//ToDo!
+	die;
+}
+
+# Parsing uri
+[$slug,$uri]=SlugTail($uri);
 
 if(!CMS::$json)
 {
-	#Loading template of the unit
-	CMS::$T[]=require CMS."user-area/unit-{$this->name}/object.php";
+	# Loading template of the unit
+	CMS::$T[]=CMS."user-area/unit-$this->name/object.php";
 
-	#Checking URI correctness via canonical urls
+	# Checking URI correctness via canonical urls
 	Canonical($Uri,$slug);
 
-	#Making links to alternative l10n versions of page
+	# Making links to alternative l10n versions of page
 	Alternate(fn($code,$Uri)=>$Uri([$this->slug,$slug]));
 }
 
-#Links for user inside unit
-if(CMS::$A->current)
+# Links for user inside unit
+if(!CMS::$json)
 {
-	CMS::$T['links']['sign-in']=(string)$Uri;
+	if(CMS::$A->current)
+	{
+		CMS::$T['links']['overview']=(string)$Uri;
 
-	foreach(['settings','sessions','change-password'] as $link)
-		CMS::$T['links'][$link]=$Uri($link);
+		foreach(['sign-up','sign-in','sign-out', 'settings','sessions','sign-in-history'] as $link)
+			CMS::$T['links'][$link]=$Uri($link);
+	}
+	else
+		foreach(['sign-up','sign-in'] as $link)
+			CMS::$T['links'][$link]=$Uri($link);
 }
 
 return match($slug ?? ''){
+	'sign-up'=>SignUp($Uri,$code),
+	'sign-in'=>SignIn($Uri,$code),
+	'sign-out'=>SignOut($Uri,$code),
+
 	'settings'=>Settings($Uri,$code),
 	'sessions'=>Sessions($Uri,$code),
-	'change-password'=>ChangePassword($Uri,$code),
-	'sign-out'=>SignOut($Uri,$code),
-	'sign-up'=>SignUp($Uri,$code),
-	''=>SignIn($Uri,$code),
+	'sign-in-history'=>SignInHistory($Uri,$code),
+
+	''=>Overview($Uri,$code),
 	default=>Halt()
 };

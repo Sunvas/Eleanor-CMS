@@ -37,7 +37,7 @@ if($l10ns!==null)
 	$l10ns[]=$l10n;
 
 $insert['cron']=<<<SQL
-INSERT INTO `cron` (`unit`, `triggers`) VALUES ('account', 'user_signed_in'), ('daily-cleanup', '');
+INSERT INTO `cron` (`unit`) VALUES ('account'), ('daily-cleanup');
 SQL;
 
 $group=L10n2JSONDbFields($Db,$l10n,$l10ns,[
@@ -48,10 +48,10 @@ $group=L10n2JSONDbFields($Db,$l10n,$l10ns,[
 ]);
 $insert['groups']=<<<SQL
 INSERT INTO `groups` (`id`, `title`, `roles`, `slow_mode`) VALUES
-(1, {$group[1]}, 'root', 0),
-(2, {$group[2]}, 'team', 0),
-(3, {$group[3]}, '', 25),
-(4, {$group[4]}, '', 10);
+(1, $group[1], 'root', 0),
+(2, $group[2], 'team', 0),
+(3, $group[3], '', 25),
+(4, $group[4], '', 10);
 SQL;
 
 $data=[

@@ -5,7 +5,6 @@
 		template,
 		data:()=>({
 			l10n:Object.seal({
-				telegram:{ru:"Телеграм",en:"Telegram"},
 				username:{ru:"Логин",en:"Login"},
 				current:{ru:"Текущая сессия",en:"Current session"},
 				ays:{ru:"Вы уверены?",en:"Are you sure?"},

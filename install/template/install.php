@@ -31,7 +31,7 @@ return new class extends \Eleanor\Basic {
 	<img src="{$this->http}images/warning.png" alt="">
 	<div>
 		<h4>{$this->l10n['error']}</h4>
-		<p>{$message}</p>
+		<p>$message</p>
 	</div>
 	<div class="clr"></div>
 </div>
@@ -73,7 +73,7 @@ $head
 			</div>
 		</div>
 		<div class="process">
-			<div class="procline" title="{$this->l10n['progress']}"><img style="width:{$percent}%" src="{$this->http}images/spacer.png" alt="{$percent}%" title="{$percent}%"></div>
+			<div class="procline" title="{$this->l10n['progress']}"><img style="width:$percent%" src="{$this->http}images/spacer.png" alt="$percent%" title="$percent%"></div>
 			<div class="procinfo"><span>$navi</span></div>
 		</div>
 	</div></div></div>
@@ -213,7 +213,7 @@ HTML;
 		<div class="wpcont" id="app"></div>
 		<script id="app-tpl" type="text/x-template">
 			<form method="post">
-				<h2 class="subhead">{$this->l10n['db']}</h2>{$db_errors}
+				<h2 class="subhead">{$this->l10n['db']}</h2>$db_errors
 				<ul class="reset formfield">
 					<li class="ffield">
 						<label for="host">{$this->l10n['db_host']}</label>

@@ -129,6 +129,9 @@ class CMS extends Library
 		/** @var bool $post Whether request method is POST */
 		$post=false,
 
+		/** @var bool $post Whether request method is PATCH */
+		$patch=false,
+
 		/** @var bool $delete Whether request method is DELETE */
 		$delete=false;
 
@@ -235,6 +238,9 @@ switch($_SERVER['REQUEST_METHOD'] ?? '')
 	break;
 	case'POST':
 		CMS::$post=true;
+	break;
+	case'PATCH':
+		CMS::$patch=true;
 	break;
 	case'DELETE':
 		CMS::$delete=true;

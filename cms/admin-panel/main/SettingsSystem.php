@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** Page with settings of the system: options here matter mainly for code not from HTML templates. Values are reachable via CMS::$config['system']
@@ -25,22 +26,6 @@ $template=<<<HTML
 </div>
 
 <form @submit.prevent="Submit">
-	<div class="card border-info border-top-3">
-		<h2 class="card-header bg-info bg-gradient lh-base h6" style="--cui-bg-opacity: .25;">Telegram <a href="https://core.telegram.org/bots" target="_blank" class="fa-solid fa-up-right-from-square"></a></h2>
-		<div class="card-body">
-			<div class="row">
-				<div class="col-md-4 col-12">
-					<label for="bot_name">{$l10n['bot_name']}</label>
-					<input type="text" class="form-control" id="bot_name" v-model.trim="config.bot_name">
-					<small class="text-secondary">{$l10n['bot_name_']}</small>
-				</div>
-				<div class="col-md-8 col-12">
-					<label for="bot_key">{$l10n['bot_key']}</label>
-					<input type="text" class="form-control" id="bot_key" v-model.trim="config.bot_key" placeholder="0000000000:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" pattern="\d+:[A-Za-z\d\-_]{10,}">
-				</div>
-			</div>
-		</div>
-	</div>
 	<div class="card border-secondary border-top-3 mt-2">
 		<h2 class="card-header bg-secondary bg-gradient lh-base h6" style="--cui-bg-opacity: .25;">{$l10n['hcaptcha']} <a href="https://hcaptcha.com/?r=2b68096cb450" target="_blank" class="fa-solid fa-up-right-from-square"></a></h2>
 		<div class="card-body">

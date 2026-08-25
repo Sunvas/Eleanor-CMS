@@ -183,7 +183,7 @@ if(!CMS::$json and CMS::$T instanceof Assign)
 	];
 
 # Site is closed (under maintenance), return https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/503
-if(CMS::$config['system']['maintenance'] and !\in_array('maintainer',CMS::$P->roles))
+if(CMS::$config['system']['maintenance'] and !\array_intersect(['root','team'],CMS::$P->roles))
 {
 	if(CMS::$json)
 		JSON(['ok'=>false],503);

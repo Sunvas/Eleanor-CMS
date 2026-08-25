@@ -1,4 +1,5 @@
 <?php
+# Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
 /** Main unit
@@ -16,7 +17,7 @@ function Main(object$Unit):array|string
 		{
 			$is_lang=\is_string($_GET['lang'] ?? 0);
 
-			#Loading contents of another l10n
+			# Loading contents of another l10n
 			if($is_lang)
 			{
 				$file=$Unit->GetMainPageFile($_GET['lang']);
@@ -75,7 +76,7 @@ function SettingsSite():array|string
 		$storage=[];
 
 		# PHP 8.6: migrate to pipe operator
-		#Multilingual values
+		# Multilingual values
 		foreach(['name','title','description'] as $f)
 			if($mono ? \is_string($_POST[$f] ?? 0) : \is_array($_POST[$f] ?? 0) && \array_all($_POST[$f],fn($t)=>\is_string($t)))
 				$storage[$f]=$_POST[$f];
@@ -108,12 +109,12 @@ function SettingsSystem():array|string
 
 		$storage=[];
 
-		#String values
-		foreach(['bot_name','bot_key','hcaptcha','hcaptcha_secret'] as $f)
+		# String values
+		foreach(['hcaptcha','hcaptcha_secret'] as $f)
 			if(\is_string($_POST[$f] ?? 0))
 				$storage[$f]=$_POST[$f];
 
-		#Boolean values
+		# Boolean values
 		foreach(['maintenance','captcha'] as $f)
 			if(\is_bool($_POST[$f] ?? 0))
 				$storage[$f]=$_POST[$f];
@@ -143,7 +144,7 @@ if(!CMS::$json)
 	];
 }
 
-#Some zones are available for administrators only
+# Some zones are available for administrators only
 $is_root=\in_array('root',CMS::$P->roles);
 
 return match($_GET['zone'] ?? ''){

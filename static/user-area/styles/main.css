@@ -269,17 +269,6 @@ button.button:hover, input.button:hover { color: #4c4c4c; background: #fff; }
 /*upload image*/
 .screenblock { color: #757575; vertical-align: middle; text-align: center; display: table-cell; background-color: #ebe9e5; border: 1px solid #c9c7c3; }
 
-/*Вкладка заполнения других языков*/
-ul.editlang, ul.editlang li { list-style: none; padding: 0; margin: 0; }
-.ol_heading { background: #fff url("../images/submitline.png") repeat-x 0 0; border-bottom: 1px solid #d6d6d6; border-top: 1px solid #ededed; font-weight: bold; padding: 5px; display: block; }
-.ol_heading img { float: left; margin-right: 8px; }
-
-/*в настройках*/
-.langtabcont { float: left; padding: 4px; border: 1px solid #dbddde; }
-.langtabs { clear: both; }
-.langtabs img { width: 20px; height: 16px; padding: 3px; border: 0 solid #dbddde; margin-top: -1px; }
-.langtabs .selected img { border-width: 0 1px 1px 1px; background-color: #fff; }
-
 /* tools.css */
 /*menuhead - Верхнее основное меню*/
 .adminmenupanel .adminsubmenu { z-index: 999; }
@@ -935,7 +924,7 @@ tr.infolabel {
 	text-align: center;
 }
 
-tr.infolabel td {
+tr.infolabel th {
 	padding: 5px;
 	color: #ff9000;
 	font-weight: bold;
@@ -1078,3 +1067,7 @@ input.ok { background:#E0F5BD; border-color:#B3D577; }
 
 .captcha > * { display: block; }
 .captcha > input { margin-top:5px; width:111px; }
+
+.group-1 { color: red; }
+.group-2 { color: green; }
+.group-4 { color: blue; }

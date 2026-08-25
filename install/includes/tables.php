@@ -19,8 +19,8 @@ CREATE TABLE `a11n` (
 	`id` smallint UNSIGNED NOT NULL,
 	`bytes` binary(7) NOT NULL COMMENT 'Random session key part: 7 bytes provide about 2^56 variants.',
 	`generated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of last key generation. Should be regenerated weekly.',
-	`used` timestamp NOT NULL DEFAULT '1997-01-01' COMMENT 'Last usage by the user.',
-	`ip` binary(16) NOT NULL DEFAULT 0x0 COMMENT 'Last IP used by the user.',
+	`used` timestamp NULL DEFAULT NULL COMMENT 'Last usage by the user.',
+	`ip` varbinary(16) NOT NULL DEFAULT 0x0 COMMENT 'Last IP used by the user.',
 	`ua` char(140) NOT NULL DEFAULT '' COMMENT 'Last User Agent used by the user.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization';
 SQL;
@@ -31,7 +31,7 @@ CREATE TABLE `a11n_adminpanel` (
 	`user_id` mediumint UNSIGNED NOT NULL,
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`marker` varbinary(5) NOT NULL DEFAULT '\0' COMMENT 'Temporary cookie marker',
-	`way` enum('username') NOT NULL DEFAULT 'username'
+	`way` enum('sign-in') NOT NULL DEFAULT 'sign-in'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization for admin panel';
 SQL;
 
@@ -41,7 +41,7 @@ CREATE TABLE `a11n_userarea` (
 	`user_id` mediumint UNSIGNED NOT NULL,
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`marker` varbinary(5) NOT NULL DEFAULT '\0' COMMENT 'Temporary cookie marker',
-	`way` enum('username','sign-up','admin-panel') NOT NULL DEFAULT 'username'
+	`way` enum('sign-in','recovery-code','sign-up','admin-panel') NOT NULL DEFAULT 'sign-in'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization for /index.php';
 SQL;
 
@@ -72,7 +72,7 @@ $tables['groups']=<<<SQL
 CREATE TABLE `groups` (
 	`id` tinyint UNSIGNED NOT NULL,
 	`roles` set('root','team') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Must be the second field because all following fields are treated as rights. Defines system roles assigned to the group.',
-	`title` {$type} NOT NULL COMMENT 'Special field defines the public title of a group.',
+	`title` $type NOT NULL COMMENT 'Special field defines the public title of a group.',
 	`slow_mode` tinyint NOT NULL DEFAULT '0' COMMENT 'Defines the number of seconds between significant actions such as posting or commenting.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
@@ -132,15 +132,15 @@ else
 CREATE TABLE `static` (
 	`id` smallint UNSIGNED NOT NULL,
 	`status` enum('ACTIVE','DRAFT') NOT NULL DEFAULT 'DRAFT',
-	`l10ns` set($set) DEFAULT '{$l10n}' COMMENT 'Empty means that the page is monolingual',
-	{$slug}{$title}{$description}{$content}{$files}{$modified}
+	`l10ns` set($set) DEFAULT '$l10n' COMMENT 'Empty means that the page is monolingual',
+	$slug$title$description$content$files$modified
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 SQL;
 
 	$tables['static_backup']=<<<SQL
 CREATE TABLE `static_backup` (
 	`id` smallint UNSIGNED NOT NULL COMMENT 'ID of the page',
-	`l10n` enum($set) DEFAULT '{$l10n}',
+	`l10n` enum($set) DEFAULT '$l10n',
 	`created_at` timestamp NOT NULL COMMENT 'Rounded to the minute',
 	`content_source` json NOT NULL,
 	`files` json DEFAULT NULL COMMENT 'Array of filenames referenced by the page content.'
@@ -158,20 +158,33 @@ CREATE TABLE `users` (
 	`name` varchar($name_len) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Unique username used as login',
 	`groups` json NOT NULL COMMENT 'Array of group IDs. Each element is an integer representing a group ID.',
 	`password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
-	`otp_secret` binary(32) DEFAULT NULL COMMENT 'Secret for OTP.',
-	`otp_digits` tinyint NOT NULL DEFAULT '6' COMMENT 'Number of OTP digits (6-8).',
-	`otp_step` tinyint NOT NULL DEFAULT '30' COMMENT 'Number of seconds between OTP digits regeneration.',
-	`otp_reserve_codes` json DEFAULT NULL COMMENT 'OTP recovery codes hashed with SHA3-256.',
-	`otp_changed_at` timestamp NOT NULL DEFAULT '1997-01-01' COMMENT 'Date when OTP secret was changed, enabled, or disabled.',
+	`password_changed_at` timestamp NULL DEFAULT NULL COMMENT 'Time when the password was last changed',
+	`totp_secret` binary(32) DEFAULT NULL COMMENT 'Secret for OTP.',
+	`totp_digits` tinyint NOT NULL DEFAULT '6' COMMENT 'Number of OTP digits (6-8).',
+	`totp_changed_at` timestamp NULL DEFAULT NULL COMMENT 'Time when OTP secret was changed, enabled, or disabled.',
+	`recovery_codes` json DEFAULT NULL COMMENT 'Array of recovery codes, each hashed with password_hash.',
+	`recovery_codes_created_at` timestamp NULL DEFAULT NULL,
+	`recovery_codes_last_used_at` timestamp NULL DEFAULT NULL COMMENT 'Time when a recovery code was last used',
 	`l10n` enum('en','ru') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '$l10n' COMMENT 'Localization',
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`activity` timestamp NOT NULL DEFAULT '1997-01-01' COMMENT 'Last user''s activity',
-	`last_login_attempt` timestamp NOT NULL DEFAULT '1997-01-01',
+	`activity` timestamp NULL DEFAULT NULL COMMENT 'Last user''s activity',
+	`last_login_attempt` timestamp NULL DEFAULT NULL COMMENT 'Time when the last login attempt was made',
 	`display_name` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Name to be displayed',
 	`avatar` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Avatar salt. Avatars are stored as static/avatars/ID-SALT.webp.',
 	`info` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Any brief information by user',
 	`comment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Comment for admin panel',
 	`timezone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'User time zone used for date and time display.'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+SQL;
+
+$tables[]='DROP TABLE IF EXISTS `users_signin_logs`';
+$tables['users_signin_logs']=<<<'SQL'
+CREATE TABLE `users_signin_logs` (
+  `user_id` mediumint UNSIGNED NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` enum('OK','WRONG_PASSWORD','WRONG_OTP','WRONG_RESERVE_CODE') NOT NULL,
+  `ip` varbinary(16) NOT NULL,
+  `ua` varchar(140) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
 
@@ -259,6 +272,12 @@ ALTER TABLE `users`
 	ADD UNIQUE KEY `name` (`name`);
 SQL;
 
+$tables['users_signin_logs_primary']=<<<'SQL'
+ALTER TABLE `users_signin_logs`
+	ADD PRIMARY KEY (`user_id`,`date`) USING BTREE,
+	ADD KEY `date` (`date`);
+SQL;
+
 $tables['widgets_primary']=<<<'SQL'
 ALTER TABLE `widgets`
 	ADD PRIMARY KEY (`place`);
@@ -303,6 +322,11 @@ SQL;
 $tables['static_backup_constraints']=<<<'SQL'
 ALTER TABLE `static_backup`
 	ADD CONSTRAINT `static_backup_ibfk_1` FOREIGN KEY (`id`) REFERENCES `static` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+SQL;
+
+$tables['users_signin_logs_constraints']=<<<'SQL'
+ALTER TABLE `users_signin_logs`
+	ADD CONSTRAINT `users_signin_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 SQL;
 
 # Triggers
@@ -375,5 +399,38 @@ $trigger
 END;
 SQL;
 }
+
+$tables['UserCredentialsChanged']=<<<'SQL'
+CREATE TRIGGER `UserCredentialsChanged`
+BEFORE UPDATE ON `users`
+FOR EACH ROW BEGIN
+	-- Password was changed
+	IF NOT (NEW.`password_hash` <=> OLD.`password_hash`) THEN
+		SET NEW.`password_changed_at` = CURRENT_TIMESTAMP;
+	END IF;
+
+	-- OTP configuration was changed, enabled, or disabled
+	IF NOT (NEW.`totp_secret` <=> OLD.`totp_secret`)
+		OR NEW.`totp_digits` <> OLD.`totp_digits`
+	THEN
+		SET NEW.`totp_changed_at` = CURRENT_TIMESTAMP;
+	END IF;
+
+	-- Recovery codes were changed
+	IF NOT (NEW.`recovery_codes` <=> OLD.`recovery_codes`) THEN
+		IF OLD.`recovery_codes` IS NOT NULL
+			AND NEW.`recovery_codes` IS NOT NULL
+			AND JSON_LENGTH(NEW.`recovery_codes`) < JSON_LENGTH(OLD.`recovery_codes`)
+		THEN
+			-- A recovery code was used
+			SET NEW.`recovery_codes_last_used_at` = CURRENT_TIMESTAMP;
+
+		ELSEIF NEW.`recovery_codes` IS NOT NULL THEN
+			-- A new set of recovery codes was generated
+			SET NEW.`recovery_codes_created_at` = CURRENT_TIMESTAMP;
+		END IF;
+	END IF;
+END
+SQL;
 
 return $tables;

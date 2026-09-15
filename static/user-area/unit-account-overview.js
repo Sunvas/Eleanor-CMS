@@ -10,7 +10,7 @@
 				totp_configured:{ru:"✅ Одноразовые коды успешно настроены",en:"✅ Onetime passcodes are successfully configured"},
 				totp_deleted:{ru:"❗️ Одноразовые успешно ОТКЛЮЧЕНЫ",en:"✅ Onetime passcodes are successfully DISABLED"},
 				available:{ru:n=>"Доступно: "+n,en:n=>"Available: "+n},
-				rc_ok:{ru:"Этот код действителен. Проверка не использовала и не аннулировала его.",en:"This code is valid. Verification has not used or invalidated it."},
+				rc_ok:{ru:"✅ Этот код действителен.\nПроверка не использовала и не аннулировала его.",en:"✅ This code is valid.\nVerification has not used or invalidated it."},
 				rc_invalid:{ru:"Этот код НЕ действителен",en:"This code is INVALID."},
 
 				UNVERIFIED:{ru:"Проверка не пройдена",en:"Verification failed"},
@@ -53,9 +53,6 @@
 			loading:false
 		}),
 		computed:{
-			totp_request(){
-				return this.totp_issuer.length>0;
-			},
 			recovery_grace_timer(){
 				return [Math.trunc(this.recovery_grace_remaining/60),this.recovery_grace_remaining%60]
 					.map(v=>v.toString().padStart(2,"0")).join(":");
@@ -79,7 +76,7 @@
 			// Change password stuff //
 			///////////////////////////
 
-			/** Show the change password form. */
+			/** Show the change password form */
 			ChangePassword(){
 				this.rc=false;
 				this.totp=false;
@@ -90,7 +87,7 @@
 				this.$refs.password2.setCustomValidity(this.password===this.password2 ? "" : this.l10n.PASS_MISMATCH);
 			},
 
-			/** Submit the change password form. */
+			/** Submit the change password form */
 			async ChangePasswordSubmit(){
 				if(this.loading)
 					return;
@@ -145,7 +142,7 @@
 			// TOTP stuff //
 			////////////////
 
-			/** Show the enable/change TOTP form. */
+			/** Show the enable/change TOTP form */
 			TotpEnable(){
 				this.rc=false;
 				this.change_password=false;
@@ -153,16 +150,16 @@
 				this.TotpQr();
 			},
 
-			/** Show the disable TOTP form. */
+			/** Show the disable TOTP form */
 			TotpDisable(){
 				this.rc=false;
 				this.change_password=false;
 				this.totp="disable";
 			},
 
-			/** Request TOTP secret and QR code data. */
+			/** Request TOTP secret and QR code data */
 			async TotpQr(){
-				if(this.loading || !this.totp || !this.totp_request)
+				if(this.loading || !this.totp || this.totp_issuer.length<1)
 					return;
 
 				const body=new URLSearchParams({
@@ -191,9 +188,9 @@
 					});
 			},
 
-			/** Configure TOTP for the current user. */
+			/** Configure TOTP for the current user */
 			async TotpSubmit(){
-				if(this.loading || !this.totp || !this.totp_request)
+				if(this.loading || !this.totp)
 					return;
 
 				const body=new URLSearchParams({
@@ -245,7 +242,7 @@
 					});
 			},
 
-			/** Disable TOTP for the current user. */
+			/** Disable TOTP for the current user */
 			async TotpDisableSubmit(){
 				if(this.loading || !this.totp)
 					return;
@@ -288,7 +285,7 @@
 			// Recovery codes stuff //
 			//////////////////////////
 
-			/** Recovery codes request form. */
+			/** Recovery codes request form */
 			RecoveryCodes(){
 				this.totp=false;
 				this.change_password=false;
@@ -297,7 +294,7 @@
 				this.RecoveryCodesGenerate();
 			},
 
-			/** Generate a new set of recovery codes. */
+			/** Generate a new set of recovery codes */
 			async RecoveryCodesGenerate(){
 				if(this.loading || !this.rc)
 					return;
@@ -322,7 +319,7 @@
 					});
 			},
 
-			/** Store the generated recovery codes. */
+			/** Store the generated recovery codes */
 			async RecoveryCodesSubmit(){
 				if(this.loading || !this.rc)
 					return;
@@ -365,9 +362,10 @@
 
 			RecoveryCodesClick({target}){
 				target.select();
+				navigator.clipboard.writeText(target.value);
 			},
 
-			/** Check whether a recovery code is still valid without consuming it. */
+			/** Check whether a recovery code is still valid without consuming it */
 			async RecoveryCodesCheck(){
 				if(this.loading)
 					return;

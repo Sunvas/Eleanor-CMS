@@ -36,6 +36,7 @@ $data=\compact('items','groups','is_root','my_id','total','pp','sort','desc')
 
 $title=[$l10n['title']];
 $script='static/admin-panel/users.js';
+$jsdelivr=',npm/qrcode-generator@2/dist/qrcode.min.js';
 $head['style']=(CMS::$T)('coloring-of-groups');
 $head['style2']=<<<'HTML'
 <style>small .group + .group:before { content:", "; color:grey; }</style>
@@ -82,7 +83,7 @@ $template=<<<HTML
 	<table class="table border mb-0">
 		<thead class="fw-semibold text-nowrap">
 			<tr>
-				<th class="bg-body-secondary text-center" style="width:2.5rem"><i class="fa-solid fa-ellipsis-vertical" v-if="is_root"></i></th>
+				<th class="bg-body-secondary text-center" style="width:2.5rem"><i class="fa-solid fa-ellipsis-vertical"></i></th>
 				<th class="bg-body-secondary">
 					<i v-if="sort=='name'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-up-a-z'"></i>
 					<a :href="Sort('name')" class="text-decoration-none">{$l10n['login']}</a>
@@ -95,17 +96,21 @@ $template=<<<HTML
 		</thead>
 		<tbody>
 			<tr class="align-middle" v-for="(item,index) in items" :id="'item-'+item.id" :class="{'table-danger':item.empty_password}" :title="item.empty_password ? l10n.empty_password : ''">
-				<td class="text-center" :class="{dropend:is_root}">
-					<div class="avatar avatar-md" :role="is_root ? 'button' : ''" data-coreui-toggle="dropdown">
+				<td class="text-center" class="dropend">
+					<div class="avatar avatar-md" role="button" data-coreui-toggle="dropdown">
 						<img v-if="item.avatar" class="avatar-img" :src="`static/avatars/\${item.id}-\${item.avatar}.webp`" :alt="item.name">
 						<i v-else class="fa-solid fa-user fa-2xl avatar-img text-muted"></i>
 						<span class="avatar-status" :class="item.status_class" :title="l10n[item.status_hint]"></span>
 					</div>
-					<ul class="dropdown-menu py-0" v-if="is_root">
+					<ul class="dropdown-menu py-0">
 						<li><button class="dropdown-item" type="button" title="{$l10n['copy-id']}" @click="Copy(item,index)"><i class="fa-solid fa-copy me-2"></i> {{item.id.toString().padStart(4,"0")}}</button></li>
-						<li><button class="dropdown-item" type="button" @click="Modify(item,index)"><i class="fa-solid fa-user-pen me-2"></i> {$l10n['modify']}</button></li>
-						<li><button class="dropdown-item text-primary" type="button" @click="SignIn(item,index)"><i class="fa-solid fa-right-to-bracket me-2"></i> {$l10n['sign-in']}</button></li>
-						<li v-if="item.id!=my_id"><button class="dropdown-item text-danger" type="button" @click="Delete(item,index)"><i class="fa-solid fa-trash-can me-2"></i> {$l10n['delete']}</button></li>
+						<template v-if="is_root">
+							<li><button class="dropdown-item" type="button" @click="Modify(item,index)"><i class="fa-solid fa-user-pen me-2"></i> {$l10n['modify']}</button></li>
+							<li><button class="dropdown-item" type="button" @click="TOTP(item,index)"><i class="fa-solid fa-key me-2" :class="{'text-success':item.totp_enabled}"></i> {$l10n['totp']}</button></li>
+							<li><button class="dropdown-item" type="button" @click="RecoveryCodes(item,index)"><i class="fa-solid fa-person-through-window me-2" :class="{'text-success':item.available_recovery_codes}" :title="item.available_recovery_codes || ''"></i> {$l10n['recovery-codes']}</button></li>
+							<li><button class="dropdown-item text-primary" type="button" @click="SignIn(item,index)"><i class="fa-solid fa-right-to-bracket me-2"></i> {$l10n['sign-in']}</button></li>
+							<li v-if="item.id!=my_id"><button class="dropdown-item text-danger" type="button" @click="Delete(item,index)"><i class="fa-solid fa-trash-can me-2"></i> {$l10n['delete']}</button></li>
+						</template>
 					</ul>
 				</td>
 				<td>
@@ -146,40 +151,40 @@ $confirm
 				<div class="row mb-1">
 					<div class="col" :class="{'was-validated':user_name_error!==null}">
 						<label for="user-name" class="form-label mb-0">{$l10n['login']}</label>
-						<input type="text" class="form-control" id="user-name" v-model.lazy="user.name" autocomplete="username" ref="user_name" required maxlength="25">
+						<input type="text" tabindex="1" class="form-control" id="user-name" v-model.lazy="user.name" autocomplete="username" ref="user_name" required maxlength="25">
 						<div class="invalid-feedback" v-text="user_name_error"></div>
 					</div>
 					<div class="col">
 						<label for="user-password" class="form-label mb-0">{$l10n['password']}</label>
-						<input type="password" class="form-control" id="user-password" v-model.lazy="user.password" minlength="$mpl" :required="!user_id" autocomplete="new-password">
+						<input type="password" tabindex="1" class="form-control" id="user-password" v-model.lazy="user.password" minlength="$mpl" :required="!user_id" autocomplete="new-password">
 					</div>
 				</div>
 				<div class="mb-1">
-					<label for="user-l10n" class="form-label mb-0">{$l10n['groups']}</label>
-					<select class="form-select" multiple size="3" v-model="user.groups" required>
+					<label for="user-groups" class="form-label mb-0">{$l10n['groups']}</label>
+					<select class="form-select" tabindex="1" id="user-groups" multiple size="3" v-model="user.groups" required>
 						<option v-for="group in groups" :value="group.id" v-text="group.title" :class="'group-'+group.id"></option>
 					</select>
 				</div>
 				<div class="row mb-1">
 					<div class="col">
 						<label for="user-dn" class="form-label mb-0">{$l10n['display_name']}</label>
-						<input type="text" class="form-control" id="user-dn" v-model.lazy="user.display_name" autocomplete="off">
+						<input type="text" tabindex="1" class="form-control" id="user-dn" v-model.lazy="user.display_name" autocomplete="off">
 					</div>
 					<div class="col" v-if="l10ns.length>0">
 						<label for="user-l10n" class="form-label mb-0">{$l10n['l10n']}</label>
-						<select id="user-l10n" class="form-select" v-model="user.l10n">
+						<select id="user-l10n" class="form-select" tabindex="1" v-model="user.l10n">
 							<option v-for="[code,title] in l10ns" :value="code" v-text="title"></option>
 						</select>
 					</div>
 				</div>
 				<div class="mb-1">
 					<label for="user-comment" class="form-label mb-0">{$l10n['comment']}</label>
-					<textarea class="form-control" rows="2" v-model.lazy="user.comment" style="resize:none"></textarea>
+					<textarea class="form-control" rows="2" id="user-comment" v-model.lazy="user.comment" style="resize:none"></textarea>
 					<small class="form-text">{$l10n['only4admin']}</small>
 				</div>
 				<div class="mb-1">
 					<label for="user-info" class="form-label mb-0">{$l10n['info']}</label>
-					<textarea class="form-control" rows="2" v-model.lazy="user.info" style="resize:none"></textarea>
+					<textarea class="form-control" tabindex="1" rows="2" id="user-info" v-model.lazy="user.info" style="resize:none"></textarea>
 					<small class="form-text">{$l10n['4anybody']}</small>
 				</div>
 			</div>
@@ -189,6 +194,132 @@ $confirm
 		</form>
 	</div>
 </dialog>
+<dialog class="modal fade bg-transparent" ref="totp" tabindex="-1" data-coreui-backdrop="static">
+	<div class="modal-dialog">
+		<form class="modal-content" @submit.prevent="TOTPSubmit">
+			<div class="modal-header">
+				<h5 class="modal-title" v-text="totp_title"></h5>
+				<button type="button" class="btn-close" tabindex="-1" data-coreui-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<label class="col-4 col-form-label col-form-label-sm pe-0" for="totp_state">{$l10n['state']}</label>
+					<div class="col-8">
+						<input type="text" readonly id="totp_state" class="form-control-plaintext form-control-sm fw-bold text-success" v-if="totp_state" value="{$l10n['totp-on']}">
+						<input type="text" readonly id="totp_state" class="form-control-plaintext form-control-sm fw-bold text-danger" v-else-if="totp_state!==null" value="{$l10n['totp-off']}">
+						<input type="text" readonly id="totp_state" class="form-control-plaintext form-control-sm" v-else value="{$l10n['totp-null']}">
+					</div>
+				</div>
+				<div class="row" v-if="totp_state!==null">
+					<label class="col-4 col-form-label col-form-label-sm pe-0" for="totp_date">{$l10n['date']}</label>
+					<div class="col-8">
+						<input type="text" readonly id="totp_date" class="form-control-plaintext form-control-sm font-monospace" v-model="totp_date">
+					</div>
+				</div>
+				<hr class="mt-1">
+				<div class="row align-items-center mb-1">
+					<label class="col-4 pe-0" for="totp_action">{$l10n['action']}</label>
+					<div class="col-8">
+						<select id="totp_action" tabindex="1" class="form-select" v-model="totp_action">
+							<option value="">{$l10n['nothing']}</option>
+							<option value="disable" v-if="totp_state">{$l10n['disable']}</option>
+							<option value="enable" v-if="totp_state">{$l10n['regenerate']}</option>
+							<option value="enable" v-else>{$l10n['enable']}</option>
+						</select>
+					</div>
+				</div>
+				<template v-if="totp_action=='enable'">
+					<div class="row align-items-center mb-1">
+						<label class="col-4 pe-0" for="totp_issuer">{$l10n['issuer']}</label>
+						<div class="col-8">
+							<input type="text" class="form-control" tabindex="1" id="totp_issuer" v-model.lazy="totp_issuer" :disabled="loading" autocomplete="off" required>
+						</div>
+					</div>
+					<div class="row align-items-center mb-1">
+						<label class="col-4 pe-0" for="totp_digits">{$l10n['totp-digits']}</label>
+						<div class="col-8">
+							<select id="totp_digits" tabindex="1" class="form-select" v-model="totp_digits" :disabled="loading">
+								<option :value="6">{$l10n['totp-digits-6']}</option>
+								<option :value="7">{$l10n['totp-digits-7']}</option>
+								<option :value="8">{$l10n['totp-digits-8']}</option>
+							</select>
+						</div>
+					</div>
+					<div class="row align-items-center mb-1">
+						<label class="col-4 pe-0">{$l10n['totp-qr']}</label>
+						<div class="col-8 pt-2" v-if="totp_qr" v-html="totp_qr"></div>
+						<div class="col-8" v-else class="w-50">
+							<i class="fa-solid fa-spinner fa-spin fs-1 mt-4 ms-3"></i>
+						</div>
+					</div>
+					<div class="row align-items-center mb-1">
+						<label class="col-4 pe-0" :class="{'mb-4':totp_wrong}" for="totp_code">{$l10n['totp-code']}</label>
+						<div class="col-8">
+							<input type="text" tabindex="1" class="form-control" :class="{'is-invalid':totp_wrong}" ref="totp_code" id="totp_code" v-model="totp_code" :maxlength="totp_digits" inputmode="numeric" :pattern="`\\\\d{\${totp_digits}}`" autocomplete="off" required>
+							<div class="invalid-feedback">{$l10n['totp-wrong']}</div>
+						</div>
+					</div>
+				</template>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary bg-gradient px-4" tabindex="1" :disabled="saving || loading || saved"><i class="fa-solid fa-spinner fa-spin-pulse" v-if="saving"></i> {{submit_text}}</button>
+			</div>
+		</form>
+	</div>
+</dialog>
+<dialog class="modal fade bg-transparent" ref="rc" tabindex="-1" data-coreui-backdrop="static">
+	<div class="modal-dialog">
+		<form class="modal-content" @submit.prevent="RecoveryCodesSubmit">
+			<div class="modal-header">
+				<h5 class="modal-title" v-text="rc_title"></h5>
+				<button type="button" class="btn-close" tabindex="-1" data-coreui-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<label class="col-4 col-form-label col-form-label-sm pe-0" for="rc_state">{$l10n['state']}</label>
+					<div class="col-8">
+						<input type="text" readonly id="rc_state" class="form-control-plaintext form-control-sm fw-bold text-success" v-if="rc_state" value="{$l10n['rc-generated']}">
+						<input type="text" readonly id="rc_state" class="form-control-plaintext form-control-sm fw-bold text-danger" v-else-if="rc_state!==null" value="{$l10n['rc-used-up']}">
+						<input type="text" readonly id="rc_state" class="form-control-plaintext form-control-sm" v-else value="{$l10n['rc-empty']}">
+					</div>
+				</div>
+				<div class="row" v-if="rc_state!==null">
+					<label class="col-4 col-form-label col-form-label-sm pe-0" for="rc_date">{$l10n['date']}</label>
+					<div class="col-8">
+						<input type="text" readonly id="rc_date" class="form-control-plaintext form-control-sm font-monospace" v-model="rc_date">
+					</div>
+				</div>
+				<div class="row" v-if="rc_state">
+					<label class="col-4 col-form-label col-form-label-sm pe-0" for="rc_remnant">{$l10n['rc-available']}</label>
+					<div class="col-8">
+						<input type="text" readonly id="rc_remnant" class="form-control-plaintext form-control-sm fw-bold" :value="rc_state">
+					</div>
+				</div>
+				<hr class="mt-1">
+				<div class="row align-items-center mb-1">
+					<label class="col-4 pe-0" for="rc_action">{$l10n['action']}</label>
+					<div class="col-8">
+						<select id="rc_action" class="form-select" tabindex="1" v-model="rc_action">
+							<option value="">{$l10n['nothing']}</option>
+							<option value="gen" v-if="rc_state!==null">{$l10n['regenerate']}</option>
+							<option value="gen" v-else>{$l10n['generate']}</option>
+						</select>
+					</div>
+				</div>
+				<div class="row align-items-center mb-1" v-if="rc_action==='gen'">
+					<label for="rc_codes" class="col-4 pe-0 mb-5">{$l10n['recovery-codes']}</label>
+					<div class="col-8">
+						<textarea tabindex="1" class="form-control font-monospace" id="rc_codes" v-model="rc_codes" @click="RecoveryCodesClick" :disabled="loading" :rows="rc_rows" readonly></textarea>
+						<i class="small text-muted">{$l10n['rc-info']}</i>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary bg-gradient px-4" tabindex="1" :disabled="saving || loading || saved"><i class="fa-solid fa-spinner fa-spin-pulse" v-if="saving"></i> {{submit_text}}</button>
+			</div>
+		</form>
+	</div>
+</dialog>
 HTML;
 
-return CMS::$T->app(\compact('data','script','template'))->content->index(\compact('title','head'));
+return CMS::$T->app(\compact('data','script','template'))->content->index(\compact('title','head','jsdelivr'));

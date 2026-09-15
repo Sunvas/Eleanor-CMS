@@ -31,7 +31,7 @@ CREATE TABLE `a11n_adminpanel` (
 	`user_id` mediumint UNSIGNED NOT NULL,
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`marker` varbinary(5) NOT NULL DEFAULT '\0' COMMENT 'Temporary cookie marker',
-	`way` enum('sign-in') NOT NULL DEFAULT 'sign-in'
+	`way` enum('recovery','sign-in') NOT NULL DEFAULT 'sign-in'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization for admin panel';
 SQL;
 
@@ -41,7 +41,7 @@ CREATE TABLE `a11n_userarea` (
 	`user_id` mediumint UNSIGNED NOT NULL,
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`marker` varbinary(5) NOT NULL DEFAULT '\0' COMMENT 'Temporary cookie marker',
-	`way` enum('sign-in','recovery-code','sign-up','admin-panel') NOT NULL DEFAULT 'sign-in'
+	`way` enum('sign-in','recovery','sign-up','admin-panel') NOT NULL DEFAULT 'sign-in'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization for /index.php';
 SQL;
 
@@ -182,7 +182,7 @@ $tables['users_signin_logs']=<<<'SQL'
 CREATE TABLE `users_signin_logs` (
   `user_id` mediumint UNSIGNED NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` enum('OK','WRONG_PASSWORD','WRONG_OTP','WRONG_RESERVE_CODE') NOT NULL,
+  `status` enum('OK','WRONG_PASSWORD','WRONG_TOTP','WRONG_RECOVERY_CODE') NOT NULL,
   `ip` varbinary(16) NOT NULL,
   `ua` varchar(140) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

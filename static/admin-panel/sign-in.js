@@ -33,7 +33,7 @@
 				coreui.Modal.getOrCreateInstance(this.$refs.alert).show();
 
 				$(this.$refs.alert)
-					.one("hide.coreui.modal",()=>$(":focus",this.$refs.alert).blur())// Blur focused element before hiding
+					.one("hide.coreui.modal",()=>$(":focus",this.$refs.alert).blur())// Blur the focused element before hiding
 					.one("hidden.coreui.modal",()=>resolve());
 			});
 		},

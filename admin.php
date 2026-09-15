@@ -6,12 +6,12 @@ namespace CMS;
 const AUTH_RETRY_INTERVAL=5;
 
 use Eleanor\Assign,
-	Eleanor\Classes\Output,
 
 	CMS\Enums\Events,
 	CMS\Classes\Uri4AdminPanel,
 	CMS\Interfaces\AdminPanel;
 
+use Eleanor\Classes\{Output, Totp};
 use const Eleanor\SITEDIR;
 
 /** Script start time, used to display service information at the bottom of the page. */
@@ -67,16 +67,15 @@ elseif(!$_SERVER['QUERY_STRING'])
 		]);
 	}
 
-	# PHP 8.6: migrate to pipe operator
 	# Sign in
-	if(!\array_all([$_POST['username'] ?? 0,$_POST['password'] ?? 0,$_POST['captcha'] ?? 0],fn($t)=>\is_string($t)))
+	if(!\is_string($_POST['username'] ?? 0) or !is_string($_POST['password'] ?? 0))
 		JSON([
 			'ok'=>false,
 			'error'=>'INSUFFICIENT'
 		]);
 
 	$R=CMS::$Db->Execute(<<<SQL
-SELECT `id`, `name`, `password_hash`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
+SELECT `id`, `name`, `password_hash`, `totp_secret`, `totp_digits`, `recovery_codes`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
 FROM `users`
 WHERE `name`=?
 SQL ,[$_POST['username']]);
@@ -95,10 +94,20 @@ SQL ,[$_POST['username']]);
 			'error'=>'ALREADY'
 		]);
 
+	# Recovery access
+	$recovery=\is_string($_POST['totp'] ?? 0) && is_string($_POST['recovery_code'] ?? 0);
+
+	# TOTP available but not provided
+	if(!$recovery and $user['totp_secret'] and empty($_POST['totp']))
+		JSON([
+			'ok'=>false,
+			'error'=>'TOTP'
+		]);
+
 	CMS::$Db->Update('users',['last_login_attempt'=>fn()=>'NOW()'],'`id`='.$user['id']);
 
 	# Too often and no captcha
-	if($user['seconds']!==null and $user['seconds']<AUTH_RETRY_INTERVAL)
+	if($user['seconds']!==null and $user['seconds']<AUTH_RETRY_INTERVAL and !\CMS\Classes\hCaptcha::Check('captcha'))
 		JSON([
 			'ok'=>false,
 			'error'=>'W8',
@@ -106,42 +115,77 @@ SQL ,[$_POST['username']]);
 			'remain'=>AUTH_RETRY_INTERVAL-$user['seconds']
 		]);
 
-	$empty=$user['password_hash']==='';
+	# Check rights
+	$P=Permissions($id);
+	if(!\array_intersect(['root','team'],$P->roles))
+		JSON([
+			'ok'=>false,
+			'error'=>'ACCESS_DENIED'
+		]);
 
-	if($empty or \password_verify($_POST['password'],$user['password_hash']))
+	if($recovery)
 	{
-		# Keep password hash up to date
-		if($empty or \password_needs_rehash($user['password_hash'],\PASSWORD_DEFAULT))
-			CMS::$Db->Update('users',['password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT)],'`id`='.$user['id']);
+		$counter=0;
 
-		# Check rights
-		$P=Permissions($id);
-		if(!\array_intersect(['root','team'],$P->roles))
+		# TOTP verification
+		if($user['totp_secret'] and Totp::Verify($user['totp_secret'],$_POST['totp'],$user['totp_digits']))
+			$counter++;
+
+		# Password verification
+		if(\password_verify($_POST['password'],$user['password_hash']))
+			$counter++;
+
+		if($counter===1 and $user['recovery_codes'])
+		{
+			include CMS.'recovery-codes.php';
+
+			if(VerifyRecoveryCode($_POST['recovery_code'],$user['recovery_codes'],$id))
+				$counter++;
+		}
+
+		if($counter<2)
 			JSON([
 				'ok'=>false,
-				'error'=>'ACCESS_DENIED'
+				'error'=>'WRONG_CREDENTIALS'
+			]);
+	}
+	else
+	{
+		# TOTP verification
+		if($user['totp_secret'] and !Totp::Verify($user['totp_secret'],$_POST['totp'],$user['totp_digits']))
+			JSON([
+				'ok'=>false,
+				'error'=>'WRONG_TOTP'
 			]);
 
-		# 2FA should be checked here
-		CMS::$A->SignIn($id);
+		# Emergency password reset: accept and store a new password if the hash was manually cleared
+		$emergency=$_POST['password'] && $user['password_hash']==='';
 
-		Events::UserSignedIn->Trigger([
-			'id'=>$id,
-			'way'=>'sign-in',
-			'where'=>'admin-panel',
-			'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
-			'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
-		]);
+		# Password verification
+		if(!$emergency and !\password_verify($_POST['password'],$user['password_hash']))
+			JSON([
+				'ok'=>false,
+				'error'=>'WRONG_PASSWORD'
+			]);
 
-		JSON([
-			'ok'=>true,
-			'id'=>$id
-		]);
+		# Keep password hash up to date
+		if($emergency or \password_needs_rehash($user['password_hash'],\PASSWORD_DEFAULT))
+			CMS::$Db->Update('users',['password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT)],'`id`='.$user['id']);
 	}
 
+	CMS::$A->SignIn($id);
+
+	Events::UserSignedIn->Trigger([
+		'id'=>$id,
+		'way'=>$recovery ? 'recovery' : 'sign-in',
+		'where'=>'admin-panel',
+		'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
+		'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
+	]);
+
 	JSON([
-		'ok'=>false,
-		'error'=>'WRONG_PASSWORD'
+		'ok'=>true,
+		'id'=>$id
 	]);
 }
 

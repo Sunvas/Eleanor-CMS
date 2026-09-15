@@ -42,7 +42,7 @@ return[
 	'totp-digits-7'=>'7 - усиленно',
 	'totp-digits-8'=>'8 - параноидально',
 	'totp-qr'=>'Отсканируйте QR код при помощи <em>Aegis</em> или <em>Google Authenticator</em>.',
-	'totp-code'=>'Введите код из приложения',
+	'totp-code'=>'Код из приложения',
 	'totp-delete'=>'Отключить одноразовые коды',
 
 	'rc-empty'=>'Отсутствуют',

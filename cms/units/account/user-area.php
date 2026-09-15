@@ -45,19 +45,6 @@ function AvatarSalt():string
 	return \base_convert(\random_int(1,60466175),10,36);
 }
 
-/** Generate a 60-bit recovery code.
- * @throws \Random\RandomException */
-function RecoveryCode():string
-{
-	$alphabet='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-	$code='';
-
-	for($i=0;$i<12;$i++)
-		$code.=$alphabet[\random_int(0,31)];
-
-	return $code;
-}
-
 /** Signing in
  * @param Classes\Uri $Uri
  * @return string|array */
@@ -85,7 +72,7 @@ SQL ,[CMS::$a11n]);
 
 		# PHP 8.6: migrate to pipe operator
 		# Sign in by username and password
-		if(!\array_all([$_POST['username'] ?? 0,$_POST['password'] ?? 0,$_POST['captcha'] ?? 0],fn($t)=>\is_string($t)) or !isset($_POST['temp']))
+		if(!\array_all([$_POST['username'] ?? 0,$_POST['password'] ?? 0],fn($t)=>\is_string($t)) or !isset($_POST['temp']))
 			return[
 				'ok'=>false,
 				'error'=>'INSUFFICIENT'
@@ -117,7 +104,7 @@ SQL ,[$_POST['username']]);
 		if($user['seconds']!==null and $user['seconds']<AUTH_RETRY_INTERVAL and !\CMS\Classes\hCaptcha::Check('captcha'))
 			return[
 				'ok'=>false,
-				'error'=>CMS::$config['system']['hcaptcha_secret'] ? 'CAPTCHA' : 'W8',
+				'error'=>'W8',
 				'seconds'=>AUTH_RETRY_INTERVAL,
 				'remain'=>AUTH_RETRY_INTERVAL-$user['seconds']
 			];
@@ -285,24 +272,24 @@ SELECT `name`, `groups`, `password_changed_at`, `totp_secret` IS NOT NULL `totp_
 FROM `users`
 WHERE `id`=$id
 SQL);
-	$me=SingleFetch($R);
+	$user=SingleFetch($R);
 
 	# Data normalization
-	$me['groups']=\json_decode($me['groups'],true);
-	$me['totp_enabled']=(bool)$me['totp_enabled'];
-	$me['available_recovery_codes']=(int)$me['available_recovery_codes'];
+	$user['groups']=\json_decode($user['groups'],true);
+	$user['totp_enabled']=(bool)$user['totp_enabled'];
+	$user['available_recovery_codes']=(int)$user['available_recovery_codes'];
 
 	# Fetching user groups
-	if($me['groups'])
+	if($user['groups'])
 	{
 		$R=CMS::$Db->Execute(<<<SQL
 SELECT `id`, `title` FROM `groups` WHERE `id` IN (?)
-SQL ,[join(',',$me['groups'])]);
-		$me['groups']=$R->fetch_all(\MYSQLI_ASSOC);
+SQL ,[join(',',$user['groups'])]);
+		$user['groups']=$R->fetch_all(\MYSQLI_ASSOC);
 		$R->free();
 	}
 
-	return(CMS::$T)('Overview',$me,MIN_PASSWORD_LENGTH,RecoveryGraceRemaining());
+	return(CMS::$T)('Overview',$user,MIN_PASSWORD_LENGTH,RecoveryGraceRemaining());
 }
 
 /** Get the remaining account recovery grace period, in seconds.
@@ -313,32 +300,11 @@ function RecoveryGraceRemaining():int
 	$R=CMS::$Db->Execute(<<<'SQL'
 SELECT TIMESTAMPDIFF(SECOND, `created`, NOW())
 FROM `a11n_userarea`
-WHERE `a11n_id`=? AND `user_id`=? AND `way`='recovery-code' AND `created`>NOW() - INTERVAL ? SECOND
+WHERE `a11n_id`=? AND `user_id`=? AND `way`='recovery' AND `created`>NOW() - INTERVAL ? SECOND
 SQL ,[CMS::$a11n,CMS::$A->current,RECOVERY_GRACE_PERIOD]);
 	$grace=SingleFetch($R,true);
 
 	return $grace===false ? 0 : RECOVERY_GRACE_PERIOD-$grace;
-}
-
-/** Verify and consume a recovery code.
- * @param string $code Recovery code to verify.
- * @param string $json_hashes JSON array of hashed recovery codes.
- * @return bool True if the code was valid and consumed successfully.
- * @throws \Throwable */
-function VerifyRecoveryCode(string$code,string$json_hashes):bool
-{
-	$hashes=\json_decode($json_hashes,true);
-	$code=\preg_replace('#[^\da-z]+#i','',$code)
-			|> \strtoupper(...);
-
-	if(\is_array($hashes))
-		foreach($hashes as $hash)
-			if(\password_verify($code,$hash))
-				return CMS::$Db->Update('users',[
-					'recovery_codes'=>fn()=>'JSON_REMOVE(`recovery_codes`,JSON_UNQUOTE(JSON_SEARCH(`recovery_codes`, "one", ?)))',
-				],'`id`=? AND ? MEMBER OF(`recovery_codes`)',[$hash,CMS::$A->current,$hash])>0;
-
-	return false;
 }
 
 /** Change the current user's password.
@@ -369,21 +335,23 @@ SELECT `password_hash`, `totp_secret`, `totp_digits`, `recovery_codes`
 FROM `users`
 WHERE `id`=?
 SQL ,[CMS::$A->current]);
-	$data=SingleFetch($R);
+	$user=SingleFetch($R);
 
-	if(\password_verify($_POST['password'],$data['password_hash']))
+	if(\password_verify($_POST['password'],$user['password_hash']))
 		return[
 			'ok'=>false,
 			'error'=>'CURRENT_PASSWORD_USED'
 		];
 
+	include CMS.'recovery-codes.php';
+
 	if(RecoveryGraceRemaining())
 		$way='';
-	elseif($data['password_hash']==='' or \password_verify($_POST['verification'],$data['password_hash']))
+	elseif($user['password_hash']==='' or \password_verify($_POST['verification'],$user['password_hash']))
 		$way='password';
-	elseif($data['totp_secret']!==null and TOTP::Verify($data['totp_secret'],$_POST['verification'],(int)$data['totp_digits']))
+	elseif($user['totp_secret']!==null and TOTP::Verify($user['totp_secret'],$_POST['verification'],(int)$user['totp_digits']))
 		$way='totp';
-	elseif($data['recovery_codes'] and VerifyRecoveryCode($_POST['verification'],$data['recovery_codes']))
+	elseif($user['recovery_codes'] and VerifyRecoveryCode($_POST['verification'],$user['recovery_codes']))
 		$way='recovery-code';
 	else
 		return[
@@ -556,6 +524,7 @@ SQL ,[CMS::$A->current]);
 		];
 	}
 
+	include CMS.'recovery-codes.php';
 	$codes=$hashes=[];
 
 	for($i=0;$i<RECOVERY_CODE_COUNT;$i++)
@@ -596,15 +565,17 @@ SELECT `password_hash`, `totp_secret`, `totp_digits`, `recovery_codes`
 FROM `users`
 WHERE `id`=?
 SQL ,[CMS::$A->current]);
-	$data=SingleFetch($R);
+	$user=SingleFetch($R);
 
-	if($data['password_hash']==='' or \password_verify($test,$data['password_hash']))
+	if($user['password_hash']==='' or \password_verify($test,$user['password_hash']))
 		return 'password';
 
-	if($data['totp_secret']!==null and TOTP::Verify($data['totp_secret'],$test,(int)$data['totp_digits']))
+	if($user['totp_secret']!==null and TOTP::Verify($user['totp_secret'],$test,(int)$user['totp_digits']))
 		return 'totp';
 
-	if($data['recovery_codes'] and VerifyRecoveryCode($test,$data['recovery_codes']))
+	include CMS.'recovery-codes.php';
+
+	if($user['recovery_codes'] and VerifyRecoveryCode($test,$user['recovery_codes']))
 		return 'recovery-code';
 
 	return[

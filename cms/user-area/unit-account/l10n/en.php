@@ -42,7 +42,7 @@ return[
 	'totp-digits-7'=>'7 - enhanced',
 	'totp-digits-8'=>'8 - paranoid',
 	'totp-qr'=>'Scan the QR code via <em>Aegis</em> or <em>Google Authenticator</em>',
-	'totp-code'=>'Enter the code from the app',
+	'totp-code'=>'Code from the app',
 	'totp-delete'=>'Disable onetime passcodes',
 
 	'rc-empty'=>'Empty',

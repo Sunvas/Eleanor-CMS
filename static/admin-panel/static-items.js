@@ -65,7 +65,7 @@
 					coreui.Modal.getOrCreateInstance(this.$refs.confirm).show();
 
 					$(this.$refs.confirm)
-						.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())// Blur focused element before hiding
+						.one("hide.coreui.modal",()=>$(":focus",this.$refs.confirm).blur())// Blur the focused element before hiding
 						.one("hidden.coreui.modal",()=>resolve(this.confirmed))
 						.one("shown.coreui.modal",()=>$(this.$refs.confirm_dismiss).focus());
 				});

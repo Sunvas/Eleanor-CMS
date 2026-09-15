@@ -3,6 +3,7 @@
 namespace CMS;
 
 use CMS\Classes\Paginator;
+use Eleanor\Classes\{E, TOTP};
 
 /** Admin of unit "users"
  * @var Classes\Uri4AdminPanel $Uri
@@ -10,8 +11,12 @@ use CMS\Classes\Paginator;
  * @var int &$code Response code
  * @var int|string &$cache Defines cache on client (int specifies the number of seconds for which the result should be cached, string means etag content) */
 
-/** Minimum password length */
-const MIN_PASSWORD_LENGTH=10;
+const
+	/** Minimum password length */
+	MIN_PASSWORD_LENGTH=10,
+
+	/** Number of recovery codes generated for a user. */
+	RECOVERY_CODE_COUNT=10;
 
 /** Checking availability of username
  * @param string $name Name to be checked
@@ -32,7 +37,7 @@ SQL ,[$name]);
 /** Userlist
  * @param bool $is_root Only administrators have right to edit users, site team can only view the list
  * @return array|string */
-function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
+function Users(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 {
 	if(CMS::$json)
 	{
@@ -41,42 +46,131 @@ function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 				'ok'=>false
 			];
 
-		#User removal
+		$id=(int)($_GET['user'] ?? 0);
+
+		# User removal
 		if(CMS::$delete)
 		{
-			$id=(int)($_GET['user'] ?? 0);
-
 			if(!$id or $id==CMS::$A->current)
 				return[
 					'ok'=>false
 				];
 
-			#Removing users
+			# Removing users
 			CMS::$Db->Delete('users','`id`='.$id);
 
-			#Removing avatar
+			# Removing avatar
 			$avatars=\glob(STATIC_PATH."avatars/$id-*.webp",\GLOB_NOSORT);
 
 			if($avatars)
-				array_walk($avatars,fn($avatar)=>\Eleanor\Classes\Files::Delete($avatar));
+				\array_walk($avatars,fn($avatar)=>\Eleanor\Classes\Files::Delete($avatar));
 
 			return[
 				'ok'=>true
 			];
 		}
 
-		#User create & update
+		$action=$_GET['action'] ?? '';
+
 		if(CMS::$post)
 		{
-			$id=(int)($_GET['user'] ?? 0);
+			# Request otpauth:// URI for TOTP qr code
+			if($action==='totp')
+			{
+				# PHP 8.6: migrate to pipe operator
+				if(!\array_all([$_POST['issuer'] ?? 0,$_POST['digits'] ?? 0],fn($t)=>\is_string($t)))
+					return['ok'=>false];
+
+				$secret=\random_bytes(32);
+				$digits=(int)$_POST['digits'];
+
+				try{
+					$name=GetUserData('name',$id);
+				}
+				catch(E){
+					return['ok'=>false];
+				}
+
+				# PHP 8.6: migrate to clamp function
+				if($digits<6 or $digits>8)
+					$digits=6;
+
+				return[
+					'ok'=>true,
+					'uri'=>Totp::Uri($_POST['issuer'],$name,$secret,$digits),
+					'secret'=>\bin2hex($secret),
+				];
+			}
+
+			# User create & update
 			$data=[];
 
-			#Storing string data
+			# Storing TOTP
+			if(isset($_POST['secret'],$_POST['digits'],$_POST['code']))
+			{
+				if(!\array_all([$_POST['secret'] ?? 0,$_POST['digits'] ?? 0,$_POST['code'] ?? 0],fn($t)=>\is_string($t))
+					or !ctype_xdigit($_POST['secret']) or \strlen($_POST['secret'])!=64 or !\is_numeric($_POST['digits']))
+					return[
+						'ok'=>false,
+						'error'=>'INSUFFICIENT'
+					];
+
+				$secret=\hex2bin($_POST['secret']);
+				$digits=(int)$_POST['digits'];
+
+				# PHP 8.6: migrate to clamp function
+				if($digits<6 or $digits>8)
+					$digits=6;
+
+				if(!Totp::Verify($secret,$_POST['code'],$digits))
+					return[
+						'ok'=>false,
+						'error'=>'INCORRECT_CODE'
+					];
+
+				$data['totp_secret']=$secret;
+				$data['totp_digits']=$digits;
+			}
+
+			# Storing recovery codes
+			if(isset($_POST['recovery_codes'],$_POST['session_id']))
+			{
+				if(!\array_all([$_POST['recovery_codes'] ?? 0,$_POST['session_id'] ?? 0],fn($t)=>\is_string($t)))
+					return[
+						'ok'=>false,
+						'error'=>'INSUFFICIENT'
+					];
+
+				\session_id($_POST['session_id']);
+				\session_start([
+					'use_cookies'=>false,
+				]);
+
+				if(!\is_array($_SESSION['recovery_codes'] ?? 0))
+					return[
+						'ok'=>false,
+						'error'=>'BROKEN'
+					];
+
+				$hash=\hash('sha3-256',\join('',$_SESSION['recovery_codes']));
+
+				if(!\hash_equals($hash,$_POST['recovery_codes']))
+					return[
+						'ok'=>false,
+						'error'=>'BROKEN'
+					];
+
+				$data['recovery_codes']=\json_encode($_SESSION['recovery_codes'],JSON);
+
+				unset($_SESSION['recovery_codes']);
+			}
+
+			# Storing string data
 			foreach(['name','display_name','info','comment','password',...(L10NS ? ['l10n'] : [])] as $k)
 				if(\is_string($_POST[$k] ?? 0))
 					$data[$k]=$_POST[$k];
 
-			#Name
+			# Name
 			if(isset($data['name']))
 			{
 				if(!CheckName($data['name'],$id))
@@ -91,10 +185,10 @@ function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 					'error'=>'NAME_REQUIRED'
 				];
 
-			#Password
+			# Password
 			if(isset($data['password']))
 			{
-				if(strlen($data['password'])<MIN_PASSWORD_LENGTH)
+				if(\strlen($data['password'])<MIN_PASSWORD_LENGTH)
 					return[
 						'ok'=>false,
 						'error'=>'LOW_PASSWORD_LENGTH'
@@ -117,7 +211,7 @@ function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 					'error'=>'GROUPS_REQUIRED'
 				];
 
-			#Updating user
+			# Updating user
 			if($id)
 			{
 				$amount=CMS::$Db->Update('users',$data,'`id`='.$id);
@@ -127,7 +221,7 @@ function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 				];
 			}
 
-			#Creating user
+			# Creating user
 			$id=CMS::$Db->Insert('users',$data);
 
 			return[
@@ -136,28 +230,54 @@ function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 			];
 		}
 
-		#Sign in into user's account
-		if(isset($_GET['sign-in']))
+		switch($id ? $action : '')
 		{
-			$id=(int)$_GET['sign-in'];
-
-			try{
+			# Sign in into user's account
+			case'sign-in':
 				CMS::$Db->Replace('a11n_userarea',['user_id'=>$id,'a11n_id'=>CMS::$a11n,'way'=>'admin-panel']);
-			}catch(\Throwable){
-				return[
-					'ok'=>false,
-					'error'=>'SOMETHING_WENT_WRONG'
-				];
-			}
 
-			return[
-				'ok'=>true
-			];
+				return[
+					'ok'=>true
+				];
+
+			# Clear TOTP credentials
+			case'delete-totp':
+				CMS::$Db->Update('users',['totp_secret'=>null],'`id`='.$id);
+
+				return[
+					'ok'=>true
+				];
+
+			# Renerating recovery codes
+			case 'recovery-codes':
+				include CMS.'recovery-codes.php';
+				$codes=$hashes=[];
+
+				for($i=0;$i<RECOVERY_CODE_COUNT;$i++)
+				{
+					$code=RecoveryCode();
+
+					$codes[]=$code;
+					$hashes[]=\password_hash($code,\PASSWORD_DEFAULT);
+				}
+
+				\session_start([
+					'use_cookies'=>false,
+				]);
+
+				$hash=\hash('sha3-256',join('',$hashes));
+
+				$_SESSION['recovery_codes']=$hashes;
+
+				return[
+					'ok'=>true,
+					'codes'=>$codes,
+					'hash'=>$hash,
+					'session_id'=>\session_id(),
+				];
 		}
 
-		#Get user's data
-		$id=(int)($_GET['user'] ?? 0);
-
+		# Get check user's name
 		if(\is_string($_GET['check_name'] ?? 0))
 		{
 			if(CheckName($_GET['check_name'],$id))
@@ -171,7 +291,7 @@ function Users(Classes\Uri4AdminPanel $Uri, bool $is_root):array|string
 			];
 		}
 
-		#Load data for modification
+		# Load data for modification
 		$R=CMS::$Db->Query(<<<SQL
 SELECT `name`, `groups`, `l10n`, `display_name`, `avatar`, `info`, `comment` FROM `users` WHERE `id`=$id
 SQL );
@@ -192,7 +312,7 @@ SQL );
 	$page=$pp=null;
 	$where=$params=[];
 
-	#Filter by id and name
+	# Filter by id and name
 	$id=(int)($_GET['id'] ?? 0);
 	$name=\is_string($_GET['name'] ?? 0) ? trim($_GET['name'],'%') : '';
 
@@ -205,7 +325,7 @@ SQL );
 		$params[]="%$name%";
 	}
 
-	#Filter by group
+	# Filter by group
 	$group=(int)($_GET['group'] ?? 0);
 
 	if($group)
@@ -237,9 +357,14 @@ SQL);
 		Redirect($Uri);
 	}
 
+	# Fields available for root admins only
+	$root_only=$is_root
+		? ", `totp_changed_at`, IF(`password_hash`='',1,0) `empty_password`, `totp_secret` IS NOT NULL `totp_enabled`, IFNULL(JSON_LENGTH(`recovery_codes`),0) `available_recovery_codes`, IF(JSON_LENGTH(`recovery_codes`)=0,`recovery_codes_last_used_at`,`recovery_codes_created_at`) `recovery_codes_date`"
+		: '';
+
 	if($params)
 		$R=CMS::$Db->Execute(<<<SQL
-SELECT `id`, `name`, `groups`, IF(`password_hash`='',1,0) `empty_password`, `created`, `activity`, `display_name`, `avatar`, `comment`
+SELECT `id`, `name`, `groups`, `created`, `activity`, `display_name`, `avatar`, `comment`$root_only
 FROM `users`
 $where
 ORDER BY `$sort`$order
@@ -247,7 +372,7 @@ $limit
 SQL, $params);
 	else
 		$R=CMS::$Db->Query(<<<SQL
-SELECT `id`, `name`, `groups`, IF(`password_hash`='',1,0) `empty_password`, `created`, `activity`, `display_name`, `avatar`, `comment`
+SELECT `id`, `name`, `groups`, `created`, `activity`, `display_name`, `avatar`, `comment`$root_only
 FROM `users`
 $where
 ORDER BY `$sort`$order
@@ -258,7 +383,9 @@ SQL);
 		foreach($R as $a)
 		{
 			$a['id']=(int)$a['id'];
+			$a['available_recovery_codes']=(int)$a['available_recovery_codes'];
 			$a['groups']=\json_decode($a['groups'],true) ?? [];
+			$a['totp_enabled']=(bool)$a['totp_enabled'];
 			$a['empty_password']=(bool)$a['empty_password'];
 
 			yield $a;
@@ -299,7 +426,7 @@ function Groups(Classes\Uri4AdminPanel $Uri):array|string
 {
 	if(CMS::$json)
 	{
-		#Group removal
+		# Group removal
 		if(CMS::$delete)
 		{
 			$id=(int)($_GET['group'] ?? 0);
@@ -316,17 +443,17 @@ function Groups(Classes\Uri4AdminPanel $Uri):array|string
 			];
 		}
 
-		#Group create & update
+		# Group create & update
 		if(CMS::$post)
 		{
 			$id=(int)($_GET['group'] ?? 0);
 			$data=[];
 
-			#Roles (not for predefined groups)
+			# Roles (not for predefined groups)
 			if(($id<1 or $id>4) and \is_array($_POST['roles'] ?? 0))
 				$data['roles']=join(',',$_POST['roles']);
 
-			#Slow mode (not for root & team groups)
+			# Slow mode (not for root & team groups)
 			if(($id<1 or $id>2) and isset($_POST['slow_mode']))
 				$data['slow_mode']=(int)$_POST['slow_mode'];
 
@@ -353,7 +480,7 @@ function Groups(Classes\Uri4AdminPanel $Uri):array|string
 				//Extra space for future keys
 			}
 
-			#Updating group
+			# Updating group
 			if($id)
 			{
 				$amount=CMS::$Db->Update('groups',$data,'`id`='.$id);
@@ -363,7 +490,7 @@ function Groups(Classes\Uri4AdminPanel $Uri):array|string
 				];
 			}
 
-			#Creating group
+			# Creating group
 			$id=CMS::$Db->Insert('groups',$data);
 
 			return[
@@ -372,7 +499,7 @@ function Groups(Classes\Uri4AdminPanel $Uri):array|string
 			];
 		}
 
-		#Load data of the group for modification
+		# Load data of the group for modification
 		$id=(int)($_GET['group'] ?? 0);
 
 		$R=CMS::$Db->Query(<<<SQL
@@ -425,7 +552,13 @@ SQL );
 	return(CMS::$T)('groups',\compact('items','roles'));
 }
 
-#Assigning folder with templates
+function SignInHistory()
+{
+	//ToDo!
+	die('?');
+}
+
+# Assigning folder with templates
 if(!CMS::$json)
 	CMS::$T[]=CMS.'admin-panel/'.$this->name;
 
@@ -433,6 +566,7 @@ $is_root=\in_array('root',CMS::$P->roles);
 
 return match($_GET['zone'] ?? ''){
 	'groups'=>$is_root ? Groups($Uri) : Halt(),
+	'sign-in-history'=>$is_root ? SignInHistory($Uri,$is_root) : Halt(),
 	''=>Users($Uri,$is_root),
 	default=>Halt()
 };

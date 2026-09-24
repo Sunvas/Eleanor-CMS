@@ -15,6 +15,7 @@ return[
 	'do-filter'=>'Filter',
 	'copy-id'=>'Copy ID',
 	'modify'=>'Modify',
+	'sign-in-log'=>'Sign-in log',
 	'totp'=>'Onetime passcodes (TOTP)',
 	'recovery-codes'=>'Recovery codes',
 	'sign-in'=>'Sign in',

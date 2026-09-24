@@ -159,9 +159,10 @@ CREATE TABLE `users` (
 	`groups` json NOT NULL COMMENT 'Array of group IDs. Each element is an integer representing a group ID.',
 	`password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
 	`password_changed_at` timestamp NULL DEFAULT NULL COMMENT 'Time when the password was last changed',
-	`totp_secret` binary(32) DEFAULT NULL COMMENT 'Secret for OTP.',
-	`totp_digits` tinyint NOT NULL DEFAULT '6' COMMENT 'Number of OTP digits (6-8).',
-	`totp_changed_at` timestamp NULL DEFAULT NULL COMMENT 'Time when OTP secret was changed, enabled, or disabled.',
+	`totp_secret` binary(32) DEFAULT NULL COMMENT 'Secret for TOTP.',
+	`totp_digits` tinyint NOT NULL DEFAULT '6' COMMENT 'Number of TOTP digits (6-8).',
+	`totp_changed_at` timestamp NULL DEFAULT NULL COMMENT 'Time when TOTP secret was changed, enabled, or disabled.',
+	`totp_used` INT UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Last successfully used TOTP code.',
 	`recovery_codes` json DEFAULT NULL COMMENT 'Array of recovery codes, each hashed with password_hash.',
 	`recovery_codes_created_at` timestamp NULL DEFAULT NULL,
 	`recovery_codes_last_used_at` timestamp NULL DEFAULT NULL COMMENT 'Time when a recovery code was last used',
@@ -177,13 +178,13 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
 
-$tables[]='DROP TABLE IF EXISTS `users_signin_logs`';
-$tables['users_signin_logs']=<<<'SQL'
-CREATE TABLE `users_signin_logs` (
+$tables[]='DROP TABLE IF EXISTS `users_signin_log`';
+$tables['users_signin_log']=<<<'SQL'
+CREATE TABLE `users_signin_log` (
   `user_id` mediumint UNSIGNED NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` enum('OK','WRONG_PASSWORD','WRONG_TOTP','WRONG_RECOVERY_CODE') NOT NULL,
-  `ip` varbinary(16) NOT NULL,
+  `result` enum('OK','WRONG_PASSWORD','WRONG_TOTP','WRONG_RECOVERY_CODE') NOT NULL,
+  `ip` varbinary(16) NOT NULL DEFAULT 0x0,
   `ua` varchar(140) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
@@ -273,7 +274,7 @@ ALTER TABLE `users`
 SQL;
 
 $tables['users_signin_logs_primary']=<<<'SQL'
-ALTER TABLE `users_signin_logs`
+ALTER TABLE `users_signin_log`
 	ADD PRIMARY KEY (`user_id`,`date`) USING BTREE,
 	ADD KEY `date` (`date`);
 SQL;
@@ -325,7 +326,7 @@ ALTER TABLE `static_backup`
 SQL;
 
 $tables['users_signin_logs_constraints']=<<<'SQL'
-ALTER TABLE `users_signin_logs`
+ALTER TABLE `users_signin_log`
 	ADD CONSTRAINT `users_signin_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 SQL;
 

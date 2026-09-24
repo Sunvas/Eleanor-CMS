@@ -44,26 +44,44 @@ HTML;
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-lg-4">
-				<div class="card-group d-block d-md-flex row" id="sign-in"></div>
+				<main class="card-group d-block d-md-flex row" id="sign-in"></main>
 				<script id="sign-in-tpl" type="text/x-template">
 					<div class="card col-md-7 p-4 mb-0">
 						<form class="card-body" @submit.prevent="Submit">
 							<h1 class="h2"><?=$l10n['admin-panel']?></h1>
 							<div class="input-group mb-2">
 								<label class="input-group-text" for="username"><i class="fa-solid fa-user-tie"></i></label>
-								<input tabindex="1" class="form-control" type="text" id="username" ref="username" placeholder="<?=$l10n['username']?>" autocomplete="username" v-model.trim="username" :disabled="loading" autofocus required>
+								<input tabindex="1" class="form-control" :class="{'is-invalid':wrong_username}" type="text" id="username" ref="username" v-model.trim="username" autocomplete="username" placeholder="<?=$l10n['username']?>" :disabled="loading" autofocus required>
+								<div class="invalid-feedback"><?=$l10n['NOT_FOUND']?></div>
 							</div>
-							<div class="input-group mb-3">
-								<label class="input-group-text" for="password"><i class="fa-solid fa-lock"></i></label>
-								<input tabindex="1" class="form-control" type="password" id="password" ref="password" placeholder="<?=$l10n['password']?>" autocomplete="current-password" v-model="password" :disabled="loading" required>
-							</div>
-							<div v-if="hcaptcha" ref="hcaptcha" class="mb-2" data-tabindex="1"></div>
+							<fieldset>
+								<legend v-if="recovery" class="mb-0"><?=$l10n['2of3']?></legend>
+								<div class="input-group mb-2">
+									<label class="input-group-text" for="password"><i class="fa-solid fa-lock"></i></label>
+									<input tabindex="1" class="form-control" :class="{'is-invalid':wrong_password}" type="password" id="password" ref="password" v-model="password" autocomplete="current-password" placeholder="<?=$l10n['password']?>" :disabled="loading" :required="required || !recovery">
+									<div class="invalid-feedback"><?=$l10n['WRONG_PASSWORD']?></div>
+								</div>
+								<div class="input-group mb-2" v-if="totp_field || recovery">
+									<label class="input-group-text" for="totp"><i class="fa-solid fa-key"></i></label>
+									<input tabindex="1" class="form-control" :class="{'is-invalid':wrong_totp}" ref="totp" id="totp" v-model="totp" autocomplete="off" minlength="6" maxlength="8" inputmode="numeric" pattern="\d+" placeholder="<?=$l10n['totp']?>" :disabled="loading" :required="required || totp_required">
+									<div class="invalid-feedback"><?=$l10n['WRONG_TOTP']?></div>
+								</div>
+								<div class="input-group mb-2" v-if="recovery">
+									<label class="input-group-text" for="recovery_code"><i class="fa-solid fa-person-through-window"></i></label>
+									<input tabindex="1" class="form-control" id="recovery_code" v-model.trim="recovery_code" autocomplete="off" placeholder="<?=$l10n['recovery_code']?>" :disabled="loading" :required>
+								</div>
+							</fieldset>
+							<div v-if="hcaptcha" ref="hcaptcha" class="mt-1 mb-2" data-tabindex="1"></div>
 							<div class="row">
-								<div class="col-6">
+								<div class="col-auto">
 									<button tabindex="1" type="submit" class="btn btn-primary bg-gradient px-4" :disabled="loading"><?=$l10n['sign-in']?></button>
 								</div>
-								<div class="col-6 text-end">
-									<button tabindex="1" type="button" class="btn btn-link px-0" @click="Forgot"><?=$l10n['forgotten']?></button>
+								<div class="col" :class="{'text-center':recovery,'text-end':!recovery}">
+									<button tabindex="1" type="button" class="btn btn-outline-secondary" v-if="recovery" @click="Back"><?=$l10n['back']?></button>
+									<button tabindex="1" type="button" class="btn btn-outline-secondary" v-else @click="Recovery"><?=$l10n['recovery']?></button>
+								</div>
+								<div class="col-auto text-end" v-if="recovery">
+									<button tabindex="1" type="button" class="btn btn-outline-secondary" @click="Forgot" title="<?=$l10n['forgotten']?>"><i class="fa-solid fa-lock-open"></i></button>
 								</div>
 							</div>
 						</form>

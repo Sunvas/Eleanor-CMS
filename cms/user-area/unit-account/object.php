@@ -22,7 +22,7 @@ return new class {
 			[$this->l10n['overview'],$links['overview']],
 			[$this->l10n['settings'],$links['settings']],
 			[$this->l10n['sessions'],$links['sessions']],
-			[$this->l10n['sign-in-history'],$links['sign-in-history']],
+			[$this->l10n['sign-in-log'],$links['sign-in-log']],
 			$this->l10n['user-sign-in'],
 		];
 
@@ -48,7 +48,7 @@ return new class {
 				[$this->l10n['overview'],$links['overview']],
 				[$this->l10n['settings'],$links['settings']],
 				[$this->l10n['sessions'],$links['sessions']],
-				[$this->l10n['sign-in-history'],$links['sign-in-history']],
+				[$this->l10n['sign-in-log'],$links['sign-in-log']],
 				$this->l10n['user-sign-in'],
 			];
 			$loading=$this->Loading();
@@ -65,13 +65,28 @@ return new class {
 			<th class="label">
 				<label for="username">{$this->l10n['username']}</label>
 			</th>
-			<td><input tabindex="1" type="text" id="username" autocomplete="username" v-model.trim="username" :disabled="loading" autofocus required></td>
+			<td><input tabindex="1" :class="{error:wrong_username}" type="text" id="username" ref="username" v-model.trim="username" autocomplete="username" :disabled="loading" autofocus required></td>
+		</tr>
+		<tr v-if="recovery" class="infolabel">
+			<th colspan="2">{$this->l10n['2of3']}</th>
 		</tr>
 		<tr>
 			<th class="label">
 				<label for="password">{$this->l10n['password']}</label>
 			</th>
-			<td><input tabindex="1" type="password" id="password" autocomplete="current-password" v-model="password" :disabled="loading" required></td>
+			<td><input tabindex="1" :class="{error:wrong_password}" type="password" id="password" ref="password" v-model="password" autocomplete="current-password" :disabled="loading" :required="required || !recovery"></td>
+		</tr>
+		<tr v-if="totp_field || recovery">
+			<th class="label">
+				<label for="totp">{$this->l10n['totp']}</label>
+			</th>
+			<td><input tabindex="1" :class="{error:wrong_totp}" type="text" id="totp" ref="totp" v-model="totp" autocomplete="off" :disabled="loading" minlength="6" maxlength="8" inputmode="numeric" pattern="\d+" :required="required || totp_required"></td>
+		</tr>
+		<tr v-if="recovery">
+			<th class="label">
+				<label for="recovery_code">{$this->l10n['recovery_code']}</label>
+			</th>
+			<td><input tabindex="1" type="text" id="recovery_code" v-model.trim="recovery_code" autocomplete="off" :disabled="loading" :required></td>
 		</tr>
 		<tr>
 			<th class="label">
@@ -86,7 +101,9 @@ return new class {
 		<tr>
 			<th></th>
 			<td>
-				<input tabindex="1" type="submit" value="{$this->l10n['sign-in']}" :disabled="loading">
+				<input tabindex="1" type="submit" value="{$this->l10n['sign-in']}" :disabled="loading" style="margin-right: 2em">
+				<input tabindex="1" type="button" value="{$this->l10n['back']}" v-if="recovery" @click.prevent="Back">
+				<input tabindex="1" type="button" value="{$this->l10n['recovery']}" v-else @click.prevent="Recovery">
 			</td>
 		</tr>
 	</table>
@@ -196,7 +213,7 @@ HTML;
 			$this->l10n['overview'],
 			[$this->l10n['settings'],$links['settings']],
 			[$this->l10n['sessions'],$links['sessions']],
-			[$this->l10n['sign-in-history'],$links['sign-in-history']],
+			[$this->l10n['sign-in-log'],$links['sign-in-log']],
 			[$this->l10n['user-sign-in'],$links['sign-in']],
 		];
 		$data=\compact('me','rgr');
@@ -266,7 +283,7 @@ HTML;
 <hr>
 <table class="tabstyle tabform">
 	<tr class="infolabel">
-		<th colspan="2">{$this->l10n['totp']}</th>
+		<th colspan="2">{$this->l10n['totps']}</th>
 	</tr>
 	<tr>
 		<th class="label">{$this->l10n['state']}</th>
@@ -308,7 +325,7 @@ HTML;
 			<th class="label">
 				<label for="totp_code">{$this->l10n['totp-code']}</label>
 			</th>
-			<td><input tabindex="1" type="text" form="totp-submit" ref="totp_code" id="totp_code" v-model="totp_code" :maxlength="totp_digits" inputmode="numeric" :pattern="`\\\\d{\${totp_digits}}`" autocomplete="off" required></td>
+			<td><input tabindex="1" type="text" form="totp-submit" ref="totp_code" id="totp_code" v-model="totp_code" minlength="6" :maxlength="totp_digits" inputmode="numeric" :pattern="`\\\\d{\${totp_digits}}`" autocomplete="off" required></td>
 		</tr>
 		<tr v-if="verification_required">
 			<th class="label">
@@ -420,7 +437,7 @@ HTML . $this->Loading();
 			[$this->l10n['overview'],$links['overview']],
 			$this->l10n['settings'],
 			[$this->l10n['sessions'],$links['sessions']],
-			[$this->l10n['sign-in-history'],$links['sign-in-history']],
+			[$this->l10n['sign-in-log'],$links['sign-in-log']],
 			[$this->l10n['user-sign-in'],$links['sign-in']],
 		];
 		$id=CMS::$A->current;
@@ -497,35 +514,36 @@ HTML )
 	}
 
 	/** List of user's sessions
-	 * @param array $sessions List of sessions
+	 * @param \Traversable $items List of sessions
 	 * @param int $mtss Months to stale session
 	 * @param string $nonce Default nonce
 	 * @param array $links Default links
 	 * @return string */
-	function Sessions(array$sessions,int$mtss,string$nonce,array$links,...$d):string
+	function Sessions(\Traversable$items,int$mtss,string$nonce,array$links,...$d):string
 	{
 		$menu=[
 			[$this->l10n['overview'],$links['overview']],
 			[$this->l10n['settings'],$links['settings']],
 			$this->l10n['sessions'],
-			[$this->l10n['sign-in-history'],$links['sign-in-history']],
+			[$this->l10n['sign-in-log'],$links['sign-in-log']],
 			[$this->l10n['user-sign-in'],$links['sign-in']],
 		];
 		$current=CMS::$a11n;
 
-		foreach($sessions as &$session)
-		{
-			$session['sort']=strtotime($session['used']);
+		$items=Iterator2Array($items,function($session){
+			$session['sort']=\strtotime($session['used']);
 			$session['used']=$session['used'] ? L10n::Date($session['used']) : '';
 			$session['created']=L10n::Date($session['created']);
-		}
-		$data=\json_encode($sessions,JSON);
+
+			return $session;
+		});
+		$items=\json_encode($items,JSON);
 
 		return CMS::$T->Heading($this->l10n['title'],menu:$menu)
 			->Append(<<<HTML
 <div id="app" class="binner"></div>
 <script src="static/user-area/unit-account-sessions.js" nonce="$nonce" defer data-container="#app" data-template="#app-tpl" data-current="$current" data-data="#app-data"></script>
-<script id="app-data" type="application/json">$data</script>
+<script id="app-data" type="application/json">$items</script>
 <script id="app-tpl" type="text/x-template">
 <table class="tabstyle sessions" style="margin-bottom: 1em">
 	<thead>
@@ -538,7 +556,7 @@ HTML )
 		</tr>
 	</thead>
 	<tbody>
-		<tr class="tabletrline2" v-for="(session,index) in sessions" :class="{current:session.a11n_id==current}" :title="session.a11n_id==current ? l10n.current : ''">
+		<tr class="tabletrline2" v-for="(session,index) in items" :class="{current:session.a11n_id==current}" :title="session.a11n_id==current ? l10n.current : ''">
 			<td v-text="session.ua"></td>
 			<td>
 				<div class="flex">
@@ -562,7 +580,84 @@ HTML )
 			);
 	}
 
-	function Loading(string$cond='loading'):string
+	/** List of user's login attempts
+	 * @param \Traversable $items List of attempts
+	 * @param int $total Total amount of items
+	 * @param string $sort Sorting field
+	 * @param int $pp Page size
+	 * @param bool $desc Flag for descending sorting
+	 * @param string $nonce Default nonce
+	 * @param array $links Default links
+	 * @return string */
+	function SignInLog(\Traversable$items,int$total,string$sort,int$pp,bool$desc,string$nonce,array$links,...$d):string
+	{
+		$menu=[
+			[$this->l10n['overview'],$links['overview']],
+			[$this->l10n['settings'],$links['settings']],
+			[$this->l10n['sessions'],$links['sessions']],
+			$this->l10n['sign-in-log'],
+			[$this->l10n['user-sign-in'],$links['sign-in']],
+		];
+
+		$items=Iterator2Array($items,function($item){
+			$item['ts']=\strtotime($item['date']);
+			$item['date']=L10n::Date($item['date']);
+
+			return $item;
+		});
+		$items=\json_encode(\compact('items','total','pp','sort','desc'),JSON);
+		$paginator=$this->app_paginator();
+		$maxdate=\date('Y-m-d');
+
+		return CMS::$T->Heading($this->l10n['title'],menu:$menu)
+			->Append(<<<HTML
+<div id="app" class="binner"></div>
+<script src="static/user-area/unit-account-sign-in-log.js" nonce="$nonce" defer data-container="#app" data-template="#app-tpl" data-data="#app-data"></script>
+<script id="app-data" type="application/json">$items</script>
+<script id="app-tpl" type="text/x-template">
+<form ref="filter" style="text-align:right; padding:1em 0;">
+	<input type="hidden" v-for="[name,value] in Filter(['date'],false)" :name :value>
+	{$this->l10n['date-filter']} <input type="date" v-model="date" name="date" max="$maxdate" @change="FilterSubmit">
+</form>
+<table class="tabstyle sign-in-log" style="margin-bottom: 1em" v-if="items.length>0">
+	<thead>
+		<tr class="first tablethhead">
+			<th>{$this->l10n['date']}</th>
+			<th>{$this->l10n['result']}</th>
+			<th>IP</th>
+			<th>{$this->l10n['browser']}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="tabletrline2" v-for="(item,index) in items">
+			<td v-text="item.date"></td>
+			<td class="status" :class="{ok:item.result=='OK'}" v-text="l10n[item.result] ?? item.result"></td>
+			<td>
+				<a target="_blank" :href="'https://www.infobyip.com/?ip='+item.ip" v-text="item.ip"></a>
+			</td>
+			<td v-text="item.ua"></td>
+		</tr>
+	</tbody>
+</table>
+<div class="warning" v-else>
+	<img src="static/user-area/images/info.png" alt="">
+	<h4>{$this->l10n['no-records']}</h4>
+	<a v-if="is_filtered" :href="Filter(['date'])">{$this->l10n['clean-filter']}</a>
+	<div class="clr"></div>
+</div>
+$paginator
+</script>
+HTML )
+			->content->BaseBlock()
+			->content->index(
+				title:[$this->l10n['sign-in-log'],$this->l10n['title']],
+			);
+	}
+
+	/** Loading indicator
+	 * @param string $cond Condition for showing
+	 * @return string */
+	private function Loading(string$cond='loading'):string
 	{
 		return<<<HTML
 <teleport to="body">

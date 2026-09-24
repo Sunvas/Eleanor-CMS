@@ -7,10 +7,10 @@ const AUTH_RETRY_INTERVAL=5;
 
 use Eleanor\Assign,
 
-	CMS\Enums\Events,
 	CMS\Classes\Uri4AdminPanel,
 	CMS\Interfaces\AdminPanel;
 
+use CMS\Enums\{Events, SignInAttempt};
 use Eleanor\Classes\{Output, Totp};
 use const Eleanor\SITEDIR;
 
@@ -75,7 +75,7 @@ elseif(!$_SERVER['QUERY_STRING'])
 		]);
 
 	$R=CMS::$Db->Execute(<<<SQL
-SELECT `id`, `name`, `password_hash`, `totp_secret`, `totp_digits`, `recovery_codes`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
+SELECT `id`, `name`, `password_hash`, `totp_secret`, `totp_digits`, `totp_used`, `recovery_codes`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
 FROM `users`
 WHERE `name`=?
 SQL ,[$_POST['username']]);
@@ -90,7 +90,7 @@ SQL ,[$_POST['username']]);
 
 	if(CMS::$A->current==$id)
 		JSON([
-			'ok'=>false,
+			'ok'=>true,
 			'error'=>'ALREADY'
 		]);
 
@@ -123,17 +123,25 @@ SQL ,[$_POST['username']]);
 			'error'=>'ACCESS_DENIED'
 		]);
 
+	$totp_used=false;
+
 	if($recovery)
 	{
 		$counter=0;
 
 		# TOTP verification
-		if($user['totp_secret'] and Totp::Verify($user['totp_secret'],$_POST['totp'],$user['totp_digits']))
+		if($user['totp_secret'] and $user['totp_used']!=$_POST['totp'] and Totp::Verify($user['totp_secret'],$_POST['totp'],$user['totp_digits']))
+		{
 			$counter++;
+			$totp_used=true;
+		}
 
 		# Password verification
 		if(\password_verify($_POST['password'],$user['password_hash']))
 			$counter++;
+
+		if($counter===2)
+			$recovery=false;
 
 		if($counter===1 and $user['recovery_codes'])
 		{
@@ -141,6 +149,8 @@ SQL ,[$_POST['username']]);
 
 			if(VerifyRecoveryCode($_POST['recovery_code'],$user['recovery_codes'],$id))
 				$counter++;
+			else
+				SignInAttempt::WrongRecoveryCode->Log($id);
 		}
 
 		if($counter<2)
@@ -152,40 +162,61 @@ SQL ,[$_POST['username']]);
 	else
 	{
 		# TOTP verification
-		if($user['totp_secret'] and !Totp::Verify($user['totp_secret'],$_POST['totp'],$user['totp_digits']))
-			JSON([
-				'ok'=>false,
-				'error'=>'WRONG_TOTP'
-			]);
+		if($user['totp_secret'])
+		{
+			if($user['totp_used']==$_POST['totp'] or !Totp::Verify($user['totp_secret'],$_POST['totp'],$user['totp_digits']))
+			{
+				SignInAttempt::WrongTOTP->Log($id);
+
+				JSON([
+					'ok'=>false,
+					'error'=>'WRONG_TOTP'
+				]);
+			}
+
+			$totp_used=true;
+		}
 
 		# Emergency password reset: accept and store a new password if the hash was manually cleared
 		$emergency=$_POST['password'] && $user['password_hash']==='';
 
 		# Password verification
 		if(!$emergency and !\password_verify($_POST['password'],$user['password_hash']))
+		{
+			SignInAttempt::WrongPassword->Log($id);
+
 			JSON([
 				'ok'=>false,
 				'error'=>'WRONG_PASSWORD'
 			]);
+		}
 
 		# Keep password hash up to date
 		if($emergency or \password_needs_rehash($user['password_hash'],\PASSWORD_DEFAULT))
 			CMS::$Db->Update('users',['password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT)],'`id`='.$user['id']);
 	}
 
-	CMS::$A->SignIn($id);
+	if($totp_used)
+		CMS::$Db->Update('users',['totp_used'=>(int)$_POST['totp']],'`id`='.$user['id']);
+
+	$way=$recovery ? 'recovery' : 'sign-in';
+
+	CMS::$A->SignIn($id,false,['way'=>$way]);
 
 	Events::UserSignedIn->Trigger([
 		'id'=>$id,
-		'way'=>$recovery ? 'recovery' : 'sign-in',
+		'way'=>$way,
 		'where'=>'admin-panel',
 		'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
 		'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
 	]);
 
+	SignInAttempt::Ok->Log($id);
+
 	JSON([
 		'ok'=>true,
-		'id'=>$id
+		'id'=>$id,
+		'recovery'=>$recovery,
 	]);
 }
 

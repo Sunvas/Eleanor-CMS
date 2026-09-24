@@ -28,6 +28,7 @@
 			slug:"",
 			title:"",
 			reset:['sort','order','id','slug','title'],// const for clearing purpose
+			is_filtered:false,
 
 			// Confirmation modal
 			confirm:"",
@@ -38,12 +39,6 @@
 			creating_title:"",
 			saving:false,
 		}),
-		computed:{
-			/** It shows that there are some filters applied to the userlist */
-			is_filtered(){
-				return !!(this.id || this.slug || this.title);
-			},
-		},
 		methods:{
 			LangChanged(){
 				if(l10ns_enabled)
@@ -148,6 +143,9 @@
 			for(const f of ["id","slug","title","lang"])
 				if(this.USP.has(f))
 					this[f]=this.USP.get(f);
+
+			if(this.id || this.slug || this.title)
+				this.is_filtered=true;
 		}
 	}).mount(container);
 })(document.currentScript.dataset);

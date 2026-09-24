@@ -28,7 +28,7 @@ $data=\compact('items','can_create','can_delete','total','pp','sort','desc')
 
 $confirm=require __DIR__.'/../includes/dialog-confirm.php';
 $say_total=$l10n['say-total']($total);
-$paginator=(CMS::$T)('app-paginator');
+$paginator=(CMS::$T)('app_paginator');
 
 $template=<<<HTML
 <div class="d-flex gap-1 gap-md-2 mb-2">
@@ -42,7 +42,7 @@ $template=<<<HTML
 		<button type="button" class="btn bg-gradient d-block d-lg-none" :class="is_filtered ? 'btn-info' : 'btn-secondary'" title="{$l10n['filter']}" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter"></i></button>
 		<button type="button" class="btn bg-gradient d-none d-lg-block" :class="is_filtered ? 'btn-info' : 'btn-secondary'" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter me-2"></i> {$l10n['filter']}</button>
 		<form class="dropdown-menu dropdown-menu-end p-3 bg-body-secondary" style="min-width:18rem">
-			<input type="hidden" v-for="[name,value] in Filter(['id','title','slug'],false)" :name :value />
+			<input type="hidden" v-for="[name,value] in Filter(['id','title','slug'],false)" :name :value>
 			<p v-if="id" class="d-flex mb-1">
 				<span>{$l10n['by-id']}</span>
 				<mark v-text="id" class="py-0 ms-1"></mark>
@@ -75,18 +75,18 @@ $template=<<<HTML
 					<a :href="Sort('id')" class="text-decoration-none">ID</a>
 				</th>
 				<th class="bg-body-secondary">
-					<i v-if="sort=='title'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-up-a-z'"></i>
+					<i v-if="sort=='title'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-down-a-z'"></i>
 					<a :href="Sort('title')" class="text-decoration-none">{$l10n['caption']}</a>
 					<a :href="Filter(['sort','order'])" v-if="sort=='title'" class="ms-3 small"><i class="fa-solid fa-xmark"></i></a>
 				</th>
 				<th class="bg-body-secondary">
-					<i v-if="sort=='slug'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-up-a-z'"></i>
+					<i v-if="sort=='slug'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-down-a-z'"></i>
 					<a :href="Sort('slug')" class="text-decoration-none">{$l10n['slug']}</a>
 					<a :href="Filter(['sort','order'])" v-if="sort=='slug'" class="ms-3 small"><i class="fa-solid fa-xmark"></i></a>
 				</th>
 				<th class="bg-body-secondary">{$l10n['status']}</th>
 				<th class="bg-body-secondary" colspan="2">
-					<i v-if="sort=='modified'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-up-a-z'"></i>
+					<i v-if="sort=='modified'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-down-a-z'"></i>
 					<a :href="Sort('modified')" class="text-decoration-none">{$l10n['modified']}</a>
 					<a :href="Filter(['sort','order'])" v-if="sort=='modified'" class="ms-3 small"><i class="fa-solid fa-xmark"></i></a>
 				</th>

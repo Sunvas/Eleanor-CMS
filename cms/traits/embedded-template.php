@@ -7,7 +7,7 @@ trait EmbeddedTemplate
 {
 	function __call(string$n,array$a):mixed
 	{
-		return (\CMS::$T)($n,...$a);
+		return (\CMS\CMS::$T)($n,...$a);
 	}
 
 	/** Return string as-is for appending to template storage.

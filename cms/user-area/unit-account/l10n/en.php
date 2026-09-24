@@ -6,13 +6,18 @@ return[
 	'overview'=>'Overview',
 	'settings'=>'Settings',
 	'sessions'=>'Sessions',
-	'sign-in-history'=>'Sessions',
+	'sign-in-log'=>'Sessions',
 
 	# Sign-in form
 	'user-sign-in'=>'Signing in for user',
 	'use-widget'=>'To log in to your account, use the form on the left',
 	'remember-me'=>'Remember me',
+	'totp'=>'One-time passcode',
+	'recovery_code'=>'Recovery code',
 	'sign-in'=>'Sign in',
+	'recovery'=>'Account recovery',
+	'2of3'=>'2 of 3',
+	'back'=>'Back',
 
 	# Overview
 	'username'=>'Username',
@@ -21,7 +26,7 @@ return[
 	'last_login_attempt'=>'Last login attempt',
 	'password_changed_at'=>'Password changed',
 	'change-password'=>'Change password',
-	'totp'=>'Onetime passcodes (TOTP)',
+	'totps'=>'Onetime passcodes (TOTP)',
 	'recovery-codes'=>'Recovery codes',
 	'state'=>'Current state',
 
@@ -63,6 +68,7 @@ return[
 	'info'=>'Information about yourself',
 	'default'=>'By default',
 
+	# Sessions
 	'browser'=>'Browser',
 	'way'=>'Way',
 	'created'=>'Created',
@@ -70,6 +76,7 @@ return[
 	'terminate'=>'Terminate',
 	'sessions-info%'=>'For safety, you cannot terminate earlier sessions, except those that have not been used for more than %d months.',
 
+	# Sign-up form
 	'signing-up'=>'User registration',
 	'username_'=>'Is used for identification and sign in',
 	'password'=>'Password',
@@ -79,9 +86,18 @@ return[
 	'display_name_'=>'If left blank, the username will be used',
 	'register'=>'Register',
 
+	# Sign-in log
+	'date'=>'Date',
+	'result'=>'Result',
+	'no-records'=>'No records found',
+	'date-filter'=>'Date filter:',
+	'clean-filter'=>'Clean filter',
+
+	# Sign-out
 	'signed-out'=>'You have signed out',
 	'signed-out_'=>'Now you\'ll be transferred to main page&hellip;',
 
+	# Errors
 	'EXISTS'=>'Registration completed successfully. You have been authorized on the site.',
 	'USERS_LIMIT'=>'Limit of users is reached',
 ];

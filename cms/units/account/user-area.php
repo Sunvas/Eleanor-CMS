@@ -2,7 +2,8 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-use CMS\Enums\Events;
+use CMS\Classes\Paginator;
+use CMS\Enums\{Events, SignInAttempt};
 use Eleanor\Classes\TOTP;
 
 const
@@ -70,16 +71,15 @@ SQL ,[CMS::$a11n]);
 				'max'=>MAX_USERS
 			];
 
-		# PHP 8.6: migrate to pipe operator
 		# Sign in by username and password
-		if(!\array_all([$_POST['username'] ?? 0,$_POST['password'] ?? 0],fn($t)=>\is_string($t)) or !isset($_POST['temp']))
+		if(!\is_string($_POST['username'] ?? 0) or !is_string($_POST['password'] ?? 0))
 			return[
 				'ok'=>false,
 				'error'=>'INSUFFICIENT'
 			];
 
 		$R=CMS::$Db->Execute(<<<SQL
-SELECT `id`, `name`, `password_hash`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
+SELECT `id`, `name`, `password_hash`, `totp_secret`, `totp_digits`, `totp_used`, `recovery_codes`, TIMESTAMPDIFF(SECOND,`last_login_attempt`,NOW()) `seconds`
 FROM `users`
 WHERE `name`=?
 SQL ,[$_POST['username']]);
@@ -94,9 +94,19 @@ SQL ,[$_POST['username']]);
 
 		if(CMS::$A->current==$id)
 			return[
-				'ok'=>false,
+				'ok'=>true,
 				'error'=>'ALREADY'
 			];
+
+		# Recovery access
+		$recovery=\is_string($_POST['totp'] ?? 0) && is_string($_POST['recovery_code'] ?? 0);
+
+		# TOTP available but not provided
+		if(!$recovery and $user['totp_secret'] and empty($_POST['totp']))
+			JSON([
+				'ok'=>false,
+				'error'=>'TOTP'
+			]);
 
 		CMS::$Db->Update('users',['last_login_attempt'=>fn()=>'NOW()'],'`id`='.$user['id']);
 
@@ -109,34 +119,100 @@ SQL ,[$_POST['username']]);
 				'remain'=>AUTH_RETRY_INTERVAL-$user['seconds']
 			];
 
-		$empty=$user['password_hash']==='';
+		$totp_used=false;
 
-		if($empty or \password_verify($_POST['password'],$user['password_hash']))
+		if($recovery)
 		{
+			$counter=0;
+
+			# TOTP verification
+			if($user['totp_secret'] and $user['totp_used']!=$_POST['totp'] and Totp::Verify($user['totp_secret'],$_POST['totp'],$user['totp_digits']))
+			{
+				$counter++;
+				$totp_used=true;
+			}
+
+			# Password verification
+			if(\password_verify($_POST['password'],$user['password_hash']))
+				$counter++;
+
+			if($counter===2)
+				$recovery=false;
+
+			if($counter===1 and $user['recovery_codes'])
+			{
+				include CMS.'recovery-codes.php';
+
+				if(VerifyRecoveryCode($_POST['recovery_code'],$user['recovery_codes'],$id))
+					$counter++;
+				else
+					SignInAttempt::WrongRecoveryCode->Log($id);
+			}
+
+			if($counter<2)
+				JSON([
+					'ok'=>false,
+					'error'=>'WRONG_CREDENTIALS'
+				]);
+		}
+		else
+		{
+			# TOTP verification
+			if($user['totp_secret'])
+			{
+				if($user['totp_used']==$_POST['totp'] or !Totp::Verify($user['totp_secret'],$_POST['totp'],$user['totp_digits']))
+				{
+					SignInAttempt::WrongTOTP->Log($id);
+
+					JSON([
+						'ok'=>false,
+						'error'=>'WRONG_TOTP'
+					]);
+				}
+
+				$totp_used=true;
+			}
+
+			# Emergency password reset: accept and store a new password if the hash was manually cleared
+			$emergency=$user['password_hash']==='';
+
+			# Password verification
+			if(!$emergency and !\password_verify($_POST['password'],$user['password_hash']))
+			{
+				SignInAttempt::WrongPassword->Log($id);
+
+				JSON([
+					'ok'=>false,
+					'error'=>'WRONG_PASSWORD'
+				]);
+			}
+
 			# Keep password hash up to date
-			if($empty or \password_needs_rehash($user['password_hash'],\PASSWORD_DEFAULT))
+			if($emergency or \password_needs_rehash($user['password_hash'],\PASSWORD_DEFAULT))
 				CMS::$Db->Update('users',['password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT)],'`id`='.$user['id']);
-
-			# FA should be injected somewhere here
-			CMS::$A->SignIn($id,(bool)$_POST['temp'],['way'=>'sign-in']);
-
-			Events::UserSignedIn->Trigger([
-				'id'=>$id,
-				'way'=>'sign-in',
-				'where'=>'user-area',
-				'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
-				'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
-			]);
-
-			return[
-				'ok'=>true,
-				'id'=>$id
-			];
 		}
 
+		if($totp_used)
+			CMS::$Db->Update('users',['totp_used'=>(int)$_POST['totp']],'`id`='.$user['id']);
+
+		$way=$recovery ? 'recovery' : 'sign-in';
+
+		CMS::$A->SignIn($id,!empty($_POST['temp']),['way'=>$way]);
+
+		Events::UserSignedIn->Trigger([
+			'id'=>$id,
+			'way'=>$way,
+			'where'=>'user-area',
+			'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
+			'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
+		]);
+
+		SignInAttempt::Ok->Log($id);
+
 		return[
-			'ok'=>false,
-			'error'=>'WRONG_PASSWORD'
+			'ok'=>true,
+			'id'=>$id,
+			'recovery'=>$recovery,
 		];
 	}
 
@@ -664,6 +740,9 @@ SQL ,[CMS::$a11n,CMS::$A->current]);
 		{
 			$a11n=(int)$_GET['id'];
 
+			if(CMS::$a11n==$a11n)
+				return['ok'=>false];
+
 			$R=CMS::$Db->Execute(<<<SQL
 SELECT `a`.`id`
 FROM `a11n_userarea` `u`
@@ -671,7 +750,7 @@ INNER JOIN `a11n` `a` ON `a`.`id`=`u`.`a11n_id`
 WHERE `a11n_id`=? AND `u`.`user_id`=? AND (`u`.`created`>? OR `a`.`used`<NOW() - INTERVAL ? MONTH)
 SQL ,[$a11n,CMS::$A->current,$current,MONTHS_TO_STALE_SESSION]);
 
-			$amount=$R->num_rows>0
+			$amount=[$R->num_rows>0,$R->free()][0]
 				? CMS::$Db->Delete('a11n_userarea','`a11n_id`=? AND `user_id`=?',[$a11n,CMS::$A->current])
 				: 0;
 
@@ -685,7 +764,6 @@ SQL ,[$a11n,CMS::$A->current,$current,MONTHS_TO_STALE_SESSION]);
 		];
 	}
 
-	$items=[];
 	$R=CMS::$Db->Execute(<<<SQL
 SELECT `u`.`a11n_id`, `u`.`created`, `u`.`way`, `a`.`used`, `a`.`ip`, `a`.`ua`,
 	IF(`u`.`created`>? OR `a`.`used`<NOW() - INTERVAL ? MONTH,1,0) `terminatable`
@@ -693,15 +771,18 @@ FROM `a11n_userarea` `u`
 INNER JOIN `a11n` `a` ON `a`.`id`=`u`.`a11n_id`
 WHERE `u`.`user_id`=? AND `u`.`way`!='admin-panel'
 SQL ,[$current,MONTHS_TO_STALE_SESSION,CMS::$A->current]);
-	foreach($R as $a)
-	{
-		$a['ip']=$a['ip'] ? \inet_ntop($a['ip']) : '';
-		$a['a11n_id']=(int)$a['a11n_id'];
-		$a['terminatable']=(bool)$a['terminatable'];
+	$items=(function()use($R){
+		foreach($R as $a)
+		{
+			$a['ip']=$a['ip'] ? \inet_ntop($a['ip']) : '';
+			$a['a11n_id']=(int)$a['a11n_id'];
+			$a['terminatable']=CMS::$a11n!=$a['a11n_id'] && $a['terminatable'];
 
-		$items[]=$a;
-	}
-	$R->free();
+			yield $a;
+		}
+
+		$R->free();
+	})();
 
 	return(CMS::$T)('Sessions',$items,MONTHS_TO_STALE_SESSION);
 }
@@ -709,14 +790,79 @@ SQL ,[$current,MONTHS_TO_STALE_SESSION,CMS::$A->current]);
 /** List of user login attempts
  * @param Uri $Uri
  * @param int $code
+ * @param string $slug
  * @return string|array */
-function SignInHistory(Uri$Uri,int&$code):array|string
+function SignInLog(Uri$Uri,int&$code,string$slug):array|string
 {
 	if(!CMS::$A->current)
 		Halt(401);
 
-	//ToDo!
-	die;
+	$page=$pp=null;
+	$where=$params=[];
+
+	# Current user id
+	$where['user_id']='`user_id`='.CMS::$A->current;
+
+	# Date filter
+	if(\is_string($_GET['date'] ?? 0))
+		if(\preg_match('#^(\d{4}-\d{2}-\d{2})(?:\.\.(\d{4}-\d{2}-\d{2}))?$#',$_GET['date'],$matches))
+		{
+			$where['date']='`date` BETWEEN ? AND ?';
+			\array_push($params,$matches[1],($matches[2] ?? $matches[1]).' 23:59:59');
+		}
+		elseif(\preg_match('#^(\.\.)?(\d{4}-\d{2}-\d{2})(\.\.)?$#',$_GET['date'],$matches, \PREG_UNMATCHED_AS_NULL))
+		{
+			$where['date']=$matches[1] ? '`date`<=?' : '`date`>=?';
+			$params[]=$matches[2];
+		}
+
+	$where=\join(' AND ',$where);
+
+	if(isset($_GET['total']))
+		$total=(int)$_GET['total'];
+	else
+	{
+		$query=<<<SQL
+SELECT COUNT(`user_id`) FROM `users_signin_log`
+WHERE $where
+SQL;
+
+		$R=$params ? CMS::$Db->Execute($query,$params) : CMS::$Db->Query($query);
+		$total=(int)SingleFetch($R,true);
+	}
+
+	try{
+		[$sort,$order,$limit,$pages]=Paginator::SortOrderLimit($total,['date'],true,$page,$pp);
+	}catch(\OutOfBoundsException){
+		Redirect($Uri($slug),302);
+	}
+
+	$query=<<<SQL
+SELECT `date`, `result`, `ip`, `ua`
+FROM `users_signin_log`
+WHERE $where
+ORDER BY `$sort`$order
+$limit
+SQL;
+
+	$R=$params ? CMS::$Db->Execute($query,$params) : CMS::$Db->Query($query);
+	$items=(function()use($R){
+		foreach($R as $a)
+		{
+			$a['ip']=$a['ip'] ? \inet_ntop($a['ip']) : '';
+
+			yield $a;
+		}
+
+		$R->free();
+	})();
+
+	CMS::$T['prevnext']=[
+		$page>1 ? $Uri($slug) : null,
+		$page<$pages ? $Uri($slug,'',['page'=>$page+1]) : null,
+	];
+
+	return(CMS::$T)('SignInLog',...\compact('items','total','sort','pp'),desc:(bool)$order);
 }
 
 # Parsing uri
@@ -741,7 +887,7 @@ if(!CMS::$json)
 	{
 		CMS::$T['links']['overview']=(string)$Uri;
 
-		foreach(['sign-up','sign-in','sign-out', 'settings','sessions','sign-in-history'] as $link)
+		foreach(['sign-up','sign-in','sign-out', 'settings','sessions','sign-in-log'] as $link)
 			CMS::$T['links'][$link]=$Uri($link);
 	}
 	else
@@ -756,7 +902,7 @@ return match($slug ?? ''){
 
 	'settings'=>Settings($Uri,$code),
 	'sessions'=>Sessions($Uri,$code),
-	'sign-in-history'=>SignInHistory($Uri,$code),
+	'sign-in-log'=>SignInLog($Uri,$code,$slug),
 
 	''=>Overview($Uri,$code),
 	default=>Halt()

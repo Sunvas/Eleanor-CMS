@@ -11,7 +11,7 @@
 			}),
 
 			current:+current,
-			sessions:JSON.parse($(data).text()).toSorted((a,b)=>b.sort-a.sort),
+			items:JSON.parse($(data).text()).toSorted((a,b)=>b.sort-a.sort),
 		}),
 		methods:{
 			/** Terminate selected session */
@@ -26,7 +26,7 @@
 					.then(J)
 					.then(({ok,error})=>{
 						if(ok)
-							this.sessions.splice(index,1);
+							this.items.splice(index,1);
 						else
 							alert(this.l10n[error] ?? error);
 					},r=>r.text().then(console.error));

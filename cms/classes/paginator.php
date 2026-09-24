@@ -34,7 +34,7 @@ class Paginator extends \Eleanor\Basic
 	 * @param ?int $pp Items per page
 	 * @return array
 	 * @throws \OutOfBoundsException */
-	static function SortOrderLimit(int$total,array$sorting,bool$desc=true,?int$page=null,?int&$pp=null):array
+	static function SortOrderLimit(int$total,array$sorting,bool$desc=true,?int&$page=null,?int&$pp=null):array
 	{
 		$pp??=static::PerPage();
 		$page??=(int)($_GET['page'] ?? 1);
@@ -62,7 +62,7 @@ class Paginator extends \Eleanor\Basic
 			default=>$desc ? ' DESC' : ''
 		};
 
-		return[$sort,$order,' LIMIT '.($offset==0 ? '' : $offset.',').$pp,$offset];
+		return[$sort,$order,' LIMIT '.($offset==0 ? '' : $offset.',').$pp,$pages];
 	}
 }
 

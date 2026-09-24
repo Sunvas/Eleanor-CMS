@@ -11,7 +11,7 @@ function Url(USP)
 export default ({total,pp,sort,desc})=>({
 	data:()=>({
 		USP:new URLSearchParams(location.search),
-		pps:[25,50,100,200],
+		pps:[25,50,100,250],
 		page:1,
 		default_sort:"",
 		default_order:1,
@@ -106,7 +106,6 @@ export default ({total,pp,sort,desc})=>({
 
 			USP.delete("pp");
 			USP.delete("page");
-			USP.delete("sort");
 			USP.delete("total");
 
 			return url ? Url(USP) : USP;

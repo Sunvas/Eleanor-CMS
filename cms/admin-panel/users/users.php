@@ -45,7 +45,7 @@ HTML;
 $mpl=MIN_PASSWORD_LENGTH;
 $confirm=require __DIR__.'/../includes/dialog-confirm.php';
 $say_total=$l10n['say-total']($total);
-$paginator=(CMS::$T)('app-paginator');
+$paginator=(CMS::$T)('app_paginator');
 
 $template=<<<HTML
 <div class="d-flex gap-1 gap-md-2 mb-2">
@@ -54,7 +54,7 @@ $template=<<<HTML
 		<button type="button" class="btn bg-gradient d-block d-lg-none" :class="is_filtered ? 'btn-info' : 'btn-secondary'" title="{$l10n['filter']}" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter"></i></button>
 		<button type="button" class="btn bg-gradient d-none d-lg-block" :class="is_filtered ? 'btn-info' : 'btn-secondary'" data-coreui-toggle="dropdown"><i class="fa-solid fa-filter me-2"></i> {$l10n['filter']}</button>
 		<form class="dropdown-menu dropdown-menu-end p-3 bg-body-secondary" style="min-width:18rem">
-			<input type="hidden" v-for="[name,value] in Filter(['name'],false)" :name :value />
+			<input type="hidden" v-for="[name,value] in Filter(['name'],false)" :name :value>
 			<p v-if="id" class="d-flex mb-1">
 				<span>{$l10n['by-id']}</span>
 				<mark v-text="id" class="py-0 ms-1"></mark>
@@ -85,7 +85,7 @@ $template=<<<HTML
 			<tr>
 				<th class="bg-body-secondary text-center" style="width:2.5rem"><i class="fa-solid fa-ellipsis-vertical"></i></th>
 				<th class="bg-body-secondary">
-					<i v-if="sort=='name'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-up-a-z'"></i>
+					<i v-if="sort=='name'" class="fa-solid" :class="desc ? 'fa-arrow-up-z-a' : 'fa-arrow-down-a-z'"></i>
 					<a :href="Sort('name')" class="text-decoration-none">{$l10n['login']}</a>
 					<a :href="Filter(['sort','order'])" v-if="sort=='name'" class="ms-3 small"><i class="fa-solid fa-xmark"></i></a>
 				</th>
@@ -104,7 +104,8 @@ $template=<<<HTML
 					</div>
 					<ul class="dropdown-menu py-0">
 						<li><button class="dropdown-item" type="button" title="{$l10n['copy-id']}" @click="Copy(item,index)"><i class="fa-solid fa-copy me-2"></i> {{item.id.toString().padStart(4,"0")}}</button></li>
-						<template v-if="is_root">
+						<template v-if="is_root || item.id==my_id">
+							<li><a class="dropdown-item" target="_blank" :href="Link2SignInLog(item,index)"><i class="fa-solid fa-address-book me-2"></i> {$l10n['sign-in-log']}</a></li>
 							<li><button class="dropdown-item" type="button" @click="Modify(item,index)"><i class="fa-solid fa-user-pen me-2"></i> {$l10n['modify']}</button></li>
 							<li><button class="dropdown-item" type="button" @click="TOTP(item,index)"><i class="fa-solid fa-key me-2" :class="{'text-success':item.totp_enabled}"></i> {$l10n['totp']}</button></li>
 							<li><button class="dropdown-item" type="button" @click="RecoveryCodes(item,index)"><i class="fa-solid fa-person-through-window me-2" :class="{'text-success':item.available_recovery_codes}" :title="item.available_recovery_codes || ''"></i> {$l10n['recovery-codes']}</button></li>
@@ -151,7 +152,7 @@ $confirm
 				<div class="row mb-1">
 					<div class="col" :class="{'was-validated':user_name_error!==null}">
 						<label for="user-name" class="form-label mb-0">{$l10n['login']}</label>
-						<input type="text" tabindex="1" class="form-control" id="user-name" v-model.lazy="user.name" autocomplete="username" ref="user_name" required maxlength="25">
+						<input type="text" tabindex="1" class="form-control" id="user-name" v-model.lazy="user.name" autocomplete="username" ref="user_name" :disabled="!is_root" required maxlength="25">
 						<div class="invalid-feedback" v-text="user_name_error"></div>
 					</div>
 					<div class="col">
@@ -159,7 +160,7 @@ $confirm
 						<input type="password" tabindex="1" class="form-control" id="user-password" v-model.lazy="user.password" minlength="$mpl" :required="!user_id" autocomplete="new-password">
 					</div>
 				</div>
-				<div class="mb-1">
+				<div class="mb-1" v-if="is_root">
 					<label for="user-groups" class="form-label mb-0">{$l10n['groups']}</label>
 					<select class="form-select" tabindex="1" id="user-groups" multiple size="3" v-model="user.groups" required>
 						<option v-for="group in groups" :value="group.id" v-text="group.title" :class="'group-'+group.id"></option>
@@ -177,7 +178,7 @@ $confirm
 						</select>
 					</div>
 				</div>
-				<div class="mb-1">
+				<div class="mb-1" v-if="is_root">
 					<label for="user-comment" class="form-label mb-0">{$l10n['comment']}</label>
 					<textarea class="form-control" rows="2" id="user-comment" v-model.lazy="user.comment" style="resize:none"></textarea>
 					<small class="form-text">{$l10n['only4admin']}</small>
@@ -255,7 +256,7 @@ $confirm
 					<div class="row align-items-center mb-1">
 						<label class="col-4 pe-0" :class="{'mb-4':totp_wrong}" for="totp_code">{$l10n['totp-code']}</label>
 						<div class="col-8">
-							<input type="text" tabindex="1" class="form-control" :class="{'is-invalid':totp_wrong}" ref="totp_code" id="totp_code" v-model="totp_code" :maxlength="totp_digits" inputmode="numeric" :pattern="`\\\\d{\${totp_digits}}`" autocomplete="off" required>
+							<input type="text" tabindex="1" class="form-control" :class="{'is-invalid':totp_wrong}" ref="totp_code" id="totp_code" v-model="totp_code" minlength="6" :maxlength="totp_digits" inputmode="numeric" :pattern="`\\\\d{\${totp_digits}}`" autocomplete="off" required>
 							<div class="invalid-feedback">{$l10n['totp-wrong']}</div>
 						</div>
 					</div>

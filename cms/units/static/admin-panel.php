@@ -131,16 +131,12 @@ function ListOfItems(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 		$total=(int)$_GET['total'];
 	else
 	{
-		if($params)
-			$R=CMS::$Db->Execute(<<<SQL
-SELECT COUNT(`id`) FROM `static` $where
-SQL, $params);
-		else
-			$R=CMS::$Db->Query(<<<SQL
+		$query=<<<SQL
 SELECT COUNT(`id`) FROM `static`
 $where
-SQL);
+SQL;
 
+		$R=$params ? CMS::$Db->Execute($query,$params) : CMS::$Db->Query($query);
 		$total=(int)SingleFetch($R,true);
 	}
 
@@ -148,31 +144,22 @@ SQL);
 		[$sort,$order,$limit]=Paginator::SortOrderLimit($total,['id','slug','title','modified'],false,$page,$pp);
 	}catch(\OutOfBoundsException){
 		$Uri->amp=false;
-		Redirect($Uri);
+		Redirect($Uri,302);
 	}
 
 	if($multi and \in_array($sort,['slug','title']))
 		$sort=$sort.'_'.$l10n;
 
 	$fields=$multi ? "`slug_$l10n` `slug`, `title_$l10n` `title`, `modified_$l10n` `modified`" : '`slug`, `title`, `modified`';
-
-	if($params)
-		$R=CMS::$Db->Execute(<<<SQL
+	$query=<<<SQL
 SELECT `id`, `status`, $fields
 FROM `static`
 $where
 ORDER BY `$sort`$order
 $limit
-SQL, $params);
-	else
-		$R=CMS::$Db->Query(<<<SQL
-SELECT `id`, `status`, $fields
-FROM `static`
-$where
-ORDER BY `$sort`$order
-$limit
-SQL);
+SQL;
 
+	$R=$params ? CMS::$Db->Execute($query, $params) : CMS::$Db->Query($query);
 	$items=(function()use($R,$l10n){
 		$USU=new Classes\Uri($l10n);# Userspace uri
 
@@ -189,7 +176,7 @@ SQL);
 
 	[$can_create,$can_delete]=$is_root ? [true,true] : Rights();
 
-	return (CMS::$T)('items',\compact('items','total','sort','pp','can_create','can_delete')+['desc'=>(bool)$order]);
+	return (CMS::$T)('items',...\compact('items','total','sort','pp','can_create','can_delete'),desc:(bool)$order);
 }
 
 /** Checking availability of desired slug
@@ -206,7 +193,7 @@ function CheckSlug(string$slug,int$id,string$l10n=''):bool
 SELECT `$field` FROM `static` WHERE `$field`=? AND `id`!=$id LIMIT 1
 SQL ,[$slug]);
 
-	return $R->num_rows>0;
+	return [$R->num_rows>0,$R->free()][0];
 }
 
 /** Remove unused attached files from the folder of the static page

@@ -249,6 +249,10 @@ div.count span {
 .sessions .current { font-style:italic; }
 .sessions .flex { display: flex; justify-content: space-between; gap:1ch; }
 
+/* users sign-in log table */
+.sign-in-log .status { text-align: center; }
+.sign-in-log .ok { color:darkgreen; font-weight:bold; }
+
 .submitline { padding: 10px 8px 5px 8px; text-align: center; background: url("../images/submitline.png") repeat-x 0 0; }
 button, input[type=button], input[type=submit] {
 	border: 1px solid #bdbdbd; color: #747474; font-weight: bold; cursor: pointer;
@@ -426,7 +430,7 @@ ul.topmenu ul a, ul.blockmenu a{
 .blocklogin .dtop { background: transparent url("../images/blocklogin.png") no-repeat left top; }
 .blocklogin .dcont { padding: 8px 15px 10px 15px; }
 .blocklogin .h-captcha > iframe { margin-left: 50%; transform: translateX(-50%); } /* hcaptcha */
-.blocklogin .submit { text-align:center; padding-bottom: 6px; }
+.blocklogin .submit { text-align:center; /*padding-bottom: 6px;*/ }
 .blocklogin hr { margin: 0; }
 .blocklogin .dcont:has(+hr) { padding-bottom: 0; }
 .blocklogin label:has(a) { display: flex; flex-direction: row; justify-content: space-between; }
@@ -751,27 +755,25 @@ table.blocktable th a{ color: #bb3000; }
 }
 
 /* ----- PAGENUMBER ----- */
-div.numbers {}
-div.numbers a,
-div.numbers span { font-weight: bold; }
-
-div.numbers span {
-	padding: 4px 2px;
-	background-color: #eeeeee;
-}
-
-div.numbers span.numbersmore {
-	padding: 4px 2px;
-	background: none;
-	border: none;
-}
-
-div.numbers a { padding: 4px 2px; }
+div.numbers { text-align: center; padding-top:.5em; border-top:1px gray dotted; }
+div.numbers > * { font-weight: bold; padding: .25em 1em; display: inline-block; margin-left: .25em; font-size: 1.1em; }
 div.numbers a:hover {
 	background-color: #ff8200;
 	color: #ffffff;
 	text-decoration: none;
 }
+
+div.numbers a.active {
+	pointer-events: none;
+	color:black;
+	background-color: #eeeeee;
+}
+
+div.numbers span {
+	background: none;
+	border: none;
+}
+
 
 /*рейтинг*/
 .rate {

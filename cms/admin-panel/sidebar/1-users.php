@@ -12,7 +12,7 @@ if($is_root){?>
 	<ul class="nav-group-items compact">
 		<li class="nav-item"><a class="nav-link" href="<?=$Uri?>"><i class="nav-icon fa-solid fa-users-line"></i> <?=$l10n['userlist']?></a></li>
 		<li class="nav-item"><a class="nav-link" href="<?=$Uri(zone:'groups')?>"><i class="nav-icon fa-solid fa-user-group"></i> <?=$l10n['groups']?></a></li>
-		<li class="nav-item"><a class="nav-link" href="<?=$Uri(zone:'sign-in-history')?>"><i class="nav-icon fa-solid fa-users-between-lines""></i> <?=$l10n['sign-in-history']?></a></li>
+		<li class="nav-item"><a class="nav-link" href="<?=$Uri(zone:'sign-in-log')?>"><i class="nav-icon fa-solid fa-address-book""></i> <?=$l10n['sign-in-log']?></a></li>
 	</ul>
 </li>
 <?php }else{?>

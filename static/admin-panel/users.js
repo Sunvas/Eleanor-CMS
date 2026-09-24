@@ -6,8 +6,8 @@
 		user=Object.create(null);
 
 	Vue.createApp({
-		extends:items4,
 		template,
+		extends:items4,
 		data:()=>({
 			// L10n
 			l10n:Object.seal({
@@ -46,6 +46,7 @@
 			name:"",
 			group:"",
 			reset:["sort","order","id","name","group"],// Query keys to clear
+			is_filtered:false,
 
 			// Confirmation modal
 			confirm:"",
@@ -94,11 +95,6 @@
 			changed:new Set,
 		}),
 		computed:{
-			/** Whether userlist filters are applied */
-			is_filtered(){
-				return !!(this.id || this.name || this.group);
-			},
-
 			/** Whether user modal has no unsaved fields */
 			saved(){
 				// true when modal is not shown
@@ -537,7 +533,7 @@
 					});
 			},
 
-			/** Form user replated URL for AJAX requests */
+			/** User replated URL for AJAX requests */
 			UserURL(id,action){
 				const USP=this.Filter(this.reset,false);
 				USP.set("user",id);
@@ -576,6 +572,17 @@
 					item.status_class="bg-danger";
 					item.status_hint="long_ago";
 				}
+			},
+
+			Link2SignInLog({id})
+			{
+				const USP=new URLSearchParams;
+
+				USP.set("u",this.USP.get("u"));
+				USP.set("zone","sign-in-log");
+				USP.set("id",id);
+
+				return location.pathname+"?"+USP.toString();
 			}
 		},
 		created(){
@@ -603,6 +610,9 @@
 			for(const f of ["id","name","group"])
 				if(this.USP.has(f))
 					this[f]=this.USP.get(f);
+
+			if(this.id || this.name || this.group)
+				this.is_filtered=true;
 
 			$(window).on("beforeunload",e=>void(this.saved || e.preventDefault()));
 		}

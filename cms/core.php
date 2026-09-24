@@ -362,7 +362,7 @@ SQL ,[CMS::$a11n]);
 
 			CMS::$Db->Update('a11n',[
 				'used'=>fn()=>'NOW()',
-				'ip'=>CMS::$ip ? $_SERVER['REMOTE_ADDR'] : null,
+				'ip'=>CMS::$ip,
 				'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? '',
 			],'`id`='.CMS::$a11n);
 		}

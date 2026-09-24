@@ -35,18 +35,19 @@ SQL ,[$name]);
 }
 
 /** Userlist
+ * @param Classes\Uri4AdminPanel $Uri
  * @param bool $is_root Only administrators have right to edit users, site team can only view the list
  * @return array|string */
 function Users(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 {
 	if(CMS::$json)
 	{
-		if(!$is_root)
+		$id=(int)($_GET['user'] ?? 0);
+
+		if(!$is_root and $id!==CMS::$A->current)
 			return[
 				'ok'=>false
 			];
-
-		$id=(int)($_GET['user'] ?? 0);
 
 		# User removal
 		if(CMS::$delete)
@@ -166,7 +167,9 @@ function Users(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 			}
 
 			# Storing string data
-			foreach(['name','display_name','info','comment','password',...(L10NS ? ['l10n'] : [])] as $k)
+			foreach(['display_name','info','comment','password',
+					...($is_root ? ['name'] : []),
+					...(L10NS ? ['l10n'] : [])] as $k)
 				if(\is_string($_POST[$k] ?? 0))
 					$data[$k]=$_POST[$k];
 
@@ -203,7 +206,7 @@ function Users(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 					'error'=>'PASSWORD_REQUIRED'
 				];
 
-			if(\is_array($_POST['groups'] ?? 0) and \array_is_list($_POST['groups']))
+			if($is_root and \is_array($_POST['groups'] ?? 0) and \array_is_list($_POST['groups']))
 				$data['groups']=\json_encode($_POST['groups'],JSON);
 			elseif(!$id)
 				return[
@@ -278,7 +281,7 @@ function Users(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 		}
 
 		# Get check user's name
-		if(\is_string($_GET['check_name'] ?? 0))
+		if($is_root and \is_string($_GET['check_name'] ?? 0))
 		{
 			if(CheckName($_GET['check_name'],$id))
 				return[
@@ -337,16 +340,12 @@ SQL );
 		$total=(int)$_GET['total'];
 	else
 	{
-		if($params)
-			$R=CMS::$Db->Execute(<<<SQL
-SELECT COUNT(`name`) FROM `users` $where
-SQL, $params);
-		else
-			$R=CMS::$Db->Query(<<<SQL
+		$query=<<<SQL
 SELECT COUNT(`id`) FROM `users`
 $where
-SQL);
+SQL;
 
+		$R=$params ? CMS::$Db->Execute($query,$params) : CMS::$Db->Query($query);
 		$total=(int)SingleFetch($R,true);
 	}
 
@@ -354,7 +353,7 @@ SQL);
 		[$sort,$order,$limit]=Paginator::SortOrderLimit($total,['id','name'],true,$page,$pp);
 	}catch(\OutOfBoundsException){
 		$Uri->amp=false;
-		Redirect($Uri);
+		Redirect($Uri,302);
 	}
 
 	# Fields available for root admins only
@@ -362,23 +361,15 @@ SQL);
 		? ", `totp_changed_at`, IF(`password_hash`='',1,0) `empty_password`, `totp_secret` IS NOT NULL `totp_enabled`, IFNULL(JSON_LENGTH(`recovery_codes`),0) `available_recovery_codes`, IF(JSON_LENGTH(`recovery_codes`)=0,`recovery_codes_last_used_at`,`recovery_codes_created_at`) `recovery_codes_date`"
 		: '';
 
-	if($params)
-		$R=CMS::$Db->Execute(<<<SQL
+	$query=<<<SQL
 SELECT `id`, `name`, `groups`, `created`, `activity`, `display_name`, `avatar`, `comment`$root_only
 FROM `users`
 $where
 ORDER BY `$sort`$order
 $limit
-SQL, $params);
-	else
-		$R=CMS::$Db->Query(<<<SQL
-SELECT `id`, `name`, `groups`, `created`, `activity`, `display_name`, `avatar`, `comment`$root_only
-FROM `users`
-$where
-ORDER BY `$sort`$order
-$limit
-SQL);
+SQL;
 
+	$R=$params ? CMS::$Db->Execute($query,$params) : CMS::$Db->Query($query);
 	$items=(function()use($R){
 		foreach($R as $a)
 		{
@@ -416,13 +407,13 @@ SQL);
 		$R->free();
 	})();
 
-	return (CMS::$T)('users',\compact('items','groups','total','sort','pp','is_root')+['desc'=>(bool)$order]);
+	return (CMS::$T)('users',...\compact('items','groups','total','sort','pp','is_root'),desc:(bool)$order);
 }
 
 /** List of groups of users
  * @param Classes\Uri4AdminPanel $Uri
  * @return array|string */
-function Groups(Classes\Uri4AdminPanel $Uri):array|string
+function Groups(Classes\Uri4AdminPanel$Uri):array|string
 {
 	if(CMS::$json)
 	{
@@ -552,10 +543,113 @@ SQL );
 	return(CMS::$T)('groups',\compact('items','roles'));
 }
 
-function SignInHistory()
+/** List of sign-in attempts
+ * @param Classes\Uri4AdminPanel $Uri
+ * @param bool $is_root Only administrators have right to see other users' sign-in attempts'
+ * @return array|string */
+function SignInLog(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 {
-	//ToDo!
-	die('?');
+	$page=$pp=null;
+	$where=$params=$uids=[];
+
+	# Filter by id
+	$id=$is_root ? (int)($_GET['id'] ?? 0) : CMS::$A->current;
+
+	if($id>0)
+	{
+		$uids[]=$id;
+		$where[]='`user_id`='.$id;
+	}
+
+	# Date filter
+	if(\is_string($_GET['date'] ?? 0))
+		if(\preg_match('#^(\d{4}-\d{2}-\d{2})(?:\.\.(\d{4}-\d{2}-\d{2}))?$#',$_GET['date'],$matches))
+		{
+			$where['date']='`date` BETWEEN ? AND ?';
+			\array_push($params,$matches[1],($matches[2] ?? $matches[1]).' 23:59:59');
+		}
+		elseif(\preg_match('#^(\.\.)?(\d{4}-\d{2}-\d{2})(\.\.)?$#',$_GET['date'],$matches, \PREG_UNMATCHED_AS_NULL))
+		{
+			$where['date']=$matches[1] ? '`date`<=?' : '`date`>=?';
+			$params[]=$matches[2];
+		}
+
+	# Result filter
+	if(\is_string($_GET['result'] ?? 0) and $_GET['result'])
+	{
+		$where['result']='`result`=?';
+		$params[]=$_GET['result'];
+	}
+
+	$where=$where ? 'WHERE '.\join(' AND ',$where) : '';
+
+	if(isset($_GET['total']))
+		$total=(int)$_GET['total'];
+	else
+	{
+		$query=<<<SQL
+SELECT COUNT(`user_id`) FROM `users_signin_log`
+$where
+SQL;
+
+		$R=$params ? CMS::$Db->Execute($query,$params) : CMS::$Db->Query($query);
+		$total=(int)SingleFetch($R,true);
+	}
+
+	try{
+		[$sort,$order,$limit]=Paginator::SortOrderLimit($total,['date'],true,$page,$pp);
+	}catch(\OutOfBoundsException){
+		$Uri->amp=false;
+		Redirect($Uri(zone:$_GET['zone']),302);
+	}
+
+	$query=<<<SQL
+SELECT `user_id`, `date`, `result`, `ip`, `ua`
+FROM `users_signin_log`
+$where
+ORDER BY `$sort`$order
+$limit
+SQL;
+
+	$R=$params ? CMS::$Db->Execute($query,$params) : CMS::$Db->Query($query);
+	$items=(function()use($R,&$uids){
+		foreach($R as $a)
+		{
+			$a['ip']=$a['ip'] ? \inet_ntop($a['ip']) : '';
+			$a['user_id']=(int)$a['user_id'];
+
+			$uids[]=$a['user_id'];
+
+			yield $a;
+		}
+
+		$R->free();
+	})();
+
+	$users=(function()use(&$uids){
+		$uids=\array_unique($uids);
+
+		if(!$uids)
+			return;
+
+		$in=CMS::$Db->In($uids);
+		$R=CMS::$Db->Query(<<<SQL
+SELECT `id`, `name`, `groups`, `display_name`
+FROM `users`
+WHERE `id`$in
+SQL );
+		foreach($R as $a)
+		{
+			$a['id']=(int)$a['id'];
+			$a['groups']=\json_decode($a['groups'],true);
+
+			yield $a;
+		}
+
+		$R->free();
+	})();
+
+	return(CMS::$T)('sign-in-log',...\compact('items','users','total','sort','pp'),desc:(bool)$order);
 }
 
 # Assigning folder with templates
@@ -566,7 +660,7 @@ $is_root=\in_array('root',CMS::$P->roles);
 
 return match($_GET['zone'] ?? ''){
 	'groups'=>$is_root ? Groups($Uri) : Halt(),
-	'sign-in-history'=>$is_root ? SignInHistory($Uri,$is_root) : Halt(),
+	'sign-in-log'=>$is_root ? SignInLog($Uri,$is_root) : Halt(),
 	''=>Users($Uri,$is_root),
 	default=>Halt()
 };

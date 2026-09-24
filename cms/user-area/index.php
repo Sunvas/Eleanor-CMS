@@ -9,9 +9,10 @@ $title??=$var_0 ?? '';
  * @var string $content Content of the page
  * @var ?array $head Extra injections into head section
  * @var ?array $scripts injection of scripts: values with integer keys will be injected as files, with string values - as scripts themselves
- * @var ?string $jsdelivr JsDelivr script injection via combine
+  * @var ?string $jsdelivr JsDelivr script injection via combine
  * @var ?string $canonical Canonical link to the genuine page
  * Default:
+ * @var ?array $prevnext [Link to previous page, Link to next page]
  * @var array $hreflang Links to alternative language versions of the page */
 
 $head??=[];
@@ -38,7 +39,23 @@ HTML;
 HTML;
 }
 
-#Appending site title to the title of pages
+# Prev/Next links
+if(isset($prevnext))
+{
+	$head['prevnext']='';
+
+	if($prevnext[0])
+		$head['prevnext'].=<<<HTML
+<link rel="prev" href="$prevnext[0]">
+HTML;
+
+	if($prevnext[1])
+		$head['prevnext'].=<<<HTML
+<link rel="next" href="$prevnext[1]">
+HTML;
+}
+
+# Appending site title to the title of pages
 if(\is_array($title))
 	$title[]=\is_array(CMS::$config['site']['title']) ? L10n::Item(CMS::$config['site']['title']) : CMS::$config['site']['title'];
 
@@ -117,10 +134,10 @@ if(isset($hreflang))
 		<aside id="leftcol">
 <?php
 
-#Login widget in the separate file to make code clear
+# Login widget in the separate file to make code clear
 require __DIR__.'/includes/widget-user.php';
 
-#Demo of fluent interface
+# Demo of fluent interface
 echo CMS::$T->BlockLight(title:'Light widget 1',content:'Light content 1')
 	->BlockDark(title:'Dark widget 1',content:'Dark content 1')
 	->BlockLight(title:'Light widget 2',content:'Light content 2')

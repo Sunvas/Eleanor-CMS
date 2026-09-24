@@ -58,7 +58,9 @@ HTML;
 		</div>
 	</div></div></div>
 	<?php
-}else{
+}
+else
+{
 	require_once __DIR__.'/../hcaptcha.php';
 	?>
 	<div class="blocklogin"><div class="dbottom"><div class="dtop">
@@ -68,12 +70,21 @@ HTML;
 	<script id="widget-sign-in-tpl" type="text/x-template">
 		<form @submit.prevent="Submit">
 			<div class="logintext">
-				<label for="block-name"><?=$l10n['username']?></label>
-				<div><div><input tabindex="1" type="text" id="block-name" autocomplete="username" v-model.trim="username" ref="username" :disabled="loading" autofocus required></div></div>
+				<label for="sign-in-username"><?=$l10n['username']?></label>
+				<div><div><input tabindex="1" type="text" id="sign-in-username" ref="username" v-model.trim="username" autocomplete="username" :disabled="loading" autofocus required></div></div>
 			</div>
+			<h5 v-if="recovery" style="text-align:center;margin-top:.75em"><?=$l10n['2of3']?></h5>
 			<div class="logintext">
-				<label for="block-password"><?=$l10n['password']?><a href="#" @click.prevent="Forgot"><?=$l10n['forgotten']?></a></label>
-				<div><div><input tabindex="1" type="password" id="block-password" autocomplete="current-password" v-model="password" ref="password" :disabled="loading" required></div></div>
+				<label for="sign-in-password"><?=$l10n['password']?><a href="#" v-if="recovery" @click.prevent="Back"><?=$l10n['back']?></a><a href="#" v-else @click.prevent="Recovery"><?=$l10n['recovery']?></a></label>
+				<div><div><input tabindex="1" type="password" id="sign-in-password" ref="password" v-model="password" autocomplete="current-password" :disabled="loading" :required="required || !recovery"></div></div>
+			</div>
+			<div class="logintext" v-if="totp_field || recovery">
+				<label for="sign-in-totp"><?=$l10n['totp']?></label>
+				<div><div><input tabindex="1" type="text" id="sign-in-totp" ref="totp" v-model="totp" autocomplete="off" :disabled="loading" minlength="6" maxlength="8" inputmode="numeric" pattern="\d+" :required="required || totp_required"></div></div>
+			</div>
+			<div class="logintext" v-if="recovery">
+				<label for="sign-in-recovery-code"><?=$l10n['recovery_code']?></label>
+				<div><div><input tabindex="1" type="text" id="sign-in-recovery-code" v-model.trim="recovery_code" autocomplete="off" :disabled="loading" :required></div></div>
 			</div>
 			<label title="<?=$l10n['cookie-explain']?>"><input tabindex="1" type="checkbox" v-model="allow_cookie" required :disabled="loading"> <span><?=$l10n['allow-cookie']?></span></label><br>
 			<label><input tabindex="1" type="checkbox" v-model="remember_me" :disabled="loading"> <span><?=$l10n['remember-me']?></span></label>

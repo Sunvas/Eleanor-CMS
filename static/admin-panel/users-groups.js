@@ -174,7 +174,7 @@
 			});
 		},
 
-		/** Submitting group modification form */
+		/** Submitting the group modification form */
 		async Submit(){
 			const
 				store=this.group_id ? {} : {...this.group,...Object.fromEntries(group_l10n)},

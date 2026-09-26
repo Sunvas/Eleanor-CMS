@@ -49,18 +49,18 @@ Examples:\n")->yellow(" php $argv[0] install
 	else
 		$info->reset("\n\nExample: ")->yellow("php $argv[0] install install.json --mysql-host=server.local");
 
-	$info->reset->write();
+	$info->reset(\PHP_EOL)->Write();
 	die;
 }
 
 /** Display the password length as asterisks */
-function Asterisks(CLI $cli, int $len):void
+function Asterisks(CLI$cli,int$len):void
 {
-	$cli->Concat(\str_repeat('*',$len))->write();
+	$cli->purple(\str_repeat('*',$len))->reset(\PHP_EOL)->Write();
 }
 
 /** Read a password from the command line */
-function ReadPassword(CLI $cli):string
+function ReadPassword(CLI$cli,bool$repeat=false):string
 {
 	$stty=\stream_isatty(\STDIN) && \function_exists('system');
 
@@ -76,17 +76,22 @@ function ReadPassword(CLI $cli):string
 	{
 		Asterisks($cli,\strlen($hidden));
 
-		$cli->PURPLE("Repeat password: ")->reset->write();
-		$hidden2=\rtrim((string)\fgets(\STDIN),"\r\n");
-		Asterisks($cli,\strlen($hidden2));
-
-		\system('stty echo');
-
-		if(\strcmp($hidden2,$hidden)!==0)
+		if($repeat)
 		{
-			$cli->red("Passwords mismatch. Process stopped.")->reset->write();
-			exit(1);
+			$cli->Concat("Repeat password: \n")->Write();
+			$hidden2=\rtrim((string)\fgets(\STDIN),"\r\n");
+			Asterisks($cli,\strlen($hidden2));
+
+			\system('stty echo');
+
+			if(\strcmp($hidden2,$hidden)!==0)
+			{
+				$cli->red("Passwords mismatch. Process stopped.")->reset(\PHP_EOL)->Write();
+				exit(1);
+			}
 		}
+		else
+			\system('stty echo');
 	}
 
 	return $hidden;
@@ -122,12 +127,12 @@ function Install(array$argv,bool$dry_run=false):never
 			$cli->RED($err)->reset(" Not writable files or directories:\n   ")
 				->yellow(join("\n   ",$errors['NOT_WRITABLE']))->reset(\PHP_EOL);
 
-		$cli->write(false);
+		$cli->Write(\STDERR);
 		exit(1);
 	}
 
 	if($dry_run)
-		$cli->Concat('Environment check ')->GREEN("passed")->reset('.')->write();
+		$cli->Concat('Environment check ')->GREEN("passed")->reset(\PHP_EOL)->Write();
 
 	$k=\count($argv);
 	$options=[];
@@ -144,15 +149,15 @@ function Install(array$argv,bool$dry_run=false):never
 		}
 
 	$file=$argv ? \array_shift($argv) : INSTALL;
-	$invalid=\array_diff(\array_keys($options),[
+	$unknown=\array_diff(\array_keys($options),[
 		'mysql-host','mysql-port','mysql-username','mysql-password','mysql-database',
 		'admin-username','admin-password',
 		'site-dir','site-title','site-description','site-l10n','site-l10ns',
 		'hcaptcha-sitekey','hcaptcha-secret'
 	]);
 
-	if($argv or $invalid)
-		$errors['UNKNOWN_OPTIONS']=\array_merge($argv,$invalid);
+	if($argv or $unknown)
+		$errors['UNKNOWN_OPTIONS']=\array_merge($argv,$unknown);
 
 	if(!\is_file($file))
 		$errors[]='CONFIG_NOT_EXISTS';
@@ -266,16 +271,16 @@ function Install(array$argv,bool$dry_run=false):never
 		# Type passwords manually
 		if(!\is_string($config['mysql']['password'] ?? 0))
 		{
-			$cli->PURPLE("Input password for MySQL user '{$config['mysql']['username']}' (input may be hidden): ")->reset->write();
+			$cli->Concat("Input password for MySQL user '{$config['mysql']['username']}' (input may be hidden):\n")->Write();
 
 			$config['mysql']['password']=ReadPassword($cli);
 		}
 
 		if(!\is_string($config['admin']['password'] ?? 0))
 		{
-			$cli->PURPLE("Input password for administrator '{$config['admin']['username']}' (input may be hidden): ")->reset->write();
+			$cli->Concat("Input password for administrator '{$config['admin']['username']}' (input may be hidden):\n")->Write();
 
-			$config['admin']['password']=ReadPassword($cli);
+			$config['admin']['password']=ReadPassword($cli,true);
 		}
 
 		if(\strlen($config['admin']['password'])<10)
@@ -347,17 +352,17 @@ function Install(array$argv,bool$dry_run=false):never
 		if(\in_array('SITE_META',$errors))
 			$cli->RED($err)->reset(" Site title or description is omitted.\n");
 
-		$cli->write(false);
+		$cli->Write(\STDERR);
 		exit(1);
 	}
 
 	if($dry_run)
 	{
-		$cli->Concat('Configuration validation ')->GREEN("passed")->reset('.')->write();
+		$cli->Concat('Configuration validation ')->GREEN("passed")->reset(\PHP_EOL)->Write();
 		die;
 	}
 
-	$cli->yellow("\nDatabase structure:")->reset->write();
+	$cli->yellow("\nDatabase structure:")->reset(\PHP_EOL)->Write();
 	$tables=AwareInclude(__DIR__.'/includes/tables.php',[
 		'Db'=>$Db,
 		'l10n'=>$cs['l10n'],
@@ -379,16 +384,16 @@ function Install(array$argv,bool$dry_run=false):never
 
 		if($err)
 		{
-			$cli->Concat('[ ')->red('FAIL')->reset(" ] $table ")->yellow($err)->reset->write();
+			$cli->Concat('[ ')->red('FAIL')->reset(" ] $table ")->yellow($err)->reset(\PHP_EOL)->Write();
 			$errors['TABLES'][]=$table;
 		}
 		else
-			$cli->Concat('[  ')->green('OK')->reset('  ] '.$table)->reset->write();
+			$cli->Concat('[  ')->green('OK')->reset('  ] '.$table)->reset(\PHP_EOL)->Write();
 	}
 
 	if(!$errors)
 	{
-		$cli->yellow("\nDatabase values:")->reset->write();
+		$cli->yellow("\nDatabase values:")->reset(\PHP_EOL)->Write();
 		$insert=AwareInclude(__DIR__.'/includes/insert.php',[
 			'Db'=>$Db,
 			'l10n'=>$cs['l10n'],
@@ -413,11 +418,11 @@ function Install(array$argv,bool$dry_run=false):never
 
 			if($err)
 			{
-				$cli->Concat('[ ')->red('FAIL')->reset(" ] $key ")->yellow($err)->reset->write();
+				$cli->Concat('[ ')->red('FAIL')->reset(" ] $key ")->yellow($err)->reset(\PHP_EOL)->Write();
 				$errors['INSERT'][]=$key;
 			}
 			else
-				$cli->Concat('[  ')->green('OK')->reset('  ] '.$key)->reset->write();
+				$cli->Concat('[  ')->green('OK')->reset('  ] '.$key)->reset(\PHP_EOL)->Write();
 		}
 
 		if(!$errors)
@@ -430,19 +435,19 @@ function Install(array$argv,bool$dry_run=false):never
 					'password_hash'=>\password_hash($config['admin']['password'],\PASSWORD_DEFAULT),
 					'avatar'=>'a'
 				]);
-				$cli->Concat('[  ')->green('OK')->reset('  ] Administrator')->reset->write();
+				$cli->Concat('[  ')->green('OK')->reset('  ] Administrator')->reset(\PHP_EOL)->Write();
 			}catch(EM$E){
 				$err=(string)$E;
 				$errors[]='ADMIN';
 
-				$cli->Concat('[ ')->red('FAIL')->reset(' ] Administrator ')->yellow($err)->reset->write();
+				$cli->Concat('[ ')->red('FAIL')->reset(' ] Administrator ')->yellow($err)->reset(\PHP_EOL)->Write();
 			}
 		}
 	}
 
 	if(!$errors)
 	{
-		$cli->yellow("\nWriting files:")->reset->write();
+		$cli->yellow("\nWriting files:")->reset(\PHP_EOL)->Write();
 		$items=[
 			# Database connection configuration
 			fn()=>[PutDbConfig(...),PutDbConfig($cm['database'],$cm['host'],$cm['username'],$cm['password'],$cm['port'])],
@@ -466,10 +471,10 @@ function Install(array$argv,bool$dry_run=false):never
 			$file=ModifiedFile::Get($F);
 
 			if($ok)
-				$cli->Concat('[  ')->green('OK')->reset('  ] '.$file)->reset->write();
+				$cli->Concat('[  ')->green('OK')->reset('  ] '.$file)->reset(\PHP_EOL)->Write();
 			else
 			{
-				$cli->Concat('[ ')->red('FAIL')->reset(' ] '.$file)->write();
+				$cli->Concat('[ ')->red('FAIL')->reset(' ] '.$file.\PHP_EOL)->Write();
 				$errors['FILES'][]=$file;
 			}
 		}
@@ -487,17 +492,17 @@ function Install(array$argv,bool$dry_run=false):never
 		$file=ModifiedFile::Get(LockInstaller(...));
 
 		if($ok)
-			$cli->Concat('[  ')->green('OK')->reset('  ] '.$file)->reset->write();
+			$cli->Concat('[  ')->green('OK')->reset('  ] '.$file)->reset(\PHP_EOL)->Write();
 		else
 		{
-			$cli->Concat('[ ')->red('FAIL')->reset(' ] '.$file)->write();
+			$cli->Concat('[ ')->red('FAIL')->reset(' ] '.$file.\PHP_EOL)->Write();
 			$errors['FILES'][]=$file;
 		}
 	}
 
 	if($errors)
 	{
-		$cli->RED("\nInstallation failed. ")->reset('See details above.')->write();
+		$cli->RED("\nInstallation failed. ")->reset("See details above.\n")->Write(\STDERR);
 		exit(1);
 	}
 
@@ -511,8 +516,8 @@ function Install(array$argv,bool$dry_run=false):never
 		->yellow('install')
 		->reset(" directory together with all its contents.\nFor additional protection, rename ")
 		->yellow('admin.php')
-		->reset(' to a non-obvious filename.')
-		->write();
+		->reset(" to a non-obvious filename.\n")
+		->Write();
 
 	die;
 }
@@ -520,7 +525,7 @@ function Install(array$argv,bool$dry_run=false):never
 /** Handler for unknown commands */
 function UnknownCommand(string$command):never
 {
-	new CLI('Unknown command: '.$command,'RED')->reset->write();
+	new CLI('Unknown command: '.$command,'RED')->reset(\PHP_EOL)->Write(\STDERR);
 	exit(1);
 }
 
@@ -548,7 +553,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-TEXT )->write();
+
+TEXT )->Write();
 
 	die;
 }

@@ -150,8 +150,11 @@ SQL;
 
 $name_len=USERNAME_LENGTH;
 
-# The longest timezone I've come across is "America/Argentina/Buenos_Aires" (30 characters).
+# Order matters: `users` can't be dropped first
+$tables[]='DROP TABLE IF EXISTS `users_signin_log`';
 $tables[]='DROP TABLE IF EXISTS `users`';
+
+# The longest timezone I've come across is "America/Argentina/Buenos_Aires" (30 characters).
 $tables['users']=<<<SQL
 CREATE TABLE `users` (
 	`id` mediumint UNSIGNED NOT NULL,
@@ -178,7 +181,6 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
 
-$tables[]='DROP TABLE IF EXISTS `users_signin_log`';
 $tables['users_signin_log']=<<<'SQL'
 CREATE TABLE `users_signin_log` (
   `user_id` mediumint UNSIGNED NOT NULL,

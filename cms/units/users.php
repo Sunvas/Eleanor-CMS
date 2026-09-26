@@ -8,9 +8,8 @@ return new class extends Abstracts\AdminPanel implements Interfaces\CLI {
 		$this->name=\basename(__FILE__,'.php');
 	}
 
-	function CLI(array$argv):never
+	function CLI(array$argv):void
 	{
-		\var_dump($argv);
-		die;
+		require __DIR__."/../units/$this->name/cli.php";
 	}
 };

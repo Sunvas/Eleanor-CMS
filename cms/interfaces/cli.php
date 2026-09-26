@@ -5,10 +5,9 @@ namespace CMS\Interfaces;
 /** Interface for units available from the command line. */
 interface CLI
 {
-	/** Execute the requested action.
-	 * @param string[] $argv Command-line arguments excluding the script name and unit.
-	 * @return never */
-	function CLI(array$argv):never;
+	/** Execute the requested command.
+	 * @param string[] $argv Command-line arguments excluding the script name and unit. */
+	function CLI(array$argv):void;
 }
 
 # Not required here because interface name matches filename.

@@ -22,7 +22,7 @@ function Link(...$a):void
 	Output::Link(...$a);
 }
 
-/** Step 1: select system language */
+/** Step 1: select the system language */
 function Step1():string
 {global$T;
 	if($_SESSION['step']===1 and \in_array($_POST['l10n'] ?? 0,['ru','en'],true))

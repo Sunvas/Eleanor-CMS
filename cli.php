@@ -44,7 +44,7 @@ if(!\file_exists(__DIR__.'/cms/config/system.json'))
 		->reset(" is not installed.\nRun the installer: ")
 		->green("php install/cli.php")
 		->reset(\PHP_EOL)->Write();
-	die;
+	exit(1);
 }
 
 # If no command line argument is specified, display the basic information about the CLI interface

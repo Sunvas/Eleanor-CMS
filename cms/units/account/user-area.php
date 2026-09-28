@@ -95,6 +95,8 @@ SQL ,[$_POST['username']]);
 		if(CMS::$A->current==$id)
 			return[
 				'ok'=>true,
+				'id'=>$id,
+				'actor'=>$total>0,
 				'error'=>'ALREADY'
 			];
 
@@ -212,6 +214,7 @@ SQL ,[$_POST['username']]);
 		return[
 			'ok'=>true,
 			'id'=>$id,
+			'actor'=>$total>0,
 			'recovery'=>$recovery,
 		];
 	}

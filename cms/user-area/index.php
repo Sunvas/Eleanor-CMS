@@ -77,7 +77,11 @@ Link('//cdn.jsdelivr.net');
 if(isset($hreflang))
 {
 	$base=\Eleanor\PROTOCOL.\Eleanor\DOMAIN.\Eleanor\SITEDIR;
-	echo \array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."<link rel='alternate' href='$base$hreflang[$code]' hreflang='$code'>","\t");
+	echo \array_reduce(\array_keys($hreflang),fn($a,$code)=>$a."\n\t<link rel='alternate' href='$base$hreflang[$code]' hreflang='$code'>","\t"),
+		"\n\t<link rel='alternate' href='$base' hreflang='x-default'>";
+
+	# Removing the current language from the list of available languages
+	unset($hreflang[L10n::$code]);
 }
 ?>
 

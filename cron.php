@@ -5,6 +5,10 @@ namespace CMS;
 use CMS\Interfaces\Cron,
 	Eleanor\Classes\Output;
 
+# Reject unsupported browser request contexts
+if(!\in_array($_SERVER['HTTP_SEC_FETCH_DEST'] ?? '',['','empty','document'],true))
+	return \http_response_code(403);
+
 require __DIR__.'/cms/core.php';
 
 # Flag shows that there is at least one task left to run

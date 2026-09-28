@@ -73,7 +73,7 @@
 		methods:{
 			Actor(id){
 				const url=new URL(location.pathname.match(/(sign-out|sign-in)$/) ? document.baseURI : location.href);
-				url.searchParams.set("@",id);
+				id && url.searchParams.set("@",id);
 				location.href=url.href;
 			},
 
@@ -105,7 +105,7 @@
 							if(r.recovery)
 								alert(this.l10n.recovered);
 
-							return this.Actor(r.id);
+							return this.Actor(r.actor && r.id);
 						}
 
 						// Field errors

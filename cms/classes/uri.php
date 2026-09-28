@@ -26,7 +26,6 @@ class Uri extends \Eleanor\Classes\Uri
 
 		if($actor and CMS::$A->available)
 			$this->query[]='@='.CMS::$A->current;
-
 	}
 
 	/** Build URI

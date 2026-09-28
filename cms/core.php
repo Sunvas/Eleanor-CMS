@@ -228,22 +228,23 @@ CMS::$config=new class extends \ArrayObject
 	}
 };
 
+$trust=($_SERVER['HTTP_SEC_FETCH_SITE'] ?? 'same-origin')==='same-origin'; # CSRF protection
 CMS::$ip=\filter_var($_SERVER['REMOTE_ADDR'] ?? 0,\FILTER_VALIDATE_IP) ? \inet_pton($_SERVER['REMOTE_ADDR']) : "\0";
-CMS::$json=\getenv('HTTP_ACCEPT')==='application/json';
+CMS::$json=$trust && \getenv('HTTP_ACCEPT')==='application/json';
 
 switch($_SERVER['REQUEST_METHOD'] ?? '')
 {
 	case'PUT':
-		CMS::$put=true;
+		CMS::$put=$trust;
 	break;
 	case'POST':
-		CMS::$post=true;
+		CMS::$post=$trust;
 	break;
 	case'PATCH':
-		CMS::$patch=true;
+		CMS::$patch=$trust;
 	break;
 	case'DELETE':
-		CMS::$delete=true;
+		CMS::$delete=$trust;
 }
 
 # Avoid Content-Type checks here: requiring this header may conflict with CORS Access-Control-Allow-Headers.

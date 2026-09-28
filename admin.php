@@ -17,6 +17,10 @@ use const Eleanor\SITEDIR;
 /** Script start time, used to display service information at the bottom of the page. */
 \define('CMS\STARTED',\hrtime(true));
 
+# Reject unsupported browser request contexts
+if(!\in_array($_SERVER['HTTP_SEC_FETCH_DEST'] ?? '',['','empty','document'],true))
+	return \http_response_code(403);
+
 require __DIR__.'/cms/core.php';
 
 /** Error page

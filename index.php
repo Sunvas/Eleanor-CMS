@@ -13,6 +13,10 @@ use const Eleanor\SITEDIR;
 /** @const Script start time, used to display service information at the bottom of the page. */
 \define('CMS\STARTED',\hrtime(true));
 
+# Reject unsupported browser request contexts
+if(!\in_array($_SERVER['HTTP_SEC_FETCH_DEST'] ?? '',['','empty','document'],true))
+	return \http_response_code(403);
+
 # If the system is not installed, redirect to installation setup. You can remove this block after installation
 if(!\file_exists(__DIR__.'/cms/config/system.json'))
 {
@@ -27,7 +31,7 @@ if(\str_starts_with(Uri::$raw,'index.php'))
 	Redirect(\substr(Uri::$raw,9));
 
 # Expose Uri class to CMS namespace
-class_alias(Uri::class,__NAMESPACE__.'\Uri');
+\class_alias(Uri::class,__NAMESPACE__.'\Uri');
 
 /** Error page
  * @param int $code Error code 4XX
@@ -50,9 +54,10 @@ function Halt(int$code=404,string$allow405='DELETE'):never
 	}
 
 	if($code===405 and $allow405)
-		header('Allow: '.$allow405);
+		\header('Allow: '.$allow405);
 
-	die($output);
+	echo$output;
+	exit(1);
 }
 
 /** Set canonical link
@@ -73,6 +78,7 @@ function Canonical(Uri|string$Uri,string|array$slug='',...$a):void
 }
 
 /** Generate alternative localization links
+ * @see https://developers.google.com/search/docs/specialty/international/localized-versions
  * @param \Closure $Gen Function receiving l10n code and Uri object */
 function Alternate(\Closure$Gen):void
 {
@@ -81,9 +87,6 @@ function Alternate(\Closure$Gen):void
 
 	foreach([L10N,...L10NS] as $lang)
 	{
-		if(L10n::$code===$lang)
-			continue;
-
 		$Uri=new class($lang) extends Uri {
 			static string $base='';
 

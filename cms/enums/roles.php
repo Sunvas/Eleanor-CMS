@@ -14,5 +14,5 @@ enum Roles:string
 	case Team='team';
 }
 
-# Not required here because the enum name matches filename
+# Not required here because enum name matches filename
 return Roles::class;

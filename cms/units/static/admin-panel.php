@@ -94,15 +94,15 @@ SQL);
 /** List of static pages */
 function ListOfItems(Classes\Uri4AdminPanel$Uri,bool$is_root):array|string
 {
-	#L10n related
+	# L10n related
 	$multi=L10NS!==null;
 	$l10n=$multi && \in_array($_GET['lang'] ?? 0,L10NS) ? $_GET['lang'] : L10N;
 
-	#Query related
+	# Query related
 	$page=$pp=null;
 	$where=$params=[];
 
-	#Filter by id, slug, title and lang
+	# Filter by id, slug, title and lang
 	$id=(int)($_GET['id'] ?? 0);
 	$slug=\is_string($_GET['slug'] ?? 0) ? trim($_GET['slug'],'%') : '';
 	$title=\is_string($_GET['title'] ?? 0) ? trim($_GET['title'],'%') : '';
@@ -203,20 +203,20 @@ SQL ,[$slug]);
  * @return array */
 function StoreItemFiles(Abstracts\AdminPanel$Unit,int$id,string$l10n=''):array
 {
-	#Files used in static page
+	# Files used in static page
 	$key=$l10n ? 'files_'.$l10n : 'files';
 	$in_use=\is_string($_POST[$key] ?? 0) && \json_validate($_POST[$key]) ? (array)\json_decode($_POST[$key],true) : [];
 
-	#Folder of the static page and trash folder
+	# Folder of the static page and trash folder
 	$dir=STATIC_PATH."uploads/$Unit->name/$id/";
 	$trash=$GLOBALS['CMS']->{'daily-cleanup'}::UPLOADS_TRASH;
 	$trash_exists=\is_dir($trash);
 
-	#No files
+	# No files
 	if(!\is_dir($dir))
 		return[];
 
-	$files=\array_diff(\scandir($dir),['.','..']);
+	$files=\array_diff(\scandir($dir) ?: [],['.','..']);
 
 	if($l10n)
 		$files=\array_filter($files,fn($file)=>\str_contains($file,"-$l10n-"));
@@ -248,7 +248,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 
 	if(CMS::$json)
 	{
-		#Static page removal
+		# Static page removal
 		if(CMS::$delete)
 		{
 			if(!$can_delete)
@@ -273,14 +273,14 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 					'error'=>'INSUFFICIENT',
 				];
 
-			#Uploading files
-			if($id>0 and isset($_FILES[ATTACH]) and \is_uploaded_file($_FILES[ATTACH]['tmp_name']))
+			# Uploading files
+			if($id>0 and isset($_FILES[ATTACH]) and $_FILES[ATTACH]['error']===\UPLOAD_ERR_OK)
 			{
 				$dir=STATIC_PATH."uploads/$Unit->name/$id/";
 				$ext=\strrchr($_FILES[ATTACH]['name'],'.');
 				$hash=\hash_file('sha3-256',$_FILES[ATTACH]['tmp_name']);
 
-				#New file name consists of file hash, l10n code (if used) and user id separated by -
+				# New file name consists of file hash, l10n code (if used) and user id separated by -
 				if(L10NS===null)
 					$name=$hash.'-'.CMS::$A->current.$ext;
 				else
@@ -291,7 +291,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 
 				$full=$dir.$name;
 
-				#File exists
+				# File exists
 				if(\is_file($full))
 				{
 					\unlink($_FILES[ATTACH]['tmp_name']);
@@ -303,7 +303,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 					];
 				}
 
-				#Creating folder
+				# Creating folder
 				if(!\is_dir($dir) and !\mkdir($dir,0755,true))
 				{
 					new E('Unable to create directory',E::SYSTEM,input:$dir)->Log();
@@ -314,7 +314,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 					];
 				}
 
-				#Moving file to destination
+				# Moving file to destination
 				if(\move_uploaded_file($_FILES[ATTACH]['tmp_name'],$full))
 				{
 					if(\preg_match('#\.(jpe?g|png|svg|gif)$#i',$ext)===1)
@@ -401,7 +401,7 @@ function Item(int$id,bool$is_root,Abstracts\AdminPanel$Unit):array|string
 							$data[$k]=null;
 					}
 
-					#If static page in monolingual - other fields should be null (except slug)
+					# If static page in monolingual - other fields should be null (except slug)
 					if($mono)
 					{
 						$nullify=$f!=='slug';
@@ -550,7 +550,7 @@ SQL );
 	return (CMS::$T)('item',\compact('item','can_delete'));
 }
 
-#Assigning folder with templates
+# Assigning folder with templates
 if(!CMS::$json)
 	CMS::$T[]=CMS.'admin-panel/'.$this->name;
 

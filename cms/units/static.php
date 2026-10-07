@@ -2,7 +2,7 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-return new class extends Abstracts\AdminPanel {
+return new class extends Abstracts\AdminPanel implements Interfaces\Cron {
 	function __construct()
 	{
 		$this->name=\basename(__FILE__,'.php');
@@ -43,17 +43,26 @@ SQL;
 
 		if($item)
 		{
-			#Links to alternative localizations
+			# Links to alternative localizations
 			Alternate(fn(string$code,Uri$Uri)=>isset($item['slug_'.$code]) ? $Uri(explode('/',$item['slug_'.$code])) : null);
 
-			#Canonical link
+			# Canonical link
 			Canonical(new Uri,\explode('/',$slug));
 
-			#Generating HTML of the page
+			# Generating HTML of the page
 			$output=(CMS::$T)('StaticPage',$item);
 
-			#Output HTML to browser. Cache is disabled for signed-in users.
+			# Output HTML to browser. Cache is disabled for signed-in users.
 			HTML($output,200,CMS::$A->current ? 0 : 86400);
 		}
+	}
+
+	/** Cron task entry point */
+	function Cron(?array$remnant):int
+	{
+		# Delete static page backups older than 1 month
+		CMS::$Db->Delete('static_backup','`created_at`<NOW() - INTERVAL 1 MONTH');
+
+		return 86400*7;
 	}
 };

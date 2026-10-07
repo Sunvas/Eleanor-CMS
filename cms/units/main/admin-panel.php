@@ -41,7 +41,7 @@ function Main(object$Unit):array|string
 
 			$file=$Unit->GetMainPageFile($lang);
 
-			if(\is_uploaded_file($F['tmp_name']) and \move_uploaded_file($F['tmp_name'],$file))
+			if($F['error']===\UPLOAD_ERR_OK and \move_uploaded_file($F['tmp_name'],$file))
 				$success++;
 		}
 

@@ -17,6 +17,13 @@ return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 
 	function UserArea(?string $uri):never
 	{
+		if(CMS::$json)
+			JSON([
+				'ok'=>false,
+				'unit'=>$this->name,
+				'error'=>'JSON_OUTPUT_NOT_SUPPORTED',
+			]);
+
 		Canonical($this->slug);
 
 		Alternate(fn(string$code,Uri$Uri)=>$Uri($this->slug));

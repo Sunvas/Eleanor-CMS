@@ -46,7 +46,6 @@
 			rc_hash:"",
 			rc_check:"",
 			rc_codes:"",
-			rc_session_id:"",
 			rc_rows:10,
 			rc_created:false,
 
@@ -312,7 +311,6 @@
 						this.rc_hash=json.hash;
 						this.rc_rows=json.codes.length;
 						this.rc_codes=json.codes.map(code=>code.replace(/(.{4})/g,"$1 ")).join("\n");
-						this.rc_session_id=json.session_id;
 					},r=>r.text().then(console.error))
 					.finally(()=>{
 						this.loading=false;
@@ -326,7 +324,6 @@
 
 				const body=new URLSearchParams({
 					hash:this.rc_hash,
-					session_id:this.rc_session_id,
 					verification:this.verification,
 				});
 
@@ -351,7 +348,6 @@
 						this.rc=false;
 						this.rc_hash="";
 						this.rc_codes="";
-						this.rc_session_id="";
 						this.rc_created=true;
 						this.verification="";
 					},r=>r.text().then(console.error))

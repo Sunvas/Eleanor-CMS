@@ -2,7 +2,6 @@
 # Eleanor CMS © 2025 --> https://eleanor-cms.com
 namespace CMS;
 
-use CMS\Classes\Paginator;
 use CMS\Enums\{Events, SignInAttempt};
 use Eleanor\Classes\TOTP;
 
@@ -10,8 +9,14 @@ const
 	/** Minimum interval between login attempts when CAPTCHA is unavailable, in seconds. */
 	AUTH_RETRY_INTERVAL=7,
 
+	/** Minimum interval between credential verification attempts, in seconds. */
+	VERIFICATION_RETRY_INTERVAL=3,
+
 	/** Maximum avatar size in bytes, 1 MiB currently */
 	MAX_AVATAR_SIZE=1048576,
+
+	/** Maximum avatar width and height size in pixels */
+	MAX_AVATAR_WH=512,
 
 	/** Maximum number of users per 1 authorization */
 	MAX_USERS=25,
@@ -30,7 +35,10 @@ const
 	RECOVERY_GRACE_PERIOD=3600,
 
 	/** Default group for newly created users */
-	USER_GROUP=3;
+	USER_GROUP=3,
+
+	/** Timezones available for users */
+	TIMEZONES=\DateTimeZone::ASIA |\DateTimeZone::EUROPE;
 
 /** Main page of the site
  * @var Classes\Uri $Uri CMS uri
@@ -44,6 +52,31 @@ const
 function AvatarSalt():string
 {
 	return \base_convert(\random_int(1,60466175),10,36);
+}
+
+/** Start or resume the PHP session associated with the current authorization. */
+function UserSession():void
+{
+	if(\session_status()===\PHP_SESSION_ACTIVE)
+		return;
+
+	\session_id(\hash('sha3-224',CMS::$a11n ? $_COOKIE[A11N_COOKIE] : CMS::$A->current.\php_uname()));
+	\session_start([
+		'use_cookies'=>false,
+	]);
+}
+
+/** Apply rate limiting to credential verification attempts.
+ * @return int Seconds remaining before another attempt is allowed, or 0 when allowed. */
+function LimitVerification():int
+{
+	$_SESSION['verification']??=\Eleanor\BASE_TIME;
+
+	if($_SESSION['verification']>\time())
+		return $_SESSION['verification']-\time();
+
+	$_SESSION['verification']=\time()+VERIFICATION_RETRY_INTERVAL;
+	return 0;
 }
 
 /** Signing in
@@ -113,7 +146,7 @@ SQL ,[$_POST['username']]);
 		CMS::$Db->Update('users',['last_login_attempt'=>fn()=>'NOW()'],'`id`='.$user['id']);
 
 		# Too often and no captcha
-		if($user['seconds']!==null and $user['seconds']<AUTH_RETRY_INTERVAL and !\CMS\Classes\hCaptcha::Check('captcha'))
+		if($user['seconds']!==null and $user['seconds']<AUTH_RETRY_INTERVAL and !Classes\hCaptcha::Check('captcha'))
 			return[
 				'ok'=>false,
 				'error'=>'W8',
@@ -175,11 +208,8 @@ SQL ,[$_POST['username']]);
 				$totp_used=true;
 			}
 
-			# Emergency password reset: accept and store a new password if the hash was manually cleared
-			$emergency=$user['password_hash']==='';
-
 			# Password verification
-			if(!$emergency and !\password_verify($_POST['password'],$user['password_hash']))
+			if(!\password_verify($_POST['password'],$user['password_hash']))
 			{
 				SignInAttempt::WrongPassword->Log($id);
 
@@ -190,7 +220,7 @@ SQL ,[$_POST['username']]);
 			}
 
 			# Keep password hash up to date
-			if($emergency or \password_needs_rehash($user['password_hash'],\PASSWORD_DEFAULT))
+			if(\password_needs_rehash($user['password_hash'],\PASSWORD_DEFAULT))
 				CMS::$Db->Update('users',['password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT)],'`id`='.$user['id']);
 		}
 
@@ -252,7 +282,7 @@ function SignUp(Uri$Uri,int&$code):array|string
 	# Check availability of username
 	if(CMS::$json and \is_string($_GET['check_name'] ?? 0))
 		return[
-			'ok'=>CheckName($_GET['check_name']),
+			'ok'=>CheckName(\trim($_GET['check_name'])),
 		];
 
 	if(CMS::$json)
@@ -264,7 +294,9 @@ function SignUp(Uri$Uri,int&$code):array|string
 				'error'=>'INSUFFICIENT'
 			];
 
-		if(!CheckName($_POST['name']))
+		$name=\trim($_POST['name']);
+
+		if(!CheckName($name))
 			return[
 				'ok'=>false,
 				'error'=>'NAME_EXISTS'
@@ -276,7 +308,7 @@ function SignUp(Uri$Uri,int&$code):array|string
 				'error'=>'LOW_PASSWORD_LENGTH'
 			];
 
-		if(!\CMS\Classes\hCaptcha::Check('captcha'))
+		if(!Classes\hCaptcha::Check('captcha'))
 			return[
 				'ok'=>false,
 				'error'=>'CAPTCHA',
@@ -284,7 +316,7 @@ function SignUp(Uri$Uri,int&$code):array|string
 
 		$group=USER_GROUP;
 		$id=CMS::$Db->Insert('users',[
-			'name'=>$_POST['name'],
+			'name'=>$name,
 			'display_name'=>$_POST['display_name'],
 			'groups'=>"[$group]",
 			'password_hash'=>\password_hash($_POST['password'],\PASSWORD_DEFAULT),
@@ -316,7 +348,7 @@ function SignUp(Uri$Uri,int&$code):array|string
  * @return string|array */
 function SignOut(Uri$Uri,int&$code):array|string
 {
-	if(CMS::$A->current)
+	if(CMS::$trusted && CMS::$A->current)
 		CMS::$A->SignOut(isset($_GET['@']) ? (int)$_GET['@'] : null);
 	else
 		$code=401;
@@ -324,7 +356,7 @@ function SignOut(Uri$Uri,int&$code):array|string
 	# AJAX request
 	if(CMS::$json)
 		return[
-			'ok'=>true,
+			'ok'=>CMS::$trusted,
 		];
 
 	return(CMS::$T)('SignOut');
@@ -333,7 +365,12 @@ function SignOut(Uri$Uri,int&$code):array|string
 function Overview(Uri$Uri,int&$code):array|string
 {
 	if(!CMS::$A->current)
+	{
+		if(CMS::$json)
+			return['ok'=>false];
+
 		Redirect($Uri('sign-in'),302);
+	}
 
 	# AJAX request
 	if(CMS::$json)
@@ -361,9 +398,10 @@ SQL);
 	# Fetching user groups
 	if($user['groups'])
 	{
-		$R=CMS::$Db->Execute(<<<SQL
-SELECT `id`, `title` FROM `groups` WHERE `id` IN (?)
-SQL ,[join(',',$user['groups'])]);
+		$in=CMS::$Db->In($user['groups']);
+		$R=CMS::$Db->Query(<<<SQL
+SELECT `id`, `title` FROM `groups` WHERE `id`$in
+SQL );
 		$user['groups']=$R->fetch_all(\MYSQLI_ASSOC);
 		$R->free();
 	}
@@ -407,6 +445,17 @@ function ChangePassword():array
 		return[
 			'ok'=>false,
 			'error'=>'LOW_PASSWORD_LENGTH'
+		];
+
+	UserSession();
+	$remain=LimitVerification();
+
+	if($remain)
+		return[
+			'ok'=>false,
+			'error'=>'W8',
+			'seconds'=>VERIFICATION_RETRY_INTERVAL,
+			'remain'=>$remain
 		];
 
 	$R=CMS::$Db->Execute(<<<SQL
@@ -507,7 +556,10 @@ function Totp():array
 
 	# PHP 8.6: migrate to clamp function
 	if($digits<6 or $digits>8)
-		$digits=6;
+		return[
+			'ok'=>false,
+			'error'=>'INCORRECT_DIGITS'
+		];
 
 	if(!Totp::Verify($secret,$_POST['code'],$digits))
 		return[
@@ -536,9 +588,21 @@ function Totp():array
  * @throws \Throwable */
 function RecoveryCodes():array
 {
+	UserSession();
+
 	# Checking if recovery code is valid
 	if(CMS::$put)
 	{
+		$remain=LimitVerification();
+
+		if($remain)
+			return[
+				'ok'=>false,
+				'error'=>'W8',
+				'seconds'=>VERIFICATION_RETRY_INTERVAL,
+				'remain'=>$remain
+			];
+
 		$R=CMS::$Db->Execute(<<<SQL
 SELECT `recovery_codes` FROM `users` WHERE `id`=?
 SQL ,[CMS::$A->current]);
@@ -561,16 +625,11 @@ SQL ,[CMS::$A->current]);
 	# Storing new recovery codes
 	if(CMS::$post)
 	{
-		if(!\array_all([$_POST['hash'] ?? 0,$_POST['session_id'] ?? 0,$_POST['verification'] ?? 0],fn($t)=>\is_string($t)))
+		if(!\array_all([$_POST['hash'] ?? 0,$_POST['verification'] ?? 0],fn($t)=>\is_string($t)))
 			return[
 				'ok'=>false,
 				'error'=>'INSUFFICIENT'
 			];
-
-		\session_id($_POST['session_id']);
-		\session_start([
-			'use_cookies'=>false,
-		]);
 
 		if(!\is_array($_SESSION['recovery_codes'] ?? 0))
 			return[
@@ -614,10 +673,6 @@ SQL ,[CMS::$A->current]);
 		$hashes[]=\password_hash($code,\PASSWORD_DEFAULT);
 	}
 
-	\session_start([
-		'use_cookies'=>false,
-	]);
-
 	$hash=\hash('sha3-256',join('',$hashes));
 
 	$_SESSION['recovery_codes']=$hashes;
@@ -626,7 +681,6 @@ SQL ,[CMS::$A->current]);
 		'ok'=>true,
 		'codes'=>$codes,
 		'hash'=>$hash,
-		'session_id'=>\session_id(),
 	];
 }
 
@@ -638,6 +692,17 @@ function Verification(string$test):array|string
 {
 	if(RecoveryGraceRemaining())
 		return '';
+
+	UserSession();
+	$remain=LimitVerification();
+
+	if($remain)
+		return[
+			'ok'=>false,
+			'error'=>'W8',
+			'seconds'=>VERIFICATION_RETRY_INTERVAL,
+			'remain'=>$remain
+		];
 
 	$R=CMS::$Db->Execute(<<<SQL
 SELECT `password_hash`, `totp_secret`, `totp_digits`, `recovery_codes`
@@ -688,21 +753,27 @@ function Settings(Uri$Uri,int&$code):array|string
 			if(\is_string($_POST[$k] ?? 0))
 				$update[$k]=$_POST[$k];
 
+		if(isset($update['timezone']) and !\in_array($update['timezone'],\timezone_identifiers_list(TIMEZONES)))
+			unset($update['timezone']);
+
 		# Saving avatar
-		if(\is_uploaded_file($_FILES['avatar']['tmp_name'] ?? '') and $_FILES['avatar']['size']<=MAX_AVATAR_SIZE)
+		if(isset($_FILES['avatar']) and $_FILES['avatar']['error']===\UPLOAD_ERR_OK and $_FILES['avatar']['size']<=MAX_AVATAR_SIZE)
 		{
-			$old=GetUserData('avatar');
-			$img=\imagecreatefromwebp($_FILES['avatar']['tmp_name']);
+			[$w,$h,$t]=\getimagesize($_FILES['avatar']['tmp_name']) ?: [0,0,0];
 
-			if($img!==false)
+			if($w>0 and $h>0 and $t===\IMAGETYPE_WEBP and $w<=MAX_AVATAR_WH and $h<=MAX_AVATAR_WH)
 			{
-				if($old)
-					\Eleanor\Classes\Files::Delete(STATIC_PATH."avatars/$id-$old.webp");
-
+				$img=\imagecreatefromwebp($_FILES['avatar']['tmp_name']);
 				$salt=AvatarSalt();
 
-				if(\imagewebp($img,STATIC_PATH."avatars/$id-$salt.webp"))
+				if($img!==false and \imagewebp($img,STATIC_PATH."avatars/$id-$salt.webp"))
+				{
 					$update['avatar']=$salt;
+					$old=GetUserData('avatar');
+
+					if($old)
+						\Eleanor\Classes\Files::Delete(STATIC_PATH."avatars/$id-$old.webp");
+				}
 			}
 		}
 
@@ -712,10 +783,7 @@ function Settings(Uri$Uri,int&$code):array|string
 	}
 
 	$settings=GetUserData(['display_name','avatar','info','timezone',...(L10NS ? ['l10n'] : [])]);
-	$timezones=array_merge(
-		timezone_identifiers_list(\DateTimeZone::ASIA),
-		timezone_identifiers_list(\DateTimeZone::EUROPE),
-	);
+	$timezones=\timezone_identifiers_list(TIMEZONES);
 
 	return(CMS::$T)('Settings',$settings,$timezones);
 }
@@ -728,6 +796,10 @@ function Sessions(Uri$Uri,int&$code):array|string
 {
 	if(!CMS::$A->current)
 		Halt(401);
+
+	# External authorization cannot manage sessions of CMS
+	if(!CMS::$a11n)
+		Halt(403);
 
 	$R=CMS::$Db->Execute(<<<SQL
 SELECT `created`
@@ -743,7 +815,7 @@ SQL ,[CMS::$a11n,CMS::$A->current]);
 		{
 			$a11n=(int)$_GET['id'];
 
-			if(CMS::$a11n==$a11n)
+			if(CMS::$a11n===$a11n)
 				return['ok'=>false];
 
 			$R=CMS::$Db->Execute(<<<SQL
@@ -835,7 +907,7 @@ SQL;
 	}
 
 	try{
-		[$sort,$order,$limit,$pages]=Paginator::SortOrderLimit($total,['date'],true,$page,$pp);
+		[$sort,$order,$limit,$pages]=Classes\Paginator::SortOrderLimit($total,['date'],true,$page,$pp);
 	}catch(\OutOfBoundsException){
 		Redirect($Uri($slug),302);
 	}

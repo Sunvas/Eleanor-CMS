@@ -27,10 +27,10 @@ enum SignInAttempt:string
 			'user_id'=>$user_id,
 			'result'=>$this->value,
 			'ip'=>CMS::$ip,
-			'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? ''
+			'ua'=>\mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 140)
 		]);
 	}
 }
 
-# Not required here because the enum name matches filename
+# Not required here because enum name matches filename
 return SignInAttempt::class;

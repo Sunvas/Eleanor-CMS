@@ -30,9 +30,12 @@ return new class implements Interfaces\UserArea, Interfaces\Cron {
 		CMS::$json ? JSON($output,$code,$cache) : HTML($output,$code,$cache);
 	}
 
-	/** Cron task entry point. Is used to send notification via Telegram asynchronously. */
-	function Cron(?array$remnant):array|int
+	/** Cron task entry point */
+	function Cron(?array$remnant):int
 	{
-		return require __DIR__."/$this->name/cron.php";
+		# Delete sign-in log entries older than 3 months
+		CMS::$Db->Delete('users_signin_log','`date`<NOW() - INTERVAL 3 MONTH');
+
+		return 86400*7;
 	}
 };

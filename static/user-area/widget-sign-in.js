@@ -78,6 +78,9 @@
 			},
 
 			async Submit(){
+				if(this.loading)
+					return;
+
 				if(this.hcaptcha && !this.captcha)
 					return alert(this.l10n.CAPTCHA);
 

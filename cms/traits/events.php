@@ -18,7 +18,7 @@ trait Events
 		if($json===false)
 		{
 			$fl=\Eleanor\BugFileLine(self::class);
-			throw new E("Data cannot be converted to JSON",E::PHP,...$fl,input:$data);
+			throw new E("Data cannot be converted to JSON for event '$this->value'",E::PHP,...$fl,input:$data);
 		}
 
 		CMS::$Db->Insert('events',[
@@ -33,5 +33,5 @@ trait Events
 	}
 }
 
-# Not necessary here, since trait name equals filename
+# Not required here because trait name matches filename
 return Events::class;

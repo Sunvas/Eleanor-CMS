@@ -56,7 +56,7 @@ if($task=SingleFetch($R))
 		CMS::$Db->Update('cron',['status'=>'OK','run_at'=>fn()=>'NOW()','remnant'=>\json_encode($remnant,JSON)],'`unit`=?',[$task['unit']]);
 	}
 	else
-		CMS::$Db->Update('cron',['status'=>'OK','run_at'=>fn()=>"NOW() + INTERVAL $remnant SECOND",'remnant'=>null],'`unit`=?',[$task['unit']]);
+		CMS::$Db->Update('cron',['status'=>'OK','run_at'=>fn()=>"NOW() + INTERVAL GREATEST($remnant,1) SECOND",'remnant'=>null],'`unit`=?',[$task['unit']]);
 
 	Skip:
 }

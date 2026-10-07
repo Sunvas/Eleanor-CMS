@@ -4,6 +4,8 @@ This directory contains public static files served directly by the web server: C
 
 PHP script execution must be disabled in this directory.
 
+For all files served from the `uploads/` directory, the web server must send the `Content-Security-Policy: sandbox` header. This is required to prevent user-uploaded content from executing in the security context of the main site.
+
 Recommended layout:
 
 - `admin-panel/` — static files used by the admin panel.

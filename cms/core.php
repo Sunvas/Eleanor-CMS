@@ -23,7 +23,8 @@ Library::$logs=CMS.'logs/';
 /** Load configuration from file.
  * @param string $file Filename without extension
  * @param string $dir Path to directory containing configuration files
- * @return ?array Configuration data or null when no config file exists */
+ * @return ?array Configuration data or null when no config file exists
+ * @throws E */
 function Config(string$file,string$dir=CMS.'config/'):?array
 {
 	$php=$dir.$file.'.php';
@@ -36,17 +37,19 @@ function Config(string$file,string$dir=CMS.'config/'):?array
 	$config=\is_file($json) ? \json_decode(\file_get_contents($json),true) : [];
 	$config2=\is_file($php) ? (array)require$php : [];
 
+	if($config===null and \json_last_error()!==\JSON_ERROR_NONE)
+		throw new E(\json_last_error_msg(),E::DATA,...BugFileLine(__NAMESPACE__.'\Config'),input:\compact('file','dir'));
+
 	return $config2+$config;
 }
 
-/** Set HTTP cookie
+/** Set HTTP cookie using SameSite=Lax policy
  * @param string $name Cookie name
  * @param string $value Cookie value
  * @param int $ttl Cookie lifetime in seconds. If set to 0, a session cookie will be created and automatically removed
  *     when the browser session ends.
- * @param bool $strict Whether to use Strict SameSite policy instead of Lax
  * @return bool True on success or false on failure */
-function SetCookie(string$name,string$value='',int$ttl=31536000,bool$strict=true):bool
+function SetCookie(string$name,string$value='',int$ttl=31536000):bool
 {
 	if($value=='')
 		$ttl=0;
@@ -59,7 +62,7 @@ function SetCookie(string$name,string$value='',int$ttl=31536000,bool$strict=true
 		'domain'=>\Eleanor\DOMAIN,
 		'secure'=>\Eleanor\PROTOCOL=='https://',
 		'httponly'=>true,
-		'samesite'=>$strict ? 'Strict' : 'Lax',
+		'samesite'=>'Lax',
 	]);
 }
 
@@ -115,7 +118,7 @@ function SingleFetch(\mysqli_result$R,bool$column=false):mixed
 
 /** Core CMS runtime class.
  * Stores shared runtime data and provides access to system components.
- * Dynamic properties usually contain either loaded units or objects of classes with matching names. */
+ * Dynamic properties should contain loaded units. */
 #[\AllowDynamicProperties]
 class CMS extends Library
 {
@@ -129,11 +132,14 @@ class CMS extends Library
 		/** @var bool $post Whether request method is POST */
 		$post=false,
 
-		/** @var bool $post Whether request method is PATCH */
+		/** @var bool $patch Whether request method is PATCH */
 		$patch=false,
 
 		/** @var bool $delete Whether request method is DELETE */
-		$delete=false;
+		$delete=false,
+
+		/** @var bool $trusted Whether the request is trusted for state-changing operations according to Fetch Metadata */
+		$trusted=false;
 
 	/** @var ?int Current authorization (a11n) ID */
 	static ?int $a11n=null;
@@ -158,7 +164,7 @@ class CMS extends Library
 	/** @var Template|Assign|null $T Template engine object */
 	static Template|Assign|null $T;
 
-	/** @var string Client IP address in binary \inet_pton() format, or "\0" when unavailable */
+	/** @var string Client IP address in binary \inet_pton() format, or '' when unavailable */
 	static string $ip;
 
 	/** Lazily load and return a unit or class object by property name.
@@ -171,17 +177,6 @@ class CMS extends Library
 			return $this->$n=include$unit;
 
 		return parent::__get($n);
-	}
-
-	/** Create and return an object instance by class name.
-	 * Uses registered factory if available; otherwise attempts to load the class file from the classes' directory.
-	 * @param string $n Class name
-	 * @param string $dir Base directory for class lookup
-	 * @param array $params Factory arguments
-	 * @throws E */
-	function __invoke(string$n,string$dir=__DIR__,array$params=[]):mixed
-	{
-		return parent::__invoke($n,$dir,$params);
 	}
 }
 
@@ -228,23 +223,23 @@ CMS::$config=new class extends \ArrayObject
 	}
 };
 
-$trust=($_SERVER['HTTP_SEC_FETCH_SITE'] ?? 'same-origin')==='same-origin'; # CSRF protection
-CMS::$ip=\filter_var($_SERVER['REMOTE_ADDR'] ?? 0,\FILTER_VALIDATE_IP) ? \inet_pton($_SERVER['REMOTE_ADDR']) : "\0";
-CMS::$json=$trust && \getenv('HTTP_ACCEPT')==='application/json';
+CMS::$trusted=($_SERVER['HTTP_SEC_FETCH_SITE'] ?? 'same-origin')==='same-origin'; # CSRF protection
+CMS::$ip=\filter_var($_SERVER['REMOTE_ADDR'] ?? 0,\FILTER_VALIDATE_IP) ? \inet_pton($_SERVER['REMOTE_ADDR']) : '';
+CMS::$json=CMS::$trusted && \getenv('HTTP_ACCEPT')==='application/json'; # Request header via getenv: single exception
 
 switch($_SERVER['REQUEST_METHOD'] ?? '')
 {
 	case'PUT':
-		CMS::$put=$trust;
+		CMS::$put=CMS::$trusted;
 	break;
 	case'POST':
-		CMS::$post=$trust;
+		CMS::$post=CMS::$trusted;
 	break;
 	case'PATCH':
-		CMS::$patch=$trust;
+		CMS::$patch=CMS::$trusted;
 	break;
 	case'DELETE':
-		CMS::$delete=$trust;
+		CMS::$delete=CMS::$trusted;
 }
 
 # Avoid Content-Type checks here: requiring this header may conflict with CORS Access-Control-Allow-Headers.
@@ -297,7 +292,7 @@ class Authorization extends Basic
 	/** @var int Current user ID (0 means guest user) */
 	protected(set) int$current;
 
-	/** @var array User IDs available for quick switching */
+	/** @var int[] User IDs available for quick switching */
 	protected(set) array$available;
 
 	/** @param string $table Table linking users with a11n records
@@ -331,7 +326,7 @@ SQL ,[CMS::$a11n]);
 				$marker=\is_string($_COOKIE[$marker] ?? 0) ? $_COOKIE[$marker] : '';
 
 				# Temporary sign-ins require an additional per-user marker cookie
-				if($a['marker']!=="\0" and \bin2hex($a['marker'])!==$marker)
+				if($a['marker'] and \bin2hex($a['marker'])!==$marker)
 					$failed[]=$id;
 				else
 					$available[]=$id;
@@ -345,10 +340,10 @@ SQL ,[CMS::$a11n]);
 			}
 		}
 
-		if(\in_array($current,$available))
+		if(\in_array($current,$available,true))
 		{
 			$this->current=$current;
-			$available=\array_filter($available,fn($item)=>$item!==$current);
+			$available=\array_filter($available,fn($item)=>$item!==$current) |> array_values(...); # Make list array
 		}
 		else
 			$this->current=\array_shift($available) ?? 0;
@@ -358,14 +353,15 @@ SQL ,[CMS::$a11n]);
 		# Update user's last activity
 		if($this->current)
 		{
-			if(!\in_array($this->current,$hidden))
+			if(!\in_array($this->current,$hidden,true))
 				CMS::$Db->Update('users',['activity'=>fn()=>'NOW()'],'`id`='.$this->current);
 
-			CMS::$Db->Update('a11n',[
-				'used'=>fn()=>'NOW()',
-				'ip'=>CMS::$ip,
-				'ua'=>$_SERVER['HTTP_USER_AGENT'] ?? '',
-			],'`id`='.CMS::$a11n);
+			if(CMS::$a11n)
+				CMS::$Db->Update('a11n',[
+					'used'=>fn()=>'NOW()',
+					'ip'=>CMS::$ip,
+					'ua'=>\mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '',0,140),
+				],'`id`='.CMS::$a11n);
 		}
 	}
 
@@ -385,15 +381,17 @@ SQL ,[CMS::$a11n]);
 	{
 		$id??=$this->current;
 
-		CMS::$Db->Delete($this->table,"`user_id`=$id AND `a11n_id`=".CMS::$a11n);
 		$this->Ext?->SignOut($id);
 
+		if(CMS::$a11n)
+			CMS::$Db->Delete($this->table,"`user_id`=$id AND `a11n_id`=".CMS::$a11n);
+
 		if($id==$this->current)
-			$this->current=\in_array($next,$this->available)
+			$this->current=\in_array($next,$this->available,true)
 				? \array_splice($this->available,\array_search($next,$this->available),1)[0]
 				: (\array_shift($this->available) ?? 0);
 
-		elseif(\in_array($id,$this->available))
+		elseif(\in_array($id,$this->available,true))
 			\array_splice($this->available,\array_search($id,$this->available),1);
 	}
 
@@ -407,7 +405,7 @@ SQL ,[CMS::$a11n]);
 	{
 		A11N();
 
-		$marker=$temp ? \random_bytes(5) : "\0";
+		$marker=$temp ? \random_bytes(5) : '';
 
 		CMS::$Db->Replace($this->table,['user_id'=>$id,'a11n_id'=>CMS::$a11n,'marker'=>$marker]+$extra);
 
@@ -645,13 +643,14 @@ function JSON(?array$json,...$a):never
 	$a11n=\is_string($_COOKIE[A11N_COOKIE] ?? 0) ? $_COOKIE[A11N_COOKIE] : '';
 
 	# The session key consists of 7 random bytes and a sequence number in hex format
-	if(!\ctype_xdigit($a11n) or \strlen($a11n)<15)
+	if(!\ctype_xdigit($a11n) or !isset($a11n[14]) or isset($a11n[19]))
 		return;
 
 	[$bytes,$id]=\str_split($a11n,14);
+	$days=CMS::$json ? 8 : 7; # Delay A11N key regeneration for AJAX requests
 
 	$R=CMS::$Db->Query(<<<SQL
-SELECT IF(`generated`<NOW() - INTERVAL 1 WEEK,1,0) `regen`, IF(`generated`<NOW() - INTERVAL 1 YEAR,1,0) `obsolete`
+SELECT IF(`generated`<NOW() - INTERVAL $days DAY,1,0) `regen`, IF(`generated`<NOW() - INTERVAL 1 YEAR,1,0) `obsolete`
 FROM `a11n`
 WHERE `id`=0x$id AND `bytes`=0x$bytes
 SQL );

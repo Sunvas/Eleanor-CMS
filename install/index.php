@@ -268,7 +268,7 @@ function Step6():string
 	L10n::$code=$_SESSION['l10n'];
 	$_SESSION['step']=6;
 
-	$sitedir=\rtrim(\dirname(SITEDIR),'/').'/';
+	$sitedir=\strrchr(SITEDIR,'/',true).'/';
 	$files=[];
 	$mono=$_SESSION['l10ns']===null;
 	$stack=[$_SESSION['l10n'],...($_SESSION['l10ns'] ?? [])];
@@ -333,7 +333,7 @@ function Step7():string
 	L10n::$code=$_SESSION['l10n'];
 	$_SESSION['step']=7;
 
-	$sitedir=\rtrim(\dirname(SITEDIR),'/').'/';
+	$sitedir=\strrchr(SITEDIR,'/',true).'/';
 
 	return $T('Step7',$sitedir);
 }

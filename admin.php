@@ -72,7 +72,7 @@ elseif(!$_SERVER['QUERY_STRING'])
 	}
 
 	# Sign in
-	if(!\is_string($_POST['username'] ?? 0) or !is_string($_POST['password'] ?? 0))
+	if(!\is_string($_POST['username'] ?? 0) or !\is_string($_POST['password'] ?? 0))
 		JSON([
 			'ok'=>false,
 			'error'=>'INSUFFICIENT'
@@ -111,7 +111,7 @@ SQL ,[$_POST['username']]);
 	CMS::$Db->Update('users',['last_login_attempt'=>fn()=>'NOW()'],'`id`='.$user['id']);
 
 	# Too often and no captcha
-	if($user['seconds']!==null and $user['seconds']<AUTH_RETRY_INTERVAL and !\CMS\Classes\hCaptcha::Check('captcha'))
+	if($user['seconds']!==null and $user['seconds']<AUTH_RETRY_INTERVAL and !Classes\hCaptcha::Check('captcha'))
 		JSON([
 			'ok'=>false,
 			'error'=>'W8',

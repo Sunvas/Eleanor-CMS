@@ -5,7 +5,7 @@
 use \Eleanor\Classes\Template;
 
 # PHP 8.6: migrate to pipe operator
-$files=array_filter(scandir($dir),fn($item)=>str_ends_with($item,'.php'));
+$files=array_filter(scandir($dir) ?: [],fn($item)=>str_ends_with($item,'.php'));
 $files=array_map(fn($item)=>strrchr($item,'.',true),$files);
 
 return array_reduce(

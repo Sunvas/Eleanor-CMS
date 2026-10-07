@@ -7,7 +7,6 @@ use CMS\CMS,
 use const CMS\JSON;
 use function CMS\{Error, SingleFetch};
 
-
 /** Default group for newly created users */
 const USER_GROUP=3;
 

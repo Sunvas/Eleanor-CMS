@@ -76,6 +76,9 @@
 		},
 
 		async Submit(){
+			if(this.loading)
+				return;
+
 			if(this.hcaptcha && !this.captcha)
 				return this.Alert(this.l10n.CAPTCHA,"🫵");
 

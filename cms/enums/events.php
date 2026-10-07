@@ -8,7 +8,7 @@ namespace CMS\Enums;
  * The maximum number of events is 64 because MySQL SET supports up to 64 elements. */
 enum Events:string
 {
-	use \CMS\Traits\Events;# Separate file for methods to keep this file clear
+	use \CMS\Traits\Events;# Separate file for methods to keep this file clean
 
 	/** A new user has been added to the system. Expected parameters: id */
 	case UserCreated='user_created';
@@ -17,5 +17,5 @@ enum Events:string
 	case UserSignedIn='user_signed_in';
 }
 
-# Not required here because the enum name matches filename
+# Not required here because enum name matches filename
 return Events::class;

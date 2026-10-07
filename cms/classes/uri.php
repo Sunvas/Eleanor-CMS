@@ -3,13 +3,12 @@
 namespace CMS\Classes;
 
 use CMS\CMS;
-use const Eleanor\SITEDIR;
 
 /** URI generator */
 class Uri extends \Eleanor\Classes\Uri
 {
 	/** @var string Base prefix containing the language identifier */
-	static string $base=SITEDIR;
+	static string $base=\Eleanor\SITEDIR;
 
 	/** @var array Query suffix added to all generated URIs */
 	public array $query=[];

@@ -18,5 +18,5 @@ trait EmbeddedTemplate
 	}
 }
 
-# Not necessary here, since trait name equals filename
+# Not required here because trait name matches filename
 return EmbeddedTemplate::class;

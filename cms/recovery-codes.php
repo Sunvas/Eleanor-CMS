@@ -6,6 +6,7 @@ namespace CMS;
  * @throws \Random\RandomException */
 function RecoveryCode():string
 {
+	# The alphabet must be exactly 32 characters long (see random_int below)
 	$alphabet='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 	$code='';
 

@@ -51,7 +51,7 @@ if(!\file_exists(__DIR__.'/cms/config/system.json'))
 if(!isset($argv[1]))
 {
 	# PHP 8.6: migrate to pipe operator
-	$units=\scandir(CMS.'units');
+	$units=\scandir(CMS.'units') ?: [];
 	$units=\array_filter($units,fn($item)=>\str_ends_with($item,'.php'));
 	$units=\array_filter($units,fn($item)=>(require (CMS.'units/'.$item)) instanceof Interfaces\CLI);
 	$units=\array_map(fn($item)=>\strrchr($item,'.',true),$units);
@@ -84,9 +84,9 @@ if(\preg_match('#[^a-z\d\-_.]#i',$argv[1])==0 and \is_file($f=CMS."units/$argv[1
 	if($U instanceof Interfaces\CLI)
 		$U->CLI(\array_slice($argv,2));
 	else
-		new CLI('Unit ')->PURPLE($argv[1])->reset(" is not available from the CLI.\n")->Write();
+		new CLI('Unit ')->PURPLE($argv[1])->reset(" is not available from the CLI.\n")->Write(\STDERR);
 }
 else
 	new CLI('Unknown unit: ')->PURPLE($argv[1])
 		->reset("\nUse \"php cli.php\" to list available CLI units.\n")
-		->Write();
+		->Write(\STDERR);

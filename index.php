@@ -71,7 +71,7 @@ function Canonical(Uri|string$Uri,string|array$slug='',...$a):void
 	else
 		$orig=$slug==='' ? (string)$Uri : $Uri($slug,...$a);
 
-	if($_SERVER['REQUEST_URI']!==\htmlspecialchars_decode($orig))
+	if(\rawurldecode($_SERVER['REQUEST_URI'])!==\htmlspecialchars_decode($orig))
 		CMS::$T['canonical']=$orig;
 	else
 		CMS::$T['canonical']=null;
@@ -144,7 +144,7 @@ SELECT `l10n` FROM `users` WHERE `id`=$id
 SQL );
 			$preferred=SingleFetch($R,true);
 
-			if(!$preferred)
+			if(!\in_array($preferred,$stack,true))
 				goto HAL;
 		}
 		else
@@ -154,7 +154,7 @@ SQL );
 			$hal=isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? \explode(',',$_SERVER['HTTP_ACCEPT_LANGUAGE']) : [];
 			$hal=\array_map(fn($item)=>\substr(\trim($item),0,2),$hal);
 
-			$preferred=\array_find($hal,fn($item)=>\in_array($item,$stack,true));
+			$preferred=\array_find($hal,fn($item)=>\in_array($item,$stack,true)) ?? L10N;
 		}
 
 		$loc=[$l10n];
@@ -201,7 +201,7 @@ $CMS=new CMS;
 [$slug,$uri]=SlugTail($uri);
 
 # Nothing found... Let's look for a unit
-$units=\scandir(CMS.'units');# PHP 8.6 - pipe operator
+$units=\scandir(CMS.'units') ?: [];# PHP 8.6 - pipe operator
 $units=\array_filter($units,fn($item)=>\str_ends_with($item,'.php'));
 
 foreach($units as $unit)

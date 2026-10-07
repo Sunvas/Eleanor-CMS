@@ -20,7 +20,7 @@ CREATE TABLE `a11n` (
 	`bytes` binary(7) NOT NULL COMMENT 'Random session key part: 7 bytes provide about 2^56 variants.',
 	`generated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of last key generation. Should be regenerated weekly.',
 	`used` timestamp NULL DEFAULT NULL COMMENT 'Last usage by the user.',
-	`ip` varbinary(16) NOT NULL DEFAULT 0x0 COMMENT 'Last IP used by the user.',
+	`ip` varbinary(16) NOT NULL DEFAULT '' COMMENT 'Last IP used by the user.',
 	`ua` char(140) NOT NULL DEFAULT '' COMMENT 'Last User Agent used by the user.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization';
 SQL;
@@ -30,7 +30,7 @@ CREATE TABLE `a11n_adminpanel` (
 	`a11n_id` smallint UNSIGNED NOT NULL,
 	`user_id` mediumint UNSIGNED NOT NULL,
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`marker` varbinary(5) NOT NULL DEFAULT '\0' COMMENT 'Temporary cookie marker',
+	`marker` varbinary(5) NOT NULL DEFAULT '' COMMENT 'Temporary cookie marker',
 	`way` enum('recovery','sign-in') NOT NULL DEFAULT 'sign-in'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization for admin panel';
 SQL;
@@ -40,7 +40,7 @@ CREATE TABLE `a11n_userarea` (
 	`a11n_id` smallint UNSIGNED NOT NULL,
 	`user_id` mediumint UNSIGNED NOT NULL,
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`marker` varbinary(5) NOT NULL DEFAULT '\0' COMMENT 'Temporary cookie marker',
+	`marker` varbinary(5) NOT NULL DEFAULT '' COMMENT 'Temporary cookie marker',
 	`way` enum('sign-in','recovery','sign-up','admin-panel') NOT NULL DEFAULT 'sign-in'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization for /index.php';
 SQL;
@@ -155,12 +155,13 @@ $tables[]='DROP TABLE IF EXISTS `users_signin_log`';
 $tables[]='DROP TABLE IF EXISTS `users`';
 
 # The longest timezone I've come across is "America/Argentina/Buenos_Aires" (30 characters).
+$l10n_enum=$l10ns===null ? "'$l10n'" : "'".join("','",$l10ns)."'";
 $tables['users']=<<<SQL
 CREATE TABLE `users` (
 	`id` mediumint UNSIGNED NOT NULL,
 	`name` varchar($name_len) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Unique username used as login',
 	`groups` json NOT NULL COMMENT 'Array of group IDs. Each element is an integer representing a group ID.',
-	`password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+	`password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Empty hash means emergency sign-in without password (admin panel only)',
 	`password_changed_at` timestamp NULL DEFAULT NULL COMMENT 'Time when the password was last changed',
 	`totp_secret` binary(32) DEFAULT NULL COMMENT 'Secret for TOTP.',
 	`totp_digits` tinyint NOT NULL DEFAULT '6' COMMENT 'Number of TOTP digits (6-8).',
@@ -169,7 +170,7 @@ CREATE TABLE `users` (
 	`recovery_codes` json DEFAULT NULL COMMENT 'Array of recovery codes, each hashed with password_hash.',
 	`recovery_codes_created_at` timestamp NULL DEFAULT NULL,
 	`recovery_codes_last_used_at` timestamp NULL DEFAULT NULL COMMENT 'Time when a recovery code was last used',
-	`l10n` enum('en','ru') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '$l10n' COMMENT 'Localization',
+	`l10n` enum($l10n_enum) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '$l10n' COMMENT 'Localization',
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`activity` timestamp NULL DEFAULT NULL COMMENT 'Last user''s activity',
 	`last_login_attempt` timestamp NULL DEFAULT NULL COMMENT 'Time when the last login attempt was made',
@@ -186,7 +187,7 @@ CREATE TABLE `users_signin_log` (
   `user_id` mediumint UNSIGNED NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `result` enum('OK','WRONG_PASSWORD','WRONG_TOTP','WRONG_RECOVERY_CODE') NOT NULL,
-  `ip` varbinary(16) NOT NULL DEFAULT 0x0,
+  `ip` varbinary(16) NOT NULL DEFAULT '',
   `ua` varchar(140) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
@@ -248,7 +249,8 @@ SQL;
 
 	$tables['static_backup_primary']=<<<'SQL'
 ALTER TABLE `static_backup`
-	ADD PRIMARY KEY (`id`,`created_at`) USING BTREE;
+	ADD PRIMARY KEY (`id`,`created_at`) USING BTREE,
+	ADD KEY `created_at` (`created_at`);
 SQL;
 }
 else
@@ -265,7 +267,8 @@ SQL;
 
 	$tables['static_backup_primary']=<<<'SQL'
 ALTER TABLE `static_backup`
-	ADD PRIMARY KEY (`id`,`l10n`,`created_at`) USING BTREE;
+	ADD PRIMARY KEY (`id`,`l10n`,`created_at`) USING BTREE,
+	ADD KEY `created_at` (`created_at`);
 SQL;
 }
 

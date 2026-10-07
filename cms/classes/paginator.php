@@ -23,10 +23,10 @@ class Paginator extends \Eleanor\Basic
 			return $pp;
 		}
 
-		return ($cpp>=$min && $cpp<=$max) ? $cpp : $def;
+		return $cpp>=$min && $cpp<=$max ? $cpp : $def;
 	}
 
-	/** Get sorting and pagination values for forward pagination: [sort field, SQL ORDER direction (DESC or empty), SQL LIMIT, offset]
+	/** Get sorting and pagination values for forward pagination: [sort field, SQL ORDER direction (DESC or empty), SQL LIMIT, number of pages]
 	 * @param int $total Total number of items
 	 * @param string[] $sorting Non-empty list of allowed sort fields; the first value is used by default
 	 * @param bool $desc Default order direction: true for descending, false for ascending (F goes before T)
@@ -38,7 +38,7 @@ class Paginator extends \Eleanor\Basic
 	{
 		$pp??=static::PerPage();
 		$page??=(int)($_GET['page'] ?? 1);
-		$pages=$total>0 ? \ceil($total/$pp) : 1;
+		$pages=$total>0 ? (int)\ceil($total/$pp) : 1;
 
 		if($page<1 or $page>$pages)
 			throw new \OutOfBoundsException('Page number must be between 1 and '.$pages);

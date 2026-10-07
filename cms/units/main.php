@@ -11,7 +11,7 @@ return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 
 	function __construct()
 	{
-		$this->slug='';#Mustn't be changed
+		$this->slug='';# Mustn't be changed
 		$this->name=basename(__FILE__,'.php');
 	}
 
@@ -38,7 +38,7 @@ return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
 		CMS::$json ? JSON($output,$code,$cache) : HTML($output,$code,$cache);
 	}
 
-	/** Get file with contents of main page
+	/** Get file containing the main page contents
 	 * @param ?string $code L10N code
 	 * @return string */
 	function GetMainPageFile(?string$code=null):string

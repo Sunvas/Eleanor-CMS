@@ -8,7 +8,7 @@ use Eleanor\Classes\Uri;
 class Uri4AdminPanel extends \Eleanor\Basic
 {
 	/** @var string Base prefix containing site directory and admin panel file */
-	static string $base="";
+	static string $base=\Eleanor\SITEDIR;
 
 	/** @var bool Use &amp; as parameter separator */
 	public bool $amp=true;

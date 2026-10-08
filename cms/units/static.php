@@ -58,7 +58,7 @@ SQL;
 	}
 
 	/** Cron task entry point */
-	function Cron(?array$remnant):int
+	function Cron(mixed&$data):int
 	{
 		# Delete static page backups older than 1 month
 		CMS::$Db->Delete('static_backup','`created_at`<NOW() - INTERVAL 1 MONTH');

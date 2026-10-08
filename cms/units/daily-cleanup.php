@@ -7,7 +7,7 @@ return new readonly class implements Interfaces\Cron {
 	/** @const Path to the uploads trash directory */
 	const string UPLOADS_TRASH=__DIR__.'/../../static/uploads/trash/';
 
-	function Cron(?array$remnant):int
+	function Cron(mixed&$data):int
 	{
 		# Deleting events happened yesterday and earlier
 		CMS::$Db->Delete('events','`happened`<NOW() - INTERVAL 1 DAY');

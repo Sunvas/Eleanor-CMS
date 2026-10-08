@@ -31,7 +31,7 @@ return new class implements Interfaces\UserArea, Interfaces\Cron {
 	}
 
 	/** Cron task entry point */
-	function Cron(?array$remnant):int
+	function Cron(mixed&$data):int
 	{
 		# Delete sign-in log entries older than 3 months
 		CMS::$Db->Delete('users_signin_log','`date`<NOW() - INTERVAL 3 MONTH');

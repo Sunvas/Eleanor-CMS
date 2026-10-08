@@ -53,7 +53,7 @@ CREATE TABLE `cron` (
 	`error` varchar(250) NOT NULL DEFAULT '' COMMENT 'Error message for FAIL status',
 	`run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'For OK: next run date. For RUN: run start date.',
 	`triggers` set('user_created','user_signed_in') NOT NULL DEFAULT '' COMMENT 'See cms/enums/events.php for details',
-	`remnant` json DEFAULT NULL COMMENT 'Data for continuation'
+	`data` json DEFAULT NULL COMMENT 'Persistent data between task executions'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Cron tasks';
 SQL;
 

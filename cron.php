@@ -15,7 +15,7 @@ require __DIR__.'/cms/core.php';
 $immediately=false;
 
 $R=CMS::$Db->Query(<<<SQL
-SELECT `unit`, `remnant` FROM `cron` WHERE `status`='OK' AND `run_at`<=NOW() ORDER BY `run_at` ASC LIMIT 1
+SELECT `unit`, `data` FROM `cron` WHERE `status`='OK' AND `run_at`<=NOW() ORDER BY `run_at` ASC LIMIT 1
 SQL );
 
 if($task=SingleFetch($R))
@@ -40,7 +40,9 @@ if($task=SingleFetch($R))
 		goto Skip;
 
 	try {
-		$remnant=$U->Cron($task['remnant'] ? \json_decode($task['remnant'], true) : null);
+		$data=$task['data']===null ? null : \json_decode($task['data'],true);
+		$seconds=$U->Cron($data);
+		$data=$data===null ? null : \json_encode($data,\JSON_THROW_ON_ERROR);
 	}catch(\Throwable$E){
 		CMS::$Db->Update('cron',[
 			'status'=>'FAIL',
@@ -50,13 +52,7 @@ if($task=SingleFetch($R))
 		goto Skip;
 	}
 
-	if(\is_array($remnant))
-	{
-		$immediately=true;
-		CMS::$Db->Update('cron',['status'=>'OK','run_at'=>fn()=>'NOW()','remnant'=>\json_encode($remnant,JSON)],'`unit`=?',[$task['unit']]);
-	}
-	else
-		CMS::$Db->Update('cron',['status'=>'OK','run_at'=>fn()=>"NOW() + INTERVAL GREATEST($remnant,1) SECOND",'remnant'=>null],'`unit`=?',[$task['unit']]);
+	CMS::$Db->Update('cron',['status'=>'OK','run_at'=>fn()=>"NOW() + INTERVAL GREATEST($seconds,0) SECOND",'data'=>$data],'`unit`=?',[$task['unit']]);
 
 	Skip:
 }

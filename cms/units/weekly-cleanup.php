@@ -4,7 +4,7 @@ namespace CMS;
 
 /** Weekly cleanup */
 return new readonly class implements Interfaces\Cron {
-	function Cron(?array$remnant):int
+	function Cron(mixed&$data):int
 	{
 		# Delete obsolete a11n sessions
 		CMS::$Db->Delete('a11n','`generated`<NOW() - INTERVAL 1 YEAR');

@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 use Eleanor\Assign,
@@ -10,7 +9,7 @@ use Eleanor\Assign,
 
 use const Eleanor\SITEDIR;
 
-/** @const Script start time, used to display service information at the bottom of the page. */
+/** @var int Monotonic script start time in nanoseconds, used to display service information at the bottom of the page. */
 \define('CMS\STARTED',\hrtime(true));
 
 # Reject unsupported browser request contexts
@@ -207,12 +206,12 @@ $units=\array_filter($units,fn($item)=>\str_ends_with($item,'.php'));
 foreach($units as $unit)
 {
 	$u=\strrchr($unit,'.',true);
-	$U=require (CMS.'units/'.$unit);
 
-	if(!\is_object($U))
+	try{
+		$U=$CMS->{$u};
+	}catch(\Eleanor\Classes\E){
 		continue;
-
-	$CMS->$u=$U;
+	}
 
 	if($U instanceof UserArea and $U->slug===$slug)
 		$U->UserArea($uri);

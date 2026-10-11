@@ -1,19 +1,17 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS\Interfaces;
 
 /** Interface for units that can be executed as background tasks. */
 interface Cron
 {
 	/** Execute the task.
-	 * If a task is too heavy to finish in a single run, it should be split into stages.
-	 * The result returned from the previous stage is passed to the next run as a non-empty array.
-	 * This array must be JSON-serializable because it is stored in the database between runs.
-	 * @param ?array $remnant Data returned by the previous run to continue an unfinished task.
-	 * @return array|int Returning an array indicates that the task is not finished yet and should be resumed
-	 * shortly. Returning an integer specifies the number of seconds until the next execution.
+	 * Task data is preserved between executions and can be modified by reference.
+	 * The data must be JSON-serializable and is saved after successful execution.
+	 * Long-running tasks can be split into stages by returning zero and storing progress in $data.
+	 * @param mixed $data Persistent task data, or null if not initialized.
+	 * @return int Seconds until the next execution. Zero or negative values request immediate execution.
 	 * @throws \Throwable Marks the task as failed. */
-	function Cron(?array$remnant):array|int;
+	function Cron(mixed&$data):int;
 }
 
 # Not required here because interface name matches filename.

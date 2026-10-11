@@ -1,10 +1,9 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 /** Daily cleanup */
 return new readonly class implements Interfaces\Cron {
-	/** @const Path to the uploads trash directory */
+	/** @var Path to the uploads trash directory */
 	const string UPLOADS_TRASH=__DIR__.'/../../static/uploads/trash/';
 
 	function Cron(mixed&$data):int

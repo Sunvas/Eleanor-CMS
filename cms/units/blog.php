@@ -1,8 +1,7 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
-return new class extends Abstracts\AdminPanel implements Interfaces\UserArea {
+return new class extends Abstracts\AdminPanel implements Interfaces\UserArea, Interfaces\Sitemap {
 	readonly string
 		/** @var string $slug URL prefix of the unit */
 		$slug,
@@ -40,5 +39,11 @@ HTML )
 
 		#Output: cache is off for users
 		HTML($output,200,CMS::$A->current ? 0 : 86400);
+	}
+
+	function Sitemap(mixed&$data):\Generator
+	{
+		//ToDo!
+		yield from [];
 	}
 };

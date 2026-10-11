@@ -1,13 +1,24 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 use CMS\Interfaces\Cron,
 	Eleanor\Classes\Output;
 
+/** @var int Monotonic script start time in nanoseconds, used to estimate remaining execution time. */
+\define('CMS\STARTED',\hrtime(true));
+
 # Reject unsupported browser request contexts
 if(!\in_array($_SERVER['HTTP_SEC_FETCH_DEST'] ?? '',['','empty','document'],true))
 	return \http_response_code(403);
+
+/** Estimate remaining PHP execution time in seconds.
+ * @return int Remaining seconds, or PHP_INT_MAX if no time limit is set. */
+function GetRemainingTime():int
+{
+	$limit=(int)\ini_get('max_execution_time');
+
+	return $limit===0 ? PHP_INT_MAX : (int)($limit-(\hrtime(true)-STARTED)/1e9);
+}
 
 require __DIR__.'/cms/core.php';
 
@@ -39,7 +50,7 @@ if($task=SingleFetch($R))
 	if(CMS::$Db->Update('cron',['status'=>'RUN','run_at'=>fn()=>'NOW()'],"`unit`=? AND `status`='OK'",[$task['unit']])<1)
 		goto Skip;
 
-	try {
+	try{
 		$data=$task['data']===null ? null : \json_decode($task['data'],true);
 		$seconds=$U->Cron($data);
 		$data=$data===null ? null : \json_encode($data,\JSON_THROW_ON_ERROR);
@@ -52,7 +63,12 @@ if($task=SingleFetch($R))
 		goto Skip;
 	}
 
-	CMS::$Db->Update('cron',['status'=>'OK','run_at'=>fn()=>"NOW() + INTERVAL GREATEST($seconds,0) SECOND",'data'=>$data],'`unit`=?',[$task['unit']]);
+	$immediately=$seconds<=0;
+	CMS::$Db->Update('cron',[
+		'run_at'=>fn()=>"IF(`status`='RERUN',NOW(),NOW() + INTERVAL GREATEST($seconds,0) SECOND)",
+		'status'=>'OK',
+		'data'=>$data
+	],'`unit`=?',[$task['unit']]);
 
 	Skip:
 }
@@ -67,7 +83,7 @@ SQL );
 }
 
 # Reset tasks that have been running for more than an hour
-if(!$immediately and CMS::$Db->Update('cron',['status'=>'OK','run_at'=>fn()=>'NOW()'],"`status`='RUN' AND `run_at`<NOW() - INTERVAL 1 HOUR")>0)
+if(!$immediately and CMS::$Db->Update('cron',['status'=>'OK','run_at'=>fn()=>'NOW()'],"`status` IN ('RUN','RERUN') AND `run_at`<NOW() - INTERVAL 1 HOUR")>0)
 	$immediately=true;
 
 # Next run should be performed immediately

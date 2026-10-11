@@ -1,8 +1,7 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
-return new class extends Abstracts\AdminPanel implements Interfaces\Cron {
+return new class extends Abstracts\AdminPanel implements Interfaces\Cron, Interfaces\Sitemap {
 	function __construct()
 	{
 		$this->name=\basename(__FILE__,'.php');
@@ -64,5 +63,11 @@ SQL;
 		CMS::$Db->Delete('static_backup','`created_at`<NOW() - INTERVAL 1 MONTH');
 
 		return 86400*7;
+	}
+
+	function Sitemap(mixed&$data):\Generator
+	{
+		//ToDo!
+		yield from [];
 	}
 };

@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2026 · https://eleanor-cms.com
 namespace CMS;
 
 /** Weekly cleanup */

@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 use Eleanor\{Basic,Assign,Library};
@@ -182,7 +181,7 @@ class CMS extends Library
 
 class Output extends \Eleanor\Classes\Output
 {
-	/** @const X-Powered-CMS header. Feel free to remove it. */
+	/** @var X-Powered-CMS header. Feel free to remove it. */
 	protected const string POWERED='X-Powered-CMS: Eleanor CMS https://eleanor-cms.com';
 }
 
@@ -313,7 +312,7 @@ SELECT `user_id`, `marker`, `way` FROM `$table` WHERE `a11n_id`=?
 SQL ,[CMS::$a11n]);
 			foreach($R as $a)
 			{
-				$id=(int)$a['user_id'];
+				$id=$a['user_id'];
 
 				if(\in_array($id,$available))
 					continue;
@@ -490,7 +489,7 @@ SQL );
 		$R=CMS::$Db->Query('SELECT * FROM `groups` WHERE `id`'.CMS::$Db->In($groups));
 		foreach($R as $a)
 		{
-			$gid=(int)$a['id'];
+			$gid=$a['id'];
 
 			if($a['roles'])
 				\array_push($roles,...\explode(',',$a['roles']));
@@ -502,7 +501,7 @@ SQL );
 			}
 
 			foreach(\array_slice($a,2) as $right=>$v)# Skip id and roles
-				$rights[$right][$gid]=\is_string($v) && \ctype_digit($v) ? (int)$v : $v;
+				$rights[$right][$gid]=$v;
 		}
 		$R->free();
 	}

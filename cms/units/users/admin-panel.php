@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 use CMS\Classes\Paginator;
@@ -373,8 +372,6 @@ SQL;
 	$items=(function()use($R){
 		foreach($R as $a)
 		{
-			$a['id']=(int)$a['id'];
-			$a['available_recovery_codes']=(int)$a['available_recovery_codes'];
 			$a['groups']=\json_decode($a['groups'],true) ?? [];
 			$a['totp_enabled']=(bool)$a['totp_enabled'];
 			$a['empty_password']=(bool)$a['empty_password'];
@@ -393,8 +390,6 @@ SQL);
 
 		foreach($R as $a)
 		{
-			$a['id']=(int)$a['id'];
-
 			if($multi)
 			{
 				$tmp=\json_decode($a['title'],true);
@@ -520,8 +515,6 @@ SQL );
 
 		foreach($R as $a)
 		{
-			$a['id']=(int)$a['id'];
-			$a['slow_mode']=(int)$a['slow_mode'];
 			$a['roles']=$a['roles'] ? \explode(',',$a['roles']) : [];
 
 			$a['deletable']=$a['id']>4;
@@ -616,7 +609,6 @@ SQL;
 		foreach($R as $a)
 		{
 			$a['ip']=$a['ip'] ? \inet_ntop($a['ip']) : '';
-			$a['user_id']=(int)$a['user_id'];
 
 			$uids[]=$a['user_id'];
 
@@ -640,7 +632,6 @@ WHERE `id`$in
 SQL );
 		foreach($R as $a)
 		{
-			$a['id']=(int)$a['id'];
 			$a['groups']=\json_decode($a['groups'],true);
 
 			yield $a;

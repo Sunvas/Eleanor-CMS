@@ -1,11 +1,8 @@
-<?php
-# Eleanor CMS © 2026 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2026 · https://eleanor-cms.com
 namespace CMS;
 
-use Eleanor\Classes\E,
-	Eleanor\Classes\Files,
-
-	CMS\Classes\Paginator;
+use CMS\Classes\Paginator;
+use Eleanor\Classes\{E, Files};
 
 /** Admin of unit "static pages"
  * @var Classes\Uri4AdminPanel $Uri
@@ -14,10 +11,10 @@ use Eleanor\Classes\E,
  * @var int|string &$cache Defines cache on client (int specifies the number of seconds for which the result should be cached, string means etag content) */
 
 const
-	/** @const name of config file */
+	/** @var name of config file */
 	CONFIG='config',
 
-	/** @const name for file uploading */
+	/** @var name for file uploading */
 	ATTACH='attach';
 
 /** Obtaining rights of site team member
@@ -74,8 +71,6 @@ SQL);
 
 		foreach($R as $a)
 		{
-			$a['id']=(int)$a['id'];
-
 			if($multi)
 			{
 				$tmp=\json_decode($a['title'],true);
@@ -165,7 +160,6 @@ SQL;
 
 		foreach($R as $a)
 		{
-			$a['id']=(int)$a['id'];
 			$a['user-area']=$USU(\explode('/',$a['slug']));
 
 			yield $a;

@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 $title??=$var_0 ?? '';
@@ -69,7 +68,7 @@ Link('//cdn.jsdelivr.net');
 <head>
 	<base href="<?=\Eleanor\SITEDIR?>">
 	<meta charset="utf-8">
-	<title><?=\strip_tags(\is_array($title) ? \join(' :: ',$title) : $title)?></title>
+	<title><?=\strip_tags(\is_array($title) ? \join(' · ',$title) : $title)?></title>
 
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="static/user-area/styles/main.css">

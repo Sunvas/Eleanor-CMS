@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 use const Eleanor\SITEDIR;
@@ -20,7 +19,7 @@ $l10n=new L10n('sign-in',__DIR__.'/l10n/');
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="none">
-	<title><?=$l10n['admin-panel'],' :: ',$site?></title>
+	<title><?=$l10n['admin-panel'],' · ',$site?></title>
 
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="static/admin-panel/style.min.css">

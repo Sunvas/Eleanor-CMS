@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 use CMS\Enums\{Events, SignInAttempt};
@@ -331,7 +330,7 @@ function SignUp(Uri$Uri,int&$code):array|string
 		# Signing in to the site
 		CMS::$A->SignIn($id,true,['way'=>'sign-up']);
 
-		Events::UserCreated->Trigger(['id'=>$id]);
+		Events::UserCreated->Trigger($id);
 
 		return[
 			'ok'=>true,
@@ -850,7 +849,6 @@ SQL ,[$current,MONTHS_TO_STALE_SESSION,CMS::$A->current]);
 		foreach($R as $a)
 		{
 			$a['ip']=$a['ip'] ? \inet_ntop($a['ip']) : '';
-			$a['a11n_id']=(int)$a['a11n_id'];
 			$a['terminatable']=CMS::$a11n!=$a['a11n_id'] && $a['terminatable'];
 
 			yield $a;

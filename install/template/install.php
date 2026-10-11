@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 use Eleanor\Classes\L10n;
@@ -58,7 +57,7 @@ HTML;
 	<base href="$sitedir">
 	<meta charset="utf-8">
 	<meta name="robots" content="noindex, follow">
-	<title>$title :: Eleanor CMS $version</title>
+	<title>$title · Eleanor CMS $version</title>
 $head
 	<link rel="icon" href="../favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="template/style.css">

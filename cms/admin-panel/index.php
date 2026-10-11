@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 /** Index template for all pages
@@ -70,7 +69,7 @@ Link('//cdn.jsdelivr.net');
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="robots" content="none">
-	<title><?=strip_tags(is_array($title) ? join(' :: ',$title) : $title)?></title>
+	<title><?=strip_tags(is_array($title) ? join(' · ',$title) : $title)?></title>
 
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="static/admin-panel/style.min.css">

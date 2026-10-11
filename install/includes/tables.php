@@ -1,5 +1,4 @@
-<?php
-# Eleanor CMS © 2025 --> https://eleanor-cms.com
+<?php # Eleanor CMS © 2025 · https://eleanor-cms.com
 namespace CMS;
 
 /** @var \Eleanor\Classes\MySQL $Db
@@ -16,12 +15,13 @@ $tables[]='DROP TABLE IF EXISTS `a11n`';
 
 $tables['a11n']=<<<'SQL'
 CREATE TABLE `a11n` (
-	`id` smallint UNSIGNED NOT NULL,
+	`id` smallint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '2 bytes mean ~180 authentications per day. See description for A11N_TRUNCATE_AFTER constant in cms/constants.php',
 	`bytes` binary(7) NOT NULL COMMENT 'Random session key part: 7 bytes provide about 2^56 variants.',
 	`generated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of last key generation. Should be regenerated weekly.',
 	`used` timestamp NULL DEFAULT NULL COMMENT 'Last usage by the user.',
 	`ip` varbinary(16) NOT NULL DEFAULT '' COMMENT 'Last IP used by the user.',
-	`ua` char(140) NOT NULL DEFAULT '' COMMENT 'Last User Agent used by the user.'
+	`ua` char(140) NOT NULL DEFAULT '' COMMENT 'Last User Agent used by the user.',
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization';
 SQL;
 
@@ -31,7 +31,9 @@ CREATE TABLE `a11n_adminpanel` (
 	`user_id` mediumint UNSIGNED NOT NULL,
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`marker` varbinary(5) NOT NULL DEFAULT '' COMMENT 'Temporary cookie marker',
-	`way` enum('recovery','sign-in') NOT NULL DEFAULT 'sign-in'
+	`way` enum('recovery','sign-in') NOT NULL DEFAULT 'sign-in',
+	PRIMARY KEY (`a11n_id`),
+	KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization for admin panel';
 SQL;
 
@@ -41,7 +43,9 @@ CREATE TABLE `a11n_userarea` (
 	`user_id` mediumint UNSIGNED NOT NULL,
 	`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`marker` varbinary(5) NOT NULL DEFAULT '' COMMENT 'Temporary cookie marker',
-	`way` enum('sign-in','recovery','sign-up','admin-panel') NOT NULL DEFAULT 'sign-in'
+	`way` enum('sign-in','recovery','sign-up','admin-panel') NOT NULL DEFAULT 'sign-in',
+	PRIMARY KEY (`a11n_id`,`user_id`),
+	KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Authorization for /index.php';
 SQL;
 
@@ -49,11 +53,12 @@ $tables[]='DROP TABLE IF EXISTS `cron`';
 $tables['cron']=<<<'SQL'
 CREATE TABLE `cron` (
 	`unit` varchar(25) COLLATE utf8mb4_bin NOT NULL COMMENT 'Cron-enabled unit filename without .php',
-	`status` enum('OK','RUN','OFF','FAIL') COLLATE utf8mb4_bin NOT NULL DEFAULT 'OK' COMMENT 'OK - ready or scheduled; RUN - currently running; OFF - disabled; FAIL - task failed, see the error field for details.',
+	`status` enum('OK','RUN','RERUN','OFF','FAIL') COLLATE utf8mb4_bin NOT NULL DEFAULT 'OK' COMMENT 'OK - ready or scheduled; RUN - currently running; OFF - disabled; FAIL - task failed, see the error field for details.',
 	`error` varchar(250) NOT NULL DEFAULT '' COMMENT 'Error message for FAIL status',
 	`run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'For OK: next run date. For RUN: run start date.',
-	`triggers` set('user_created','user_signed_in') NOT NULL DEFAULT '' COMMENT 'See cms/enums/events.php for details',
-	`data` json DEFAULT NULL COMMENT 'Persistent data between task executions'
+	`triggers` set('user_created','user_signed_in','uri_created') NOT NULL DEFAULT '' COMMENT 'See cms/enums/events.php for details',
+	`data` json DEFAULT NULL COMMENT 'Persistent data between task executions',
+	PRIMARY KEY (`unit`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Cron tasks';
 SQL;
 
@@ -61,8 +66,9 @@ $tables[]='DROP TABLE IF EXISTS `events`';
 $tables['events']=<<<'SQL'
 CREATE TABLE `events` (
 	`happened` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-	`event` enum('user_created','user_signed_in') NOT NULL COMMENT 'See cms/enums/events.php for details',
-	`data` json DEFAULT NULL
+	`event` enum('user_created','user_signed_in','uri_created') NOT NULL COMMENT 'See cms/enums/events.php for details',
+	`data` json DEFAULT NULL,
+	PRIMARY KEY (`happened`,`event`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Events for asynchronous operations';
 SQL;
 
@@ -70,12 +76,31 @@ $type=$l10ns===null ? 'varchar(25)' : 'json';
 $tables[]='DROP TABLE IF EXISTS `groups`';
 $tables['groups']=<<<SQL
 CREATE TABLE `groups` (
-	`id` tinyint UNSIGNED NOT NULL,
+	`id` tinyint UNSIGNED NOT NULL AUTO_INCREMENT,
 	`roles` set('root','team') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Must be the second field because all following fields are treated as rights. Defines system roles assigned to the group.',
 	`title` $type NOT NULL COMMENT 'Special field defines the public title of a group.',
-	`slow_mode` tinyint NOT NULL DEFAULT '0' COMMENT 'Defines the number of seconds between significant actions such as posting or commenting.'
+	`slow_mode` tinyint NOT NULL DEFAULT '0' COMMENT 'Defines the number of seconds between significant actions such as posting or commenting.',
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
+
+# Sitemap
+$tables[]='DROP TABLE IF EXISTS `sitemaps`';
+$tables['sitemaps']=<<<'SQL'
+CREATE TABLE `sitemaps` (
+	`name` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+	`status` enum('OK','SCHEDULED','OFF','RUN','FAIL') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+	`run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'For OK: next run date. For RUN: run start date.',
+	`debounce` time NOT NULL DEFAULT '00:00:00' COMMENT 'Delay before sitemap generation; subsequent URI events are batched without resetting the timer',
+	`units` json NOT NULL COMMENT 'Array of units',
+	`data` json DEFAULT NULL COMMENT 'Object of persistent units data between executions in format unit_name:data',
+	`number` smallint UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Number of uris in a current file',
+	`n` tinyint UNSIGNED NOT NULL DEFAULT '0' COMMENT 'File number',
+	PRIMARY KEY (`name`),
+	CONSTRAINT `units_is_array` CHECK (JSON_TYPE(`units`) = 'ARRAY')
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+SQL;
+
 
 # Static pages
 $tables[]='DROP TABLE IF EXISTS `static_backup`';
@@ -85,7 +110,7 @@ if($l10ns===null)
 {
 	$tables['static']=<<<'SQL'
 CREATE TABLE `static` (
-	`id` smallint UNSIGNED NOT NULL,
+	`id` smallint UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` enum('ACTIVE','DRAFT') NOT NULL DEFAULT 'DRAFT',
 	`slug` varchar(100) DEFAULT NULL,
 	`title` varchar(100) NOT NULL DEFAULT '',
@@ -95,7 +120,9 @@ CREATE TABLE `static` (
 	`content_state` enum('OK','OK_PARTIAL','STALE','PARSING') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'OK' COMMENT 'Defines synchronization status between content_source and content.',
 	`content_parsing_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Shows time of the last content parsing operation.',
 	`files` json DEFAULT NULL COMMENT 'Array of filenames referenced by the page content.',
-	`modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Time when page was modified'
+	`modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Time when page was modified',
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `slug` (`slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 SQL;
 
@@ -104,7 +131,9 @@ CREATE TABLE `static_backup` (
 	`id` smallint UNSIGNED NOT NULL COMMENT 'ID of the page',
 	`created_at` timestamp NOT NULL COMMENT 'Rounded to the minute',
 	`content_source` json NOT NULL,
-	`files` json DEFAULT NULL COMMENT 'Files attached to the page.'
+	`files` json DEFAULT NULL COMMENT 'Files attached to the page.',
+	PRIMARY KEY (`id`,`created_at`),
+	KEY `created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Page content backups generated by trigger. No more than once per hour.';
 SQL;
 }
@@ -126,14 +155,14 @@ else
 	}
 
 	$set="'".join("','",$l10ns)."'";
-	$modified=rtrim($modified,',');
 
 	$tables['static']=<<<SQL
 CREATE TABLE `static` (
-	`id` smallint UNSIGNED NOT NULL,
+	`id` smallint UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` enum('ACTIVE','DRAFT') NOT NULL DEFAULT 'DRAFT',
 	`l10ns` set($set) DEFAULT '$l10n' COMMENT 'Empty means that the page is monolingual',
 	$slug$title$description$content$files$modified
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 SQL;
 
@@ -143,7 +172,9 @@ CREATE TABLE `static_backup` (
 	`l10n` enum($set) DEFAULT '$l10n',
 	`created_at` timestamp NOT NULL COMMENT 'Rounded to the minute',
 	`content_source` json NOT NULL,
-	`files` json DEFAULT NULL COMMENT 'Array of filenames referenced by the page content.'
+	`files` json DEFAULT NULL COMMENT 'Array of filenames referenced by the page content.',
+	PRIMARY KEY (`id`,`l10n`,`created_at`),
+	KEY `created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Page content backups generated by trigger. No more than once per hour.';
 SQL;
 }
@@ -158,7 +189,7 @@ $tables[]='DROP TABLE IF EXISTS `users`';
 $l10n_enum=$l10ns===null ? "'$l10n'" : "'".join("','",$l10ns)."'";
 $tables['users']=<<<SQL
 CREATE TABLE `users` (
-	`id` mediumint UNSIGNED NOT NULL,
+	`id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT,
 	`name` varchar($name_len) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Unique username used as login',
 	`groups` json NOT NULL COMMENT 'Array of group IDs. Each element is an integer representing a group ID.',
 	`password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Empty hash means emergency sign-in without password (admin panel only)',
@@ -178,17 +209,21 @@ CREATE TABLE `users` (
 	`avatar` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Avatar salt. Avatars are stored as static/avatars/ID-SALT.webp.',
 	`info` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Any brief information by user',
 	`comment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'Comment for admin panel',
-	`timezone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'User time zone used for date and time display.'
+	`timezone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'User time zone used for date and time display.',
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
 
 $tables['users_signin_log']=<<<'SQL'
 CREATE TABLE `users_signin_log` (
-  `user_id` mediumint UNSIGNED NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `result` enum('OK','WRONG_PASSWORD','WRONG_TOTP','WRONG_RECOVERY_CODE') NOT NULL,
-  `ip` varbinary(16) NOT NULL DEFAULT '',
-  `ua` varchar(140) NOT NULL DEFAULT ''
+	`user_id` mediumint UNSIGNED NOT NULL,
+	`date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`result` enum('OK','WRONG_PASSWORD','WRONG_TOTP','WRONG_RECOVERY_CODE') NOT NULL,
+	`ip` varbinary(16) NOT NULL DEFAULT '',
+	`ua` varchar(140) NOT NULL DEFAULT '',
+	PRIMARY KEY (`user_id`,`date`),
+	ADD KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 SQL;
 
@@ -199,117 +234,24 @@ CREATE TABLE `widgets` (
 	`title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'Title displayed in the admin panel.',
 	`description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'Detailed description displayed in the admin panel.',
 	`file` varchar(25) COLLATE utf8mb4_bin NOT NULL COMMENT 'Widget file selected from the admin panel.',
-	`content` text COLLATE utf8mb4_bin COMMENT 'Widget content entered in the admin panel.'
+	`content` text COLLATE utf8mb4_bin COMMENT 'Widget content entered in the admin panel.',
+	PRIMARY KEY (`place`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Widgets assigned to predefined frontend placements.';
 SQL;
 
-# Keys
-
-$tables['a11n_primary']=<<<'SQL'
-ALTER TABLE `a11n`
-	ADD PRIMARY KEY (`id`);
-SQL;
-
-$tables['a11n_adminpanel_primary']=<<<'SQL'
-ALTER TABLE `a11n_adminpanel`
-	ADD PRIMARY KEY (`a11n_id`),
-	ADD KEY `user_id` (`user_id`);
-SQL;
-
-$tables['a11n_userarea_primary']=<<<'SQL'
-ALTER TABLE `a11n_userarea`
-	ADD PRIMARY KEY (`a11n_id`,`user_id`),
-	ADD KEY `user_id` (`user_id`);
-SQL;
-
-$tables['cron_primary']=<<<'SQL'
-ALTER TABLE `cron`
-	ADD PRIMARY KEY (`unit`),
-	ADD KEY `status_run_at` (`status`,`run_at`);
-SQL;
-
-$tables['events_primary']=<<<'SQL'
-ALTER TABLE `events`
-	ADD PRIMARY KEY (`happened`,`event`);
-SQL;
-
-$tables['groups_primary']=<<<'SQL'
-ALTER TABLE `groups`
-	ADD PRIMARY KEY (`id`);
-SQL;
-
 # Static pages
-if($l10ns===null)
-{
-	$tables['static_primary']=<<<'SQL'
-ALTER TABLE `static`
-	ADD PRIMARY KEY (`id`),
-	ADD UNIQUE KEY `slug` (`slug`);
-SQL;
-
-	$tables['static_backup_primary']=<<<'SQL'
-ALTER TABLE `static_backup`
-	ADD PRIMARY KEY (`id`,`created_at`) USING BTREE,
-	ADD KEY `created_at` (`created_at`);
-SQL;
-}
-else
+if($l10ns!==null)
 {
 	$slug='';
 
 	foreach($l10ns as $code)
-		$slug.=", ADD UNIQUE KEY `slug_$code` (`slug_$code`)";
+		$slug.="ADD UNIQUE KEY `slug_$code` (`slug_$code`), ";
 
+	$slug=\rtrim($slug,', ');
 	$tables['static_primary']=<<<SQL
-ALTER TABLE `static`
-	ADD PRIMARY KEY (`id`)$slug;
-SQL;
-
-	$tables['static_backup_primary']=<<<'SQL'
-ALTER TABLE `static_backup`
-	ADD PRIMARY KEY (`id`,`l10n`,`created_at`) USING BTREE,
-	ADD KEY `created_at` (`created_at`);
+ALTER TABLE `static` $slug;
 SQL;
 }
-
-$tables['users_primary']=<<<'SQL'
-ALTER TABLE `users`
-	ADD PRIMARY KEY (`id`),
-	ADD UNIQUE KEY `name` (`name`);
-SQL;
-
-$tables['users_signin_logs_primary']=<<<'SQL'
-ALTER TABLE `users_signin_log`
-	ADD PRIMARY KEY (`user_id`,`date`) USING BTREE,
-	ADD KEY `date` (`date`);
-SQL;
-
-$tables['widgets_primary']=<<<'SQL'
-ALTER TABLE `widgets`
-	ADD PRIMARY KEY (`place`);
-SQL;
-
-# Autoincrements
-
-$tables['a11n_autoincrement']=<<<'SQL'
-ALTER TABLE `a11n`
-	MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '2 bytes mean ~180 authentications per day. See description for A11N_TRUNCATE_AFTER constant in cms/constants.php';
-SQL;
-
-$tables['groups_autoincrement']=<<<'SQL'
-ALTER TABLE `groups`
-	MODIFY `id` tinyint UNSIGNED NOT NULL AUTO_INCREMENT;
-SQL;
-
-$tables['static_autoincrement']=<<<'SQL'
-ALTER TABLE `static`
-	MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT;
-SQL;
-
-$tables['users_autoincrement']=<<<'SQL'
-ALTER TABLE `users`
-	MODIFY `id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT;
-SQL;
 
 # Constraints
 
